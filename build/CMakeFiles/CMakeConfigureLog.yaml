@@ -1,0 +1,1510 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineSystem.cmake:204 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The system is: Linux - 4.18.0-553.81.1.el8_10.x86_64 - x86_64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/share/cmake/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+      
+      The C compiler identification is GNU, found in:
+        /home/x-zjian1/ASTZ_tests/build/CMakeFiles/3.26.5/CompilerIdC/a.out
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/share/cmake/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is GNU, found in:
+        /home/x-zjian1/ASTZ_tests/build/CMakeFiles/3.26.5/CompilerIdCXX/a.out
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "/usr/share/cmake/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-VFFkhO"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-VFFkhO"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-VFFkhO
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_57aca/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_57aca.dir/build.make CMakeFiles/cmTC_57aca.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-VFFkhO'
+        Building C object CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc   -v -o CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+        Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs
+        COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/gcc
+        Target: x86_64-pc-linux-gnu
+        Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c,c++,fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc'
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 11.2.0 (Spack GCC) 
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_57aca.dir/'
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/cc1 -quiet -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include -D_REENTRANT /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_57aca.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fexceptions -o /tmp/ccmXlf9T.s
+        GNU C17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)
+        	compiled by GNU C version 11.2.0, GMP version 6.2.1, MPFR version 4.0.2-p9, MPC version 1.1.0, isl version none
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"
+        ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"
+        ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"
+        ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"
+        ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"
+        ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"
+        ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"
+        ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"
+        ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"
+        ignoring nonexistent directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../x86_64-pc-linux-gnu/include"
+        ignoring duplicate directory "/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include"
+        ignoring duplicate directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include"
+          as it is a non-system directory that duplicates a system directory
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include
+         /apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include
+         /apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include
+         /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include
+         /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include
+         /apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include
+         /apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include
+         .
+         /home/x-zjian1/hdf5/hdf5-1.14.6/install/include
+         /home/x-zjian1/jpeg-9f/install/include
+         /home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include
+         /home/x-zjian1/GKlib/install/include
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include
+         /usr/local/include
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed
+         /usr/include
+        End of search list.
+        GNU C17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)
+        	compiled by GNU C version 11.2.0, GMP version 6.2.1, MPFR version 4.0.2-p9, MPC version 1.1.0, isl version none
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        Compiler executable checksum: fefd872176f3ca5467cb7b8c84f26131
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_57aca.dir/'
+         as -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include --64 -o CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o /tmp/ccmXlf9T.s
+        GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-127.el8_10
+        COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/
+        LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.'
+        Linking C executable cmTC_57aca
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_57aca.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -v CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o -o cmTC_57aca 
+        Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs
+        COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/gcc
+        COLLECT_LTO_WRAPPER=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper
+        Target: x86_64-pc-linux-gnu
+        Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c,c++,fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc'
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 11.2.0 (Spack GCC) 
+        COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/
+        LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_57aca' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib' '-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib' '-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib' '-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_57aca.'
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/collect2 -plugin /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/liblto_plugin.so -plugin-opt=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccwRzNvr.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_57aca /lib/../lib64/crt1.o /lib/../lib64/crti.o /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib -L/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -L/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib -L/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../.. CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -rpath /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -rpath /apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -rpath /apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -lmpi -lgcc --push-state --as-needed -lgcc_s --pop-state -lpthread -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o /lib/../lib64/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_57aca' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib' '-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib' '-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib' '-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_57aca.'
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-VFFkhO'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:127 (message)"
+      - "/usr/share/cmake/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include]
+          add: [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include]
+          add: [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include]
+          add: [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include]
+          add: [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include]
+          add: [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include]
+          add: [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include]
+          add: [.]
+          add: [/home/x-zjian1/hdf5/hdf5-1.14.6/install/include]
+          add: [/home/x-zjian1/jpeg-9f/install/include]
+          add: [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include]
+          add: [/home/x-zjian1/GKlib/install/include]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include]
+          add: [/usr/local/include]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include] ==> [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include]
+        collapse include dir [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include] ==> [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include]
+        collapse include dir [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include] ==> [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include]
+        collapse include dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include] ==> [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include]
+        collapse include dir [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include] ==> [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include]
+        collapse include dir [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include] ==> [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include]
+        collapse include dir [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include] ==> [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include]
+        skipping relative include dir [.]
+        collapse include dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/include] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/include]
+        collapse include dir [/home/x-zjian1/jpeg-9f/install/include] ==> [/home/x-zjian1/jpeg-9f/install/include]
+        collapse include dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include]
+        collapse include dir [/home/x-zjian1/GKlib/install/include] ==> [/home/x-zjian1/GKlib/install/include]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include;/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include;/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include;/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include;/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include;/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include;/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include;/home/x-zjian1/hdf5/hdf5-1.14.6/install/include;/home/x-zjian1/jpeg-9f/install/include;/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include;/home/x-zjian1/GKlib/install/include;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include;/usr/local/include;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:152 (message)"
+      - "/usr/share/cmake/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-VFFkhO]
+        ignore line: []
+        ignore line: [Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_57aca/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_57aca.dir/build.make CMakeFiles/cmTC_57aca.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-VFFkhO']
+        ignore line: [Building C object CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc   -v -o CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs]
+        ignore line: [COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/gcc]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c c++ fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc']
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 11.2.0 (Spack GCC) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_57aca.dir/']
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/cc1 -quiet -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include -D_REENTRANT /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_57aca.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fexceptions -o /tmp/ccmXlf9T.s]
+        ignore line: [GNU C17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)]
+        ignore line: [	compiled by GNU C version 11.2.0  GMP version 6.2.1  MPFR version 4.0.2-p9  MPC version 1.1.0  isl version none]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"]
+        ignore line: [ignoring nonexistent directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../x86_64-pc-linux-gnu/include"]
+        ignore line: [ignoring duplicate directory "/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include"]
+        ignore line: [ignoring duplicate directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include"]
+        ignore line: [  as it is a non-system directory that duplicates a system directory]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include]
+        ignore line: [ /apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include]
+        ignore line: [ /apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include]
+        ignore line: [ /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include]
+        ignore line: [ /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include]
+        ignore line: [ /apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include]
+        ignore line: [ /apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include]
+        ignore line: [ .]
+        ignore line: [ /home/x-zjian1/hdf5/hdf5-1.14.6/install/include]
+        ignore line: [ /home/x-zjian1/jpeg-9f/install/include]
+        ignore line: [ /home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include]
+        ignore line: [ /home/x-zjian1/GKlib/install/include]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [GNU C17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)]
+        ignore line: [	compiled by GNU C version 11.2.0  GMP version 6.2.1  MPFR version 4.0.2-p9  MPC version 1.1.0  isl version none]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [Compiler executable checksum: fefd872176f3ca5467cb7b8c84f26131]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_57aca.dir/']
+        ignore line: [ as -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include --64 -o CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o /tmp/ccmXlf9T.s]
+        ignore line: [GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-127.el8_10]
+        ignore line: [COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C executable cmTC_57aca]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_57aca.dir/link.txt --verbose=1]
+        ignore line: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -v CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o -o cmTC_57aca ]
+        ignore line: [Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs]
+        ignore line: [COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/gcc]
+        ignore line: [COLLECT_LTO_WRAPPER=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c c++ fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc']
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 11.2.0 (Spack GCC) ]
+        ignore line: [COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_57aca' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib' '-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib' '-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib' '-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_57aca.']
+        link line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/collect2 -plugin /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/liblto_plugin.so -plugin-opt=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccwRzNvr.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_57aca /lib/../lib64/crt1.o /lib/../lib64/crti.o /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib -L/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -L/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib -L/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../.. CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -rpath /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -rpath /apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -rpath /apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -lmpi -lgcc --push-state --as-needed -lgcc_s --pop-state -lpthread -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o /lib/../lib64/crtn.o]
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccwRzNvr.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lpthread] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_57aca] ==> ignore
+          arg [/lib/../lib64/crt1.o] ==> obj [/lib/../lib64/crt1.o]
+          arg [/lib/../lib64/crti.o] ==> obj [/lib/../lib64/crti.o]
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o] ==> obj [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o]
+          arg [-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+          arg [-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib] ==> dir [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib]
+          arg [-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib] ==> dir [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib]
+          arg [-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64]
+          arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+          arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+          arg [-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+          arg [-L/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib] ==> dir [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib]
+          arg [-L/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib] ==> dir [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib]
+          arg [-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+          arg [-L/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib] ==> dir [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib]
+          arg [-L/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib] ==> dir [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib]
+          arg [-L/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib] ==> dir [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib]
+          arg [-L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+          arg [-L/home/x-zjian1/jpeg-9f/install/lib] ==> dir [/home/x-zjian1/jpeg-9f/install/lib]
+          arg [-L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+          arg [-L/home/x-zjian1/GKlib/install/lib] ==> dir [/home/x-zjian1/GKlib/install/lib]
+          arg [-L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+          arg [-L/home/x-zjian1/jpeg-9f/install/lib] ==> dir [/home/x-zjian1/jpeg-9f/install/lib]
+          arg [-L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+          arg [-L/home/x-zjian1/GKlib/install/lib] ==> dir [/home/x-zjian1/GKlib/install/lib]
+          arg [-L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+          arg [-L/home/x-zjian1/jpeg-9f/install/lib] ==> dir [/home/x-zjian1/jpeg-9f/install/lib]
+          arg [-L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+          arg [-L/home/x-zjian1/GKlib/install/lib] ==> dir [/home/x-zjian1/GKlib/install/lib]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../..] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../..]
+          arg [CMakeFiles/cmTC_57aca.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> ignore
+          arg [-lmpi] ==> lib [mpi]
+          arg [-lgcc] ==> lib [gcc]
+          arg [--push-state] ==> ignore
+          arg [--as-needed] ==> ignore
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [--pop-state] ==> ignore
+          arg [-lpthread] ==> lib [pthread]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc] ==> lib [gcc]
+          arg [--push-state] ==> ignore
+          arg [--as-needed] ==> ignore
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [--pop-state] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o] ==> obj [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o]
+          arg [/lib/../lib64/crtn.o] ==> obj [/lib/../lib64/crtn.o]
+        collapse obj [/lib/../lib64/crt1.o] ==> [/lib64/crt1.o]
+        collapse obj [/lib/../lib64/crti.o] ==> [/lib64/crti.o]
+        collapse obj [/lib/../lib64/crtn.o] ==> [/lib64/crtn.o]
+        collapse library dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+        collapse library dir [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib] ==> [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib]
+        collapse library dir [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib] ==> [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib]
+        collapse library dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/lib/../lib64] ==> [/lib64]
+        collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+        collapse library dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+        collapse library dir [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib] ==> [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib]
+        collapse library dir [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib] ==> [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib]
+        collapse library dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+        collapse library dir [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib] ==> [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib]
+        collapse library dir [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib] ==> [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib]
+        collapse library dir [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib] ==> [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib]
+        collapse library dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+        collapse library dir [/home/x-zjian1/jpeg-9f/install/lib] ==> [/home/x-zjian1/jpeg-9f/install/lib]
+        collapse library dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+        collapse library dir [/home/x-zjian1/GKlib/install/lib] ==> [/home/x-zjian1/GKlib/install/lib]
+        collapse library dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+        collapse library dir [/home/x-zjian1/jpeg-9f/install/lib] ==> [/home/x-zjian1/jpeg-9f/install/lib]
+        collapse library dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+        collapse library dir [/home/x-zjian1/GKlib/install/lib] ==> [/home/x-zjian1/GKlib/install/lib]
+        collapse library dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+        collapse library dir [/home/x-zjian1/jpeg-9f/install/lib] ==> [/home/x-zjian1/jpeg-9f/install/lib]
+        collapse library dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+        collapse library dir [/home/x-zjian1/GKlib/install/lib] ==> [/home/x-zjian1/GKlib/install/lib]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../..] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib]
+        implicit libs: [mpi;gcc;gcc_s;pthread;c;gcc;gcc_s]
+        implicit objs: [/lib64/crt1.o;/lib64/crti.o;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o;/lib64/crtn.o]
+        implicit dirs: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib;/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib;/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib;/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0;/lib64;/usr/lib64;/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib;/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib;/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib;/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib;/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib;/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib;/home/x-zjian1/jpeg-9f/install/lib;/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib;/home/x-zjian1/GKlib/install/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "/usr/share/cmake/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UwLRYK"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UwLRYK"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UwLRYK
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_75702/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_75702.dir/build.make CMakeFiles/cmTC_75702.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UwLRYK'
+        Building CXX object CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC   -v -o CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs
+        COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/g++
+        Target: x86_64-pc-linux-gnu
+        Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c,c++,fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc'
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 11.2.0 (Spack GCC) 
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_75702.dir/'
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/cc1plus -quiet -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include -D_GNU_SOURCE -D_REENTRANT /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_75702.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fexceptions -o /tmp/cc6n6VWk.s
+        GNU C++17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)
+        	compiled by GNU C version 11.2.0, GMP version 6.2.1, MPFR version 4.0.2-p9, MPC version 1.1.0, isl version none
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"
+        ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"
+        ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"
+        ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"
+        ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"
+        ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"
+        ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"
+        ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"
+        ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"
+        ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"
+        ignoring nonexistent directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../x86_64-pc-linux-gnu/include"
+        ignoring duplicate directory "/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include"
+        ignoring duplicate directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include"
+          as it is a non-system directory that duplicates a system directory
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include
+         /apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include
+         /apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include
+         /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include
+         /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include
+         /apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include
+         /apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include
+         .
+         /home/x-zjian1/hdf5/hdf5-1.14.6/install/include
+         /home/x-zjian1/jpeg-9f/install/include
+         /home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include
+         /home/x-zjian1/GKlib/install/include
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/x86_64-pc-linux-gnu
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/backward
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include
+         /usr/local/include
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed
+         /usr/include
+        End of search list.
+        GNU C++17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)
+        	compiled by GNU C version 11.2.0, GMP version 6.2.1, MPFR version 4.0.2-p9, MPC version 1.1.0, isl version none
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        Compiler executable checksum: 8a5ba690264d144825ec6839cf9677c4
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_75702.dir/'
+         as -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include --64 -o CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc6n6VWk.s
+        GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-127.el8_10
+        COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/
+        LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX executable cmTC_75702
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_75702.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -v CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_75702 
+        Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs
+        COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/g++
+        COLLECT_LTO_WRAPPER=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper
+        Target: x86_64-pc-linux-gnu
+        Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c,c++,fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl,-rpath,/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl,-rpath,/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl,-rpath,/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl,-rpath,/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl,-rpath,/apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl,-rpath,/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc'
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 11.2.0 (Spack GCC) 
+        COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/
+        LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_75702' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib' '-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib' '-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib' '-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_75702.'
+         /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/collect2 -plugin /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/liblto_plugin.so -plugin-opt=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccuBatIs.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_75702 /lib/../lib64/crt1.o /lib/../lib64/crti.o /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib -L/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -L/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib -L/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../.. CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -rpath /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -rpath /apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -rpath /apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -lmpi_cxx -lmpi -lstdc++ -lm -lgcc_s -lgcc -lpthread -lc -lgcc_s -lgcc /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o /lib/../lib64/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_75702' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib' '-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib' '-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib' '-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_75702.'
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UwLRYK'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:127 (message)"
+      - "/usr/share/cmake/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include]
+          add: [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include]
+          add: [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include]
+          add: [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include]
+          add: [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include]
+          add: [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include]
+          add: [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include]
+          add: [.]
+          add: [/home/x-zjian1/hdf5/hdf5-1.14.6/install/include]
+          add: [/home/x-zjian1/jpeg-9f/install/include]
+          add: [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include]
+          add: [/home/x-zjian1/GKlib/install/include]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/x86_64-pc-linux-gnu]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/backward]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include]
+          add: [/usr/local/include]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include]
+          add: [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include] ==> [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include]
+        collapse include dir [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include] ==> [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include]
+        collapse include dir [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include] ==> [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include]
+        collapse include dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include] ==> [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include]
+        collapse include dir [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include] ==> [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include]
+        collapse include dir [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include] ==> [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include]
+        collapse include dir [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include] ==> [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include]
+        skipping relative include dir [.]
+        collapse include dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/include] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/include]
+        collapse include dir [/home/x-zjian1/jpeg-9f/install/include] ==> [/home/x-zjian1/jpeg-9f/install/include]
+        collapse include dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include]
+        collapse include dir [/home/x-zjian1/GKlib/install/include] ==> [/home/x-zjian1/GKlib/install/include]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include/c++/11.2.0]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/x86_64-pc-linux-gnu] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include/c++/11.2.0/x86_64-pc-linux-gnu]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/backward] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include/c++/11.2.0/backward]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include]
+        collapse include dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include;/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include;/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include;/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include;/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include;/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include;/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include;/home/x-zjian1/hdf5/hdf5-1.14.6/install/include;/home/x-zjian1/jpeg-9f/install/include;/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include;/home/x-zjian1/GKlib/install/include;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include/c++/11.2.0;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include/c++/11.2.0/x86_64-pc-linux-gnu;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include/c++/11.2.0/backward;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include;/usr/local/include;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:152 (message)"
+      - "/usr/share/cmake/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UwLRYK]
+        ignore line: []
+        ignore line: [Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_75702/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_75702.dir/build.make CMakeFiles/cmTC_75702.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UwLRYK']
+        ignore line: [Building CXX object CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC   -v -o CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs]
+        ignore line: [COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/g++]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c c++ fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc']
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 11.2.0 (Spack GCC) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_75702.dir/']
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/cc1plus -quiet -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include -D_GNU_SOURCE -D_REENTRANT /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_75702.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fexceptions -o /tmp/cc6n6VWk.s]
+        ignore line: [GNU C++17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)]
+        ignore line: [	compiled by GNU C version 11.2.0  GMP version 6.2.1  MPFR version 4.0.2-p9  MPC version 1.1.0  isl version none]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ3/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/SZx/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/HPEZ/install/include"]
+        ignore line: [ignoring nonexistent directory "/home/x-zjian1/qcat/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/hdf5/hdf5-1.14.6/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/jpeg-9f/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include"]
+        ignore line: [ignoring duplicate directory "/home/x-zjian1/GKlib/install/include"]
+        ignore line: [ignoring nonexistent directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../x86_64-pc-linux-gnu/include"]
+        ignore line: [ignoring duplicate directory "/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include"]
+        ignore line: [ignoring duplicate directory "/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include"]
+        ignore line: [  as it is a non-system directory that duplicates a system directory]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include]
+        ignore line: [ /apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/include]
+        ignore line: [ /apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/include]
+        ignore line: [ /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/include]
+        ignore line: [ /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include]
+        ignore line: [ /apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/include]
+        ignore line: [ /apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/include]
+        ignore line: [ .]
+        ignore line: [ /home/x-zjian1/hdf5/hdf5-1.14.6/install/include]
+        ignore line: [ /home/x-zjian1/jpeg-9f/install/include]
+        ignore line: [ /home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/include]
+        ignore line: [ /home/x-zjian1/GKlib/install/include]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/x86_64-pc-linux-gnu]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../include/c++/11.2.0/backward]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/include]
+        ignore line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/include-fixed]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [GNU C++17 (Spack GCC) version 11.2.0 (x86_64-pc-linux-gnu)]
+        ignore line: [	compiled by GNU C version 11.2.0  GMP version 6.2.1  MPFR version 4.0.2-p9  MPC version 1.1.0  isl version none]
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [Compiler executable checksum: 8a5ba690264d144825ec6839cf9677c4]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_75702.dir/']
+        ignore line: [ as -v -I /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include --64 -o CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc6n6VWk.s]
+        ignore line: [GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-127.el8_10]
+        ignore line: [COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX executable cmTC_75702]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_75702.dir/link.txt --verbose=1]
+        ignore line: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -v CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_75702 ]
+        ignore line: [Reading specs from /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/specs]
+        ignore line: [COLLECT_GCC=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/bin/g++]
+        ignore line: [COLLECT_LTO_WRAPPER=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper]
+        ignore line: [Target: x86_64-pc-linux-gnu]
+        ignore line: [Configured with: /tmp/rcactest/spack-stage-gcc-11.2.0-qjtdkvszjnmbsopeuflhtcmqex5fyagb/spack-src/configure --prefix=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs --with-pkgversion='Spack GCC' --with-bugurl=https://github.com/spack/spack/issues --disable-multilib --enable-languages=c c++ fortran --disable-nls --with-system-zlib --with-zstd-include=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/include --with-zstd-lib=/apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 --enable-bootstrap --with-mpfr-include=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/include --with-mpfr-lib=/apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib --with-gmp-include=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/include --with-gmp-lib=/apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib --with-mpc-include=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/include --with-mpc-lib=/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib --without-isl --with-stage1-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64' --with-boot-ldflags='-Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -Wl -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -Wl -rpath /apps/spack/anvil/apps/gmp/6.2.1-gcc-8.4.1-a4uy3yg/lib -Wl -rpath /apps/spack/anvil/apps/mpfr/4.0.2-gcc-8.4.1-zqh4s5a/lib -Wl -rpath /apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -Wl -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-8.4.1-dif34jo/lib -Wl -rpath /apps/spack/anvil/apps/zstd/1.5.0-gcc-8.4.1-tdqxudx/lib64 -static-libstdc++ -static-libgcc']
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 11.2.0 (Spack GCC) ]
+        ignore line: [COMPILER_PATH=/apps/anvil/external/apps/xalt2/xalt/xalt/bin/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/]
+        ignore line: [LIBRARY_PATH=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib/:/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib/:/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/:/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib/:/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib/:/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib/:/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib/:/home/x-zjian1/jpeg-9f/install/lib/:/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib/:/home/x-zjian1/GKlib/install/lib/:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_75702' '-I' '/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/include' '-fexceptions' '-pthread' '-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib' '-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib' '-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib' '-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_75702.']
+        link line: [ /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/collect2 -plugin /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/liblto_plugin.so -plugin-opt=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccuBatIs.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_75702 /lib/../lib64/crt1.o /lib/../lib64/crti.o /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -L/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib -L/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib -L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -L/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib -L/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib -L/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib -L/home/x-zjian1/jpeg-9f/install/lib -L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib -L/home/x-zjian1/GKlib/install/lib -L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../.. CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0 -rpath /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64 -rpath /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib -rpath /apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib -rpath /apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib -rpath /apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib -lmpi_cxx -lmpi -lstdc++ -lm -lgcc_s -lgcc -lpthread -lc -lgcc_s -lgcc /apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o /lib/../lib64/crtn.o]
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/libexec/gcc/x86_64-pc-linux-gnu/11.2.0/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccuBatIs.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lpthread] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib:/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_75702] ==> ignore
+          arg [/lib/../lib64/crt1.o] ==> obj [/lib/../lib64/crt1.o]
+          arg [/lib/../lib64/crti.o] ==> obj [/lib/../lib64/crti.o]
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o] ==> obj [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o]
+          arg [-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+          arg [-L/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib] ==> dir [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib]
+          arg [-L/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib] ==> dir [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib]
+          arg [-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64]
+          arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+          arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+          arg [-L/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+          arg [-L/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib] ==> dir [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib]
+          arg [-L/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib] ==> dir [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib]
+          arg [-L/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+          arg [-L/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib] ==> dir [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib]
+          arg [-L/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib] ==> dir [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib]
+          arg [-L/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib] ==> dir [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib]
+          arg [-L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+          arg [-L/home/x-zjian1/jpeg-9f/install/lib] ==> dir [/home/x-zjian1/jpeg-9f/install/lib]
+          arg [-L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+          arg [-L/home/x-zjian1/GKlib/install/lib] ==> dir [/home/x-zjian1/GKlib/install/lib]
+          arg [-L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+          arg [-L/home/x-zjian1/jpeg-9f/install/lib] ==> dir [/home/x-zjian1/jpeg-9f/install/lib]
+          arg [-L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+          arg [-L/home/x-zjian1/GKlib/install/lib] ==> dir [/home/x-zjian1/GKlib/install/lib]
+          arg [-L/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+          arg [-L/home/x-zjian1/jpeg-9f/install/lib] ==> dir [/home/x-zjian1/jpeg-9f/install/lib]
+          arg [-L/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+          arg [-L/home/x-zjian1/GKlib/install/lib] ==> dir [/home/x-zjian1/GKlib/install/lib]
+          arg [-L/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../..] ==> dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../..]
+          arg [CMakeFiles/cmTC_75702.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib] ==> ignore
+          arg [-rpath] ==> ignore
+          arg [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> ignore
+          arg [-lmpi_cxx] ==> lib [mpi_cxx]
+          arg [-lmpi] ==> lib [mpi]
+          arg [-lstdc++] ==> lib [stdc++]
+          arg [-lm] ==> lib [m]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lpthread] ==> lib [pthread]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [-lgcc] ==> lib [gcc]
+          arg [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o] ==> obj [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o]
+          arg [/lib/../lib64/crtn.o] ==> obj [/lib/../lib64/crtn.o]
+        collapse obj [/lib/../lib64/crt1.o] ==> [/lib64/crt1.o]
+        collapse obj [/lib/../lib64/crti.o] ==> [/lib64/crti.o]
+        collapse obj [/lib/../lib64/crtn.o] ==> [/lib64/crtn.o]
+        collapse library dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+        collapse library dir [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib] ==> [/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib]
+        collapse library dir [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib] ==> [/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib]
+        collapse library dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64/../lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/../lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../../../lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/lib/../lib64] ==> [/lib64]
+        collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+        collapse library dir [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib] ==> [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib]
+        collapse library dir [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib] ==> [/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib]
+        collapse library dir [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib] ==> [/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib]
+        collapse library dir [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib] ==> [/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib]
+        collapse library dir [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib] ==> [/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib]
+        collapse library dir [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib] ==> [/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib]
+        collapse library dir [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib] ==> [/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib]
+        collapse library dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+        collapse library dir [/home/x-zjian1/jpeg-9f/install/lib] ==> [/home/x-zjian1/jpeg-9f/install/lib]
+        collapse library dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+        collapse library dir [/home/x-zjian1/GKlib/install/lib] ==> [/home/x-zjian1/GKlib/install/lib]
+        collapse library dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+        collapse library dir [/home/x-zjian1/jpeg-9f/install/lib] ==> [/home/x-zjian1/jpeg-9f/install/lib]
+        collapse library dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+        collapse library dir [/home/x-zjian1/GKlib/install/lib] ==> [/home/x-zjian1/GKlib/install/lib]
+        collapse library dir [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib] ==> [/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib]
+        collapse library dir [/home/x-zjian1/jpeg-9f/install/lib] ==> [/home/x-zjian1/jpeg-9f/install/lib]
+        collapse library dir [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib] ==> [/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib]
+        collapse library dir [/home/x-zjian1/GKlib/install/lib] ==> [/home/x-zjian1/GKlib/install/lib]
+        collapse library dir [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/../../..] ==> [/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib]
+        implicit libs: [mpi_cxx;mpi;stdc++;m;gcc_s;gcc;pthread;c;gcc_s;gcc]
+        implicit objs: [/lib64/crt1.o;/lib64/crti.o;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtbegin.o;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0/crtend.o;/lib64/crtn.o]
+        implicit dirs: [/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/lib;/apps/spack/anvil/apps/hwloc/2.5.0-gcc-11.2.0-zzxt6un/lib;/apps/spack/anvil/apps/libevent/2.1.12-gcc-11.2.0-loxxg45/lib;/apps/spack/anvil/apps/zlib/1.2.11-gcc-11.2.0-g2guo73/lib;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib64;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib/gcc/x86_64-pc-linux-gnu/11.2.0;/lib64;/usr/lib64;/apps/spack/anvil/apps/numactl/2.0.14-gcc-11.2.0-wrjotmv/lib;/apps/spack/anvil/apps/libfabric/1.12.0-gcc-8.4.1-xj6lmd4/lib;/apps/spack/anvil/apps/gcc/11.2.0-gcc-8.4.1-qjtdkvs/lib;/apps/spack/anvil/apps/mpc/1.1.0-gcc-8.4.1-dh4xij5/lib;/apps/spack/anvil/apps/mpfr/4.0.2-gcc-11.2.0-ke4ellj/lib;/apps/spack/anvil/apps/gmp/6.2.1-gcc-11.2.0-trpptvt/lib;/home/x-zjian1/hdf5/hdf5-1.14.6/install/lib;/home/x-zjian1/jpeg-9f/install/lib;/home/x-zjian1/netcdf-c/netcdf-c-4.9.3/install/lib;/home/x-zjian1/GKlib/install/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:70 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WALL"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UmLi6q"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UmLi6q"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WALL"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UmLi6q
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_794d6/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_794d6.dir/build.make CMakeFiles/cmTC_794d6.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UmLi6q'
+        Building C object CMakeFiles/cmTC_794d6.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WALL  -Wall -o CMakeFiles/cmTC_794d6.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UmLi6q/src.c
+        Linking C executable cmTC_794d6
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_794d6.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc CMakeFiles/cmTC_794d6.dir/src.c.o -o cmTC_794d6 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UmLi6q'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:70 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_WALL"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Ovp17t"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Ovp17t"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_WALL"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Ovp17t
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_c60e5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_c60e5.dir/build.make CMakeFiles/cmTC_c60e5.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Ovp17t'
+        Building CXX object CMakeFiles/cmTC_c60e5.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_WALL  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else  -std=gnu++11   -Wall -o CMakeFiles/cmTC_c60e5.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Ovp17t/src.cxx
+        Linking CXX executable cmTC_c60e5
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c60e5.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else  CMakeFiles/cmTC_c60e5.dir/src.cxx.o -o cmTC_c60e5 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Ovp17t'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:72 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WEXTRA"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-1A3OP3"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-1A3OP3"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WEXTRA"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-1A3OP3
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_b3185/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b3185.dir/build.make CMakeFiles/cmTC_b3185.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-1A3OP3'
+        Building C object CMakeFiles/cmTC_b3185.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WEXTRA  -Wall    -Wextra -o CMakeFiles/cmTC_b3185.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-1A3OP3/src.c
+        Linking C executable cmTC_b3185
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b3185.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall  CMakeFiles/cmTC_b3185.dir/src.c.o -o cmTC_b3185 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-1A3OP3'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:72 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_WEXTRA"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-sWK5Se"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-sWK5Se"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_WEXTRA"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-sWK5Se
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_cdbd9/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_cdbd9.dir/build.make CMakeFiles/cmTC_cdbd9.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-sWK5Se'
+        Building CXX object CMakeFiles/cmTC_cdbd9.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_WEXTRA  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall  -std=gnu++11   -Wextra -o CMakeFiles/cmTC_cdbd9.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-sWK5Se/src.cxx
+        Linking CXX executable cmTC_cdbd9
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cdbd9.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall  CMakeFiles/cmTC_cdbd9.dir/src.cxx.o -o cmTC_cdbd9 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-sWK5Se'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:73 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WUNDEF"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-hl58DJ"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-hl58DJ"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WUNDEF"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-hl58DJ
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_dafb5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_dafb5.dir/build.make CMakeFiles/cmTC_dafb5.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-hl58DJ'
+        Building C object CMakeFiles/cmTC_dafb5.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WUNDEF  -Wall -Wextra    -Wundef -o CMakeFiles/cmTC_dafb5.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-hl58DJ/src.c
+        Linking C executable cmTC_dafb5
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dafb5.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra  CMakeFiles/cmTC_dafb5.dir/src.c.o -o cmTC_dafb5 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-hl58DJ'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:73 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_WUNDEF"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-t461fl"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-t461fl"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_WUNDEF"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-t461fl
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_3809d/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_3809d.dir/build.make CMakeFiles/cmTC_3809d.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-t461fl'
+        Building CXX object CMakeFiles/cmTC_3809d.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_WUNDEF  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra  -std=gnu++11   -Wundef -o CMakeFiles/cmTC_3809d.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-t461fl/src.cxx
+        Linking CXX executable cmTC_3809d
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3809d.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra  CMakeFiles/cmTC_3809d.dir/src.cxx.o -o cmTC_3809d 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-t461fl'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:74 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WSHADOW"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-GMuQdb"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-GMuQdb"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WSHADOW"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-GMuQdb
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_0562c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_0562c.dir/build.make CMakeFiles/cmTC_0562c.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-GMuQdb'
+        Building C object CMakeFiles/cmTC_0562c.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WSHADOW  -Wall -Wextra -Wundef    -Wshadow -o CMakeFiles/cmTC_0562c.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-GMuQdb/src.c
+        Linking C executable cmTC_0562c
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0562c.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra -Wundef  CMakeFiles/cmTC_0562c.dir/src.c.o -o cmTC_0562c 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-GMuQdb'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:74 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_WSHADOW"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nwnaKQ"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nwnaKQ"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_WSHADOW"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nwnaKQ
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_60ccf/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_60ccf.dir/build.make CMakeFiles/cmTC_60ccf.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nwnaKQ'
+        Building CXX object CMakeFiles/cmTC_60ccf.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_WSHADOW  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef  -std=gnu++11   -Wshadow -o CMakeFiles/cmTC_60ccf.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nwnaKQ/src.cxx
+        Linking CXX executable cmTC_60ccf
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_60ccf.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef  CMakeFiles/cmTC_60ccf.dir/src.cxx.o -o cmTC_60ccf 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nwnaKQ'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:75 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WCAST_ALIGN"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UW0Dwn"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UW0Dwn"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WCAST_ALIGN"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UW0Dwn
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_97d8c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_97d8c.dir/build.make CMakeFiles/cmTC_97d8c.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UW0Dwn'
+        Building C object CMakeFiles/cmTC_97d8c.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WCAST_ALIGN  -Wall -Wextra -Wundef -Wshadow    -Wcast-align -o CMakeFiles/cmTC_97d8c.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UW0Dwn/src.c
+        Linking C executable cmTC_97d8c
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_97d8c.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra -Wundef -Wshadow  CMakeFiles/cmTC_97d8c.dir/src.c.o -o cmTC_97d8c 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-UW0Dwn'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:75 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_WCAST_ALIGN"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-tR4YAS"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-tR4YAS"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_WCAST_ALIGN"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-tR4YAS
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_49b48/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_49b48.dir/build.make CMakeFiles/cmTC_49b48.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-tR4YAS'
+        Building CXX object CMakeFiles/cmTC_49b48.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_WCAST_ALIGN  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow  -std=gnu++11   -Wcast-align -o CMakeFiles/cmTC_49b48.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-tR4YAS/src.cxx
+        Linking CXX executable cmTC_49b48
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_49b48.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow  CMakeFiles/cmTC_49b48.dir/src.cxx.o -o cmTC_49b48 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-tR4YAS'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:76 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WCAST_QUAL"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-40WoJ8"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-40WoJ8"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WCAST_QUAL"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-40WoJ8
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_131f7/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_131f7.dir/build.make CMakeFiles/cmTC_131f7.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-40WoJ8'
+        Building C object CMakeFiles/cmTC_131f7.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WCAST_QUAL  -Wall -Wextra -Wundef -Wshadow -Wcast-align    -Wcast-qual -o CMakeFiles/cmTC_131f7.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-40WoJ8/src.c
+        Linking C executable cmTC_131f7
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_131f7.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra -Wundef -Wshadow -Wcast-align  CMakeFiles/cmTC_131f7.dir/src.c.o -o cmTC_131f7 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-40WoJ8'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:76 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_WCAST_QUAL"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-EOzaOH"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-EOzaOH"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_WCAST_QUAL"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-EOzaOH
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_430ac/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_430ac.dir/build.make CMakeFiles/cmTC_430ac.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-EOzaOH'
+        Building CXX object CMakeFiles/cmTC_430ac.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_WCAST_QUAL  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align  -std=gnu++11   -Wcast-qual -o CMakeFiles/cmTC_430ac.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-EOzaOH/src.cxx
+        Linking CXX executable cmTC_430ac
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_430ac.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align  CMakeFiles/cmTC_430ac.dir/src.cxx.o -o cmTC_430ac 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-EOzaOH'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:77 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WSTRICT_PROTOTYPES"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KGSXN9"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KGSXN9"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WSTRICT_PROTOTYPES"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KGSXN9
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_ce3b8/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_ce3b8.dir/build.make CMakeFiles/cmTC_ce3b8.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KGSXN9'
+        Building C object CMakeFiles/cmTC_ce3b8.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WSTRICT_PROTOTYPES  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual    -Wstrict-prototypes -o CMakeFiles/cmTC_ce3b8.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KGSXN9/src.c
+        Linking C executable cmTC_ce3b8
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ce3b8.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual  CMakeFiles/cmTC_ce3b8.dir/src.c.o -o cmTC_ce3b8 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KGSXN9'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckLinkerFlag.cmake:37 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckLinkerFlag.cmake:44 (cmake_check_linker_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:43 (CHECK_LINKER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:84 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test LD_FLAG_WL_Z_NOEXECSTACK"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nmXoR5"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nmXoR5"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "LD_FLAG_WL_Z_NOEXECSTACK"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nmXoR5
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_a62cd/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_a62cd.dir/build.make CMakeFiles/cmTC_a62cd.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nmXoR5'
+        Building C object CMakeFiles/cmTC_a62cd.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DLD_FLAG_WL_Z_NOEXECSTACK  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes  -o CMakeFiles/cmTC_a62cd.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nmXoR5/src.c
+        Linking C executable cmTC_a62cd
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a62cd.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes  -Wl,-z,noexecstack CMakeFiles/cmTC_a62cd.dir/src.c.o -o cmTC_a62cd 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-nmXoR5'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:86 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_QUNUSED_ARGUMENTS"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SEf4qH"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SEf4qH"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " -Wl,-z,noexecstack"
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_QUNUSED_ARGUMENTS"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SEf4qH
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_212a1/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_212a1.dir/build.make CMakeFiles/cmTC_212a1.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SEf4qH'
+        Building C object CMakeFiles/cmTC_212a1.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_QUNUSED_ARGUMENTS  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes    -Qunused-arguments -o CMakeFiles/cmTC_212a1.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SEf4qH/src.c
+        gcc: error: unrecognized command-line option '-Qunused-arguments'
+        gmake[1]: *** [CMakeFiles/cmTC_212a1.dir/build.make:78: CMakeFiles/cmTC_212a1.dir/src.c.o] Error 1
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SEf4qH'
+        gmake: *** [Makefile:127: cmTC_212a1/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:86 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_QUNUSED_ARGUMENTS"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KxRzDQ"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KxRzDQ"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " -Wl,-z,noexecstack"
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_QUNUSED_ARGUMENTS"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KxRzDQ
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_bc9c6/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_bc9c6.dir/build.make CMakeFiles/cmTC_bc9c6.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KxRzDQ'
+        Building CXX object CMakeFiles/cmTC_bc9c6.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_QUNUSED_ARGUMENTS  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual  -std=gnu++11   -Qunused-arguments -o CMakeFiles/cmTC_bc9c6.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KxRzDQ/src.cxx
+        g++: error: unrecognized command-line option '-Qunused-arguments'
+        gmake[1]: *** [CMakeFiles/cmTC_bc9c6.dir/build.make:78: CMakeFiles/cmTC_bc9c6.dir/src.cxx.o] Error 1
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-KxRzDQ'
+        gmake: *** [Makefile:127: cmTC_bc9c6/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:87 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_WA_NOEXECSTACK"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-9Z5YQX"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-9Z5YQX"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " -Wl,-z,noexecstack"
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_WA_NOEXECSTACK"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-9Z5YQX
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_c923c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_c923c.dir/build.make CMakeFiles/cmTC_c923c.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-9Z5YQX'
+        Building C object CMakeFiles/cmTC_c923c.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DC_FLAG_WA_NOEXECSTACK  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes    -Wa,--noexecstack -o CMakeFiles/cmTC_c923c.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-9Z5YQX/src.c
+        Linking C executable cmTC_c923c
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c923c.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes   -Wl,-z,noexecstack  CMakeFiles/cmTC_c923c.dir/src.c.o -o cmTC_c923c 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-9Z5YQX'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:87 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_WA_NOEXECSTACK"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-QDmsDb"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-QDmsDb"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " -Wl,-z,noexecstack"
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_WA_NOEXECSTACK"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-QDmsDb
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_86d15/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_86d15.dir/build.make CMakeFiles/cmTC_86d15.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-QDmsDb'
+        Building CXX object CMakeFiles/cmTC_86d15.dir/src.cxx.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC -DCXX_FLAG_WA_NOEXECSTACK  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual  -std=gnu++11   -Wa,--noexecstack -o CMakeFiles/cmTC_86d15.dir/src.cxx.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-QDmsDb/src.cxx
+        Linking CXX executable cmTC_86d15
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_86d15.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual   -Wl,-z,noexecstack  CMakeFiles/cmTC_86d15.dir/src.cxx.o -o cmTC_86d15 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-QDmsDb'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/CheckCSourceCompiles.cmake:76 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "/usr/share/cmake/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "third_party/zstd/build/cmake/CMakeModules/ZstdDependencies.cmake:22 (find_package)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:71 (include)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-srxKhN"
+      binary: "/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-srxKhN"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Wa,--noexecstack"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: " -Wl,-z,noexecstack"
+      CMAKE_MODULE_PATH: "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-srxKhN
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_fa2af/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_fa2af.dir/build.make CMakeFiles/cmTC_fa2af.dir/build
+        gmake[1]: Entering directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-srxKhN'
+        Building C object CMakeFiles/cmTC_fa2af.dir/src.c.o
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc -DCMAKE_HAVE_LIBC_PTHREAD  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Wa,--noexecstack  -o CMakeFiles/cmTC_fa2af.dir/src.c.o -c /home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-srxKhN/src.c
+        Linking C executable cmTC_fa2af
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fa2af.dir/link.txt --verbose=1
+        /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Wa,--noexecstack   -Wl,-z,noexecstack  CMakeFiles/cmTC_fa2af.dir/src.c.o -o cmTC_fa2af 
+        gmake[1]: Leaving directory '/home/x-zjian1/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-srxKhN'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/CMakeDetermineCompilerId.cmake:1102 (message)"
+      - "/usr/share/cmake/Modules/CMakeDetermineASMCompiler.cmake:127 (CMAKE_DETERMINE_COMPILER_ID_VENDOR)"
+      - "third_party/zstd/build/cmake/lib/CMakeLists.txt:43 (enable_language)"
+    message: |
+      Checking whether the ASM compiler is GNU using "--version" matched "(GNU assembler)|(GCC)|(Free Software Foundation)":
+      gcc (Spack GCC) 11.2.0
+      Copyright (C) 2021 Free Software Foundation, Inc.
+      This is free software; see the source for copying conditions.  There is NO
+      warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+      
+...
