@@ -312,6 +312,12 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//which target to build
+CODE_NAME:STRING=s8_verify_theory_correctness
+
+//which target to build
+TARGET_NAME:STRING=
+
 //Visibility for ZDICTLIB_STATIC_API API
 ZDICTLIB_STATIC_API:STRING=
 

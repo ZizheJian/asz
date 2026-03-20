@@ -1,4 +1,4 @@
-/home/x-zjian1/ASTZ_tests/build/CMakeFiles/ASTZ_tests.dir
+/home/x-zjian1/ASTZ_tests/build/CMakeFiles/s8_verify_theory_correctness.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/edit_cache.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/rebuild_cache.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/list_install_components.dir

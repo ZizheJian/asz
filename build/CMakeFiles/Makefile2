@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /home/x-zjian1/ASTZ_tests/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/ASTZ_tests.dir/all
+all: CMakeFiles/s8_verify_theory_correctness.dir/all
 all: csv_tools/all
 all: third_party/zstd/all
 .PHONY : all
@@ -74,7 +74,7 @@ preinstall: third_party/zstd/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/ASTZ_tests.dir/clean
+clean: CMakeFiles/s8_verify_theory_correctness.dir/clean
 clean: csv_tools/clean
 clean: third_party/zstd/clean
 .PHONY : clean
@@ -180,30 +180,30 @@ third_party/zstd/build/cmake/programs/clean: third_party/zstd/build/cmake/progra
 .PHONY : third_party/zstd/build/cmake/programs/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/ASTZ_tests.dir
+# Target rules for target CMakeFiles/s8_verify_theory_correctness.dir
 
 # All Build rule for target.
-CMakeFiles/ASTZ_tests.dir/all: third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ASTZ_tests.dir/build.make CMakeFiles/ASTZ_tests.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ASTZ_tests.dir/build.make CMakeFiles/ASTZ_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=1,2 "Built target ASTZ_tests"
-.PHONY : CMakeFiles/ASTZ_tests.dir/all
+CMakeFiles/s8_verify_theory_correctness.dir/all: third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=66,67 "Built target s8_verify_theory_correctness"
+.PHONY : CMakeFiles/s8_verify_theory_correctness.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/ASTZ_tests.dir/rule: cmake_check_build_system
+CMakeFiles/s8_verify_theory_correctness.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/x-zjian1/ASTZ_tests/build/CMakeFiles 34
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ASTZ_tests.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/s8_verify_theory_correctness.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/x-zjian1/ASTZ_tests/build/CMakeFiles 0
-.PHONY : CMakeFiles/ASTZ_tests.dir/rule
+.PHONY : CMakeFiles/s8_verify_theory_correctness.dir/rule
 
 # Convenience name for target.
-ASTZ_tests: CMakeFiles/ASTZ_tests.dir/rule
-.PHONY : ASTZ_tests
+s8_verify_theory_correctness: CMakeFiles/s8_verify_theory_correctness.dir/rule
+.PHONY : s8_verify_theory_correctness
 
 # clean rule for target.
-CMakeFiles/ASTZ_tests.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ASTZ_tests.dir/build.make CMakeFiles/ASTZ_tests.dir/clean
-.PHONY : CMakeFiles/ASTZ_tests.dir/clean
+CMakeFiles/s8_verify_theory_correctness.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/clean
+.PHONY : CMakeFiles/s8_verify_theory_correctness.dir/clean
 
 #=============================================================================
 # Target rules for target third_party/zstd/build/cmake/CMakeFiles/clean-all.dir
@@ -212,7 +212,7 @@ CMakeFiles/ASTZ_tests.dir/clean:
 third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/all:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/build.make third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/depend
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/build.make third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=3 "Built target clean-all"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=1 "Built target clean-all"
 .PHONY : third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/all
 
 # Build rule for subdir invocation for target.
@@ -238,7 +238,7 @@ third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/clean:
 third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/all:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/build.make third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/depend
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/build.make third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35 "Built target libzstd_shared"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33 "Built target libzstd_shared"
 .PHONY : third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/all
 
 # Build rule for subdir invocation for target.
@@ -264,7 +264,7 @@ third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/clean:
 third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/all:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/build.make third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/depend
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/build.make third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67 "Built target libzstd_static"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65 "Built target libzstd_static"
 .PHONY : third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/all
 
 # Build rule for subdir invocation for target.

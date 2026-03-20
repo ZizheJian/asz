@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <stdexcept>
+#include <cstring>
 
 #include "add_column.cpp"
 #include "add_row.cpp"

@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named ASTZ_tests
+# Target rules for targets named s8_verify_theory_correctness
 
 # Build rule for target.
-ASTZ_tests: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ASTZ_tests
-.PHONY : ASTZ_tests
+s8_verify_theory_correctness: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s8_verify_theory_correctness
+.PHONY : s8_verify_theory_correctness
 
 # fast build rule for target.
-ASTZ_tests/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ASTZ_tests.dir/build.make CMakeFiles/ASTZ_tests.dir/build
-.PHONY : ASTZ_tests/fast
+s8_verify_theory_correctness/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/build
+.PHONY : s8_verify_theory_correctness/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+s8_verify_theory_correctness.o: s8_verify_theory_correctness.cpp.o
+.PHONY : s8_verify_theory_correctness.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ASTZ_tests.dir/build.make CMakeFiles/ASTZ_tests.dir/main.cpp.o
-.PHONY : main.cpp.o
+s8_verify_theory_correctness.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/s8_verify_theory_correctness.cpp.o
+.PHONY : s8_verify_theory_correctness.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+s8_verify_theory_correctness.i: s8_verify_theory_correctness.cpp.i
+.PHONY : s8_verify_theory_correctness.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ASTZ_tests.dir/build.make CMakeFiles/ASTZ_tests.dir/main.cpp.i
-.PHONY : main.cpp.i
+s8_verify_theory_correctness.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/s8_verify_theory_correctness.cpp.i
+.PHONY : s8_verify_theory_correctness.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+s8_verify_theory_correctness.s: s8_verify_theory_correctness.cpp.s
+.PHONY : s8_verify_theory_correctness.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ASTZ_tests.dir/build.make CMakeFiles/ASTZ_tests.dir/main.cpp.s
-.PHONY : main.cpp.s
+s8_verify_theory_correctness.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/s8_verify_theory_correctness.cpp.s
+.PHONY : s8_verify_theory_correctness.cpp.s
 
 # Help Target
 help:
@@ -402,14 +402,14 @@ help:
 	@echo "... zstdgrep.1"
 	@echo "... zstdless.1"
 	@echo "... zstdmt"
-	@echo "... ASTZ_tests"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
+	@echo "... s8_verify_theory_correctness"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... s8_verify_theory_correctness.o"
+	@echo "... s8_verify_theory_correctness.i"
+	@echo "... s8_verify_theory_correctness.s"
 .PHONY : help
 
 

@@ -1,0 +1,1 @@
+/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -lquadmath -O3 -DNDEBUG CMakeFiles/s8_verify_theory_correctness.dir/s8_verify_theory_correctness.cpp.o -o s8_verify_theory_correctness  third_party/zstd/build/cmake/lib/libzstd.a 
