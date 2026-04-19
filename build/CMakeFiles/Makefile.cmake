@@ -90,7 +90,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/s8_verify_theory_correctness.dir/DependInfo.cmake"
+  "CMakeFiles/s2_sort_curves.dir/DependInfo.cmake"
   "third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/DependInfo.cmake"
   "third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/DependInfo.cmake"
   "third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/DependInfo.cmake"

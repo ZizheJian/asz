@@ -11,24 +11,14 @@ void add_column(string &csv_path,T column_name)
     add_column2(csv_path,change_string_type(column_name));
 }
 
-template<typename T1,typename T2>
-void add_column(string &csv_path,T1 column_name1,T2 column_name2)
-{
-    add_column2(csv_path,change_string_type(column_name1));
-    add_column2(csv_path,change_string_type(column_name2));
-}
-
 void add_column2(string &csv_path,string column_name)
 {
     ifstream csv_file_in(csv_path);
     vector<string> lines;
     string line;
-    if (csv_file_in.is_open())
-    {
-        while (getline(csv_file_in, line))
-            lines.push_back(line);
-        csv_file_in.close();
-    }
+    while (getline(csv_file_in,line))
+        lines.push_back(line);
+    csv_file_in.close();
     bool modified=false;
     if (lines.empty())
     {
@@ -47,17 +37,17 @@ void add_column2(string &csv_path,string column_name)
         string item;
         while (getline(ss,item,','))
             headers.push_back(item);
-        bool has_column_name=false;
+        bool found_column_name=false;
         for (auto &h:headers)
             if (h==column_name)
             {
-                has_column_name=true;
+                found_column_name=true;
                 break;
             }
-        if (!has_column_name)
+        if (!found_column_name)
         {
             lines[0]+=","+column_name;
-            for (size_t i=1;i<lines.size();i++)
+            for (uint64_t i=1;i<lines.size();i++)
                 lines[i]+=",";
             modified=true;
         }
@@ -66,7 +56,10 @@ void add_column2(string &csv_path,string column_name)
     {
         ofstream csv_file_out(csv_path,ios::trunc);
         for (auto &l:lines)
-            csv_file_out<<l<<"\n";
+        {
+            csv_file_out.write(l.data(),l.size());
+            csv_file_out.write("\n",1);
+        }
         csv_file_out.close();
     }
 }

@@ -34,14 +34,16 @@ def run_command(command,silent=False):
             exit()
         return output
     
-code_name_map={1:"s1_linear_interpolation",
-               2:"s2_cubic_prediction",
-               3:"s3_linear_coefficient_enumerating",
-               4:"s4_cubic_coefficient_enumerating",
+code_name_map={1:"s1_cubic_prediction",
+               2:"s2_sort_curves",
+               3:"s3_cubic_prediction2",
+               4:"s4_sort_curves_2",
                5:"s5_cubic_prediction",
-               6:"s6_cubic_prediction",
+               6:"s6_check_H2_distinguishibility",
                7:"s7_calc_cov",
                8:"s8_verify_theory_correctness"}
+
+data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS"
 
 test_num=int(sys.argv[1])
 code_name=code_name_map[test_num]

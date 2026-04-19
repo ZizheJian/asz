@@ -13,7 +13,7 @@ string change_string_type(T value)
         uint32_t pos_dot=strlen(buf);
         for (int i=strlen(buf)-1;i>=0;i--)
         {
-            if ((buf[i]=='0') and (pos_0==i+1))
+            if ((buf[i]=='0') and ((int32_t)pos_0==i+1))
                 pos_0=i;
             else 
                 if (buf[i]=='.')

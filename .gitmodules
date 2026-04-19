@@ -1,3 +1,11 @@
 [submodule "c_codes/third_party/zstd"]
 	path = c_codes/third_party/zstd
 	url = https://github.com/facebook/zstd.git
+[submodule "c_codes/third_party/SZ3_master"]
+	path = c_codes/third_party/SZ3_master
+	url = https://github.com/szcompressor/SZ3.git
+	branch = master
+[submodule "c_codes/third_party/SZ3_QoZ"]
+	path = c_codes/third_party/SZ3_QoZ
+	url = https://github.com/szcompressor/SZ3.git
+	branch = QoZ

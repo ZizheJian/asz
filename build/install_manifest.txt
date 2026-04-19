@@ -1,4 +1,4 @@
-/home/x-zjian1/ASTZ_tests/install/bin/s8_verify_theory_correctness
+/home/x-zjian1/ASTZ_tests/install/bin/s2_sort_curves
 /home/x-zjian1/ASTZ_tests/install/include/csv_tools/csv.hpp
 /home/x-zjian1/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared.cmake
 /home/x-zjian1/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared-release.cmake

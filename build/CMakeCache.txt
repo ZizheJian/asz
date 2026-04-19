@@ -313,7 +313,7 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //which target to build
-CODE_NAME:STRING=s8_verify_theory_correctness
+CODE_NAME:STRING=s2_sort_curves
 
 //which target to build
 TARGET_NAME:STRING=

@@ -1,1 +1,3 @@
-astz_env/*
+astz_env/
+build/
+install/

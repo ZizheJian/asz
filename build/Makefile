@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s8_verify_theory_correctness
+# Target rules for targets named s2_sort_curves
 
 # Build rule for target.
-s8_verify_theory_correctness: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s8_verify_theory_correctness
-.PHONY : s8_verify_theory_correctness
+s2_sort_curves: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s2_sort_curves
+.PHONY : s2_sort_curves
 
 # fast build rule for target.
-s8_verify_theory_correctness/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/build
-.PHONY : s8_verify_theory_correctness/fast
+s2_sort_curves/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/build
+.PHONY : s2_sort_curves/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s8_verify_theory_correctness.o: s8_verify_theory_correctness.cpp.o
-.PHONY : s8_verify_theory_correctness.o
+s2_sort_curves.o: s2_sort_curves.cpp.o
+.PHONY : s2_sort_curves.o
 
 # target to build an object file
-s8_verify_theory_correctness.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/s8_verify_theory_correctness.cpp.o
-.PHONY : s8_verify_theory_correctness.cpp.o
+s2_sort_curves.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/s2_sort_curves.cpp.o
+.PHONY : s2_sort_curves.cpp.o
 
-s8_verify_theory_correctness.i: s8_verify_theory_correctness.cpp.i
-.PHONY : s8_verify_theory_correctness.i
+s2_sort_curves.i: s2_sort_curves.cpp.i
+.PHONY : s2_sort_curves.i
 
 # target to preprocess a source file
-s8_verify_theory_correctness.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/s8_verify_theory_correctness.cpp.i
-.PHONY : s8_verify_theory_correctness.cpp.i
+s2_sort_curves.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/s2_sort_curves.cpp.i
+.PHONY : s2_sort_curves.cpp.i
 
-s8_verify_theory_correctness.s: s8_verify_theory_correctness.cpp.s
-.PHONY : s8_verify_theory_correctness.s
+s2_sort_curves.s: s2_sort_curves.cpp.s
+.PHONY : s2_sort_curves.s
 
 # target to generate assembly for a file
-s8_verify_theory_correctness.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s8_verify_theory_correctness.dir/build.make CMakeFiles/s8_verify_theory_correctness.dir/s8_verify_theory_correctness.cpp.s
-.PHONY : s8_verify_theory_correctness.cpp.s
+s2_sort_curves.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/s2_sort_curves.cpp.s
+.PHONY : s2_sort_curves.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s8_verify_theory_correctness"
+	@echo "... s2_sort_curves"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s8_verify_theory_correctness.o"
-	@echo "... s8_verify_theory_correctness.i"
-	@echo "... s8_verify_theory_correctness.s"
+	@echo "... s2_sort_curves.o"
+	@echo "... s2_sort_curves.i"
+	@echo "... s2_sort_curves.s"
 .PHONY : help
 
 
