@@ -1,10 +1,16 @@
-/home/x-zjian1/ASTZ_tests/build/CMakeFiles/s2_sort_curves.dir
+/home/x-zjian1/ASTZ_tests/build/CMakeFiles/s5_compress.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/edit_cache.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/rebuild_cache.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/list_install_components.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/install.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/install/local.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/install/strip.dir
+/home/x-zjian1/ASTZ_tests/build/asz_core/CMakeFiles/edit_cache.dir
+/home/x-zjian1/ASTZ_tests/build/asz_core/CMakeFiles/rebuild_cache.dir
+/home/x-zjian1/ASTZ_tests/build/asz_core/CMakeFiles/list_install_components.dir
+/home/x-zjian1/ASTZ_tests/build/asz_core/CMakeFiles/install.dir
+/home/x-zjian1/ASTZ_tests/build/asz_core/CMakeFiles/install/local.dir
+/home/x-zjian1/ASTZ_tests/build/asz_core/CMakeFiles/install/strip.dir
 /home/x-zjian1/ASTZ_tests/build/csv_tools/CMakeFiles/edit_cache.dir
 /home/x-zjian1/ASTZ_tests/build/csv_tools/CMakeFiles/rebuild_cache.dir
 /home/x-zjian1/ASTZ_tests/build/csv_tools/CMakeFiles/list_install_components.dir

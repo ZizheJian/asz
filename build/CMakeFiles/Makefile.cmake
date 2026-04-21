@@ -12,6 +12,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.26.5/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.26.5/CMakeSystem.cmake"
   "/home/x-zjian1/ASTZ_tests/c_codes/CMakeLists.txt"
+  "/home/x-zjian1/ASTZ_tests/c_codes/asz_core/CMakeLists.txt"
   "/home/x-zjian1/ASTZ_tests/c_codes/csv_tools/CMakeLists.txt"
   "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/CMakeLists.txt"
   "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeLists.txt"
@@ -77,6 +78,7 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "asz_core/CMakeFiles/CMakeDirectoryInformation.cmake"
   "csv_tools/CMakeFiles/CMakeDirectoryInformation.cmake"
   "third_party/zstd/CMakeFiles/CMakeDirectoryInformation.cmake"
   "third_party/zstd/build/cmake/zstdConfigVersion.cmake"
@@ -90,7 +92,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/s2_sort_curves.dir/DependInfo.cmake"
+  "CMakeFiles/s5_compress.dir/DependInfo.cmake"
   "third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/DependInfo.cmake"
   "third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/DependInfo.cmake"
   "third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/DependInfo.cmake"

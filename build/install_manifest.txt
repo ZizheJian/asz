@@ -1,4 +1,9 @@
-/home/x-zjian1/ASTZ_tests/install/bin/s2_sort_curves
+/home/x-zjian1/ASTZ_tests/install/bin/s5_compress
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/compare_curves.tpp
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/get_AB_map.tpp
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/get_default_slope.tpp
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/asz_param.hpp
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/estimate_br_psnr.tpp
 /home/x-zjian1/ASTZ_tests/install/include/csv_tools/csv.hpp
 /home/x-zjian1/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared.cmake
 /home/x-zjian1/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared-release.cmake

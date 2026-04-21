@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s2_sort_curves
+# Target rules for targets named s5_compress
 
 # Build rule for target.
-s2_sort_curves: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s2_sort_curves
-.PHONY : s2_sort_curves
+s5_compress: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s5_compress
+.PHONY : s5_compress
 
 # fast build rule for target.
-s2_sort_curves/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/build
-.PHONY : s2_sort_curves/fast
+s5_compress/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/build
+.PHONY : s5_compress/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s2_sort_curves.o: s2_sort_curves.cpp.o
-.PHONY : s2_sort_curves.o
+s5_compress.o: s5_compress.cpp.o
+.PHONY : s5_compress.o
 
 # target to build an object file
-s2_sort_curves.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/s2_sort_curves.cpp.o
-.PHONY : s2_sort_curves.cpp.o
+s5_compress.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/s5_compress.cpp.o
+.PHONY : s5_compress.cpp.o
 
-s2_sort_curves.i: s2_sort_curves.cpp.i
-.PHONY : s2_sort_curves.i
+s5_compress.i: s5_compress.cpp.i
+.PHONY : s5_compress.i
 
 # target to preprocess a source file
-s2_sort_curves.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/s2_sort_curves.cpp.i
-.PHONY : s2_sort_curves.cpp.i
+s5_compress.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/s5_compress.cpp.i
+.PHONY : s5_compress.cpp.i
 
-s2_sort_curves.s: s2_sort_curves.cpp.s
-.PHONY : s2_sort_curves.s
+s5_compress.s: s5_compress.cpp.s
+.PHONY : s5_compress.s
 
 # target to generate assembly for a file
-s2_sort_curves.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_sort_curves.dir/build.make CMakeFiles/s2_sort_curves.dir/s2_sort_curves.cpp.s
-.PHONY : s2_sort_curves.cpp.s
+s5_compress.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/s5_compress.cpp.s
+.PHONY : s5_compress.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s2_sort_curves"
+	@echo "... s5_compress"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s2_sort_curves.o"
-	@echo "... s2_sort_curves.i"
-	@echo "... s2_sort_curves.s"
+	@echo "... s5_compress.o"
+	@echo "... s5_compress.i"
+	@echo "... s5_compress.s"
 .PHONY : help
 
 

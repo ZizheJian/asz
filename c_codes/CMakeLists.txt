@@ -8,6 +8,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)
 # 优化标志
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -lquadmath")
 
+add_subdirectory(asz_core)
 add_subdirectory(csv_tools)
 add_subdirectory(third_party/zstd)
 
@@ -24,5 +25,5 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SRC_FILE}")
 endif()
 
 add_executable(${CODE_NAME} ${SRC_FILE})
-target_link_libraries(${CODE_NAME} PRIVATE libcsv libzstd_static)
+target_link_libraries(${CODE_NAME} PRIVATE libasz libcsv libzstd_static)
 install(TARGETS ${CODE_NAME} DESTINATION bin)
