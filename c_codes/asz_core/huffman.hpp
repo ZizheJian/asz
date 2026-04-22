@@ -237,13 +237,11 @@ class huffman_encoder_class
             }
             tree.offset=__minval;
             tree.maxval=__maxval-__minval+1;
-
             // bin的值密集时使用vector存储频次，稀疏时使用map存储频次
             if ((tree.maxval>=(1<<12) and num_bin<2*static_cast<uint64_t>(__maxval)) || tree.maxval>=(1<<28))
                 tree.usemp=1;
             else
                 tree.usemp=0;
-
             if (tree.usemp)
             {
                 map<uint64_t,uint64_t> freq;
@@ -266,7 +264,6 @@ class huffman_encoder_class
                     if (freq[i]) 
                         tree.addElementInVector(i,freq[i]);
             }
-
             tree.constructHuffmanTree();
         }
 

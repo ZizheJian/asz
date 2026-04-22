@@ -5,8 +5,8 @@ namespace asz
     void param_c::get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<float> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,
         uint64_t dist,float neg_2_stat_eb)
     {
-        uint64_t sampling_stride=pow(((float)data_shape[0]*data_shape[1]*data_shape[2]/(stride[0]*stride[1]*stride[2]*small_block_sampling_num)),1.0/3);
-        printf("sampling_stride=%llu\n",sampling_stride);
+        uint64_t sampling_stride=(block_loc[0][1]-block_loc[0][0])*(block_loc[1][1]-block_loc[1][0])*(block_loc[2][1]-block_loc[2][0]);
+        sampling_stride=pow(((float)sampling_stride/(stride[0]*stride[1]*stride[2]*small_block_sampling_num)),1.0/3);
         if (sampling_stride==0)
             sampling_stride=1;
         for (uint64_t i0=block_loc[0][0];i0<block_loc[0][1];i0+=stride[0]*sampling_stride)

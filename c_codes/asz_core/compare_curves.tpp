@@ -9,9 +9,9 @@ namespace asz
         float k=(PSNR_vec[2]-PSNR_vec[0])/(H1_vec[2]-H1_vec[0]);
         float k_base=(PSNR_vec_base[2]-PSNR_vec_base[0])/(H1_vec_base[2]-H1_vec_base[0]);
         float k_avg=(k*sqrt(1+k_base*k_base)+k_base*sqrt(1+k*k))/(sqrt(1+k*k)+sqrt(1+k_base*k_base));
-        printf("k=%f, k_base=%f, k_avg=%f\n", k, k_base, k_avg);
+        // printf("k=%f, k_base=%f, k_avg=%f\n", k, k_base, k_avg);
         float dist=(-k_avg*(H1_vec[1]-H1_vec_base[1])+PSNR_vec[1]-PSNR_vec_base[1])/sqrt(1+k_avg*k_avg);
-        printf("dist=%f\n", dist);
+        // printf("dist=%f\n", dist);
         return dist>0;
     }
 }

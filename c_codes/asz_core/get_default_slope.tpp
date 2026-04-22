@@ -47,14 +47,14 @@ namespace asz
             uint64_t compressed_data_num=0;
             for (const auto &[AB_key,count]:AB_map)
                 compressed_data_num+=count;
-            for (float t2:t2_vec)
+            for (float t2:possible_t2_vec)
             {
                 for (auto temp_abs_eb_id=0;temp_abs_eb_id<temp_abs_eb_vec.size();++temp_abs_eb_id)
                 {
                     float temp_abs_eb=temp_abs_eb_vec[temp_abs_eb_id];
                     float neg_2_eb=1/(2*temp_abs_eb);
                     estimate_br_psnr(H1_vec[temp_abs_eb_id],PSNR_vec[temp_abs_eb_id],AB_map,t2,temp_abs_eb,stat_eb,compressed_data_num);
-                    printf("temp_abs_eb=%e, t2=%f, H1=%f, PSNR=%f\n",temp_abs_eb,t2,H1_vec[temp_abs_eb_id],PSNR_vec[temp_abs_eb_id]);
+                    // printf("temp_abs_eb=%e, t2=%f, H1=%f, PSNR=%f\n",temp_abs_eb,t2,H1_vec[temp_abs_eb_id],PSNR_vec[temp_abs_eb_id]);
                 }
                 if ((no_valid_result) || (compare_curves1(H1_vec,PSNR_vec,best_H1_vec,best_PSNR_vec)))
                 {

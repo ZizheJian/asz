@@ -3,7 +3,10 @@
 /home/x-zjian1/ASTZ_tests/install/include/asz_core/get_AB_map.tpp
 /home/x-zjian1/ASTZ_tests/install/include/asz_core/get_default_slope.tpp
 /home/x-zjian1/ASTZ_tests/install/include/asz_core/asz_param.hpp
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/compress.tpp
 /home/x-zjian1/ASTZ_tests/install/include/asz_core/estimate_br_psnr.tpp
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/huffman.hpp
+/home/x-zjian1/ASTZ_tests/install/include/asz_core/generate_config.tpp
 /home/x-zjian1/ASTZ_tests/install/include/csv_tools/csv.hpp
 /home/x-zjian1/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared.cmake
 /home/x-zjian1/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared-release.cmake
