@@ -1,1 +1,0 @@
-/apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpiCC  -Wall -Ofast -march=native -fopenmp -mavx2 -mfma -Wno-dangling-else -O3 -DNDEBUG CMakeFiles/ASTZ_tests.dir/main.cpp.o -o ASTZ_tests  third_party/zstd/build/cmake/lib/libzstd.a 

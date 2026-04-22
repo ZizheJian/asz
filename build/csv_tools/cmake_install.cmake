@@ -1,8 +1,8 @@
-# Install script for directory: /home/x-zjian1/ASTZ_tests/c_codes/csv_tools
+# Install script for directory: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/csv_tools
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/x-zjian1/ASTZ_tests/install")
+  set(CMAKE_INSTALL_PREFIX "/gpfs/fs1/home/zjian/ASTZ_tests/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -43,6 +43,6 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/x-zjian1/ASTZ_tests/c_codes/csv_tools" FILES_MATCHING REGEX "/[^/]*\\.hpp$" REGEX "/[^/]*\\.tpp$")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/csv_tools" FILES_MATCHING REGEX "/[^/]*\\.hpp$" REGEX "/[^/]*\\.tpp$")
 endif()
 

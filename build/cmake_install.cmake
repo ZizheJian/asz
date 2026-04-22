@@ -1,8 +1,8 @@
-# Install script for directory: /home/x-zjian1/ASTZ_tests/c_codes
+# Install script for directory: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/x-zjian1/ASTZ_tests/install")
+  set(CMAKE_INSTALL_PREFIX "/gpfs/fs1/home/zjian/ASTZ_tests/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -49,7 +49,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/s5_compress"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/x-zjian1/ASTZ_tests/build/s5_compress")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/s5_compress")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/s5_compress" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/s5_compress")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -60,9 +60,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/x-zjian1/ASTZ_tests/build/asz_core/cmake_install.cmake")
-  include("/home/x-zjian1/ASTZ_tests/build/csv_tools/cmake_install.cmake")
-  include("/home/x-zjian1/ASTZ_tests/build/third_party/zstd/cmake_install.cmake")
+  include("/gpfs/fs1/home/zjian/ASTZ_tests/build/asz_core/cmake_install.cmake")
+  include("/gpfs/fs1/home/zjian/ASTZ_tests/build/csv_tools/cmake_install.cmake")
+  include("/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/cmake_install.cmake")
 
 endif()
 
@@ -74,5 +74,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/x-zjian1/ASTZ_tests/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/gpfs/fs1/home/zjian/ASTZ_tests/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

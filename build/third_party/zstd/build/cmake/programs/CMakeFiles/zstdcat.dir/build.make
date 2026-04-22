@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/x-zjian1/ASTZ_tests/c_codes
+CMAKE_SOURCE_DIR = /gpfs/fs1/home/zjian/ASTZ_tests/c_codes
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/x-zjian1/ASTZ_tests/build
+CMAKE_BINARY_DIR = /gpfs/fs1/home/zjian/ASTZ_tests/build
 
 # Utility rule file for zstdcat.
 
@@ -67,8 +67,8 @@ include third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/compiler_de
 include third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/progress.make
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat: third_party/zstd/build/cmake/programs/zstd
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Creating zstdcat symlink"
-	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cmake -E create_symlink zstd zstdcat
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Creating zstdcat symlink"
+	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cmake -E create_symlink zstd zstdcat
 
 zstdcat: third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat
 zstdcat: third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/build.make
@@ -79,10 +79,10 @@ third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/build: zstdcat
 .PHONY : third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/build
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/clean:
-	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && $(CMAKE_COMMAND) -P CMakeFiles/zstdcat.dir/cmake_clean.cmake
+	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && $(CMAKE_COMMAND) -P CMakeFiles/zstdcat.dir/cmake_clean.cmake
 .PHONY : third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/clean
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/depend:
-	cd /home/x-zjian1/ASTZ_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/x-zjian1/ASTZ_tests/c_codes /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/programs /home/x-zjian1/ASTZ_tests/build /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/DependInfo.cmake --color=$(COLOR)
+	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /gpfs/fs1/home/zjian/ASTZ_tests/c_codes /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/programs /gpfs/fs1/home/zjian/ASTZ_tests/build /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/depend
 

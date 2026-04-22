@@ -5,7 +5,8 @@ using namespace std;
 int main()
 {
     auto param=asz::param_c();
-    param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
+    // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
+    param.original_data_path="/lcrc/project/SDR/zjian-in-SDR/Pf01.bin";
     param.data_shape={100,500,500};
     param.rel_eb=1e-5;
 
