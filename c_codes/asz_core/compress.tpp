@@ -229,13 +229,14 @@ namespace asz
         vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
         uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
         zstd_bs_vec.resize(zstd_bs_len);
-        float br=(float)zstd_bs_len/data.size();
+        float cr=(float)data.size()*sizeof(float)/zstd_bs_len;
+        float br=8*sizeof(float)/cr;
         float mse=0;
         for (uint64_t i=0;i<data.size();i++)
             mse+=(data[i]-compressed_data[i])*(data[i]-compressed_data[i]);
         mse/=data.size();
         float psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
-        printf("BR: %f, PSNR: %f\n",br,psnr);
+        printf("CR: %f, BR: %f, PSNR: %f\n",cr,br,psnr);
         printf("dist=%f\n",-default_slope*br+psnr);
     }
 }

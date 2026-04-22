@@ -18,7 +18,7 @@ namespace asz
             for (int i=0;i<block_num[0]*block_num[1]*block_num[2];i++)
             {
                 predictor_vec.push_back({"cubic1","cubic2","cubic3","cubic1","cubic2","cubic3"});
-                eb_ratio_vec.push_back({1,1,1,1,1,1});
+                eb_ratio_vec.push_back({0.95,0.95,0.95,0.95,0.95,1});
             }
             config_generated=true;
         }
