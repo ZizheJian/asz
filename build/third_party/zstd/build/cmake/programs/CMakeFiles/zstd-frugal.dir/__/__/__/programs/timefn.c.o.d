@@ -21,7 +21,7 @@ third_party/zstd/build/cmake/programs/CMakeFiles/zstd-frugal.dir/__/__/__/progra
  /usr/include/bits/types/__fpos64_t.h /usr/include/bits/types/__FILE.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
- /usr/include/bits/stdio.h /usr/include/time.h /usr/include/bits/time.h \
+ /usr/include/time.h /usr/include/bits/time.h \
  /usr/include/bits/types/clock_t.h /usr/include/bits/types/time_t.h \
  /usr/include/bits/types/struct_tm.h \
  /usr/include/bits/types/struct_timespec.h \
@@ -38,4 +38,4 @@ third_party/zstd/build/cmake/programs/CMakeFiles/zstd-frugal.dir/__/__/__/progra
  /usr/include/bits/types/struct_timeval.h \
  /usr/include/bits/pthreadtypes.h /usr/include/bits/thread-shared-types.h \
  /usr/include/bits/pthreadtypes-arch.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h
+ /usr/include/bits/stdlib-float.h

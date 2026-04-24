@@ -1344,3 +1344,77 @@ events:
       warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
       
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:21 (CHECK_C_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:80 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test C_FLAG_DDEBUGLEVEL_1"
+    directories:
+      source: "/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Wdl16I"
+      binary: "/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Wdl16I"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes"
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "C_FLAG_DDEBUGLEVEL_1"
+      cached: true
+      stdout: |
+        Change Dir: /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Wdl16I
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_80fd7/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_80fd7.dir/build.make CMakeFiles/cmTC_80fd7.dir/build
+        gmake[1]: Entering directory '/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Wdl16I'
+        Building C object CMakeFiles/cmTC_80fd7.dir/src.c.o
+        /usr/bin/cc -DC_FLAG_DDEBUGLEVEL_1 -DDEBUGLEVEL=1  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes  -o CMakeFiles/cmTC_80fd7.dir/src.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Wdl16I/src.c
+        Linking C executable cmTC_80fd7
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_80fd7.dir/link.txt --verbose=1
+        /usr/bin/cc  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes  CMakeFiles/cmTC_80fd7.dir/src.c.o -o cmTC_80fd7 
+        gmake[1]: Leaving directory '/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-Wdl16I'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/usr/share/cmake/Modules/CheckCXXCompilerFlag.cmake:40 (cmake_check_compiler_flag)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:27 (CHECK_CXX_COMPILER_FLAG)"
+      - "third_party/zstd/build/cmake/CMakeModules/AddZstdCompilationFlags.cmake:80 (EnableCompilerFlag)"
+      - "third_party/zstd/build/cmake/CMakeLists.txt:66 (ADD_ZSTD_COMPILATION_FLAGS)"
+    checks:
+      - "Performing Test CXX_FLAG_DDEBUGLEVEL_1"
+    directories:
+      source: "/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SdxlXT"
+      binary: "/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SdxlXT"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: " -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual"
+      CMAKE_CXX_FLAGS_DEBUG: "-Wall -O0 -g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/CMakeModules"
+    buildResult:
+      variable: "CXX_FLAG_DDEBUGLEVEL_1"
+      cached: true
+      stdout: |
+        Change Dir: /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SdxlXT
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_4defe/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_4defe.dir/build.make CMakeFiles/cmTC_4defe.dir/build
+        gmake[1]: Entering directory '/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SdxlXT'
+        Building CXX object CMakeFiles/cmTC_4defe.dir/src.cxx.o
+        /usr/bin/c++ -DCXX_FLAG_DDEBUGLEVEL_1 -DDEBUGLEVEL=1  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual  -o CMakeFiles/cmTC_4defe.dir/src.cxx.o -c /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SdxlXT/src.cxx
+        Linking CXX executable cmTC_4defe
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4defe.dir/link.txt --verbose=1
+        /usr/bin/c++  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual  CMakeFiles/cmTC_4defe.dir/src.cxx.o -o cmTC_4defe 
+        gmake[1]: Leaving directory '/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles/CMakeScratch/TryCompile-SdxlXT'
+        
+      exitCode: 0
+...

@@ -9,9 +9,9 @@
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/compare_curves.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/csv_tools/csv.hpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared.cmake
-/gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared-release.cmake
+/gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared-debug.cmake
 /gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_static.cmake
-/gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_static-release.cmake
+/gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_static-debug.cmake
 /gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets.cmake
 /gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdConfig.cmake
 /gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdConfigVersion.cmake

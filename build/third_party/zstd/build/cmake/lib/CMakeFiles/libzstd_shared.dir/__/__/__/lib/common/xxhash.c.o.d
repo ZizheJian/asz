@@ -31,4 +31,4 @@ third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/__/__/__/lib/comm
  /usr/include/bits/types/struct_timespec.h \
  /usr/include/bits/pthreadtypes.h /usr/include/bits/thread-shared-types.h \
  /usr/include/bits/pthreadtypes-arch.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h
+ /usr/include/bits/stdlib-float.h /usr/include/assert.h

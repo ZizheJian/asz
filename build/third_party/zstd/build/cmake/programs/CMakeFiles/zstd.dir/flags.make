@@ -6,5 +6,5 @@ C_DEFINES = -DXXH_NAMESPACE=ZSTD_ -DZSTD_LEGACY_SUPPORT=0 -DZSTD_MULTITHREAD
 
 C_INCLUDES = -I/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs -I/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/programs -I/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../programs -I/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib -I/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/common -I/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/compress -I/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/dictBuilder
 
-C_FLAGS =  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Wa,--noexecstack -O3 -DNDEBUG
+C_FLAGS =  -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -DDEBUGLEVEL=1 -Wa,--noexecstack -g
 

@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <random>
 
 using namespace std;
 
@@ -73,21 +74,52 @@ namespace asz
                     possible_t2_vec.push_back((float)t2_i/t2_precision);
             }
 
+            void copy_from(param_c &other)
+            {
+                original_data_path=other.original_data_path;
+                compressed_data_path=other.compressed_data_path;
+                decompressed_data_path=other.decompressed_data_path;
+                data_shape=other.data_shape;
+                min_val=other.min_val;
+                max_val=other.max_val;
+                rel_eb=other.rel_eb;
+                abs_eb=other.abs_eb;
+                data=other.data;
+                compressed_data=other.compressed_data;
+                data_compressed=other.data_compressed;
+                qb_vec=other.qb_vec;
+                t2_int_vec=other.t2_int_vec;
+                t2_precision=other.t2_precision;
+                small_block_sampling_num=other.small_block_sampling_num;
+                possible_t2_vec=other.possible_t2_vec;
+                default_slope=other.default_slope;
+                config_generated=other.config_generated;
+                block_shape=other.block_shape;
+                pivot_stride=other.pivot_stride;
+                pivot_eb_ratio=other.pivot_eb_ratio;
+                predictor_vec=other.predictor_vec;
+                eb_ratio_vec=other.eb_ratio_vec;
+                block_num=other.block_num;
+            }
+
             void get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<float> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,
                 uint64_t dist,float neg_2_stat_eb);
+            void get_AB_map_random(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<float> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,
+                uint64_t dist,float neg_2_stat_eb,float max_random_err);
             void estimate_br_psnr(float &br,float &psnr,unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,float t2,float abs_eb,float stat_eb,uint64_t num);
             bool compare_curves1(vector<float> &H1_vec,vector<float> &PSNR_vec,vector<float> &H1_vec_base,vector<float> &PSNR_vec_base);
             void get_default_slope();
             void generate_config_enumerate();
-            void compress();
-            void block_compress(vector<vector<uint64_t>> &block_loc,vector<string> &predictor_vec,vector<float> &eb_ratio_vec,vector<uint64_t> &stride,uint32_t layer_id);
+            void generate_config();
+            float compress();
             void block_compress_cubic1(vector<int64_t> &temp_qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float best_t2,float layer_eb,
                 float neg_2_layer_eb);
             void block_compress_cubic2(vector<int64_t> &temp_qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float best_t2,float layer_eb,
                 float neg_2_layer_eb);
             void block_compress_cubic3(vector<int64_t> &temp_qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float best_t2,float layer_eb,
                 float neg_2_layer_eb);
-
+            void dot_compress(vector<int64_t> &temp_qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t2,
+                float neg_2_layer_eb,float layer_eb);
     };
 }
 

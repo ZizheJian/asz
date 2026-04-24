@@ -55,11 +55,11 @@ set_target_properties(zstd::libzstd_static PROPERTIES
   INTERFACE_LINK_LIBRARIES "-pthread"
 )
 
-# Import target "zstd::libzstd_static" for configuration "Release"
-set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+# Import target "zstd::libzstd_static" for configuration "Debug"
+set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(zstd::libzstd_static PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "ASM;C"
-  IMPORTED_LOCATION_RELEASE "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "ASM;C"
+  IMPORTED_LOCATION_DEBUG "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.a"
   )
 
 # This file does not depend on other imported targets which have

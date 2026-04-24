@@ -8,8 +8,8 @@ namespace asz
     void param_c::get_default_slope()
     {
         vector<string> predictor_vec={"cubic1","cubic2","cubic3"};
-        vector<float> temp_abs_eb_vec={abs_eb*1.5f,abs_eb,abs_eb/1.5f};
-        float stat_eb=abs_eb/150;
+        vector<float> temp_abs_eb_vec={abs_eb*2.0f,abs_eb,abs_eb/2.0f};
+        float stat_eb=abs_eb/200;
         float neg_2_stat_eb=1/(2*stat_eb);
         bool no_valid_result=true;
         vector<float> best_H1_vec(3),best_PSNR_vec(3);

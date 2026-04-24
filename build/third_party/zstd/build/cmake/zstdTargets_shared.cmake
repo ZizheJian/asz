@@ -55,11 +55,11 @@ set_target_properties(zstd::libzstd_shared PROPERTIES
   INTERFACE_LINK_LIBRARIES "-pthread"
 )
 
-# Import target "zstd::libzstd_shared" for configuration "Release"
-set_property(TARGET zstd::libzstd_shared APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+# Import target "zstd::libzstd_shared" for configuration "Debug"
+set_property(TARGET zstd::libzstd_shared APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(zstd::libzstd_shared PROPERTIES
-  IMPORTED_LOCATION_RELEASE "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so.1.6.0"
-  IMPORTED_SONAME_RELEASE "libzstd.so.1"
+  IMPORTED_LOCATION_DEBUG "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so.1.6.0"
+  IMPORTED_SONAME_DEBUG "libzstd.so.1"
   )
 
 # This file does not depend on other imported targets which have
