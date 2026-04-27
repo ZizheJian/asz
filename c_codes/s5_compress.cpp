@@ -9,7 +9,7 @@ int main()
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
     param.original_data_path="/lcrc/project/SDR/zjian-in-SDR/Pf01.bin";
     param.data_shape={100,500,500};
-    param.rel_eb=1e-1;
+    param.rel_eb=1e-5;
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);
@@ -24,13 +24,18 @@ int main()
     printf("default_slope=%f\n",param.default_slope);
 
     //////// 直接生成配置 ////////
-    // param.generate_config();
-    // exit(0);
-    // param.compress();
+    param.generate_config();
+    printf("pivot_eb_ratio=%f\n",param.pivot_eb_ratio);
+    printf("eb_ratio=%f\n",param.eb_ratio);
+    for (auto predictor:param.predictor_vec[0])
+        printf("\"%s\",",predictor.c_str());
+    printf("\n");
+    param.compress();
+    exit(0);
 
     //////// 搜索配置 ////////
     float best_dist=0;
-    for (int attempt=0;attempt<1;attempt++)
+    for (int attempt=0;attempt<50;attempt++)
     {
         asz::param_c backup_param;
         backup_param.copy_from(param);
@@ -46,10 +51,8 @@ int main()
         printf("\n");
     }
     printf("pivot_eb_ratio=%f\n",param.pivot_eb_ratio);
+    printf("eb_ratio=%f\n",param.eb_ratio);
     for (auto predictor:param.predictor_vec[0])
         printf("\"%s\",",predictor.c_str());
-    printf("\n");
-    for (auto eb_ratio:param.eb_ratio_vec[0])
-        printf("%f,",eb_ratio);
     printf("\n");
 }

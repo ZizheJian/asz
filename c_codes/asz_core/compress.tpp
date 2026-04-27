@@ -125,18 +125,14 @@ namespace asz
                     block_loc[0]={block_i0*block_shape[0],min((block_i0+1)*block_shape[0]+1,data_shape[0])};
                     block_loc[1]={block_i1*block_shape[1],min((block_i1+1)*block_shape[1]+1,data_shape[1])};
                     block_loc[2]={block_i2*block_shape[2],min((block_i2+1)*block_shape[2]+1,data_shape[2])};
-                    auto block_predictor_vec=predictor_vec[block_id];
-                    auto block_eb_ratio_vec=eb_ratio_vec[block_id];
                     auto stride=pivot_stride;
                     //////// 逐层压缩 ////////
-                    uint32_t layer_num=block_predictor_vec.size();
+                    uint32_t layer_num=predictor_vec[block_id].size();
                     qb_vec.push_back(vector<int64_t>());
                     for (uint32_t layer_id=0;layer_id<layer_num;layer_id++)
                     {
-                        string predictor=block_predictor_vec[layer_id];
-                        float layer_eb=abs_eb;
-                        for (uint32_t i=layer_id;i<layer_num;i++)
-                            layer_eb*=block_eb_ratio_vec[i];
+                        string predictor=predictor_vec[block_id][layer_id];
+                        float layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
                         float neg_2_layer_eb=1/(2*layer_eb);
                         //////// 估计最好t2 ////////
                         float stat_eb=layer_eb*0.01;
@@ -199,9 +195,8 @@ namespace asz
                                 }
                             }
                         }
-                        // printf("best_t2=%f,best_br=%f,best_psnr=%f\n",best_t2,best_br,best_psnr);
                         t2_int_vec.push_back(llround(best_t2*t2_precision));
-                        //////// 量化 ////////
+                        //////// 预测 ////////
                         if (predictor=="cubic1")
                         {
                             block_compress_cubic1(qb_vec.back(),block_loc,stride,best_t2,layer_eb,neg_2_layer_eb);
@@ -228,26 +223,15 @@ namespace asz
         qb_vec.push_back(t2_int_vec);
         vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
         unsigned char *huffman_bs=huffman_bs_vec.data();
-
-        // for (auto &block_qb_vec:qb_vec)
-        // {
-        //     huffman_encoder_class<int64_t> huffman_encoder;
-        //     huffman_encoder.preprocess_encode(block_qb_vec.data(),block_qb_vec.size());
-        //     huffman_encoder.save(huffman_bs);
-        //     huffman_encoder.encode(block_qb_vec.data(),block_qb_vec.size(),huffman_bs);
-        // }
-
         vector<int64_t> concatenated_qb_vec;
         for (auto &block_qb_vec:qb_vec)
             concatenated_qb_vec.insert(concatenated_qb_vec.end(),block_qb_vec.begin(),block_qb_vec.end());
-        // printf("concatenated_qb_vec size=%lu\n",concatenated_qb_vec.size());
         huffman_encoder_class<int64_t> huffman_encoder;
         huffman_encoder.preprocess_encode(concatenated_qb_vec.data(),concatenated_qb_vec.size());
         huffman_encoder.save(huffman_bs);
         huffman_encoder.encode(concatenated_qb_vec.data(),concatenated_qb_vec.size(),huffman_bs);
 
         uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
-        // printf("huffman_bs_len=%lu\n",huffman_bs_len);
         uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
         vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
         uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);

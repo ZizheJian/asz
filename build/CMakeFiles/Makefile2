@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /gpfs/fs1/home/zjian/ASTZ_tests/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/s5_compress.dir/all
+all: CMakeFiles/s61_find_best_t12_per_eb.dir/all
 all: asz_core/all
 all: csv_tools/all
 all: third_party/zstd/all
@@ -76,7 +76,7 @@ preinstall: third_party/zstd/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/s5_compress.dir/clean
+clean: CMakeFiles/s61_find_best_t12_per_eb.dir/clean
 clean: asz_core/clean
 clean: csv_tools/clean
 clean: third_party/zstd/clean
@@ -198,30 +198,30 @@ third_party/zstd/build/cmake/programs/clean: third_party/zstd/build/cmake/progra
 .PHONY : third_party/zstd/build/cmake/programs/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/s5_compress.dir
+# Target rules for target CMakeFiles/s61_find_best_t12_per_eb.dir
 
 # All Build rule for target.
-CMakeFiles/s5_compress.dir/all: third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=66,67 "Built target s5_compress"
-.PHONY : CMakeFiles/s5_compress.dir/all
+CMakeFiles/s61_find_best_t12_per_eb.dir/all: third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s61_find_best_t12_per_eb.dir/build.make CMakeFiles/s61_find_best_t12_per_eb.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s61_find_best_t12_per_eb.dir/build.make CMakeFiles/s61_find_best_t12_per_eb.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=66,67 "Built target s61_find_best_t12_per_eb"
+.PHONY : CMakeFiles/s61_find_best_t12_per_eb.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/s5_compress.dir/rule: cmake_check_build_system
+CMakeFiles/s61_find_best_t12_per_eb.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles 34
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/s5_compress.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/s61_find_best_t12_per_eb.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles 0
-.PHONY : CMakeFiles/s5_compress.dir/rule
+.PHONY : CMakeFiles/s61_find_best_t12_per_eb.dir/rule
 
 # Convenience name for target.
-s5_compress: CMakeFiles/s5_compress.dir/rule
-.PHONY : s5_compress
+s61_find_best_t12_per_eb: CMakeFiles/s61_find_best_t12_per_eb.dir/rule
+.PHONY : s61_find_best_t12_per_eb
 
 # clean rule for target.
-CMakeFiles/s5_compress.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/clean
-.PHONY : CMakeFiles/s5_compress.dir/clean
+CMakeFiles/s61_find_best_t12_per_eb.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s61_find_best_t12_per_eb.dir/build.make CMakeFiles/s61_find_best_t12_per_eb.dir/clean
+.PHONY : CMakeFiles/s61_find_best_t12_per_eb.dir/clean
 
 #=============================================================================
 # Target rules for target third_party/zstd/build/cmake/CMakeFiles/clean-all.dir

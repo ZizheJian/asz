@@ -1,4 +1,4 @@
-/gpfs/fs1/home/zjian/ASTZ_tests/install/bin/s5_compress
+/gpfs/fs1/home/zjian/ASTZ_tests/install/bin/s61_find_best_t12_per_eb
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/get_AB_map.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/generate_config.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/asz_param.hpp

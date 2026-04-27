@@ -39,9 +39,15 @@ code_name_map={1:"s1_cubic_prediction",
                3:"s3_cubic_prediction2",
                4:"s4_sort_curves_2",
                5:"s5_compress",
-               6:"s6_check_H2_distinguishibility",
-               7:"s7_calc_cov",
-               8:"s8_verify_theory_correctness"}
+               6:"s6_find_best_t2_per_eb",
+               61:"s61_find_best_t12_per_eb",
+               7:"s7_cubic_prediction_dim1",
+               71:"s71_quintic_prediction_dim1",
+               8:"s8_cubic_prediction_dim2",
+               9:"s9_cubic_prediction_dim3",
+               10:"s10_multi_prediction_dim12",
+               11:"s11_multi_prediction_dim13",
+               12:"s12_multi_prediction_dim23"}
 
 data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS"
 

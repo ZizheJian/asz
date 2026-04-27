@@ -52,8 +52,8 @@ namespace asz
             vector<int64_t> t2_int_vec;
 
 
-            int t2_precision=128;//必须大于等于32
-            uint64_t small_block_sampling_num=2048;//每个小block中为了决定t2需要采样的数据量，应该远小于small_block_split_size
+            int t2_precision=32;//必须大于等于16
+            uint64_t small_block_sampling_num=1024;//每个小block中为了决定t2需要采样的数据量，应该远小于small_block_split_size
 
             vector<float> possible_t2_vec;
             float default_slope;
@@ -64,13 +64,13 @@ namespace asz
             vector<uint64_t> pivot_stride;//pivoting point在每个维度上的stride
             float pivot_eb_ratio;//pivoting point的误差比例
             vector<vector<string>> predictor_vec;//每个block的预测器列表
-            vector<vector<float>> eb_ratio_vec;//每个block的误差比例列表
+            float eb_ratio;//所有block共用的相邻layer之间的误差比例
 
             vector<uint64_t> block_num;//block在每个维度上的数量
 
             param_c()
             {
-                for (int t2_i=7*t2_precision/32;t2_i<=11*t2_precision/32;t2_i++)
+                for (int t2_i=3*t2_precision/16;t2_i<=6*t2_precision/16;t2_i++)
                     possible_t2_vec.push_back((float)t2_i/t2_precision);
             }
 
@@ -98,7 +98,7 @@ namespace asz
                 pivot_stride=other.pivot_stride;
                 pivot_eb_ratio=other.pivot_eb_ratio;
                 predictor_vec=other.predictor_vec;
-                eb_ratio_vec=other.eb_ratio_vec;
+                eb_ratio=other.eb_ratio;
                 block_num=other.block_num;
             }
 

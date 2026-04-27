@@ -17,6 +17,12 @@ void write_value(string &csv_path,T1 row_index1,T2 row_index2,T3 column_name,T4 
     write_value2(csv_path,change_string_type(row_index1)+","+change_string_type(row_index2),change_string_type(column_name),change_string_type(value));
 }
 
+template<typename T1,typename T2,typename T3,typename T4,typename T5>
+void write_value(string &csv_path,T1 row_index1,T2 row_index2,T3 row_index3,T4 column_name,T5 value)
+{
+    write_value2(csv_path,change_string_type(row_index1)+","+change_string_type(row_index2)+","+change_string_type(row_index3),change_string_type(column_name),change_string_type(value));
+}
+
 void write_value2(string &csv_path,string row_index,string column_name,string value_str)
 {
     ifstream csv_file_in(csv_path);

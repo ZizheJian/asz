@@ -18,6 +18,12 @@ void add_row(string &csv_path,T1 row_index1,T2 row_index2)
     add_row2(csv_path,change_string_type(row_index1)+","+change_string_type(row_index2));
 }
 
+template<typename T1,typename T2,typename T3>
+void add_row(string &csv_path,T1 row_index1,T2 row_index2,T3 row_index3)
+{
+    add_row2(csv_path,change_string_type(row_index1)+","+change_string_type(row_index2)+","+change_string_type(row_index3));
+}
+
 void add_row2(string &csv_path,string row_index)
 {
     ifstream csv_file_in(csv_path);

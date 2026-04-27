@@ -17,6 +17,12 @@ double read_value(string &csv_path,T1 row_index1,T2 row_index2,T3 column_name)
     return read_value2(csv_path,change_string_type(row_index1)+","+change_string_type(row_index2),change_string_type(column_name));
 }
 
+template<typename T1,typename T2,typename T3,typename T4>
+double read_value(string &csv_path,T1 row_index1,T2 row_index2,T3 row_index3,T4 column_name)
+{
+    return read_value2(csv_path,change_string_type(row_index1)+","+change_string_type(row_index2)+","+change_string_type(row_index3),change_string_type(column_name));
+}
+
 double read_value2(string &csv_path,string row_index,string column_name)
 {
     ifstream csv_file_in(csv_path);
