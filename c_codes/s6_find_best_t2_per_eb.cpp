@@ -104,7 +104,7 @@ void compare_win_table(vector<vector<int>> &win_table_truth,vector<vector<int>> 
 
 int main()
 {
-    string csv_path="/home/zjian/ASTZ_tests/csv/results_cubic_prediction_dim1_ISABEL_Pf01.csv";
+    string csv_path="/home/zjian/ASTZ_tests/csv/results_cubic_prediction_dim1_321_ISABEL_Pf01.csv";
     vector<double> rel_eb_vec;
     read_all_values_in_column(csv_path,"rel_eb",rel_eb_vec);
     vector<double> t2_vec;

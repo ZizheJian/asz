@@ -23,7 +23,7 @@ int main()
     string data_path="/lcrc/project/SDR/zjian-in-SDR/Pf01.bin";
     vector<uint64_t> data_shape={100,500,500};
     vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8};
-    string csv_path="/home/zjian/ASTZ_tests/csv/results_cubic_prediction_dim3_ISABEL_Pf01.csv";
+    string csv_path="/home/zjian/ASTZ_tests/csv/results_cubic_prediction_dim3_321_ISABEL_Pf01.csv";
 
     uint64_t data_size=data_shape[0]*data_shape[1]*data_shape[2];
     vector<float> data;
@@ -41,6 +41,8 @@ int main()
     add_column(csv_path,"rel_eb");
     add_column(csv_path,"t2");
     add_column(csv_path,"BR");
+    add_column(csv_path,"H1");
+    add_column(csv_path,"H2");
     add_column(csv_path,"PSNR");
     vector<double> t2_vec;
     for (int i=24;i<=48;i++)
@@ -54,9 +56,9 @@ int main()
             double mse=0;
             vector<int64_t> qb_vec;
             qb_vec.reserve(compressed_data_num);
+            for (uint64_t i2=3;i2+3<data_shape[2];i2+=2)
+            for (uint64_t i1=0;i1<data_shape[1];i1++)
             for (uint64_t i0=0;i0<data_shape[0];i0++)
-                for (uint64_t i1=0;i1<data_shape[1];i1++)
-                    for (uint64_t i2=3;i2+3<data_shape[2];i2+=2)
                     {
                         uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
                         double pred=(0.25-t2)*data[pos-3];
@@ -68,6 +70,8 @@ int main()
                         double decmp=pred-qb*2*abs_eb;
                         mse+=pow(decmp-data[pos],2);
                     }
+            double H1=get_H1(qb_vec);
+            double H2=get_H2(qb_vec);
             vector<unsigned char> huffman_bs_vec(data_size*sizeof(float));
             unsigned char *huffman_bs=huffman_bs_vec.data();
             huffman_encoder_class<int64_t> huffman_encoder;
@@ -85,6 +89,8 @@ int main()
             double psnr=10*log10(pow(max_val-min_val,2)/mse);
             add_row(csv_path,rel_eb,t2);
             write_value(csv_path,rel_eb,t2,"BR",br);
+            write_value(csv_path,rel_eb,t2,"H1",H1);
+            write_value(csv_path,rel_eb,t2,"H2",H2);
             write_value(csv_path,rel_eb,t2,"PSNR",psnr);
             printf("rel_eb=%f, t2=%f\n",rel_eb,t2);
             printf("BR=%f, CR=%f\n",br,cr);

@@ -314,7 +314,7 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //which target to build
-CODE_NAME:STRING=s61_find_best_t12_per_eb
+CODE_NAME:STRING=s7_cubic_prediction_dim1
 
 //Visibility for ZDICTLIB_STATIC_API API
 ZDICTLIB_STATIC_API:STRING=

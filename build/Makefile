@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s61_find_best_t12_per_eb
+# Target rules for targets named s7_cubic_prediction_dim1
 
 # Build rule for target.
-s61_find_best_t12_per_eb: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s61_find_best_t12_per_eb
-.PHONY : s61_find_best_t12_per_eb
+s7_cubic_prediction_dim1: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s7_cubic_prediction_dim1
+.PHONY : s7_cubic_prediction_dim1
 
 # fast build rule for target.
-s61_find_best_t12_per_eb/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s61_find_best_t12_per_eb.dir/build.make CMakeFiles/s61_find_best_t12_per_eb.dir/build
-.PHONY : s61_find_best_t12_per_eb/fast
+s7_cubic_prediction_dim1/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/build
+.PHONY : s7_cubic_prediction_dim1/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s61_find_best_t12_per_eb.o: s61_find_best_t12_per_eb.cpp.o
-.PHONY : s61_find_best_t12_per_eb.o
+s7_cubic_prediction_dim1.o: s7_cubic_prediction_dim1.cpp.o
+.PHONY : s7_cubic_prediction_dim1.o
 
 # target to build an object file
-s61_find_best_t12_per_eb.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s61_find_best_t12_per_eb.dir/build.make CMakeFiles/s61_find_best_t12_per_eb.dir/s61_find_best_t12_per_eb.cpp.o
-.PHONY : s61_find_best_t12_per_eb.cpp.o
+s7_cubic_prediction_dim1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/s7_cubic_prediction_dim1.cpp.o
+.PHONY : s7_cubic_prediction_dim1.cpp.o
 
-s61_find_best_t12_per_eb.i: s61_find_best_t12_per_eb.cpp.i
-.PHONY : s61_find_best_t12_per_eb.i
+s7_cubic_prediction_dim1.i: s7_cubic_prediction_dim1.cpp.i
+.PHONY : s7_cubic_prediction_dim1.i
 
 # target to preprocess a source file
-s61_find_best_t12_per_eb.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s61_find_best_t12_per_eb.dir/build.make CMakeFiles/s61_find_best_t12_per_eb.dir/s61_find_best_t12_per_eb.cpp.i
-.PHONY : s61_find_best_t12_per_eb.cpp.i
+s7_cubic_prediction_dim1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/s7_cubic_prediction_dim1.cpp.i
+.PHONY : s7_cubic_prediction_dim1.cpp.i
 
-s61_find_best_t12_per_eb.s: s61_find_best_t12_per_eb.cpp.s
-.PHONY : s61_find_best_t12_per_eb.s
+s7_cubic_prediction_dim1.s: s7_cubic_prediction_dim1.cpp.s
+.PHONY : s7_cubic_prediction_dim1.s
 
 # target to generate assembly for a file
-s61_find_best_t12_per_eb.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s61_find_best_t12_per_eb.dir/build.make CMakeFiles/s61_find_best_t12_per_eb.dir/s61_find_best_t12_per_eb.cpp.s
-.PHONY : s61_find_best_t12_per_eb.cpp.s
+s7_cubic_prediction_dim1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/s7_cubic_prediction_dim1.cpp.s
+.PHONY : s7_cubic_prediction_dim1.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s61_find_best_t12_per_eb"
+	@echo "... s7_cubic_prediction_dim1"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s61_find_best_t12_per_eb.o"
-	@echo "... s61_find_best_t12_per_eb.i"
-	@echo "... s61_find_best_t12_per_eb.s"
+	@echo "... s7_cubic_prediction_dim1.o"
+	@echo "... s7_cubic_prediction_dim1.i"
+	@echo "... s7_cubic_prediction_dim1.s"
 .PHONY : help
 
 

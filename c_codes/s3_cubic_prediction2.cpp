@@ -41,10 +41,10 @@ using namespace std;
 
 int main()
 {
-    string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
+    string data_path="/lcrc/project/SDR/zjian-in-SDR/Pf01.bin";
     vector<uint64_t> data_shape={100,500,500};
     vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,5.623e-5,3.162e-5,1.778e-5,1e-5,5.623e-6,3.162e-6,1.778e-6,1e-6,1e-7};
-    string csv_path="/home/x-zjian1/ASTZ_tests/csv/results_cubic_prediction_ISABEL_Pf01_2.csv";
+    string csv_path="/home/zjian/ASTZ_tests/csv/results_cubic_prediction_ISABEL_Pf01_2.csv";
     uint64_t stride=32;
 
     add_column(csv_path,"rel_eb");
@@ -69,7 +69,7 @@ int main()
     vector<double> t2_vec;
     for (int i=0;i<=20;i++)
         t2_vec.push_back(0.2+i*0.01);
-    double stat_eb=*min_element(rel_eb_vec.begin(),rel_eb_vec.end())*(max_val-min_val)*0.01;
+    double stat_eb=*min_element(rel_eb_vec.begin(),rel_eb_vec.end())*(max_val-min_val)*0.1;
     double neg_2_stat_eb=1/(2*stat_eb);
     unordered_map<int64_t,int64_t> A_map,B_map;
     unordered_map<tuple<int64_t,int64_t>,int64_t> AB_map;
