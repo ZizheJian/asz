@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /gpfs/fs1/home/zjian/ASTZ_tests/c_codes
+CMAKE_SOURCE_DIR = /home/x-zjian1/ASTZ_tests/c_codes
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /gpfs/fs1/home/zjian/ASTZ_tests/build
+CMAKE_BINARY_DIR = /home/x-zjian1/ASTZ_tests/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -132,14 +132,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(CMAKE_COMMAND) -E cmake_progress_start /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles /gpfs/fs1/home/zjian/ASTZ_tests/build/csv_tools//CMakeFiles/progress.marks
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles 0
+	cd /home/x-zjian1/ASTZ_tests/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/x-zjian1/ASTZ_tests/build/CMakeFiles /home/x-zjian1/ASTZ_tests/build/csv_tools//CMakeFiles/progress.marks
+	cd /home/x-zjian1/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/x-zjian1/ASTZ_tests/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/clean
+	cd /home/x-zjian1/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/clean
 .PHONY : clean
 
 # The main clean target
@@ -148,17 +148,17 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/preinstall
+	cd /home/x-zjian1/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/preinstall
+	cd /home/x-zjian1/ASTZ_tests/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 csv_tools/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/x-zjian1/ASTZ_tests/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Help Target
@@ -184,6 +184,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/x-zjian1/ASTZ_tests/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

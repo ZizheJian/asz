@@ -1,8 +1,8 @@
-# Install script for directory: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake
+# Install script for directory: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/gpfs/fs1/home/zjian/ASTZ_tests/install")
+  set(CMAKE_INSTALL_PREFIX "/home/x-zjian1/ASTZ_tests/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
+    set(CMAKE_INSTALL_CONFIG_NAME "Release")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -46,7 +46,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets_shared.cmake")
     file(DIFFERENT _cmake_export_file_changed FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets_shared.cmake"
-         "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_shared.cmake")
+         "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_shared.cmake")
     if(_cmake_export_file_changed)
       file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets_shared-*.cmake")
       if(_cmake_old_config_files)
@@ -59,9 +59,9 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     endif()
     unset(_cmake_export_file_changed)
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_shared.cmake")
-  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_shared-debug.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_shared.cmake")
+  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_shared-release.cmake")
   endif()
 endif()
 
@@ -69,7 +69,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets_static.cmake")
     file(DIFFERENT _cmake_export_file_changed FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets_static.cmake"
-         "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_static.cmake")
+         "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_static.cmake")
     if(_cmake_export_file_changed)
       file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets_static-*.cmake")
       if(_cmake_old_config_files)
@@ -82,9 +82,9 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     endif()
     unset(_cmake_export_file_changed)
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_static.cmake")
-  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_static-debug.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_static.cmake")
+  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets_static-release.cmake")
   endif()
 endif()
 
@@ -92,7 +92,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets.cmake")
     file(DIFFERENT _cmake_export_file_changed FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets.cmake"
-         "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets.cmake")
+         "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets.cmake")
     if(_cmake_export_file_changed)
       file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd/zstdTargets-*.cmake")
       if(_cmake_old_config_files)
@@ -105,20 +105,20 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     endif()
     unset(_cmake_export_file_changed)
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/CMakeFiles/Export/7cd453e9c303927a731457206834b245/zstdTargets.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/cmake/zstd" TYPE FILE FILES
-    "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/zstdConfig.cmake"
-    "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/zstdConfigVersion.cmake"
+    "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/zstdConfig.cmake"
+    "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/zstdConfigVersion.cmake"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/cmake_install.cmake")
-  include("/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs/cmake_install.cmake")
+  include("/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib/cmake_install.cmake")
+  include("/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs/cmake_install.cmake")
 
 endif()
 

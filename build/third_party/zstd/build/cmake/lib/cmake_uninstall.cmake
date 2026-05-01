@@ -1,9 +1,9 @@
  
-if(NOT EXISTS "/gpfs/fs1/home/zjian/ASTZ_tests/build/install_manifest.txt")
-  message(FATAL_ERROR "Cannot find install manifest: /gpfs/fs1/home/zjian/ASTZ_tests/build/install_manifest.txt")
+if(NOT EXISTS "/home/x-zjian1/ASTZ_tests/build/install_manifest.txt")
+  message(FATAL_ERROR "Cannot find install manifest: /home/x-zjian1/ASTZ_tests/build/install_manifest.txt")
 endif()
 
-file(READ "/gpfs/fs1/home/zjian/ASTZ_tests/build/install_manifest.txt" files)
+file(READ "/home/x-zjian1/ASTZ_tests/build/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 foreach(file ${files})
   message(STATUS "Uninstalling $ENV{DESTDIR}${file}")

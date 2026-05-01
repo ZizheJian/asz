@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /gpfs/fs1/home/zjian/ASTZ_tests/c_codes
+CMAKE_SOURCE_DIR = /home/x-zjian1/ASTZ_tests/c_codes
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /gpfs/fs1/home/zjian/ASTZ_tests/build
+CMAKE_BINARY_DIR = /home/x-zjian1/ASTZ_tests/build
 
 # Include any dependencies generated for this target.
 include third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/depend.make
@@ -70,158 +70,158 @@ include third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/progress.make
 include third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c > CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c > CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c -o CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchfn.c -o CMakeFiles/zstd.dir/__/__/__/programs/benchfn.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c > CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c > CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c -o CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/benchzstd.c -o CMakeFiles/zstd.dir/__/__/__/programs/benchzstd.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c > CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c > CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c -o CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/datagen.c -o CMakeFiles/zstd.dir/__/__/__/programs/datagen.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c > CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c > CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c -o CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/dibio.c -o CMakeFiles/zstd.dir/__/__/__/programs/dibio.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c > CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c > CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c -o CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio.c -o CMakeFiles/zstd.dir/__/__/__/programs/fileio.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c > CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c > CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c -o CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/fileio_asyncio.c -o CMakeFiles/zstd.dir/__/__/__/programs/fileio_asyncio.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c > CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c > CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c -o CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/lorem.c -o CMakeFiles/zstd.dir/__/__/__/programs/lorem.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c > CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c > CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c -o CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/timefn.c -o CMakeFiles/zstd.dir/__/__/__/programs/timefn.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/util.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/util.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/util.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/util.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/util.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/util.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/util.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/util.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/util.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/util.c > CMakeFiles/zstd.dir/__/__/__/programs/util.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/util.c > CMakeFiles/zstd.dir/__/__/__/programs/util.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/util.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/util.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/util.c -o CMakeFiles/zstd.dir/__/__/__/programs/util.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/util.c -o CMakeFiles/zstd.dir/__/__/__/programs/util.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c > CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c > CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli.c -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli.c.s
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/flags.make
-third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c
+third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o -c /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o -MF CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o.d -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.o -c /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.i"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c > CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.i
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c > CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.i
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.s"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.s
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && /apps/spack/anvil/apps/openmpi/4.0.6-gcc-11.2.0-3navcwb/bin/mpicc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/programs/zstdcli_trace.c -o CMakeFiles/zstd.dir/__/__/__/programs/zstdcli_trace.c.s
 
 # Object files for target zstd
 zstd_OBJECTS = \
@@ -254,18 +254,18 @@ third_party/zstd/build/cmake/programs/zstd: third_party/zstd/build/cmake/program
 third_party/zstd/build/cmake/programs/zstd: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/build.make
 third_party/zstd/build/cmake/programs/zstd: third_party/zstd/build/cmake/lib/libzstd.a
 third_party/zstd/build/cmake/programs/zstd: third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/gpfs/fs1/home/zjian/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking C executable zstd"
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/zstd.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking C executable zstd"
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/zstd.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/build: third_party/zstd/build/cmake/programs/zstd
 .PHONY : third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/build
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/clean:
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs && $(CMAKE_COMMAND) -P CMakeFiles/zstd.dir/cmake_clean.cmake
+	cd /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs && $(CMAKE_COMMAND) -P CMakeFiles/zstd.dir/cmake_clean.cmake
 .PHONY : third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/clean
 
 third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/depend:
-	cd /gpfs/fs1/home/zjian/ASTZ_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /gpfs/fs1/home/zjian/ASTZ_tests/c_codes /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/programs /gpfs/fs1/home/zjian/ASTZ_tests/build /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs /gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/x-zjian1/ASTZ_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/x-zjian1/ASTZ_tests/c_codes /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/programs /home/x-zjian1/ASTZ_tests/build /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs /home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/depend
 

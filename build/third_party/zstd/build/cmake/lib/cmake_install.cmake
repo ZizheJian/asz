@@ -1,8 +1,8 @@
-# Install script for directory: /gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/lib
+# Install script for directory: /home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/lib
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/gpfs/fs1/home/zjian/ASTZ_tests/install")
+  set(CMAKE_INSTALL_PREFIX "/home/x-zjian1/ASTZ_tests/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
+    set(CMAKE_INSTALL_CONFIG_NAME "Release")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -43,21 +43,21 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/pkgconfig" TYPE FILE FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64/pkgconfig" TYPE FILE FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.pc")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE FILE FILES
-    "/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/zdict.h"
-    "/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/zstd.h"
-    "/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/zstd_errors.h"
+    "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/zdict.h"
+    "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/zstd.h"
+    "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib/zstd_errors.h"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64" TYPE SHARED_LIBRARY FILES
-    "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so.1.6.0"
-    "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so.1"
+    "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so.1.6.0"
+    "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so.1"
     )
   foreach(file
       "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/libzstd.so.1.6.0"
@@ -73,7 +73,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64" TYPE SHARED_LIBRARY FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64" TYPE SHARED_LIBRARY FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.so")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/libzstd.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib64/libzstd.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -83,6 +83,6 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64" TYPE STATIC_LIBRARY FILES "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib64" TYPE STATIC_LIBRARY FILES "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.a")
 endif()
 

@@ -51,15 +51,14 @@ add_library(zstd::libzstd_static STATIC IMPORTED)
 
 set_target_properties(zstd::libzstd_static PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "ZSTD_MULTITHREAD"
-  INTERFACE_INCLUDE_DIRECTORIES "/gpfs/fs1/home/zjian/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib"
-  INTERFACE_LINK_LIBRARIES "-pthread"
+  INTERFACE_INCLUDE_DIRECTORIES "/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/../../lib"
 )
 
-# Import target "zstd::libzstd_static" for configuration "Debug"
-set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+# Import target "zstd::libzstd_static" for configuration "Release"
+set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(zstd::libzstd_static PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "ASM;C"
-  IMPORTED_LOCATION_DEBUG "/gpfs/fs1/home/zjian/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "ASM;C"
+  IMPORTED_LOCATION_RELEASE "/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib/libzstd.a"
   )
 
 # This file does not depend on other imported targets which have
