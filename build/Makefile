@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s7_cubic_prediction_dim1
+# Target rules for targets named s5_compress
 
 # Build rule for target.
-s7_cubic_prediction_dim1: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s7_cubic_prediction_dim1
-.PHONY : s7_cubic_prediction_dim1
+s5_compress: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s5_compress
+.PHONY : s5_compress
 
 # fast build rule for target.
-s7_cubic_prediction_dim1/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/build
-.PHONY : s7_cubic_prediction_dim1/fast
+s5_compress/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/build
+.PHONY : s5_compress/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s7_cubic_prediction_dim1.o: s7_cubic_prediction_dim1.cpp.o
-.PHONY : s7_cubic_prediction_dim1.o
+s5_compress.o: s5_compress.cpp.o
+.PHONY : s5_compress.o
 
 # target to build an object file
-s7_cubic_prediction_dim1.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/s7_cubic_prediction_dim1.cpp.o
-.PHONY : s7_cubic_prediction_dim1.cpp.o
+s5_compress.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/s5_compress.cpp.o
+.PHONY : s5_compress.cpp.o
 
-s7_cubic_prediction_dim1.i: s7_cubic_prediction_dim1.cpp.i
-.PHONY : s7_cubic_prediction_dim1.i
+s5_compress.i: s5_compress.cpp.i
+.PHONY : s5_compress.i
 
 # target to preprocess a source file
-s7_cubic_prediction_dim1.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/s7_cubic_prediction_dim1.cpp.i
-.PHONY : s7_cubic_prediction_dim1.cpp.i
+s5_compress.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/s5_compress.cpp.i
+.PHONY : s5_compress.cpp.i
 
-s7_cubic_prediction_dim1.s: s7_cubic_prediction_dim1.cpp.s
-.PHONY : s7_cubic_prediction_dim1.s
+s5_compress.s: s5_compress.cpp.s
+.PHONY : s5_compress.s
 
 # target to generate assembly for a file
-s7_cubic_prediction_dim1.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_cubic_prediction_dim1.dir/build.make CMakeFiles/s7_cubic_prediction_dim1.dir/s7_cubic_prediction_dim1.cpp.s
-.PHONY : s7_cubic_prediction_dim1.cpp.s
+s5_compress.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s5_compress.dir/build.make CMakeFiles/s5_compress.dir/s5_compress.cpp.s
+.PHONY : s5_compress.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s7_cubic_prediction_dim1"
+	@echo "... s5_compress"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s7_cubic_prediction_dim1.o"
-	@echo "... s7_cubic_prediction_dim1.i"
-	@echo "... s7_cubic_prediction_dim1.s"
+	@echo "... s5_compress.o"
+	@echo "... s5_compress.i"
+	@echo "... s5_compress.s"
 .PHONY : help
 
 

@@ -2,106 +2,212 @@
 
 namespace asz
 {
-    void param_c::dot_compress(vector<int64_t> &temp_qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t2,
-        float neg_2_layer_eb,float layer_eb)
+    void param_c::dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb,float neg_2_eb)
     {
-        if (data_compressed[pos])
-            return;
         float pred;
         if (i<=half_stride)
         {
             if (i+half_stride>=right)
-            {
-                assert(data_compressed[pos-half_stride*dist]);
-                pred=compressed_data[pos-half_stride*dist];
-            }
+                pred=compressed_data[pos-dist];
             else if (i+3*half_stride>=right)
-            {
-                assert(data_compressed[pos-half_stride*dist]);
-                assert(data_compressed[pos+half_stride*dist]);
-                pred=(compressed_data[pos-half_stride*dist]+compressed_data[pos+half_stride*dist])/2;
-            }
+                pred=(compressed_data[pos-dist]+compressed_data[pos+dist])/2;
             else
-            {
-                assert(data_compressed[pos-half_stride*dist]);
-                assert(data_compressed[pos+half_stride*dist]);
-                assert(data_compressed[pos+3*half_stride*dist]);
-                pred=(3*compressed_data[pos-half_stride*dist]+6*compressed_data[pos+half_stride*dist]-compressed_data[pos+3*half_stride*dist])/8;
-            }
+                pred=(3*compressed_data[pos-dist]+6*compressed_data[pos+dist]-compressed_data[pos+3*dist])/8;
         }
         else
         {
             if (i+half_stride>=right)
-            {
-                assert(data_compressed[pos-3*half_stride*dist]);
-                assert(data_compressed[pos-half_stride*dist]);
-                pred=(-compressed_data[pos-3*half_stride*dist]+3*compressed_data[pos-half_stride*dist])/2;
-            }
+                pred=(-compressed_data[pos-3*dist]+3*compressed_data[pos-dist])/2;
             else if (i+3*half_stride>=right)
-            {
-                assert(data_compressed[pos-3*half_stride*dist]);
-                assert(data_compressed[pos-half_stride*dist]);
-                assert(data_compressed[pos+half_stride*dist]);
-                pred=(-compressed_data[pos-3*half_stride*dist]+6*compressed_data[pos-half_stride*dist]+3*compressed_data[pos+half_stride*dist])/8;
-            }
+                pred=(-compressed_data[pos-3*dist]+6*compressed_data[pos-dist]+3*compressed_data[pos+dist])/8;
             else 
             {
-                assert(data_compressed[pos-3*half_stride*dist]);
-                assert(data_compressed[pos-half_stride*dist]);
-                assert(data_compressed[pos+half_stride*dist]);
-                assert(data_compressed[pos+3*half_stride*dist]);
-                pred=(0.25-t2)*(compressed_data[pos-3*half_stride*dist]+compressed_data[pos+3*half_stride*dist]);
-                pred+=(0.25+t2)*(compressed_data[pos-half_stride*dist]+compressed_data[pos+half_stride*dist]);
+                pred=(0.25-t)*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist]);
+                pred+=(0.25+t)*(compressed_data[pos-dist]+compressed_data[pos+dist]);
             }
         }
-        int64_t qb=llround((pred-compressed_data[pos])*neg_2_layer_eb);
-        temp_qb_vec.push_back(qb);
-        compressed_data[pos]=pred-qb*2*layer_eb;
-        data_compressed[pos]=true;
+        int64_t qb=llround((pred-compressed_data[pos])*neg_2_eb);
+        qb_vec.push_back(qb);
+        compressed_data[pos]=pred-qb*2*eb;
     }
 
-    void param_c::block_compress_cubic1(vector<int64_t> &temp_qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float best_t2,float layer_eb,
-        float neg_2_layer_eb)
+    void param_c::block_compress_cubic1_231(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
     {
-        for (uint64_t i1=block_loc[1][0];i1<block_loc[1][1];i1+=stride[1])
-            for (uint64_t i2=block_loc[2][0];i2<block_loc[2][1];i2+=stride[2])
-                for (uint64_t i0=block_loc[0][0]+stride[0]/2;i0<block_loc[0][1];i0+=stride[0])
-                    dot_compress(temp_qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,data_shape[1]*data_shape[2],
-                        best_t2,neg_2_layer_eb,layer_eb);
+        vector<uint64_t> target_block_loc(3);
+        target_block_loc[0]=block_loc[0][0]+stride[0]/2;
+        if (block_loc[1][0]==0)
+            target_block_loc[1]=0;
+        else
+            target_block_loc[1]=block_loc[1][0]+stride[1];
+        if (block_loc[2][0]==0)
+            target_block_loc[2]=0;
+        else
+            target_block_loc[2]=block_loc[2][0]+stride[2];
+        for (uint64_t i1=target_block_loc[1];i1<block_loc[1][1];i1+=stride[1])
+        for (uint64_t i2=target_block_loc[2];i2<block_loc[2][1];i2+=stride[2])
+        for (uint64_t i0=target_block_loc[0];i0<block_loc[0][1];i0+=stride[0])
+            dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic2(vector<int64_t> &temp_qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float best_t2,float layer_eb,
-        float neg_2_layer_eb)
+    void param_c::block_compress_cubic1_132(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
     {
-        for (uint64_t i0=block_loc[0][0];i0<block_loc[0][1];i0+=stride[0])
-            for (uint64_t i2=block_loc[2][0];i2<block_loc[2][1];i2+=stride[2])
-                for (uint64_t i1=block_loc[1][0]+stride[1]/2;i1<block_loc[1][1];i1+=stride[1])
-                    dot_compress(temp_qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,data_shape[2],
-                        best_t2,neg_2_layer_eb,layer_eb);
+        vector<uint64_t> target_block_loc(3);
+        target_block_loc[0]=block_loc[0][0]+stride[0]/2;
+        if (block_loc[1][0]==0)
+            target_block_loc[1]=0;
+        else
+            target_block_loc[1]=block_loc[1][0]+stride[1];
+        if (block_loc[2][0]==0)
+            target_block_loc[2]=0;
+        else
+            target_block_loc[2]=block_loc[2][0]+stride[2];
+        for (uint64_t i0=target_block_loc[0];i0<block_loc[0][1];i0+=stride[0])
+        for (uint64_t i2=target_block_loc[2];i2<block_loc[2][1];i2+=stride[2])
+        for (uint64_t i1=target_block_loc[1];i1<block_loc[1][1];i1+=stride[1])
+            dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic3(vector<int64_t> &temp_qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float best_t2,float layer_eb,
-        float neg_2_layer_eb)
+    void param_c::block_compress_cubic1_123(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
     {
-        for (uint64_t i0=block_loc[0][0];i0<block_loc[0][1];i0+=stride[0])
-            for (uint64_t i1=block_loc[1][0];i1<block_loc[1][1];i1+=stride[1])
-                for (uint64_t i2=block_loc[2][0]+stride[2]/2;i2<block_loc[2][1];i2+=stride[2])
-                    dot_compress(temp_qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,1,
-                        best_t2,neg_2_layer_eb,layer_eb);
+        vector<uint64_t> target_block_loc(3);
+        target_block_loc[0]=block_loc[0][0]+stride[0]/2;
+        if (block_loc[1][0]==0)
+            target_block_loc[1]=0;
+        else
+            target_block_loc[1]=block_loc[1][0]+stride[1];
+        if (block_loc[2][0]==0)
+            target_block_loc[2]=0;
+        else
+            target_block_loc[2]=block_loc[2][0]+stride[2];
+        for (uint64_t i0=target_block_loc[0];i0<block_loc[0][1];i0+=stride[0])
+        for (uint64_t i1=target_block_loc[1];i1<block_loc[1][1];i1+=stride[1])
+        for (uint64_t i2=target_block_loc[2];i2<block_loc[2][1];i2+=stride[2])
+            dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
+    }
+
+    void param_c::block_compress_cubic2_231(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    {
+        // printf("In block_compress_cubic2_231\n");
+        // printf("block_loc={%lu,%lu} {%lu,%lu} {%lu,%lu}\n",block_loc[0][0],block_loc[0][1],block_loc[1][0],block_loc[1][1],block_loc[2][0],block_loc[2][1]);
+        // printf("stride={%lu,%lu,%lu}\n",stride[0],stride[1],stride[2]);
+        vector<uint64_t> target_block_left(3);
+        if (block_loc[0][0]==0)
+            target_block_left[0]=0;
+        else
+            target_block_left[0]=block_loc[0][0]+stride[0];
+        target_block_left[1]=block_loc[1][0]+stride[1]/2;
+        if (block_loc[2][0]==0)
+            target_block_left[2]=0;
+        else
+            target_block_left[2]=block_loc[2][0]+stride[2];
+        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
+        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
+        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
+            dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
+        // printf("bbb\n");
+    }
+
+    void param_c::block_compress_cubic2_132(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    {
+        vector<uint64_t> target_block_left(3);
+        if (block_loc[0][0]==0)
+            target_block_left[0]=0;
+        else
+            target_block_left[0]=block_loc[0][0]+stride[0];
+        target_block_left[1]=block_loc[1][0]+stride[1]/2;
+        if (block_loc[2][0]==0)
+            target_block_left[2]=0;
+        else
+            target_block_left[2]=block_loc[2][0]+stride[2];
+        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
+        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
+        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
+            dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
+    }
+
+    void param_c::block_compress_cubic2_123(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    {
+        vector<uint64_t> target_block_left(3);
+        if (block_loc[0][0]==0)
+            target_block_left[0]=0;
+        else
+            target_block_left[0]=block_loc[0][0]+stride[0];
+        target_block_left[1]=block_loc[1][0]+stride[1]/2;
+        if (block_loc[2][0]==0)
+            target_block_left[2]=0;
+        else
+            target_block_left[2]=block_loc[2][0]+stride[2];
+        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
+        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
+        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
+            dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
+    }
+
+    void param_c::block_compress_cubic3_231(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    {
+        vector<uint64_t> target_block_left(3);
+        if (block_loc[0][0]==0)
+            target_block_left[0]=0;
+        else
+            target_block_left[0]=block_loc[0][0]+stride[0];
+        if (block_loc[1][0]==0)
+            target_block_left[1]=0;
+        else
+            target_block_left[1]=block_loc[1][0]+stride[1];
+        target_block_left[2]=block_loc[2][0]+stride[2]/2;
+        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
+        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
+        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
+            dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
+    }
+
+    void param_c::block_compress_cubic3_132(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    {
+        vector<uint64_t> target_block_left(3);
+        if (block_loc[0][0]==0)
+            target_block_left[0]=0;
+        else
+            target_block_left[0]=block_loc[0][0]+stride[0];
+        if (block_loc[1][0]==0)
+            target_block_left[1]=0;
+        else
+            target_block_left[1]=block_loc[1][0]+stride[1];
+        target_block_left[2]=block_loc[2][0]+stride[2]/2;
+        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
+        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
+        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
+            dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
+    }
+
+    void param_c::block_compress_cubic3_123(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    {
+        vector<uint64_t> target_block_left(3);
+        if (block_loc[0][0]==0)
+            target_block_left[0]=0;
+        else
+            target_block_left[0]=block_loc[0][0]+stride[0];
+        if (block_loc[1][0]==0)
+            target_block_left[1]=0;
+        else
+            target_block_left[1]=block_loc[1][0]+stride[1];
+        target_block_left[2]=block_loc[2][0]+stride[2]/2;
+        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
+        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
+        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
+            dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
     }
 
     float param_c::compress()
     {
         compressed_data=data;
-        data_compressed.assign(data.size(),0);
+        // data_compressed.assign(data.size(),0);
         qb_vec.clear();
-        t2_int_vec.clear();
+        qb_vec.reserve(data.size());
+        t_int_vec.clear();
         //////// 存储pivot points ////////
-        vector<int64_t> pivot_qb;
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
         pivot_num*=((data_shape[1]+pivot_stride[1]-1)/pivot_stride[1]);
         pivot_num*=((data_shape[2]+pivot_stride[2]-1)/pivot_stride[2]);
-        pivot_qb.reserve(pivot_num);
         float pivot_eb=abs_eb*pivot_eb_ratio;
         float neg_2_pivot_eb=1/(2*pivot_eb);
         for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
@@ -110,11 +216,9 @@ namespace asz
                 {
                     uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
                     int64_t qb=llround(data[pos]*neg_2_pivot_eb);
-                    pivot_qb.push_back(qb);
+                    qb_vec.push_back(qb);
                     compressed_data[pos]=qb*pivot_eb*2;
-                    data_compressed[pos]=true;
                 }
-        qb_vec.push_back(pivot_qb);
         //////// 依次处理每个大block ////////
         for (uint64_t block_i0=0;block_i0<block_num[0];block_i0++)
             for (uint64_t block_i1=0;block_i1<block_num[1];block_i1++)
@@ -127,109 +231,109 @@ namespace asz
                     block_loc[2]={block_i2*block_shape[2],min((block_i2+1)*block_shape[2]+1,data_shape[2])};
                     auto stride=pivot_stride;
                     //////// 逐层压缩 ////////
-                    uint32_t layer_num=predictor_vec[block_id].size();
-                    qb_vec.push_back(vector<int64_t>());
+                    uint32_t layer_num=predictor_vec.size();
                     for (uint32_t layer_id=0;layer_id<layer_num;layer_id++)
                     {
-                        string predictor=predictor_vec[block_id][layer_id];
+                        string predictor=predictor_vec[layer_id];
                         float layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
                         float neg_2_layer_eb=1/(2*layer_eb);
                         //////// 估计最好t2 ////////
-                        float stat_eb=layer_eb*0.01;
+                        float stat_eb=layer_eb*stat_eb_ratio;
                         float neg_2_stat_eb=1/(2*stat_eb);
                         unordered_map<tuple<int64_t,int64_t>,uint64_t> AB_map;
-                        if (predictor=="cubic1")
+                        if ((predictor.compare(0,6,"cubic1")==0) && (block_loc[0][1]>block_loc[0][0]+3*stride[0]))
                         {
-                            if (block_loc[0][1]>block_loc[0][0]+3*stride[0])
-                            {
-                                vector<vector<uint64_t>> temp_block_loc(3);
-                                temp_block_loc[0]={block_loc[0][0]+3*stride[0]/2,block_loc[0][1]-3*stride[0]/2};
-                                temp_block_loc[1]={block_loc[1][0],block_loc[1][1]};
-                                temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
-                                get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[0]*data_shape[1]*data_shape[2]/2,neg_2_stat_eb);
-                            }
+                            vector<vector<uint64_t>> temp_block_loc(3);
+                            temp_block_loc[0]={block_loc[0][0]+3*stride[0]/2,block_loc[0][1]-3*stride[0]/2};
+                            temp_block_loc[1]={block_loc[1][0],block_loc[1][1]};
+                            temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
+                            get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[0]*data_shape[1]*data_shape[2]/2,neg_2_stat_eb);
                         }
-                        else if (predictor=="cubic2")
+                        else if ((predictor=="cubic2") && (block_loc[1][1]>block_loc[1][0]+3*stride[1]))
                         {
-                            if (block_loc[1][1]>block_loc[1][0]+3*stride[1])
-                            {
-                                vector<vector<uint64_t>> temp_block_loc(3);
-                                temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
-                                temp_block_loc[1]={block_loc[1][0]+3*stride[1]/2,block_loc[1][1]-3*stride[1]/2};
-                                temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
-                                get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[1]*data_shape[2]/2,neg_2_stat_eb);
-                            }
+                            vector<vector<uint64_t>> temp_block_loc(3);
+                            temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
+                            temp_block_loc[1]={block_loc[1][0]+3*stride[1]/2,block_loc[1][1]-3*stride[1]/2};
+                            temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
+                            get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[1]*data_shape[2]/2,neg_2_stat_eb);
                         }
-                        else if (predictor=="cubic3")
+                        else if ((predictor=="cubic3") && (block_loc[2][1]>block_loc[2][0]+3*stride[2]))
                         {
-                            if (block_loc[2][1]>block_loc[2][0]+3*stride[2])
-                            {
-                                vector<vector<uint64_t>> temp_block_loc(3);
-                                temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
-                                temp_block_loc[1]={block_loc[1][0],block_loc[1][1]};
-                                temp_block_loc[2]={block_loc[2][0]+3*stride[2]/2,block_loc[2][1]-3*stride[2]/2};
-                                get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[2]/2,neg_2_stat_eb);
-                            }
+                            vector<vector<uint64_t>> temp_block_loc(3);
+                            temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
+                            temp_block_loc[1]={block_loc[1][0],block_loc[1][1]};
+                            temp_block_loc[2]={block_loc[2][0]+3*stride[2]/2,block_loc[2][1]-3*stride[2]/2};
+                            get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[2]/2,neg_2_stat_eb);
                         }
-                        uint64_t AB_num=0;
+                        uint64_t data_num=0;
                         for (const auto &[AB_key,count]:AB_map)
-                            AB_num+=count;
-                        float best_t2=0,best_br=0,best_psnr=0;
+                            data_num+=count;
+                        float best_t,best_h1,best_psnr;
                         if (AB_map.empty())
                         {
-                            best_t2=0.3125;
-                            best_br=-1;
-                            best_psnr=-1;
+                            best_t=0.3125;
+                            best_h1=0;
+                            best_psnr=0;
                         }
                         else
                         {
-                            float br=0,psnr=0;
-                            for (auto t2:possible_t2_vec)
+                            float h1=0,psnr=0;
+                            bool any_t_tried=false;
+                            for (auto t:possible_t_vec)
                             {
-                                estimate_br_psnr(br,psnr,AB_map,t2,layer_eb,stat_eb,AB_num);
-                                if ((t2==possible_t2_vec[0]) || (-default_slope*(br-best_br)+(psnr-best_psnr)>0))
+                                estimate_h1_psnr(h1,psnr,AB_map,t,layer_eb,stat_eb,data_num);
+                                if ((!any_t_tried) || (-default_h1_slope*(h1-best_h1)+(psnr-best_psnr)>0))
                                 {
-                                    best_t2=t2;
-                                    best_br=br;
+                                    best_t=t;
+                                    best_h1=h1;
                                     best_psnr=psnr;
                                 }
                             }
                         }
-                        t2_int_vec.push_back(llround(best_t2*t2_precision));
+                        t_int_vec.push_back(llround(best_t*t_precision));
                         //////// 预测 ////////
-                        if (predictor=="cubic1")
+                        if (predictor.compare(0,6,"cubic1")==0)
                         {
-                            block_compress_cubic1(qb_vec.back(),block_loc,stride,best_t2,layer_eb,neg_2_layer_eb);
+                            if (predictor=="cubic1_231")
+                                block_compress_cubic1_231(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                            else if (predictor=="cubic1_132")
+                                block_compress_cubic1_132(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                            else if (predictor=="cubic1_123")
+                                block_compress_cubic1_123(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             stride[0]/=2;
                         }
-                        else if (predictor=="cubic2")
+                        else if (predictor.compare(0,6,"cubic2")==0)
                         {
-                            block_compress_cubic2(qb_vec.back(),block_loc,stride,best_t2,layer_eb,neg_2_layer_eb);
+                            if (predictor=="cubic2_231")
+                                block_compress_cubic2_231(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                            else if (predictor=="cubic2_132")
+                                block_compress_cubic2_132(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                            else if (predictor=="cubic2_123")
+                                block_compress_cubic2_123(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             stride[1]/=2;
                         }
-                        else if (predictor=="cubic3")
+                        else if (predictor.compare(0,6,"cubic3")==0)
                         {
-                            block_compress_cubic3(qb_vec.back(),block_loc,stride,best_t2,layer_eb,neg_2_layer_eb);
+                            if (predictor=="cubic3_231")
+                                block_compress_cubic3_231(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                            else if (predictor=="cubic3_132")
+                                block_compress_cubic3_132(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                            else if (predictor=="cubic3_123")
+                                block_compress_cubic3_123(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             stride[2]/=2;
                         }
                     }
                 }
-        assert(all_of(data_compressed.begin(),data_compressed.end(),[](bool v){return v;}));
-        uint64_t qb_vec_len=0;
-        for (auto &block_qb_vec:qb_vec)
-            qb_vec_len+=block_qb_vec.size();
-        assert(qb_vec_len==data.size());
+        printf("qb_vec.size()=%lu\n",qb_vec.size());
+        printf("t_int_vec.size()=%lu\n",t_int_vec.size());
         //////// 编码 ////////
-        qb_vec.push_back(t2_int_vec);
+        qb_vec.insert(qb_vec.end(),t_int_vec.begin(),t_int_vec.end());
         vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
         unsigned char *huffman_bs=huffman_bs_vec.data();
-        vector<int64_t> concatenated_qb_vec;
-        for (auto &block_qb_vec:qb_vec)
-            concatenated_qb_vec.insert(concatenated_qb_vec.end(),block_qb_vec.begin(),block_qb_vec.end());
         huffman_encoder_class<int64_t> huffman_encoder;
-        huffman_encoder.preprocess_encode(concatenated_qb_vec.data(),concatenated_qb_vec.size());
+        huffman_encoder.preprocess_encode(qb_vec.data(),qb_vec.size());
         huffman_encoder.save(huffman_bs);
-        huffman_encoder.encode(concatenated_qb_vec.data(),concatenated_qb_vec.size(),huffman_bs);
+        huffman_encoder.encode(qb_vec.data(),qb_vec.size(),huffman_bs);
 
         uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
         uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
@@ -244,7 +348,7 @@ namespace asz
         mse/=data.size();
         float psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
         printf("CR: %f, BR: %f, PSNR: %f\n",cr,br,psnr);
-        printf("dist=%f\n",-default_slope*br+psnr);
-        return -default_slope*br+psnr;
+        printf("dist=%f\n",-default_h1_slope*br+psnr);
+        return -default_h1_slope*br+psnr;
     }
 }

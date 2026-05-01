@@ -104,7 +104,7 @@ void compare_win_table(vector<vector<int>> &win_table_truth,vector<vector<int>> 
 
 int main()
 {
-    string csv_path="/home/zjian/ASTZ_tests/csv/results_cubic_prediction_dim1_321_ISABEL_Pf01.csv";
+    string csv_path="/home/zjian/ASTZ_tests/csv/results_cubic_prediction_dim3_321_ISABEL_Pf01.csv";
     vector<double> rel_eb_vec;
     read_all_values_in_column(csv_path,"rel_eb",rel_eb_vec);
     vector<double> t2_vec;
@@ -113,7 +113,7 @@ int main()
     for (auto &rel_eb:rel_eb_vec)
         for (auto &t2:t2_vec)
         {
-            br[{rel_eb,t2}]=read_value(csv_path,rel_eb,t2,"BR");
+            br[{rel_eb,t2}]=read_value(csv_path,rel_eb,t2,"H2");
             psnr[{rel_eb,t2}]=read_value(csv_path,rel_eb,t2,"PSNR");
         }
     vector<double> slope_vec(rel_eb_vec.size());

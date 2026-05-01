@@ -1,11 +1,11 @@
-/gpfs/fs1/home/zjian/ASTZ_tests/install/bin/s7_cubic_prediction_dim1
+/gpfs/fs1/home/zjian/ASTZ_tests/install/bin/s5_compress
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/get_AB_map.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/generate_config.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/asz_param.hpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/get_default_slope.tpp
+/gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/estimate_h_psnr.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/huffman.hpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/compress.tpp
-/gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/estimate_br_psnr.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/asz_core/compare_curves.tpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/include/csv_tools/csv.hpp
 /gpfs/fs1/home/zjian/ASTZ_tests/install/lib64/cmake/zstd/zstdTargets_shared.cmake
