@@ -36,36 +36,79 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
     uint64_t compressed_data_num=0,adjacent_pos_dist=0;
     if (predictor.compare(0,6,"cubic0")==0)
     {
-        compressed_data_num=(data_shape[0]+2*stride-7)/(2*stride);
-        compressed_data_num*=(data_shape[1]+stride-1)/stride;
-        compressed_data_num*=(data_shape[2]+stride-1)/stride;
         adjacent_pos_dist=data_shape[1]*data_shape[2];
+        if (predictor=="cubic0_120")
+        {
+            compressed_data_num=(data_shape[0]-5)/2;
+            compressed_data_num*=(data_shape[1]+stride-1)/stride;
+            compressed_data_num*=(data_shape[2]+stride-1)/stride;
+        }
+        else if (predictor=="cubic0_021")
+        {
+            compressed_data_num=(data_shape[0]+2*stride-7)/(2*stride);
+            compressed_data_num*=data_shape[1];
+            compressed_data_num*=(data_shape[2]+stride-1)/stride;
+        }
+        else if (predictor=="cubic0_012")
+        {
+            compressed_data_num=(data_shape[0]+2*stride-7)/(2*stride);
+            compressed_data_num*=(data_shape[1]+stride-1)/stride;
+            compressed_data_num*=data_shape[2];
+        }
     }
     else if (predictor.compare(0,6,"cubic1")==0)
     {
-        compressed_data_num=(data_shape[0]+stride-1)/stride;
-        compressed_data_num*=(data_shape[1]+2*stride-7)/(2*stride);
-        compressed_data_num*=(data_shape[2]+stride-1)/stride;
         adjacent_pos_dist=data_shape[2];
+        if (predictor=="cubic1_120")
+        {
+            compressed_data_num=data_shape[0];
+            compressed_data_num*=(data_shape[1]+2*stride-7)/(2*stride);
+            compressed_data_num*=(data_shape[2]+stride-1)/stride;
+        }
+        else if (predictor=="cubic1_021")
+        {
+            compressed_data_num=(data_shape[0]+stride-1)/stride;
+            compressed_data_num*=(data_shape[1]-5)/2;
+            compressed_data_num*=(data_shape[2]+stride-1)/stride;
+        }
+        else if (predictor=="cubic1_012")
+        {
+            compressed_data_num=(data_shape[0]+stride-1)/stride;
+            compressed_data_num*=(data_shape[1]+2*stride-7)/(2*stride);
+            compressed_data_num*=data_shape[2];
+        }        
     }
     else if (predictor.compare(0,6,"cubic2")==0)
     {
-        compressed_data_num=(data_shape[0]+stride-1)/stride;
-        compressed_data_num*=(data_shape[1]+stride-1)/stride;
-        compressed_data_num*=(data_shape[2]+2*stride-7)/(2*stride);
         adjacent_pos_dist=1;
+        if (predictor=="cubic2_120")
+        {
+            compressed_data_num=data_shape[0];
+            compressed_data_num*=(data_shape[1]+stride-1)/stride;
+            compressed_data_num*=(data_shape[2]+2*stride-7)/(2*stride);
+        }
+        else if (predictor=="cubic2_021")
+        {
+            compressed_data_num=(data_shape[0]+stride-1)/stride;
+            compressed_data_num*=data_shape[1];
+            compressed_data_num*=(data_shape[2]+2*stride-7)/(2*stride);
+        }
+        else if (predictor=="cubic2_012")
+        {
+            compressed_data_num=(data_shape[0]+stride-1)/stride;
+            compressed_data_num*=(data_shape[1]+stride-1)/stride;
+            compressed_data_num*=(data_shape[2]-5)/2;
+        }
     }
     string br_name=stride==1?"BR":"BR_s"+to_string(stride);
     string h1_name=stride==1?"H1":"H1_s"+to_string(stride);
     string h2_name=stride==1?"H2":"H2_s"+to_string(stride);
-    string h3_name=stride==1?"H3":"H3_s"+to_string(stride);
     string psnr_name=stride==1?"PSNR":"PSNR_s"+to_string(stride);
     add_column(temp_csv_path,"rel_eb");
     add_column(temp_csv_path,"t2");
     add_column(temp_csv_path,br_name);
     add_column(temp_csv_path,h1_name);
     add_column(temp_csv_path,h2_name);
-    add_column(temp_csv_path,h3_name);
     add_column(temp_csv_path,psnr_name);
     vector<double> t2_vec;
     for (int i=14;i<=22;i++)
@@ -82,51 +125,52 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
             if (predictor=="cubic0_120")
                 for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                 for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
-                for (uint64_t i0=3;i0+3<data_shape[0];i0+=2*stride)
+                for (uint64_t i0=3;i0+3<data_shape[0];i0+=2)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic0_021")
                 for (uint64_t i0=3;i0+3<data_shape[0];i0+=2*stride)
                 for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
-                for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
+                for (uint64_t i1=0;i1<data_shape[1];i1+=1)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic0_012")
                 for (uint64_t i0=3;i0+3<data_shape[0];i0+=2*stride)
                 for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
-                for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
+                for (uint64_t i2=0;i2<data_shape[2];i2+=1)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic1_120")
                 for (uint64_t i1=3;i1+3<data_shape[1];i1+=2*stride)
                 for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
-                for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
+                for (uint64_t i0=0;i0<data_shape[0];i0+=1)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic1_021")
                 for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                 for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
-                for (uint64_t i1=3;i1+3<data_shape[1];i1+=2*stride)
+                for (uint64_t i1=3;i1+3<data_shape[1];i1+=2)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic1_012")
                 for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                 for (uint64_t i1=3;i1+3<data_shape[1];i1+=2*stride)
-                for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
+                for (uint64_t i2=0;i2<data_shape[2];i2+=1)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic2_120")
                 for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                 for (uint64_t i2=3;i2+3<data_shape[2];i2+=2*stride)
-                for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
+                for (uint64_t i0=0;i0<data_shape[0];i0+=1)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic2_021")
                 for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                 for (uint64_t i2=3;i2+3<data_shape[2];i2+=2*stride)
-                for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
+                for (uint64_t i1=0;i1<data_shape[1];i1+=1)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
             else if (predictor=="cubic2_012")
                 for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                 for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
-                for (uint64_t i2=3;i2+3<data_shape[2];i2+=2*stride)
+                for (uint64_t i2=3;i2+3<data_shape[2];i2+=2)
                     compress_dot(qb_vec,mse,data,data_shape,adjacent_pos_dist,abs_eb,neg_2_eb,t2,i0,i1,i2);
+            if (qb_vec.size()!=compressed_data_num)
+                throw runtime_error(predictor+" qb_vec.size()!=compressed_data_num");
             double H1=get_H1(qb_vec);
             double H2=get_H2(qb_vec);
-            double H3=get_H3(qb_vec);
             vector<unsigned char> huffman_bs_vec(compressed_data_num*sizeof(float)*2);
             unsigned char *huffman_bs=huffman_bs_vec.data();
             huffman_encoder_class<int64_t> huffman_encoder;
@@ -146,13 +190,11 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
             write_value(temp_csv_path,rel_eb,t2,br_name,br);
             write_value(temp_csv_path,rel_eb,t2,h1_name,H1);
             write_value(temp_csv_path,rel_eb,t2,h2_name,H2);
-            write_value(temp_csv_path,rel_eb,t2,h3_name,H3);
             write_value(temp_csv_path,rel_eb,t2,psnr_name,psnr);
             printf("rel_eb=%f, t2=%f\n",rel_eb,t2);
             printf("BR=%f, CR=%f\n",br,cr);
             printf("H1=%f, H1_cr=%f\n",H1,(8*sizeof(float))/(H1));
             printf("H2=%f, H2_cr=%f\n",H2,(8*sizeof(float))/(H2));
-            printf("H3=%f, H3_cr=%f\n",H3,(8*sizeof(float))/(H3));
             printf("PSNR=%f\n",psnr);
             printf("\n");
         }
@@ -196,7 +238,7 @@ int main()
     // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8};
     // string csv_path="/home/x-zjian1/ASTZ_tests/csv/results_cubic_prediction_LETKF_center.csv";
 
-    uint64_t stride=8;
+    uint64_t stride=32;
 
     uint64_t data_size=data_shape[0]*data_shape[1]*data_shape[2];
     vector<float> data;
