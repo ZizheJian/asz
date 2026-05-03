@@ -13,6 +13,7 @@ namespace asz
         printf("};\n");
         printf("pivot_eb_ratio=%.2f;\n",pivot_eb_ratio);
         printf("eb_ratio=%.2f;\n",eb_ratio);
+        printf("slope_ratio=%.2f;\n",slope_ratio);
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
         printf("pivot_stride={%lu,%lu,%lu};\n",pivot_stride[0],pivot_stride[1],pivot_stride[2]);
         printf("block_shape={%lu,%lu,%lu};\n",block_shape[0],block_shape[1],block_shape[2]);
@@ -43,6 +44,13 @@ namespace asz
         if (!config_generated)
         {
             //////// 这里写初始配置 ////////
+            //////// CSSI_L0470_center 1e-3 ////////
+            predictor_vec={"cubic0_012","cubic1_120","cubic2_021","cubic2_012","cubic2_120","cubic1_012","cubic1_120","cubic2_120","cubic0_120","cubic2_120","cubic2_120","cubic2_120","cubic1_120","cubic0_012","cubic2_012","cubic1_012"};
+            pivot_eb_ratio=0.25;
+            eb_ratio=0.96;
+            slope_ratio=0.97;
+            block_pivot_ratio=3;
+
             //////// Miranda 1e-6 ////////
             // predictor_vec={"cubic2_120","cubic1_120","cubic1_120","cubic1_120","cubic2_120","cubic2_012","cubic2_120","cubic1_012","cubic2_012","cubic1_021","cubic1_021","cubic2_120","cubic2_120","cubic1_012","cubic0_120","cubic2_120","cubic1_012"};
             // pivot_eb_ratio=0.20;
@@ -50,10 +58,18 @@ namespace asz
             // block_pivot_ratio=2;
 
             //////// Miranda 1e-5 ////////
-            predictor_vec={"cubic2_012","cubic2_012","cubic1_120","cubic1_120","cubic2_012","cubic2_012","cubic2_120","cubic1_021","cubic1_012","cubic2_012","cubic1_021","cubic1_021","cubic2_120","cubic2_012","cubic1_120","cubic0_120","cubic2_120","cubic1_012"};
-            pivot_eb_ratio=0.22;
-            eb_ratio=0.96;
-            block_pivot_ratio=2;
+            // predictor_vec={"cubic1_021","cubic1_021","cubic2_012","cubic1_021","cubic1_012","cubic2_012","cubic2_012","cubic2_012","cubic1_012","cubic2_021","cubic2_120","cubic1_021","cubic1_021","cubic2_021","cubic2_120","cubic1_120","cubic0_120","cubic2_120","cubic1_012"};
+            // pivot_eb_ratio=0.22;
+            // eb_ratio=0.97;
+            // slope_ratio=0.99;
+            // block_pivot_ratio=2;
+
+            //////// Miranda 1e-4 ////////
+            // predictor_vec={"cubic1_120","cubic2_021","cubic2_120","cubic1_021","cubic1_012","cubic2_021","cubic2_021","cubic2_012","cubic1_021","cubic2_012","cubic2_120","cubic1_021","cubic1_021","cubic2_120","cubic2_120","cubic1_120","cubic0_012","cubic2_120","cubic1_012"};
+            // pivot_eb_ratio=0.23;
+            // eb_ratio=0.96;
+            // slope_ratio=0.98;
+            // block_pivot_ratio=2;
 
             generate_pivot_stride_and_block_shape_and_block_num();
             config_generated=true;
@@ -67,7 +83,8 @@ namespace asz
             // change_pos=predictor_vec.size()+1: 更改eb_ratio
             // change_pos=predictor_vec.size()+2: 更改block_pivot_ratio
             // change_pos=predictor_vec.size()+3: 更改predictor_vec的长度
-            int config_num=predictor_vec.size()+4;
+            // change_pos=predictor_vec.size()+4: 更改slope_ratio
+            int config_num=predictor_vec.size()+5;
             while (true)
             {
                 int change_pos=rand()%config_num;
@@ -131,6 +148,19 @@ namespace asz
                     else if (c==1)
                         predictor_vec.insert(predictor_vec.begin(),candidate_predictors[rand()%candidate_predictors.size()]);
                     generate_pivot_stride_and_block_shape_and_block_num();
+                    break;
+                }
+                if (change_pos==predictor_vec.size()+4)
+                {
+                    int c=rand()%2;//0:减小，1:增大
+                    if (slope_ratio==1)
+                        slope_ratio-=0.01;
+                    else if (slope_ratio==0)
+                        slope_ratio+=0.01;
+                    else if (c==0)
+                        slope_ratio-=0.01;
+                    else if (c==1)
+                        slope_ratio+=0.01;
                     break;
                 }
             }

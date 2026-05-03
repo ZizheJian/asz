@@ -60,7 +60,7 @@ namespace asz
             float abs_eb;
             vector<float> data;
             vector<float> compressed_data;
-            vector<int64_t> qb_vec;
+            vector<vector<int64_t>> qb_vec_vec;
             vector<int64_t> t_int_vec;
 
             vector<string> candidate_predictors={"cubic0_120","cubic0_021","cubic0_012","cubic1_120","cubic1_021","cubic1_012","cubic2_120","cubic2_021","cubic2_012"};
@@ -74,7 +74,8 @@ namespace asz
             bool config_generated=false;
             //////// 可调整参数 ////////
             float pivot_eb_ratio;//pivoting point的误差比例
-            float eb_ratio;//所有block共用的相邻layer之间的误差比例
+            float eb_ratio;//相邻layer之间的误差比例
+            float slope_ratio;//相邻layer之间的斜率比例
             vector<string> predictor_vec;//预测器列表
             uint64_t block_pivot_ratio;//block边长和pivot间距的比值
             
@@ -102,7 +103,7 @@ namespace asz
                 abs_eb=other.abs_eb;
                 data=other.data;
                 compressed_data=other.compressed_data;
-                qb_vec=other.qb_vec;
+                qb_vec_vec=other.qb_vec_vec;
                 t_int_vec=other.t_int_vec;
                 candidate_predictors=other.candidate_predictors;
                 t_precision=other.t_precision;

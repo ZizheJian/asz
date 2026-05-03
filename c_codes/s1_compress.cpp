@@ -11,12 +11,12 @@ int main()
     auto param=asz::param_c();
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
     // param.data_shape={100,500,500};
-    param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Miranda/density.f32.dat";
-    param.data_shape={256,384,384};
+    param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0470_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part0_001.h5.f32_center.bin";
+    param.data_shape={150,454,390};
+    // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Miranda/density.f32.dat";
+    // param.data_shape={256,384,384};
     // param.original_data_path="/lcrc/project/SDR/zjian-in-SDR/APSU_TestData_004.h5.f32_center.bin";
     // param.data_shape={205,312,363};
-    // param.original_data_path="/lcrc/project/SDR/zjian-in-SDR/Avg_L0470_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part0_001.h5.f32_center.bin";
-    // param.data_shape={150,454,390};
     // param.original_data_path="/lcrc/project/SDR/zjian-in-SDR/baryon_density.f32_center.bin";
     // param.data_shape={256,256,256};
     // param.original_data_path="/lcrc/project/SDR/zjian-in-SDR/CLDICE_26x1800x3600.dat_center.bin";
@@ -25,7 +25,7 @@ int main()
     // param.data_shape={49,600,600};
     // param.original_data_path="/lcrc/project/ECP-EZ/aramco/aramco-snapshot-1800.f32";
     // param.data_shape={449,449,235};
-    param.rel_eb=1e-5;
+    param.rel_eb=1e-3;
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);

@@ -196,13 +196,17 @@ namespace asz
     float param_c::compress()
     {
         compressed_data=data;
-        qb_vec.clear();
-        qb_vec.reserve(data.size());
+        for (auto &qb_vec:qb_vec_vec)
+            qb_vec.clear();
+        qb_vec_vec.resize(predictor_vec.size()+1);
+        for (uint64_t i=0;i<qb_vec_vec.size();i++)
+            qb_vec_vec[i].reserve((uint64_t)(data.size()*pow(2,i-qb_vec_vec.size()+1)));
         t_int_vec.clear();
         //////// 存储pivot points ////////
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
         pivot_num*=((data_shape[1]+pivot_stride[1]-1)/pivot_stride[1]);
         pivot_num*=((data_shape[2]+pivot_stride[2]-1)/pivot_stride[2]);
+        qb_vec_vec[0].reserve(pivot_num);
         float pivot_eb=abs_eb*pivot_eb_ratio;
         float neg_2_pivot_eb=1/(2*pivot_eb);
         for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
@@ -211,7 +215,7 @@ namespace asz
                 {
                     uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
                     int64_t qb=llround(data[pos]*neg_2_pivot_eb);
-                    qb_vec.push_back(qb);
+                    qb_vec_vec[0].push_back(qb);
                     compressed_data[pos]=qb*pivot_eb*2;
                 }
         //////// 依次处理每个大block ////////
@@ -274,7 +278,7 @@ namespace asz
                             for (auto t:candidate_t)
                             {
                                 get_h1_psnr(h1,psnr,AB_map,t,layer_eb,stat_eb);
-                                if ((!any_t_tried) || (-default_slope*(h1-best_h1)+(psnr-best_psnr)>0))
+                                if ((!any_t_tried) || (-default_slope*pow(slope_ratio,layer_num-layer_id+1)*(h1-best_h1)+(psnr-best_psnr)>0))
                                 {
                                     best_t=t;
                                     best_h1=h1;
@@ -287,46 +291,54 @@ namespace asz
                         if (predictor.compare(0,6,"cubic0")==0)
                         {
                             if (predictor=="cubic0_120")
-                                block_compress_cubic0_120(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic0_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             else if (predictor=="cubic0_021")
-                                block_compress_cubic0_021(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic0_021(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             else if (predictor=="cubic0_012")
-                                block_compress_cubic0_012(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic0_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             stride[0]/=2;
                         }
                         else if (predictor.compare(0,6,"cubic1")==0)
                         {
                             if (predictor=="cubic1_120")
-                                block_compress_cubic1_120(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic1_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             else if (predictor=="cubic1_021")
-                                block_compress_cubic1_021(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic1_021(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             else if (predictor=="cubic1_012")
-                                block_compress_cubic1_012(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic1_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             stride[1]/=2;
                         }
                         else if (predictor.compare(0,6,"cubic2")==0)
                         {
                             if (predictor=="cubic2_120")
-                                block_compress_cubic2_120(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic2_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             else if (predictor=="cubic2_021")
-                                block_compress_cubic2_021(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic2_021(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             else if (predictor=="cubic2_012")
-                                block_compress_cubic2_012(qb_vec,block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
+                                block_compress_cubic2_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                             stride[2]/=2;
                         }
                     }
                 }
-        printf("qb_vec.size()=%lu\n",qb_vec.size());
+        uint64_t total_qb_num=0;
+        for (auto &qb_vec:qb_vec_vec)
+            total_qb_num+=qb_vec.size();
+        printf("total_qb_num=%lu\n",total_qb_num);
         printf("t_int_vec.size()=%lu\n",t_int_vec.size());
-        if (qb_vec.size()!=data.size())
-            throw runtime_error("qb_vec.size()!=data.size()");
+        if (total_qb_num!=data.size())
+            throw runtime_error("total_qb_num!=data.size()");
         //////// 编码 ////////
         vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
         unsigned char *huffman_bs=huffman_bs_vec.data();
-        huffman_encoder_class<int64_t> huffman_encoder;
-        huffman_encoder.preprocess_encode(qb_vec.data(),qb_vec.size());
-        huffman_encoder.save(huffman_bs);
-        huffman_encoder.encode(qb_vec.data(),qb_vec.size(),huffman_bs);
+        for (uint64_t i=0;i<qb_vec_vec.size();i++)
+        {   
+            if (qb_vec_vec[i].empty())
+                continue;
+            huffman_encoder_class<int64_t> huffman_encoder;
+            huffman_encoder.preprocess_encode(qb_vec_vec[i].data(),qb_vec_vec[i].size());
+            huffman_encoder.save(huffman_bs);
+            huffman_encoder.encode(qb_vec_vec[i].data(),qb_vec_vec[i].size(),huffman_bs);
+        }
         huffman_encoder_class<int64_t> huffman_t_int_encoder;
         huffman_t_int_encoder.preprocess_encode(t_int_vec.data(),t_int_vec.size());
         huffman_t_int_encoder.save(huffman_bs);
