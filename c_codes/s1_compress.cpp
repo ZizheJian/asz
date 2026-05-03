@@ -25,7 +25,7 @@ int main()
     // param.data_shape={49,600,600};
     // param.original_data_path="/lcrc/project/ECP-EZ/aramco/aramco-snapshot-1800.f32";
     // param.data_shape={449,449,235};
-    param.rel_eb=1e-6;
+    param.rel_eb=1e-5;
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);
@@ -38,7 +38,6 @@ int main()
     //////// 获得基准斜率 ////////
     param.get_default_slope();
     printf("default_slope=%f\n",param.default_slope);
-    exit(0);
 
     //////// 直接生成配置 ////////
     // param.generate_config();

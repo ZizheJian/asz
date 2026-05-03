@@ -43,9 +43,16 @@ namespace asz
         if (!config_generated)
         {
             //////// 这里写初始配置 ////////
-            predictor_vec={"cubic1_021","cubic1_021","cubic2_021","cubic2_021","cubic2_012","cubic2_021","cubic2_012","cubic2_012","cubic1_021","cubic2_021","cubic2_012","cubic1_012","cubic0_012","cubic2_120","cubic1_012"};
-            pivot_eb_ratio=0.20;
-            eb_ratio=0.99;
+            //////// Miranda 1e-6 ////////
+            // predictor_vec={"cubic2_120","cubic1_120","cubic1_120","cubic1_120","cubic2_120","cubic2_012","cubic2_120","cubic1_012","cubic2_012","cubic1_021","cubic1_021","cubic2_120","cubic2_120","cubic1_012","cubic0_120","cubic2_120","cubic1_012"};
+            // pivot_eb_ratio=0.20;
+            // eb_ratio=0.99;
+            // block_pivot_ratio=2;
+
+            //////// Miranda 1e-5 ////////
+            predictor_vec={"cubic2_012","cubic2_012","cubic1_120","cubic1_120","cubic2_012","cubic2_012","cubic2_120","cubic1_021","cubic1_012","cubic2_012","cubic1_021","cubic1_021","cubic2_120","cubic2_012","cubic1_120","cubic0_120","cubic2_120","cubic1_012"};
+            pivot_eb_ratio=0.22;
+            eb_ratio=0.96;
             block_pivot_ratio=2;
 
             generate_pivot_stride_and_block_shape_and_block_num();

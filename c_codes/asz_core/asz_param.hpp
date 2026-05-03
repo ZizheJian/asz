@@ -111,11 +111,12 @@ namespace asz
                 candidate_t=other.candidate_t;
                 default_slope=other.default_slope;
                 config_generated=other.config_generated;
+                pivot_eb_ratio=other.pivot_eb_ratio;
+                eb_ratio=other.eb_ratio;
+                predictor_vec=other.predictor_vec;
+                block_pivot_ratio=other.block_pivot_ratio;
                 block_shape=other.block_shape;
                 pivot_stride=other.pivot_stride;
-                pivot_eb_ratio=other.pivot_eb_ratio;
-                predictor_vec=other.predictor_vec;
-                eb_ratio=other.eb_ratio;
                 block_num=other.block_num;
             }
 

@@ -40,40 +40,6 @@ namespace asz
                 get_h1_psnr(h1[predictor][{temp_abs_eb,t}],psnr[predictor][{temp_abs_eb,t}],AB_map,t,temp_abs_eb,stat_eb);
         }
         //////// 计算所有predictor、所有t的平均斜率 ////////
-        // int valid_slope_num=0;
-        // double avg_angle=0;
-        // float eb_prev=*temp_abs_eb_vec.begin();
-        // float eb_next=*(temp_abs_eb_vec.end()-1);
-        // for (auto &predictor:candidate_predictors)
-        // for (auto t:candidate_t)
-        // {
-        //     if ((h1[predictor][{eb_prev,t}]>h1[predictor][{eb_next,t}]) || (psnr[predictor][{eb_prev,t}]>psnr[predictor][{eb_next,t}]))
-        //         continue;
-        //     if (h1[predictor][{eb_prev,t}]==h1[predictor][{eb_next,t}])
-        //         if (psnr[predictor][{eb_prev,t}]==psnr[predictor][{eb_next,t}])
-        //             continue;
-        //         else
-        //         {
-        //             avg_angle+=M_PI/2;
-        //             valid_slope_num++;
-        //         }
-        //     else
-        //     {
-        //         double slope=(psnr[predictor][{eb_next,t}]-psnr[predictor][{eb_prev,t}])/(h1[predictor][{eb_next,t}]-h1[predictor][{eb_prev,t}]);
-        //         avg_angle+=atan(slope);
-        //         valid_slope_num++;
-        //     }
-        // }
-        // if (valid_slope_num==0)
-        //     throw runtime_error("valid_slope_num==0");
-        // else
-        // {
-        //     avg_angle/=valid_slope_num;
-        //     if (avg_angle==M_PI/2)
-        //         throw runtime_error("slope is infinite");
-        //     else
-        //         default_slope=tan(avg_angle);
-        // }
         vector<float> average_h1(temp_abs_eb_vec.size()),average_psnr(temp_abs_eb_vec.size());
         for (int i=0;i<temp_abs_eb_vec.size();i++)
         {
@@ -86,11 +52,9 @@ namespace asz
             average_h1[i]/=candidate_predictors.size()*candidate_t.size();
             average_psnr[i]/=candidate_predictors.size()*candidate_t.size();
         }
-        for (int i=0;i<temp_abs_eb_vec.size();i++)
-        {
-            printf("average_h1[%d]=%f\n",i,average_h1[i]);
-            printf("average_psnr[%d]=%f\n",i,average_psnr[i]);
-        }
+        if (temp_abs_eb_vec.size()==3)
+            printf("average_h1=%f\n",average_h1[1]);
+            printf("average_psnr=%f\n",average_psnr[1]);
         default_slope=(average_psnr[temp_abs_eb_vec.size()-1]-average_psnr[0])/(average_h1[temp_abs_eb_vec.size()-1]-average_h1[0]);
     }
 }
