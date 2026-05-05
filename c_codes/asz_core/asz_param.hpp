@@ -114,6 +114,7 @@ namespace asz
                 config_generated=other.config_generated;
                 pivot_eb_ratio=other.pivot_eb_ratio;
                 eb_ratio=other.eb_ratio;
+                slope_ratio=other.slope_ratio;
                 predictor_vec=other.predictor_vec;
                 block_pivot_ratio=other.block_pivot_ratio;
                 block_shape=other.block_shape;
@@ -124,14 +125,39 @@ namespace asz
             void get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<float> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,
                 uint64_t dist,float neg_2_stat_eb);
             void get_AB_map_random(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<float> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,
-                uint64_t dist,float neg_2_stat_eb,float max_random_err);
+                uint64_t dist,float neg_2_stat_ebtemp_stride);
             void get_h1_psnr(float &h1,float &psnr,unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,float t,float abs_eb,float stat_eb);
             void get_default_slope();
             void print_config();
             void generate_pivot_stride_and_block_shape_and_block_num();
             void generate_config_enumerate();
             void generate_config();
-            void generate_config2(float &ret_t,float &ret_h1,float &ret_psnr,string &predictor,vector<uint64_t> &stride,float abs_eb,float stat_eb,float neg_2_stat_eb);
+            void block_sample_compress_cubic0_120(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void block_sample_compress_cubic0_021(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void block_sample_compress_cubic0_012(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void block_sample_compress_cubic1_120(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void block_sample_compress_cubic1_021(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void block_sample_compress_cubic1_012(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void block_sample_compress_cubic2_120(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void block_sample_compress_cubic2_021(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
+            void block_sample_compress_cubic2_012(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+                vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
+            void pivot_sample_compress_120(vector<int64_t> &pivot_qb_vec,float &pivot_mse,vector<uint64_t> &pivot_stride,uint64_t sample_stride,
+                float pivot_eb,float neg_2_pivot_eb);
+            void pivot_sample_compress_021(vector<int64_t> &pivot_qb_vec,float &pivot_mse,vector<uint64_t> &pivot_stride,uint64_t sample_stride,
+                float pivot_eb,float neg_2_pivot_eb);
+            void pivot_sample_compress_012(vector<int64_t> &pivot_qb_vec,float &pivot_mse,vector<uint64_t> &pivot_stride,uint64_t sample_stride,
+                float pivot_eb,float neg_2_pivot_eb);
+            void dot_sample_compress(vector<int64_t> &qb_vec,float &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb,
+                float neg_2_eb);
             float compress();
             void block_compress_cubic0_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
             void block_compress_cubic0_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
@@ -142,6 +168,7 @@ namespace asz
             void block_compress_cubic2_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
             void block_compress_cubic2_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
             void block_compress_cubic2_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
+            
             void dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb,float neg_2_eb);
     };
 }

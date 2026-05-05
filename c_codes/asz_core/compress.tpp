@@ -339,10 +339,13 @@ namespace asz
             huffman_encoder.save(huffman_bs);
             huffman_encoder.encode(qb_vec_vec[i].data(),qb_vec_vec[i].size(),huffman_bs);
         }
-        huffman_encoder_class<int64_t> huffman_t_int_encoder;
-        huffman_t_int_encoder.preprocess_encode(t_int_vec.data(),t_int_vec.size());
-        huffman_t_int_encoder.save(huffman_bs);
-        huffman_t_int_encoder.encode(t_int_vec.data(),t_int_vec.size(),huffman_bs);
+        if (!t_int_vec.empty())
+        {
+            huffman_encoder_class<int64_t> huffman_t_int_encoder;
+            huffman_t_int_encoder.preprocess_encode(t_int_vec.data(),t_int_vec.size());
+            huffman_t_int_encoder.save(huffman_bs);
+            huffman_t_int_encoder.encode(t_int_vec.data(),t_int_vec.size(),huffman_bs);
+        }
 
         uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
         uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);

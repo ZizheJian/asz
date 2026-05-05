@@ -38,11 +38,10 @@ namespace asz
     //                 uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
     //                 float v_l3=data[pos-3*dist]+rand_err(gen);
     //                 float v_l1=data[pos-dist]+rand_err(gen);
-    //                 float v_m=data[pos]+rand_err(gen);
     //                 float v_r1=data[pos+dist]+rand_err(gen);
     //                 float v_r3=data[pos+3*dist]+rand_err(gen);
     //                 float A=-v_l3+v_l1+v_r1-v_r3;
-    //                 float B=0.25*(v_l3+v_l1+v_r1+v_r3)-v_m;
+    //                 float B=0.25*(v_l3+v_l1+v_r1+v_r3)-data[pos];
     //                 int64_t A_key=llround(A*neg_2_stat_eb);
     //                 int64_t B_key=llround(B*neg_2_stat_eb);
     //                 AB_map[{A_key,B_key}]++;
