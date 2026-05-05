@@ -11,7 +11,7 @@ namespace asz
             else
                 printf("\"%s\",",predictor_it->c_str());
         printf("};\n");
-        // printf("pivot_seq=\n");
+        printf("pivot_seq=\"%s\";\n",pivot_seq.c_str());
         printf("pivot_eb_ratio=%.2f;\n",pivot_eb_ratio);
         printf("eb_ratio=%.2f;\n",eb_ratio);
         printf("slope_ratio=%.2f;\n",slope_ratio);
@@ -87,10 +87,11 @@ namespace asz
             // block_pivot_ratio=2;
 
             //////// Miranda 1e-4 ////////
-            predictor_vec={"cubic2_012","cubic2_012","cubic1_012","cubic1_021","cubic2_021","cubic1_021","cubic2_021","cubic0_012","cubic2_120","cubic1_012"};
+            predictor_vec={"cubic2_120","cubic2_012","cubic1_012","cubic2_120","cubic1_021","cubic1_021","cubic2_120","cubic1_021","cubic2_021","cubic0_012","cubic2_120","cubic1_012"};
+            pivot_seq="120";
             pivot_eb_ratio=0.23;
-            eb_ratio=0.92;
-            slope_ratio=0.92;
+            eb_ratio=0.89;
+            slope_ratio=0.84;
             block_pivot_ratio=2;
 
             generate_pivot_stride_and_block_shape_and_block_num();
@@ -174,7 +175,7 @@ namespace asz
             else if (change_operation=="change pivot_seq")
             {
                 vector<string> candidate_seq={"120","021","012"};
-                string predictor_seq=candidate_seq[rand()%candidate_seq.size()];                    
+                pivot_seq=candidate_seq[rand()%candidate_seq.size()];
             }
             else if (change_operation=="change pivot_eb_ratio")
             {
@@ -478,8 +479,8 @@ namespace asz
     void param_c::generate_config()
     {
         pivot_eb_ratio=0.23;
-        eb_ratio=0.92;
-        slope_ratio=0.92;
+        eb_ratio=0.89;
+        slope_ratio=0.42;
         block_pivot_ratio=2;
         
         pivot_stride={1,1,1};
@@ -491,7 +492,7 @@ namespace asz
         float best_dist=-1e8;
         uint64_t best_layer_num=0;
         string best_pivot_seq="";
-        for (uint64_t layer=0;;layer++)
+        for (uint64_t layer=0;layer<12;layer++)
         {
             float layer_eb=abs_eb*pow(eb_ratio,layer);
             float neg_2_layer_eb=1/(2*layer_eb);
@@ -689,6 +690,12 @@ namespace asz
                     best_layer_num=layer+1;
                 }
             }
+            if (layer==0)
+                best_layer_predictor="cubic1_012";
+            else if (layer==1)
+                best_layer_predictor="cubic2_120";
+            else if (layer==2)
+                best_layer_predictor="cubic0_012";
             if (best_layer_predictor=="")
                 break;
             printf("best_layer_num=%lu\n",best_layer_num);
@@ -707,6 +714,7 @@ namespace asz
             predictor_vec.insert(predictor_vec.begin(),best_layer_predictor);
             getchar();
         }
+        pivot_seq=best_pivot_seq;
         generate_pivot_stride_and_block_shape_and_block_num();
     }
 }

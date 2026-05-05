@@ -209,15 +209,36 @@ namespace asz
         qb_vec_vec[0].reserve(pivot_num);
         float pivot_eb=abs_eb*pivot_eb_ratio;
         float neg_2_pivot_eb=1/(2*pivot_eb);
-        for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
+        if (pivot_seq=="120")
             for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1])
-                for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
-                {
-                    uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-                    int64_t qb=llround(data[pos]*neg_2_pivot_eb);
-                    qb_vec_vec[0].push_back(qb);
-                    compressed_data[pos]=qb*pivot_eb*2;
-                }
+            for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
+            for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
+            {
+                uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
+                int64_t qb=llround(data[pos]*neg_2_pivot_eb);
+                qb_vec_vec[0].push_back(qb);
+                compressed_data[pos]=qb*pivot_eb*2;
+            }
+        else if (pivot_seq=="021")
+            for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
+            for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
+            for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1])
+            {
+                uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
+                int64_t qb=llround(data[pos]*neg_2_pivot_eb);
+                qb_vec_vec[0].push_back(qb);
+                compressed_data[pos]=qb*pivot_eb*2;
+            }
+        else if (pivot_seq=="012")
+            for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
+            for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1])
+            for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
+            {
+                uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
+                int64_t qb=llround(data[pos]*neg_2_pivot_eb);
+                qb_vec_vec[0].push_back(qb);
+                compressed_data[pos]=qb*pivot_eb*2;
+            }
         //////// 依次处理每个大block ////////
         for (uint64_t block_i0=0;block_i0<block_num[0];block_i0++)
             for (uint64_t block_i1=0;block_i1<block_num[1];block_i1++)

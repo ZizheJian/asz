@@ -40,28 +40,28 @@ int main()
     printf("default_slope=%f\n",param.default_slope);
 
     //////// 直接生成配置 ////////
-    param.generate_config(0);
+    param.generate_config();
     param.print_config();
     param.compress();
     exit(0);
 
     //////// 搜索配置 ////////
-    // float best_dist=-1e8;
-    // for (int attempt=0;attempt<100;attempt++)
-    // {
-    //     printf("Attempt %d\n",attempt);
-    //     asz::param_c backup_param;
-    //     backup_param.copy_from(param);
-    //     param.generate_config_enumerate();
-    //     float dist=param.compress();
-    //     if (dist<best_dist)
-    //         param.copy_from(backup_param);
-    //     else
-    //     {
-    //         printf("Found better configuration\n");
-    //         best_dist=dist;
-    //     }
-    //     printf("\n");
-    // }
-    // param.print_config();
+    float best_dist=-1e8;
+    for (int attempt=0;attempt<100;attempt++)
+    {
+        printf("Attempt %d\n",attempt);
+        asz::param_c backup_param;
+        backup_param.copy_from(param);
+        param.generate_config_enumerate();
+        float dist=param.compress();
+        if (dist<best_dist)
+            param.copy_from(backup_param);
+        else
+        {
+            printf("Found better configuration\n");
+            best_dist=dist;
+        }
+        printf("\n");
+    }
+    param.print_config();
 }
