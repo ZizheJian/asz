@@ -313,7 +313,7 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //which target to build
-CODE_NAME:STRING=s1_compress
+CODE_NAME:STRING=s7_find_best_t2_per_eb
 
 //Visibility for ZDICTLIB_STATIC_API API
 ZDICTLIB_STATIC_API:STRING=

@@ -15,10 +15,10 @@ using namespace std;
 
 int main()
 {
-    string data_path="/lcrc/project/SDR/zjian-in-SDR/Pf01.bin";
+    string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
     vector<uint64_t> data_shape={100,500,500};
-    vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8};
-    string csv_path="/home/zjian/ASTZ_tests/csv/results_multi_prediction_dim12_ISABEL_Pf01.csv";
+    vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
+    string csv_path="/home/zjian/ASTZ_tests/csv/multi_ISABEL_multi01.csv";
 
     uint64_t data_size=data_shape[0]*data_shape[1]*data_shape[2];
     vector<float> data;

@@ -205,8 +205,8 @@ int main()
 {
     // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
     // vector<uint64_t> data_shape={100,500,500};
-    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,5.623e-5,3.162e-5,1.778e-5,1e-5,5.623e-6,3.162e-6,1.778e-6,1e-6,1e-7,1e-8};
-    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/results_cubic_prediction_ISABEL_Pf01.csv";
+    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
+    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/Pf01.csv";
 
     // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0470_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part0_001.h5.f32_center.bin";
     // vector<uint64_t> data_shape={150,454,390};
@@ -215,18 +215,18 @@ int main()
 
     // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/xpcs_datasets/APSU_TestData_004/APSU_TestData_004.h5.f32_center.bin";
     // vector<uint64_t> data_shape={205,312,363};
-    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,5.623e-3,3.162e-3,1.778e-3,1e-4};
-    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/results_cubic_prediction_APSU_004_center.csv";
+    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
+    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/APSU_004_center.csv";
 
-    // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat_center.bin";
-    // vector<uint64_t> data_shape={13,900,1800};
-    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8};
-    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/results_cubic_prediction_CLDICE_center.csv";
-
-    string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Miranda/density.f32.dat";
-    vector<uint64_t> data_shape={256,384,384};
+    string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat_center.bin";
+    vector<uint64_t> data_shape={13,900,1800};
     vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
-    string csv_path="/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda.csv";
+    string csv_path="/home/x-zjian1/ASTZ_tests/csv/CLDICE_center.csv";
+
+    // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Miranda/density.f32.dat";
+    // vector<uint64_t> data_shape={256,384,384};
+    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
+    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/Miranda.csv";
 
     // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32_center.bin";
     // vector<uint64_t> data_shape={256,256,256};
@@ -238,7 +238,7 @@ int main()
     // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8};
     // string csv_path="/home/x-zjian1/ASTZ_tests/csv/results_cubic_prediction_LETKF_center.csv";
 
-    uint64_t stride=32;
+    uint64_t stride=1;
 
     uint64_t data_size=data_shape[0]*data_shape[1]*data_shape[2];
     vector<float> data;

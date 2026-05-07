@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s1_compress
+# Target rules for targets named s7_find_best_t2_per_eb
 
 # Build rule for target.
-s1_compress: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s1_compress
-.PHONY : s1_compress
+s7_find_best_t2_per_eb: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s7_find_best_t2_per_eb
+.PHONY : s7_find_best_t2_per_eb
 
 # fast build rule for target.
-s1_compress/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/build
-.PHONY : s1_compress/fast
+s7_find_best_t2_per_eb/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_find_best_t2_per_eb.dir/build.make CMakeFiles/s7_find_best_t2_per_eb.dir/build
+.PHONY : s7_find_best_t2_per_eb/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s1_compress.o: s1_compress.cpp.o
-.PHONY : s1_compress.o
+s7_find_best_t2_per_eb.o: s7_find_best_t2_per_eb.cpp.o
+.PHONY : s7_find_best_t2_per_eb.o
 
 # target to build an object file
-s1_compress.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/s1_compress.cpp.o
-.PHONY : s1_compress.cpp.o
+s7_find_best_t2_per_eb.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_find_best_t2_per_eb.dir/build.make CMakeFiles/s7_find_best_t2_per_eb.dir/s7_find_best_t2_per_eb.cpp.o
+.PHONY : s7_find_best_t2_per_eb.cpp.o
 
-s1_compress.i: s1_compress.cpp.i
-.PHONY : s1_compress.i
+s7_find_best_t2_per_eb.i: s7_find_best_t2_per_eb.cpp.i
+.PHONY : s7_find_best_t2_per_eb.i
 
 # target to preprocess a source file
-s1_compress.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/s1_compress.cpp.i
-.PHONY : s1_compress.cpp.i
+s7_find_best_t2_per_eb.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_find_best_t2_per_eb.dir/build.make CMakeFiles/s7_find_best_t2_per_eb.dir/s7_find_best_t2_per_eb.cpp.i
+.PHONY : s7_find_best_t2_per_eb.cpp.i
 
-s1_compress.s: s1_compress.cpp.s
-.PHONY : s1_compress.s
+s7_find_best_t2_per_eb.s: s7_find_best_t2_per_eb.cpp.s
+.PHONY : s7_find_best_t2_per_eb.s
 
 # target to generate assembly for a file
-s1_compress.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/s1_compress.cpp.s
-.PHONY : s1_compress.cpp.s
+s7_find_best_t2_per_eb.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s7_find_best_t2_per_eb.dir/build.make CMakeFiles/s7_find_best_t2_per_eb.dir/s7_find_best_t2_per_eb.cpp.s
+.PHONY : s7_find_best_t2_per_eb.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s1_compress"
+	@echo "... s7_find_best_t2_per_eb"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s1_compress.o"
-	@echo "... s1_compress.i"
-	@echo "... s1_compress.s"
+	@echo "... s7_find_best_t2_per_eb.o"
+	@echo "... s7_find_best_t2_per_eb.i"
+	@echo "... s7_find_best_t2_per_eb.s"
 .PHONY : help
 
 

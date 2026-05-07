@@ -278,23 +278,23 @@ string find_best_sp(unordered_map<string,double> &dist_2,vector<string> &csv_pat
 int main()
 {
     vector<string> csv_path_vec;
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic0_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic0_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic0_012.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic1_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic1_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic1_012.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic2_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic2_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/cubic_Miranda_cubic2_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic0_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic0_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic0_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic1_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic1_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic1_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic2_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic2_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic2_012.csv");
     vector<double> rel_eb_vec;
     read_all_values_in_column(csv_path_vec[0],"rel_eb",rel_eb_vec);
     vector<double> t2_vec;
     read_all_values_in_column(csv_path_vec[0],"t2",t2_vec);
 
-    vector<string> aspt_name_vec={"BR","BR_s16","H1_s16"};//第一个是标准值
+    vector<string> aspt_name_vec={"BR"};//第一个是标准值
     string standard_psnr_name="PSNR";
-    string aspt_psnr_name="PSNR_s16";
+    string aspt_psnr_name="PSNR";
 
     unordered_map<string,unordered_map<tuple<double,double>,double>> standard_psnr,aspt_psnr;
     vector<unordered_map<string,unordered_map<tuple<double,double>,double>>> aspt_vec(aspt_name_vec.size());
@@ -430,5 +430,20 @@ int main()
         best_sp_vec[i][rel_eb]=find_best_sp(dist_2_vec[i][rel_eb],csv_path_vec);
         printf("rel_eb=%f, aspt=%s, best_sp=%s, best_t2=%f\n",rel_eb,aspt_name_vec[i].c_str(),best_sp_vec[i][rel_eb].c_str(),
             best_t2_vec[i][best_sp_vec[i][rel_eb]][rel_eb]);
+    }
+
+    // 对每个eb，每个预测方向，选择最好的遍历顺序，使用最好的t2
+    for (auto &rel_eb:rel_eb_vec)
+    {
+        for (const string &sp:{"cubic0","cubic1","cubic2"})
+        {
+            vector<string> temp_csv_path_vec;
+            for (auto &csv_path:csv_path_vec)
+                if (csv_path.find(sp)!=string::npos)
+                    temp_csv_path_vec.push_back(csv_path);
+            string best_csv_path=find_best_sp(dist_2_vec[0][rel_eb],temp_csv_path_vec);
+            printf("%f %f ",aspt_vec[0][best_csv_path][{rel_eb,best_t2_vec[0][best_csv_path][rel_eb]}],standard_psnr[best_csv_path][{rel_eb,best_t2_vec[0][best_csv_path][rel_eb]}]);
+        }
+        printf("\n");
     }
 }

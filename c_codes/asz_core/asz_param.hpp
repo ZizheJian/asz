@@ -74,7 +74,6 @@ namespace asz
             bool config_generated=false;
             //////// 可调整参数 ////////
             float pivot_eb_ratio;//pivoting point的误差比例
-            string pivot_seq;//pivoting point的遍历顺序
             float eb_ratio;//相邻layer之间的误差比例
             float slope_ratio;//相邻layer之间的斜率比例
             vector<string> predictor_vec;//预测器列表
@@ -114,7 +113,6 @@ namespace asz
                 default_slope=other.default_slope;
                 config_generated=other.config_generated;
                 pivot_eb_ratio=other.pivot_eb_ratio;
-                pivot_seq=other.pivot_seq;
                 eb_ratio=other.eb_ratio;
                 slope_ratio=other.slope_ratio;
                 predictor_vec=other.predictor_vec;

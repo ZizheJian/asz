@@ -11,7 +11,6 @@ namespace asz
             else
                 printf("\"%s\",",predictor_it->c_str());
         printf("};\n");
-        printf("pivot_seq=\"%s\";\n",pivot_seq.c_str());
         printf("pivot_eb_ratio=%.2f;\n",pivot_eb_ratio);
         printf("eb_ratio=%.2f;\n",eb_ratio);
         printf("slope_ratio=%.2f;\n",slope_ratio);
@@ -45,26 +44,44 @@ namespace asz
         if (!config_generated)
         {
             //////// 这里写初始配置 ////////
-            //////// Nyx_baryon_density_center 1e-5 ////////
-            // predictor_vec={"cubic1_021","cubic1_021","cubic1_120","cubic1_120","cubic1_012","cubic1_021","cubic0_012","cubic2_120","cubic0_120","cubic2_120","cubic1_012","cubic0_012","cubic2_120","cubic1_012"};
-            // pivot_eb_ratio=0.26;
-            // eb_ratio=0.93;
-            // slope_ratio=0.99;
+            //////// Nyx_baryon_density_center 1e-5 //////// 好
+            // predictor_vec={"cubic2_120","cubic0_021","cubic1_120","cubic2_120","cubic0_012","cubic1_120","cubic2_021"};
+            // pivot_eb_ratio=0.23;
+            // eb_ratio=0.79;
+            // slope_ratio=0.52;
+            // block_pivot_ratio=2;
+            //////// Nyx_baryon_density_center 1e-2 //////// 好
+            // predictor_vec={"cubic2_021","cubic0_120","cubic1_021"};
+            // pivot_eb_ratio=0.23;
+            // eb_ratio=0.80;
+            // slope_ratio=0.53;
             // block_pivot_ratio=2;
 
-            //////// APSU_004_center 1e-3 ////////
-            // predictor_vec={"cubic0_021","cubic0_120","cubic0_012","cubic0_120","cubic0_012","cubic0_012","cubic0_120","cubic0_012","cubic0_120","cubic0_120","cubic0_120","cubic0_021"};
-            // pivot_eb_ratio=0.25;
-            // eb_ratio=0.93;
-            // slope_ratio=0.97;
+            //////// APSU_004_center 1e-5 //////// 好
+            // predictor_vec={"cubic0_120"};
+            // pivot_eb_ratio=0.24;
+            // eb_ratio=0.83;
+            // slope_ratio=0.53;
             // block_pivot_ratio=1;
+            //////// APSU_004_center 1e-2 //////// 好
+            // predictor_vec={"cubic0_120","cubic0_120","cubic0_120"};
+            // pivot_eb_ratio=0.18;
+            // eb_ratio=0.72;
+            // slope_ratio=0.47;
+            // block_pivot_ratio=6;
 
-            //////// Pf01 1e-3 ////////
-            // predictor_vec={"cubic1_012","cubic2_021","cubic2_012","cubic1_012","cubic1_012","cubic2_120","cubic2_120","cubic0_120","cubic0_120","cubic1_120","cubic2_012","cubic1_120"};
-            // pivot_eb_ratio=0.25;
-            // eb_ratio=0.78;
-            // slope_ratio=0.96;
-            // block_pivot_ratio=2;
+            //////// Pf01 1e-5 ////////
+            // predictor_vec={"cubic2_012","cubic1_120","cubic2_021","cubic1_021","cubic2_021","cubic0_021"};
+            // pivot_eb_ratio=0.28;
+            // eb_ratio=0.81;
+            // slope_ratio=0.54;
+            // block_pivot_ratio=1;
+            //////// Pf01 1e-2 ////////
+            predictor_vec={"cubic0_120","cubic0_120","cubic1_120","cubic1_012","cubic1_012","cubic2_012"};
+            pivot_eb_ratio=0.21;
+            eb_ratio=0.79;
+            slope_ratio=0.55;
+            block_pivot_ratio=1;
 
             //////// CSSI_L0470_center 1e-3 ////////
             // predictor_vec={"cubic0_012","cubic1_120","cubic2_021","cubic2_012","cubic2_120","cubic1_012","cubic1_120","cubic2_120","cubic0_120","cubic2_120","cubic2_120","cubic2_120","cubic1_120","cubic0_012","cubic2_012","cubic1_012"};
@@ -87,12 +104,11 @@ namespace asz
             // block_pivot_ratio=2;
 
             //////// Miranda 1e-4 ////////
-            predictor_vec={"cubic2_120","cubic2_012","cubic1_012","cubic2_120","cubic1_021","cubic1_021","cubic2_120","cubic1_021","cubic2_021","cubic0_012","cubic2_120","cubic1_012"};
-            pivot_seq="120";
-            pivot_eb_ratio=0.23;
-            eb_ratio=0.89;
-            slope_ratio=0.84;
-            block_pivot_ratio=2;
+            // predictor_vec={"cubic2_120","cubic2_012","cubic1_012","cubic2_120","cubic1_021","cubic1_021","cubic2_120","cubic1_021","cubic2_021","cubic0_012","cubic2_120","cubic1_012"};
+            // pivot_eb_ratio=0.23;
+            // eb_ratio=0.85;
+            // slope_ratio=0.5;
+            // block_pivot_ratio=2;
 
             generate_pivot_stride_and_block_shape_and_block_num();
             config_generated=true;
@@ -104,12 +120,11 @@ namespace asz
             // change_pos=0~predictor_vec.size()-1: 更改predictor_vec中的一个元素
             // change_pos=predictor_vec.size()~2*predictor_vec.size()-2: 将predictor_vec中的一个元素和前一个交换
             // change_pos=2*predictor_vec.size()-1: 更改predictor_vec的长度
-            // change_pos=2*predictor_vec.size(): 更改pivot_seq
-            // change_pos=2*predictor_vec.size()+1: 更改pivot_eb_ratio
-            // change_pos=2*predictor_vec.size()+2: 更改eb_ratio
-            // change_pos=2*predictor_vec.size()+3: 更改slope_ratio
-            // change_pos=2*predictor_vec.size()+4: 更改block_pivot_ratio
-            int config_num=2*predictor_vec.size()+5;
+            // change_pos=2*predictor_vec.size()+0: 更改pivot_eb_ratio
+            // change_pos=2*predictor_vec.size()+1: 更改eb_ratio
+            // change_pos=2*predictor_vec.size()+2: 更改slope_ratio
+            // change_pos=2*predictor_vec.size()+3: 更改block_pivot_ratio
+            int config_num=2*predictor_vec.size()+4;
             string change_operation;
             int change_pos=rand()%config_num;
             if (change_pos<=predictor_vec.size()-1)
@@ -125,27 +140,22 @@ namespace asz
                 change_operation="change predictor_vec length";
                 change_pos=0;
             }
-            else if (change_pos==2*predictor_vec.size())
-            {
-                change_operation="change pivot_seq";
-                change_pos=0;
-            }
-            else if (change_pos==2*predictor_vec.size()+1)
+            else if (change_pos==2*predictor_vec.size()+0)
             {
                 change_operation="change pivot_eb_ratio";
                 change_pos=0;
             }
-            else if (change_pos==2*predictor_vec.size()+2)
+            else if (change_pos==2*predictor_vec.size()+1)
             {
                 change_operation="change eb_ratio";
                 change_pos=0;
             }
-            else if (change_pos==2*predictor_vec.size()+3)
+            else if (change_pos==2*predictor_vec.size()+2)
             {
                 change_operation="change slope_ratio";
                 change_pos=0;
             }
-            else if (change_pos==2*predictor_vec.size()+4)
+            else if (change_pos==2*predictor_vec.size()+3)
             {                
                 change_operation="change block_pivot_ratio";
                 change_pos=0;
@@ -171,11 +181,6 @@ namespace asz
                 else if (c==1)
                     predictor_vec.insert(predictor_vec.begin(),candidate_predictors[rand()%candidate_predictors.size()]);
                 generate_pivot_stride_and_block_shape_and_block_num();
-            }
-            else if (change_operation=="change pivot_seq")
-            {
-                vector<string> candidate_seq={"120","021","012"};
-                pivot_seq=candidate_seq[rand()%candidate_seq.size()];
             }
             else if (change_operation=="change pivot_eb_ratio")
             {
@@ -432,55 +437,13 @@ namespace asz
             dot_sample_compress(qb_vec,mse,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::pivot_sample_compress_120(vector<int64_t> &pivot_qb_vec,float &pivot_mse,vector<uint64_t> &pivot_stride,uint64_t sample_stride,
-        float pivot_eb,float neg_2_pivot_eb)
-    {
-        for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1]*sample_stride)
-        for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2]*sample_stride)
-        for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
-        {
-            uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-            int64_t qb=llround(data[pos]*neg_2_pivot_eb);
-            pivot_qb_vec.push_back(qb);
-            pivot_mse+=(data[pos]-qb*2*pivot_eb)*(data[pos]-qb*2*pivot_eb);
-        }
-    }
-
-    void param_c::pivot_sample_compress_021(vector<int64_t> &pivot_qb_vec,float &pivot_mse,vector<uint64_t> &pivot_stride,uint64_t sample_stride,
-        float pivot_eb,float neg_2_pivot_eb)
-    {
-        for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0]*sample_stride)
-        for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2]*sample_stride)
-        for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1])
-        {
-            uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-            int64_t qb=llround(data[pos]*neg_2_pivot_eb);
-            pivot_qb_vec.push_back(qb);
-            pivot_mse+=(data[pos]-qb*2*pivot_eb)*(data[pos]-qb*2*pivot_eb);
-        }
-    }
-
-    void param_c::pivot_sample_compress_012(vector<int64_t> &pivot_qb_vec,float &pivot_mse,vector<uint64_t> &pivot_stride,uint64_t sample_stride,
-        float pivot_eb,float neg_2_pivot_eb)
-    {
-        for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0]*sample_stride)
-        for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1]*sample_stride)
-        for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
-        {
-            uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-            int64_t qb=llround(data[pos]*neg_2_pivot_eb);
-            pivot_qb_vec.push_back(qb);
-            pivot_mse+=(data[pos]-qb*2*pivot_eb)*(data[pos]-qb*2*pivot_eb);
-        }
-    }
-
     // 逐层生成配置
     // 对于每一层，先对每个predictor找到最好的t，然后用最好的t实际压缩得到br和psnr，选出最好的predictor
     void param_c::generate_config()
     {
         pivot_eb_ratio=0.23;
-        eb_ratio=0.89;
-        slope_ratio=0.42;
+        eb_ratio=0.79;
+        slope_ratio=0.52;
         block_pivot_ratio=2;
         
         pivot_stride={1,1,1};
@@ -489,23 +452,19 @@ namespace asz
         float cumulated_psnr=0;
         uint64_t cumulated_data_num=0;
 
-        float best_dist=-1e8;
-        uint64_t best_layer_num=0;
         string best_pivot_seq="";
-        for (uint64_t layer=0;layer<12;layer++)
+        for (uint64_t layer=0;layer<8;layer++)
         {
             float layer_eb=abs_eb*pow(eb_ratio,layer);
             float neg_2_layer_eb=1/(2*layer_eb);
             float stat_eb=layer_eb*stat_eb_ratio;
             float neg_2_stat_eb=1/(2*stat_eb);
             float pivot_eb=abs_eb*pivot_eb_ratio;
-            float neg_2_pivot_eb=1/(2*pivot_eb);
             float layer_default_slope=default_slope*pow(slope_ratio,layer);
             unordered_map<string,unordered_map<float,float>> h1,psnr,dist;//每个predictor在不同t时的h1、psnr、dist
             unordered_map<string,float> best_t;//每个predictor最好的t
             unordered_map<string,float> qb_br,qb_mse,qb_psnr;//每个predictor在采样数据上的实测br、mse、psnr
-            unordered_map<string,float> pivot_br,pivot_mse,pivot_psnr;//使用每一种predictor时，pivot的br、mse、psnr。此时predictor后三位表示pivot的遍历顺序
-            unordered_map<string,uint64_t> qb_num,pivot_num;//每个predictor的qb数量和pivot的qb数量
+            unordered_map<string,uint64_t> qb_num;//每个predictor的qb数量和pivot的qb数量
             for (string &predictor:candidate_predictors)
             {
                 printf("predictor=%s\n",predictor.c_str());
@@ -559,19 +518,16 @@ namespace asz
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0],pivot_stride[1]*sample_stride,pivot_stride[2]*sample_stride};
                         block_sample_compress_cubic0_120(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_120(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     else if (predictor=="cubic0_021")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*sample_stride,pivot_stride[1],pivot_stride[2]*sample_stride};
                         block_sample_compress_cubic0_021(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_021(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     else if (predictor=="cubic0_012")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*sample_stride,pivot_stride[1]*sample_stride,pivot_stride[2]};
                         block_sample_compress_cubic0_012(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_012(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     pivot_stride[0]/=2;
                 }
@@ -582,19 +538,16 @@ namespace asz
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0],pivot_stride[1]*sample_stride,pivot_stride[2]*sample_stride};
                         block_sample_compress_cubic1_120(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_120(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     else if (predictor=="cubic1_021")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*sample_stride,pivot_stride[1],pivot_stride[2]*sample_stride};
                         block_sample_compress_cubic1_021(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_021(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     else if (predictor=="cubic1_012")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*sample_stride,pivot_stride[1]*sample_stride,pivot_stride[2]};
                         block_sample_compress_cubic1_012(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_012(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     pivot_stride[1]/=2;
                 }
@@ -605,19 +558,16 @@ namespace asz
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0],pivot_stride[1]*sample_stride,pivot_stride[2]*sample_stride};
                         block_sample_compress_cubic2_120(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_120(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     else if (predictor=="cubic2_021")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*sample_stride,pivot_stride[1],pivot_stride[2]*sample_stride};
                         block_sample_compress_cubic2_021(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_021(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     else if (predictor=="cubic2_012")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*sample_stride,pivot_stride[1]*sample_stride,pivot_stride[2]};
                         block_sample_compress_cubic2_012(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
-                        pivot_sample_compress_012(pivot_qb_vec,pivot_mse[predictor],pivot_stride,sample_stride,pivot_eb,neg_2_pivot_eb);
                     }
                     pivot_stride[2]/=2;
                 }
@@ -641,66 +591,31 @@ namespace asz
                     qb_psnr[predictor]=10*log10((max_val-min_val)*(max_val-min_val)/qb_mse[predictor]);
                     qb_num[predictor]=qb_vec.size();
                 }
-                //////// lossless compress pivot_qb_vec ////////
-                if (!pivot_qb_vec.empty())
-                {
-                    vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
-                    unsigned char *huffman_bs=huffman_bs_vec.data();
-                    huffman_encoder_class<int64_t> huffman_encoder;
-                    huffman_encoder.preprocess_encode(pivot_qb_vec.data(),pivot_qb_vec.size());
-                    huffman_encoder.save(huffman_bs);
-                    huffman_encoder.encode(pivot_qb_vec.data(),pivot_qb_vec.size(),huffman_bs);
-                    uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
-                    uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
-                    vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
-                    uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
-                    zstd_bs_vec.resize(zstd_bs_len);
-                    float pivot_cr=(float)pivot_qb_vec.size()*sizeof(float)/zstd_bs_len;
-                    pivot_br[predictor]=8*sizeof(float)/pivot_cr;
-                    pivot_mse[predictor]=pivot_mse[predictor]/pivot_qb_vec.size();
-                    pivot_psnr[predictor]=10*log10((max_val-min_val)*(max_val-min_val)/pivot_mse[predictor]);
-                    pivot_num[predictor]=pivot_qb_vec.size();
-                }
             }
             string best_layer_predictor="";
+            float best_dist=-1e8;
             for (auto &qb_predictor:candidate_predictors)
-            for (auto &pivot_predictor:candidate_predictors)
             {
-                if (qb_predictor.substr(0,6)!=pivot_predictor.substr(0,6))
+                if (qb_num[qb_predictor]==0)
                     continue;
-                if (qb_num[qb_predictor]==0 || pivot_num[pivot_predictor]==0)
-                    continue;
-                float total_br=cumulated_br*cumulated_data_num+qb_br[qb_predictor]*qb_num[qb_predictor]+pivot_br[pivot_predictor]*pivot_num[pivot_predictor];
-                float total_mse=cumulated_mse*cumulated_data_num+qb_mse[qb_predictor]*qb_num[qb_predictor]+pivot_mse[pivot_predictor]*pivot_num[pivot_predictor];
-                uint64_t total_num=cumulated_data_num+qb_num[qb_predictor]+pivot_num[pivot_predictor];
+                float total_br=cumulated_br*cumulated_data_num+qb_br[qb_predictor]*qb_num[qb_predictor];
+                float total_mse=cumulated_mse*cumulated_data_num+qb_mse[qb_predictor]*qb_num[qb_predictor];
+                uint64_t total_num=cumulated_data_num+qb_num[qb_predictor];
                 total_br/=total_num;
                 total_mse/=total_num;
                 float total_psnr=10*log10((max_val-min_val)*(max_val-min_val)/total_mse);
-                printf("qb_predictor=%s, pivot_predictor=%s\n",qb_predictor.c_str(), pivot_predictor.c_str());
+                printf("qb_predictor=%s\n",qb_predictor.c_str());
                 printf("    cumulated_br=%f, cumulated_psnr=%f, cumulated_data_num=%lu\n",cumulated_br,10*log10((max_val-min_val)*(max_val-min_val)/cumulated_mse),cumulated_data_num);
                 printf("    qb_br=%f, qb_psnr=%f, qb_num=%lu, qb_dist=%f\n",qb_br[qb_predictor],qb_psnr[qb_predictor],qb_num[qb_predictor],-layer_default_slope*qb_br[qb_predictor]+qb_psnr[qb_predictor]);
-                printf("    pivot_br=%f, pivot_psnr=%f, pivot_num=%lu\n",pivot_br[pivot_predictor],pivot_psnr[pivot_predictor],pivot_num[pivot_predictor]);
                 printf("    total_br=%f, total_psnr=%f, total_num=%lu\n",total_br,total_psnr,total_num);
                 printf("    dist=%f\n",-layer_default_slope*total_br+total_psnr);
-                if (-layer_default_slope*total_br+total_psnr>best_dist)
+                if (best_layer_predictor=="" || -layer_default_slope*qb_br[qb_predictor]+qb_psnr[qb_predictor]>best_dist)
                 {
-                    best_dist=-layer_default_slope*total_br+total_psnr;
+                    best_dist=-layer_default_slope*qb_br[qb_predictor]+qb_psnr[qb_predictor];
                     best_layer_predictor=qb_predictor;
-                    best_pivot_seq=pivot_predictor.substr(pivot_predictor.size()-3,3);
-                    best_layer_num=layer+1;
                 }
             }
-            if (layer==0)
-                best_layer_predictor="cubic1_012";
-            else if (layer==1)
-                best_layer_predictor="cubic2_120";
-            else if (layer==2)
-                best_layer_predictor="cubic0_012";
-            if (best_layer_predictor=="")
-                break;
-            printf("best_layer_num=%lu\n",best_layer_num);
             printf("best_layer_predictor=%s\n",best_layer_predictor.c_str());
-            printf("best_pivot_seq=%s\n",best_pivot_seq.c_str());
             cumulated_br=(cumulated_br*cumulated_data_num+qb_br[best_layer_predictor]*qb_num[best_layer_predictor])/(cumulated_data_num+qb_num[best_layer_predictor]);
             cumulated_mse=(cumulated_mse*cumulated_data_num+qb_mse[best_layer_predictor]*qb_num[best_layer_predictor])/(cumulated_data_num+qb_num[best_layer_predictor]);
             cumulated_psnr=10*log10((max_val-min_val)*(max_val-min_val)/cumulated_mse);
@@ -712,9 +627,7 @@ namespace asz
             else if (best_layer_predictor.compare(0,6,"cubic2")==0)
                 pivot_stride[2]*=2;
             predictor_vec.insert(predictor_vec.begin(),best_layer_predictor);
-            getchar();
         }
-        pivot_seq=best_pivot_seq;
         generate_pivot_stride_and_block_shape_and_block_num();
     }
 }

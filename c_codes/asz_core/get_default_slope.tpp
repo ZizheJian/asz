@@ -43,18 +43,24 @@ namespace asz
         vector<float> average_h1(temp_abs_eb_vec.size()),average_psnr(temp_abs_eb_vec.size());
         for (int i=0;i<temp_abs_eb_vec.size();i++)
         {
+            int valid_case_num=0;
             for (auto &predictor:candidate_predictors)
             for (auto t:candidate_t)
             {
+                if (psnr[predictor][{temp_abs_eb_vec[i],t}]==INFINITY)
+                    continue;
                 average_h1[i]+=h1[predictor][{temp_abs_eb_vec[i],t}];
                 average_psnr[i]+=psnr[predictor][{temp_abs_eb_vec[i],t}];
+                valid_case_num++;
             }
-            average_h1[i]/=candidate_predictors.size()*candidate_t.size();
-            average_psnr[i]/=candidate_predictors.size()*candidate_t.size();
+            average_h1[i]/=valid_case_num;
+            average_psnr[i]/=valid_case_num;
         }
         if (temp_abs_eb_vec.size()==3)
+        {
             printf("average_h1=%f\n",average_h1[1]);
             printf("average_psnr=%f\n",average_psnr[1]);
+        }
         default_slope=(average_psnr[temp_abs_eb_vec.size()-1]-average_psnr[0])/(average_h1[temp_abs_eb_vec.size()-1]-average_h1[0]);
     }
 }

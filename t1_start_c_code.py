@@ -37,7 +37,10 @@ def run_command(command,silent=False):
 code_name_map={1:"s1_compress",
                2:"s2_cubic_prediction",
                3:"s3_find_best_t2_per_eb",
-               4:"s4_cubic_prediction"}
+               4:"s4_multi_prediction",
+               5:"s5_find_best_t2_per_eb",
+               6:"s6_quantic_prediction",
+               7:"s7_find_best_t2_per_eb"}
 
 data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS"
 
