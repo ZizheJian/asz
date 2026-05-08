@@ -6,7 +6,6 @@ project(ASTZ_tests)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)
 
 # 优化标志
-# set(CMAKE_CXX_FLAGS "-Wall -O0 -g")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Ofast -march=native -mavx2 -mfma -Wno-dangling-else")
 
 add_subdirectory(asz_core)

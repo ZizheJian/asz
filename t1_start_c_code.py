@@ -2,7 +2,7 @@ import os,subprocess,sys
 
 redbegin="\033[91m"
 redend="\033[0m"
-silent_build=False
+silent_build=True
 
 def run_command(command,silent=False):
     import pty,errno
@@ -40,7 +40,8 @@ code_name_map={1:"s1_compress",
                4:"s4_multi_prediction",
                5:"s5_find_best_t2_per_eb",
                6:"s6_quantic_prediction",
-               7:"s7_find_best_t2_per_eb"}
+               7:"s7_find_best_t2_per_eb",
+               8:"s8_get_AB_distribution",}
 
 data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS"
 

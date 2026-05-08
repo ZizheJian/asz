@@ -203,10 +203,10 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
 
 int main()
 {
-    // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
-    // vector<uint64_t> data_shape={100,500,500};
-    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
-    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/Pf01.csv";
+    string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
+    vector<uint64_t> data_shape={100,500,500};
+    vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
+    string csv_path="/home/x-zjian1/ASTZ_tests/csv/Pf01.csv";
 
     // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0470_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part0_001.h5.f32_center.bin";
     // vector<uint64_t> data_shape={150,454,390};
@@ -218,10 +218,10 @@ int main()
     // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
     // string csv_path="/home/x-zjian1/ASTZ_tests/csv/APSU_004_center.csv";
 
-    string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat_center.bin";
-    vector<uint64_t> data_shape={13,900,1800};
-    vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
-    string csv_path="/home/x-zjian1/ASTZ_tests/csv/CLDICE_center.csv";
+    // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat_center.bin";
+    // vector<uint64_t> data_shape={13,900,1800};
+    // vector<double> rel_eb_vec={1e-1,1e-2,1e-3,1e-4,1e-5,1e-6};
+    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/CLDICE_center.csv";
 
     // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Miranda/density.f32.dat";
     // vector<uint64_t> data_shape={256,384,384};

@@ -278,21 +278,21 @@ string find_best_sp(unordered_map<string,double> &dist_2,vector<string> &csv_pat
 int main()
 {
     vector<string> csv_path_vec;
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic0_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic0_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic0_012.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic1_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic1_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic1_012.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic2_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic2_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_cubic2_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic0_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic0_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic0_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic1_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic1_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic1_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic2_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic2_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/Pf01_cubic2_012.csv");
     vector<double> rel_eb_vec;
     read_all_values_in_column(csv_path_vec[0],"rel_eb",rel_eb_vec);
     vector<double> t2_vec;
     read_all_values_in_column(csv_path_vec[0],"t2",t2_vec);
 
-    vector<string> aspt_name_vec={"BR"};//第一个是标准值
+    vector<string> aspt_name_vec={"BR","H1"};//第一个是标准值
     string standard_psnr_name="PSNR";
     string aspt_psnr_name="PSNR";
 
@@ -307,6 +307,14 @@ int main()
         standard_psnr[csv_path][{rel_eb,t2}]=read_value(csv_path,rel_eb,t2,standard_psnr_name);
         aspt_psnr[csv_path][{rel_eb,t2}]=read_value(csv_path,rel_eb,t2,aspt_psnr_name);
     }
+
+    // for (auto rel_eb:rel_eb_vec)
+    // {
+    //     for (auto t2:t2_vec)
+    //         printf("%f %f ",aspt_vec[1][csv_path_vec[6]][{rel_eb,t2}],standard_psnr[csv_path_vec[6]][{rel_eb,t2}]);
+    //     printf("\n");
+    // }
+    // exit(0);
     
     // 对每个stencil pattern、每个eb，获取每个t2相对于平均斜率的dist
     vector<unordered_map<string,unordered_map<tuple<double,double>,double>>> dist_vec(aspt_name_vec.size());

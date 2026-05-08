@@ -200,8 +200,10 @@ namespace asz
             qb_vec.clear();
         qb_vec_vec.resize(predictor_vec.size()+1);
         for (uint64_t i=0;i<qb_vec_vec.size();i++)
-            qb_vec_vec[i].reserve((uint64_t)(data.size()*pow(2,i-qb_vec_vec.size()+1)));
+            qb_vec_vec[i].reserve((uint64_t)(data.size()*pow(2,(int64_t)i-(int64_t)qb_vec_vec.size()+1)));
         t_int_vec.clear();
+
+        auto start_time=chrono::high_resolution_clock::now();
         //////// 存储pivot points ////////
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
         pivot_num*=((data_shape[1]+pivot_stride[1]-1)/pivot_stride[1]);
@@ -236,11 +238,12 @@ namespace asz
                 string predictor=predictor_vec[layer_id];
                 float layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
                 float neg_2_layer_eb=1/(2*layer_eb);
+                float layer_default_slope=default_slope*pow(slope_ratio,(int32_t)layer_num-(int32_t)layer_id+1);
                 //////// 估计最好t2 ////////
                 float stat_eb=layer_eb*stat_eb_ratio;
                 float neg_2_stat_eb=1/(2*stat_eb);
                 unordered_map<tuple<int64_t,int64_t>,uint64_t> AB_map;
-                if ((predictor.compare(0,6,"cubic0")==0) && (block_loc[0][1]>block_loc[0][0]+3*stride[0]))
+                if ((predictor.substr(0,6)=="cubic0") && (block_loc[0][1]>block_loc[0][0]+3*stride[0]))
                 {
                     vector<vector<uint64_t>> temp_block_loc(3);
                     temp_block_loc[0]={block_loc[0][0]+3*stride[0]/2,block_loc[0][1]-3*stride[0]/2};
@@ -248,7 +251,7 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[0]*data_shape[1]*data_shape[2]/2,neg_2_stat_eb);
                 }
-                else if ((predictor=="cubic1") && (block_loc[1][1]>block_loc[1][0]+3*stride[1]))
+                else if ((predictor.substr(0,6)=="cubic1") && (block_loc[1][1]>block_loc[1][0]+3*stride[1]))
                 {
                     vector<vector<uint64_t>> temp_block_loc(3);
                     temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
@@ -256,7 +259,7 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[1]*data_shape[2]/2,neg_2_stat_eb);
                 }
-                else if ((predictor=="cubic2") && (block_loc[2][1]>block_loc[2][0]+3*stride[2]))
+                else if ((predictor.substr(0,6)=="cubic2") && (block_loc[2][1]>block_loc[2][0]+3*stride[2]))
                 {
                     vector<vector<uint64_t>> temp_block_loc(3);
                     temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
@@ -278,11 +281,14 @@ namespace asz
                     for (auto t:candidate_t)
                     {
                         get_h1_psnr(h1,psnr,AB_map,t,layer_eb,stat_eb);
-                        if ((!any_t_tried) || (-default_slope*pow(slope_ratio,layer_num-layer_id+1)*(h1-best_h1)+(psnr-best_psnr)>0))
+                        if (psnr==INFINITY)
+                            continue;
+                        if ((!any_t_tried) || (-layer_default_slope*(h1-best_h1)+(psnr-best_psnr)>0))
                         {
                             best_t=t;
                             best_h1=h1;
                             best_psnr=psnr;
+                            any_t_tried=true;
                         }
                     }
                 }
@@ -352,6 +358,9 @@ namespace asz
         vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
         uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
         zstd_bs_vec.resize(zstd_bs_len);
+        auto end_time=chrono::high_resolution_clock::now();
+        printf("Compression time: %f s\n",chrono::duration<double>(end_time-start_time).count());
+
         float cr=(float)data.size()*sizeof(float)/zstd_bs_len;
         float br=8*sizeof(float)/cr;
         float mse=0;
