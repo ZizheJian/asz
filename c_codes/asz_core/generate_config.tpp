@@ -442,11 +442,6 @@ namespace asz
     // 对于每一层，先对每个predictor找到最好的t，然后用最好的t实际压缩得到br和psnr，选出最好的predictor
     void param_c::generate_config()
     {
-        // pivot_eb_ratio=0.10;
-        // eb_ratio=0.74;
-        // slope_ratio=0.51;
-        // block_pivot_ratio=2;
-
         pivot_eb_ratio=0.10;
         eb_ratio=0.72;
         slope_ratio=0.54;
@@ -498,17 +493,17 @@ namespace asz
                 }
                 // 估算h1和psnr，找到最好的t
                 if (AB_map.empty())
-                {
                     best_t[predictor]=0.3125;
-                    continue;
-                }
-                best_t[predictor]=candidate_t[0];
-                for (auto t:candidate_t)
+                else
                 {
-                    get_h1_psnr(h1[predictor][t],psnr[predictor][t],AB_map,t,abs_eb,stat_eb);
-                    dist[predictor][t]=-layer_default_slope*h1[predictor][t]+psnr[predictor][t];
-                    if (dist[predictor][t]>dist[predictor][best_t[predictor]])
-                        best_t[predictor]=t;
+                    best_t[predictor]=candidate_t[0];
+                    for (auto t:candidate_t)
+                    {
+                        get_h1_psnr(h1[predictor][t],psnr[predictor][t],AB_map,t,abs_eb,stat_eb);
+                        dist[predictor][t]=-layer_default_slope*h1[predictor][t]+psnr[predictor][t];
+                        if (dist[predictor][t]>dist[predictor][best_t[predictor]])
+                            best_t[predictor]=t;
+                    }
                 }
                 // 用最好的t实际压缩得到br和psnr
                 vector<int64_t> qb_vec;
@@ -617,6 +612,7 @@ namespace asz
                 pivot_stride[2]*=2;
             predictor_vec.insert(predictor_vec.begin(),best_layer_predictor);
         }
+        // predictor_vec={"cubic2_012","cubic0_012","cubic1_012","cubic2_012","cubic0_012","cubic1_012","cubic2_012","cubic0_012","cubic1_012","cubic2_012"};
         generate_pivot_stride_and_block_shape_and_block_num();
     }
 }

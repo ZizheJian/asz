@@ -3,9 +3,9 @@ import subprocess
 import re
 
 compressor="qoz"
-data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32"
-data_shape=[1024,1024,1024]
-rel_eb_list=[1e-6]
+data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat"
+data_shape=[26,1800,3600]
+rel_eb_list=[1e-4]
 q=3
 
 results=[]

@@ -20,14 +20,14 @@ int main()
     // 好，有很多类似数据
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat_center.bin";
     // param.data_shape={13,900,1800};
-    // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat";
-    // param.data_shape={26,1800,3600};
+    param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat";
+    param.data_shape={26,1800,3600};
 
     // 略好
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32_center.bin";
     // param.data_shape={256,256,256};
-    param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32";
-    param.data_shape={1024,1024,1024};
+    // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32";
+    // param.data_shape={1024,1024,1024};
 
     // 坏
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/SCALE_LETKF/PRES-98x1200x1200.dat_center.bin";
@@ -47,8 +47,6 @@ int main()
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32";
     // param.data_shape={1024,1813,1558};
 
-    
-
     // 坏
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0470_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part0_001.h5.f32_center.bin";
     // param.data_shape={150,454,390};
@@ -61,7 +59,7 @@ int main()
     // param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/aramco/aramco-snapshot-1800.f32";
     // param.data_shape={449,449,235};
 
-    param.rel_eb=1e-8;
+    param.rel_eb=1e-4;
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);
