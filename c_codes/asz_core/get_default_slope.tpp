@@ -16,19 +16,19 @@ namespace asz
             vector<vector<uint64_t>> block_loc;
             vector<uint64_t> stride;
             unordered_map<tuple<int64_t,int64_t>,uint64_t> AB_map;
-            if (predictor.compare(0,6,"cubic0")==0)
+            if (predictor.substr(0,6)=="cubic0")
             {
                 block_loc={{3,data_shape[0]-3},{0,data_shape[1]},{0,data_shape[2]}};
                 stride={2,1,1};
                 get_AB_map(AB_map,data,block_loc,stride,data_shape[1]*data_shape[2],neg_2_stat_eb);
             }
-            else if (predictor.compare(0,6,"cubic1")==0)
+            else if (predictor.substr(0,6)=="cubic1")
             {
                 block_loc={{3,data_shape[0]-3},{1,data_shape[1]},{0,data_shape[2]}};
                 stride={1,2,1};
                 get_AB_map(AB_map,data,block_loc,stride,data_shape[2],neg_2_stat_eb);
             }
-            else if (predictor.compare(0,6,"cubic2")==0)
+            else if (predictor.substr(0,6)=="cubic2")
             {
                 block_loc={{3,data_shape[0]-3},{0,data_shape[1]},{1,data_shape[2]}};
                 stride={1,1,2};
@@ -49,10 +49,7 @@ namespace asz
             for (auto t:candidate_t)
             {
                 if (psnr[predictor][{temp_abs_eb_vec[i],t}]==INFINITY)
-                {
-                    // printf("Warning: predictor %s, rel_eb %f, t %f has infinite psnr\n",predictor.c_str(),temp_abs_eb_vec[i]/(max_val-min_val),t);
                     continue;
-                }
                 average_h1[i]+=h1[predictor][{temp_abs_eb_vec[i],t}];
                 average_psnr[i]+=psnr[predictor][{temp_abs_eb_vec[i],t}];
                 valid_case_num++;
@@ -62,7 +59,7 @@ namespace asz
             if (valid_case_num!=candidate_predictors.size()*candidate_t.size())
                 printf("Warning: for rel_eb %f, only %d/%d valid cases are used to calculate average h1 and psnr\n",
                     temp_abs_eb_vec[i]/(max_val-min_val),valid_case_num,candidate_predictors.size()*candidate_t.size());
-            if (valid_case_num==0)
+            else if (valid_case_num==0)
                 throw runtime_error("In get_default_slope, for rel_eb "+to_string(temp_abs_eb_vec[i]/(max_val-min_val))+", no valid case is found to calculate average h1 and psnr");
         }
         if (temp_abs_eb_vec.size()==3)

@@ -1,4 +1,5 @@
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/s1_compress.dir
+/home/x-zjian1/ASTZ_tests/build/CMakeFiles/s1_decompress.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/edit_cache.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/rebuild_cache.dir
 /home/x-zjian1/ASTZ_tests/build/CMakeFiles/list_install_components.dir

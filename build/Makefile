@@ -175,6 +175,19 @@ s1_compress/fast:
 .PHONY : s1_compress/fast
 
 #=============================================================================
+# Target rules for targets named s1_decompress
+
+# Build rule for target.
+s1_decompress: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s1_decompress
+.PHONY : s1_decompress
+
+# fast build rule for target.
+s1_decompress/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/build
+.PHONY : s1_decompress/fast
+
+#=============================================================================
 # Target rules for targets named clean-all
 
 # Build rule for target.
@@ -380,6 +393,30 @@ s1_compress.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/s1_compress.cpp.s
 .PHONY : s1_compress.cpp.s
 
+s1_decompress.o: s1_decompress.cpp.o
+.PHONY : s1_decompress.o
+
+# target to build an object file
+s1_decompress.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/s1_decompress.cpp.o
+.PHONY : s1_decompress.cpp.o
+
+s1_decompress.i: s1_decompress.cpp.i
+.PHONY : s1_decompress.i
+
+# target to preprocess a source file
+s1_decompress.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/s1_decompress.cpp.i
+.PHONY : s1_decompress.cpp.i
+
+s1_decompress.s: s1_decompress.cpp.s
+.PHONY : s1_decompress.s
+
+# target to generate assembly for a file
+s1_decompress.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/s1_decompress.cpp.s
+.PHONY : s1_decompress.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -405,11 +442,15 @@ help:
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
 	@echo "... s1_compress"
+	@echo "... s1_decompress"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
 	@echo "... s1_compress.o"
 	@echo "... s1_compress.i"
 	@echo "... s1_compress.s"
+	@echo "... s1_decompress.o"
+	@echo "... s1_decompress.i"
+	@echo "... s1_decompress.s"
 .PHONY : help
 
 

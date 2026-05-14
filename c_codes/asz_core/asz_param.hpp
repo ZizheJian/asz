@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -60,6 +61,7 @@ namespace asz
             float rel_eb;
             float abs_eb;
             vector<float> data;
+            vector<unsigned char> zstd_bs_vec;
             vector<float> compressed_data;
             vector<vector<int64_t>> qb_vec_vec;
             vector<int64_t> t_int_vec;
@@ -131,7 +133,7 @@ namespace asz
             void print_config();
             void generate_pivot_stride_and_block_shape_and_block_num();
             void generate_config_enumerate();
-            void generate_config();
+            void generate_config(string task);
             void block_sample_compress_cubic0_120(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,float t,float eb,float neg_2_ebtemp_stride);
             void block_sample_compress_cubic0_021(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
@@ -163,6 +165,17 @@ namespace asz
             void block_compress_cubic2_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
             void block_compress_cubic2_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb);
             void dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb,float neg_2_eb);
+            void decompress();
+            void block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb);
+            void dot_decompress(vector<int64_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb);
     };
 }
 
@@ -173,3 +186,4 @@ namespace asz
 #include "get_default_slope.tpp"
 #include "generate_config.tpp"
 #include "compress.tpp"
+#include "decompress.tpp"

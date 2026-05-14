@@ -30,20 +30,16 @@ def run_command(command,silent=False):
         proc.wait()
         output="".join(lines)
         if proc.returncode!=0:
-            print(output)
             exit()
         return output
     
-code_name_map={1:"s1_compress",
-               2:"s2_cubic_prediction",
+code_name_map={2:"s2_cubic_prediction",
                3:"s3_find_best_t2_per_eb",
                4:"s4_multi_prediction",
                5:"s5_find_best_t2_per_eb",
                6:"s6_quantic_prediction",
                7:"s7_find_best_t2_per_eb",
-               8:"s8_get_AB_distribution",}
-
-data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS"
+               8:"s8_get_AB_distribution"}
 
 test_num=int(sys.argv[1])
 code_name=code_name_map[test_num]

@@ -26,7 +26,7 @@ namespace asz
                 pred+=(0.25+t)*(compressed_data[pos-dist]+compressed_data[pos+dist]);
             }
         }
-        int64_t qb=llround((pred-compressed_data[pos])*neg_2_eb);
+        int64_t qb=llround((pred-data[pos])*neg_2_eb);
         qb_vec.push_back(qb);
         compressed_data[pos]=pred-qb*2*eb;
     }
@@ -195,6 +195,7 @@ namespace asz
 
     float param_c::compress()
     {
+        printf("min_val=%f max_val=%f\n",min_val,max_val);
         compressed_data=data;
         for (auto &qb_vec:qb_vec_vec)
             qb_vec.clear();
@@ -294,7 +295,7 @@ namespace asz
                 }
                 t_int_vec.push_back(llround(best_t*t_precision));
                 //////// 预测 ////////
-                if (predictor.compare(0,6,"cubic0")==0)
+                if (predictor.substr(0,6)=="cubic0")
                 {
                     if (predictor=="cubic0_120")
                         block_compress_cubic0_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
@@ -304,7 +305,7 @@ namespace asz
                         block_compress_cubic0_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                     stride[0]/=2;
                 }
-                else if (predictor.compare(0,6,"cubic1")==0)
+                else if (predictor.substr(0,6)=="cubic1")
                 {
                     if (predictor=="cubic1_120")
                         block_compress_cubic1_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
@@ -314,7 +315,7 @@ namespace asz
                         block_compress_cubic1_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
                     stride[1]/=2;
                 }
-                else if (predictor.compare(0,6,"cubic2")==0)
+                else if (predictor.substr(0,6)=="cubic2")
                 {
                     if (predictor=="cubic2_120")
                         block_compress_cubic2_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
@@ -336,8 +337,37 @@ namespace asz
         //////// 编码 ////////
         vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
         unsigned char *huffman_bs=huffman_bs_vec.data();
+        memcpy(huffman_bs,&min_val,sizeof(float));
+        huffman_bs+=sizeof(float);
+        memcpy(huffman_bs,&max_val,sizeof(float));
+        huffman_bs+=sizeof(float);
+        huffman_bs[0]=static_cast<unsigned char>(predictor_vec.size());
+        huffman_bs++;
+        for (auto &predictor:predictor_vec)
+        {
+            huffman_bs[0]=predictor[5];
+            huffman_bs[1]=predictor[9];
+            huffman_bs+=2;
+        }
+        {
+            uint64_t len=t_int_vec.size();
+            for (int i=0;i<8;i++)
+                huffman_bs[i]=(len>>(i*8))&0xFF;
+            huffman_bs+=8;
+            if (!t_int_vec.empty())
+            {
+                huffman_encoder_class<int64_t> huffman_t_int_encoder;
+                huffman_t_int_encoder.preprocess_encode(t_int_vec.data(),t_int_vec.size());
+                huffman_t_int_encoder.save(huffman_bs);
+                huffman_t_int_encoder.encode(t_int_vec.data(),t_int_vec.size(),huffman_bs);
+            }
+        }
         for (uint64_t i=0;i<qb_vec_vec.size();i++)
         {   
+            uint64_t len=qb_vec_vec[i].size();
+            for (int j=0;j<8;j++)
+                huffman_bs[j]=(len>>(j*8))&0xFF;
+            huffman_bs+=8;
             if (qb_vec_vec[i].empty())
                 continue;
             huffman_encoder_class<int64_t> huffman_encoder;
@@ -345,29 +375,27 @@ namespace asz
             huffman_encoder.save(huffman_bs);
             huffman_encoder.encode(qb_vec_vec[i].data(),qb_vec_vec[i].size(),huffman_bs);
         }
-        if (!t_int_vec.empty())
-        {
-            huffman_encoder_class<int64_t> huffman_t_int_encoder;
-            huffman_t_int_encoder.preprocess_encode(t_int_vec.data(),t_int_vec.size());
-            huffman_t_int_encoder.save(huffman_bs);
-            huffman_t_int_encoder.encode(t_int_vec.data(),t_int_vec.size(),huffman_bs);
-        }
 
         uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
         uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
-        vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
-        uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
-        zstd_bs_vec.resize(zstd_bs_len);
+        zstd_bs_vec.resize(max_zstd_bs_len);
+        unsigned char *zstd_bs=zstd_bs_vec.data();
+        zstd_bs+=ZSTD_compress(zstd_bs,max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
+        zstd_bs_vec.resize(zstd_bs-zstd_bs_vec.data());
         auto end_time=chrono::high_resolution_clock::now();
         printf("Compression time: %f s\n",chrono::duration<double>(end_time-start_time).count());
 
-        float cr=(float)data.size()*sizeof(float)/zstd_bs_len;
+        float cr=(float)data.size()*sizeof(float)/zstd_bs_vec.size();
         float br=8*sizeof(float)/cr;
-        float mse=0;
+        float mse=0,max_err=0;
         for (uint64_t i=0;i<data.size();i++)
+        {
             mse+=(data[i]-compressed_data[i])*(data[i]-compressed_data[i]);
+            max_err=max(max_err,abs(data[i]-compressed_data[i]));
+        }
         mse/=data.size();
         float psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
+        printf("max_err= %f (%f\%)\n",max_err,max_err*100/abs_eb);
         printf("CR: %f, BR: %f, PSNR: %f\n",cr,br,psnr);
         printf("dist=%f\n",-default_slope*br+psnr);
         return -default_slope*br+psnr;

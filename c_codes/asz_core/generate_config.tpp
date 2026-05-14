@@ -25,11 +25,11 @@ namespace asz
         pivot_stride={1,1,1};
         for (auto predictor:predictor_vec)
         {
-            if (predictor.compare(0,6,"cubic0")==0)
+            if (predictor.substr(0,6)=="cubic0")
                 pivot_stride[0]*=2;
-            else if (predictor.compare(0,6,"cubic1")==0)
+            else if (predictor.substr(0,6)=="cubic1")
                 pivot_stride[1]*=2;
-            else if (predictor.compare(0,6,"cubic2")==0)
+            else if (predictor.substr(0,6)=="cubic2")
                 pivot_stride[2]*=2;
         }
         block_shape={pivot_stride[0]*block_pivot_ratio,pivot_stride[1]*block_pivot_ratio,pivot_stride[2]*block_pivot_ratio};
@@ -440,12 +440,19 @@ namespace asz
 
     // 逐层生成配置
     // 对于每一层，先对每个predictor找到最好的t，然后用最好的t实际压缩得到br和psnr，选出最好的predictor
-    void param_c::generate_config()
+    // 尝试使用固定的t而不是最好的t
+    void param_c::generate_config(string task)
     {
         pivot_eb_ratio=0.10;
         eb_ratio=0.72;
         slope_ratio=0.54;
         block_pivot_ratio=4;
+
+        if (task=="compress");
+        else if (task=="decompress")
+            return;
+        else
+            throw invalid_argument("invalid task received in generate_config");
         
         pivot_stride={1,1,1};
         for (uint64_t layer=0;layer<10;layer++)
@@ -470,21 +477,21 @@ namespace asz
                 // 采样数据，得到AB_map
                 vector<vector<uint64_t>> block_loc;
                 unordered_map<tuple<int64_t,int64_t>,uint64_t> AB_map;
-                if (predictor.compare(0,6,"cubic0")==0)
+                if ((predictor.substr(0,6)=="cubic0") and (data_shape[0]>3*pivot_stride[0]))
                 {
                     pivot_stride[0]*=2;
                     block_loc={{3*pivot_stride[0]/2,data_shape[0]-3*pivot_stride[0]/2},{0,data_shape[1]},{0,data_shape[2]}};
                     get_AB_map(AB_map,data,block_loc,pivot_stride,pivot_stride[0]*data_shape[1]*data_shape[2]/2,neg_2_stat_eb);
                     pivot_stride[0]/=2;
                 }
-                else if (predictor.compare(0,6,"cubic1")==0)
+                else if ((predictor.substr(0,6)=="cubic1") and (data_shape[1]>3*pivot_stride[1]))
                 {
                     pivot_stride[1]*=2;
                     block_loc={{0,data_shape[0]},{3*pivot_stride[1]/2,data_shape[1]-3*pivot_stride[1]/2},{0,data_shape[2]}};
                     get_AB_map(AB_map,data,block_loc,pivot_stride,pivot_stride[1]*data_shape[2]/2,neg_2_stat_eb);
                     pivot_stride[1]/=2;
                 }
-                else if (predictor.compare(0,6,"cubic2")==0)
+                else if ((predictor.substr(0,6)=="cubic2") and (data_shape[2]>3*pivot_stride[2]))
                 {
                     pivot_stride[2]*=2;
                     block_loc={{0,data_shape[0]},{0,data_shape[1]},{3*pivot_stride[2]/2,data_shape[2]-3*pivot_stride[2]/2}};
@@ -508,7 +515,7 @@ namespace asz
                 // 用最好的t实际压缩得到br和psnr
                 vector<int64_t> qb_vec;
                 block_loc={{0,data_shape[0]},{0,data_shape[1]},{0,data_shape[2]}};
-                if (predictor.compare(0,6,"cubic0")==0)
+                if (predictor.substr(0,6)=="cubic0")
                 {
                     pivot_stride[0]*=2;
                     if (predictor=="cubic0_120")
@@ -528,7 +535,7 @@ namespace asz
                     }
                     pivot_stride[0]/=2;
                 }
-                else if (predictor.compare(0,6,"cubic1")==0)
+                else if (predictor.substr(0,6)=="cubic1")
                 {
                     pivot_stride[1]*=2;
                     if (predictor=="cubic1_120")
@@ -548,7 +555,7 @@ namespace asz
                     }
                     pivot_stride[1]/=2;
                 }
-                else if (predictor.compare(0,6,"cubic2")==0)
+                else if (predictor.substr(0,6)=="cubic2")
                 {
                     pivot_stride[2]*=2;
                     if (predictor=="cubic2_120")
@@ -604,15 +611,14 @@ namespace asz
                 }
             }
             printf("best_layer_predictor=%s, best_dist=%f\n",best_layer_predictor.c_str(),best_dist);
-            if (best_layer_predictor.compare(0,6,"cubic0")==0)
+            if (best_layer_predictor.substr(0,6)=="cubic0")
                 pivot_stride[0]*=2;
-            else if (best_layer_predictor.compare(0,6,"cubic1")==0)
+            else if (best_layer_predictor.substr(0,6)=="cubic1")
                 pivot_stride[1]*=2;
-            else if (best_layer_predictor.compare(0,6,"cubic2")==0)
+            else if (best_layer_predictor.substr(0,6)=="cubic2")
                 pivot_stride[2]*=2;
             predictor_vec.insert(predictor_vec.begin(),best_layer_predictor);
         }
-        // predictor_vec={"cubic2_012","cubic0_012","cubic1_012","cubic2_012","cubic0_012","cubic1_012","cubic2_012","cubic0_012","cubic1_012","cubic2_012"};
         generate_pivot_stride_and_block_shape_and_block_num();
     }
 }
