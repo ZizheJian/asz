@@ -2,14 +2,17 @@
 
 namespace asz
 {
-    void param_c::get_default_slope()
+    template<typename T>
+    void param_c<T>::get_default_slope()
     {
-        // vector<float> temp_abs_eb_vec={abs_eb*2.0f,abs_eb,abs_eb/2.0f};
-        vector<float> temp_abs_eb_vec={abs_eb*2.0f,abs_eb*0.5f};
-        float stat_eb=abs_eb*stat_eb_ratio*0.5f;
-        float neg_2_stat_eb=1/(2*stat_eb);
+        auto start_time=chrono::high_resolution_clock::now();
+
+        // vector<T> temp_abs_eb_vec={abs_eb*2.0f,abs_eb,abs_eb/2.0f};
+        vector<T> temp_abs_eb_vec={abs_eb*2.0f,abs_eb*0.5f};
+        T stat_eb=abs_eb*stat_eb_ratio*0.5f;
+        T neg_2_stat_eb=1/(2*stat_eb);
         string best_predictor="";
-        unordered_map<string,unordered_map<tuple<float,float>,float>> h1,psnr;//每个predictor在不同rel_eb、t时的h1、psnr
+        unordered_map<string,unordered_map<tuple<T,T>,T>> h1,psnr;//每个predictor在不同rel_eb、t时的h1、psnr
         //////// 获取h1和psnr ////////
         for (auto &predictor:candidate_predictors)
         {
@@ -41,7 +44,7 @@ namespace asz
                 get_h1_psnr(h1[predictor][{temp_abs_eb,t}],psnr[predictor][{temp_abs_eb,t}],AB_map,t,temp_abs_eb,stat_eb);
         }
         //////// 计算所有predictor、所有t的平均斜率 ////////
-        vector<float> average_h1(temp_abs_eb_vec.size()),average_psnr(temp_abs_eb_vec.size());
+        vector<T> average_h1(temp_abs_eb_vec.size()),average_psnr(temp_abs_eb_vec.size());
         for (int i=0;i<temp_abs_eb_vec.size();i++)
         {
             int valid_case_num=0;
@@ -59,7 +62,7 @@ namespace asz
             if (valid_case_num!=candidate_predictors.size()*candidate_t.size())
                 printf("Warning: for rel_eb %f, only %d/%d valid cases are used to calculate average h1 and psnr\n",
                     temp_abs_eb_vec[i]/(max_val-min_val),valid_case_num,candidate_predictors.size()*candidate_t.size());
-            else if (valid_case_num==0)
+            if (valid_case_num==0)
                 throw runtime_error("In get_default_slope, for rel_eb "+to_string(temp_abs_eb_vec[i]/(max_val-min_val))+", no valid case is found to calculate average h1 and psnr");
         }
         if (temp_abs_eb_vec.size()==3)
@@ -71,5 +74,8 @@ namespace asz
             default_slope=1e4;
         else
             default_slope=(average_psnr[temp_abs_eb_vec.size()-1]-average_psnr[0])/(average_h1[temp_abs_eb_vec.size()-1]-average_h1[0]);
+        
+        auto end_time=chrono::high_resolution_clock::now();
+        printf("Get default slope time: %f s\n",chrono::duration<double>(end_time-start_time).count());
     }
 }

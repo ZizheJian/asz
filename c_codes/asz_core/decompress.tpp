@@ -2,9 +2,10 @@
 
 namespace asz
 {
-    void param_c::dot_decompress(vector<int64_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb)
+    template<typename T>
+    void param_c<T>::dot_decompress(vector<int64_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb)
     {
-        float pred;
+        T pred;
         if (i<=half_stride)
         {
             if (i+half_stride>=right)
@@ -28,36 +29,10 @@ namespace asz
         }
         compressed_data[pos]=pred-qb_vec[qb_pos]*eb*2;
         qb_pos++;
-
-        // if (abs(data[pos]-compressed_data[pos])>1.02*eb)
-        // {
-        //     printf("pos=%lu\n",pos);
-        //     printf("data[pos]=%f, compressed_data[pos]=%f\n",data[pos],compressed_data[pos]);
-        //     printf("err=%f, eb=%f\n",abs(data[pos]-compressed_data[pos]),eb);
-        //     if (i<=half_stride)
-        //     {
-        //         if (i+half_stride>=right)
-        //             printf("%f=%f\n",pred,compressed_data[pos-dist]);
-        //         else if (i+3*half_stride>=right)
-        //             printf("%f=(%f+%f)/2\n",pred,compressed_data[pos-dist],compressed_data[pos+dist]);
-        //         else
-        //             printf("%f=(3*%f+6*%f-%f)/8\n",pred,compressed_data[pos-dist],compressed_data[pos+dist],compressed_data[pos+3*dist]);
-        //     }
-        //     else
-        //     {
-        //         if (i+half_stride>=right)
-        //             printf("%f=(-%f+3*%f)/2\n",pred,compressed_data[pos-3*dist],compressed_data[pos-dist]);
-        //         else if (i+3*half_stride>=right)
-        //             printf("%f=(-%f+6*%f+3*%f)/8\n",pred,compressed_data[pos-3*dist],compressed_data[pos-dist],compressed_data[pos+dist]);
-        //         else 
-        //             printf("%f=(0.25-%f)*(%f+%f)+(0.25+%f)*(%f+%f)\n",pred,t,compressed_data[pos-3*dist],compressed_data[pos+3*dist],t,compressed_data[pos-dist],compressed_data[pos+dist]);
-        //     }
-        //     printf("%f=%f-%ld*%f*2\n",compressed_data[pos],pred,qb_vec[qb_pos-1],eb);
-        //     throw runtime_error("aaa");
-        // }
     }
 
-    void param_c::block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -75,7 +50,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -93,7 +69,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -111,7 +88,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -129,7 +107,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -147,7 +126,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -165,7 +145,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -183,7 +164,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -201,7 +183,8 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb);
     }
 
-    void param_c::block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb)
+    template<typename T>
+    void param_c<T>::block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -219,17 +202,20 @@ namespace asz
             dot_decompress(qb_vec,qb_pos,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb);
     }
 
-    void param_c::decompress()
+    template<typename T>
+    void param_c<T>::decompress()
     {
+        auto start_time=chrono::high_resolution_clock::now();
+
         uint64_t huffman_bs_len=ZSTD_getFrameContentSize(zstd_bs_vec.data(),zstd_bs_vec.size());
         vector<unsigned char> huffman_bs_vec(huffman_bs_len);
         if (ZSTD_decompress(huffman_bs_vec.data(),huffman_bs_len,zstd_bs_vec.data(),zstd_bs_vec.size())!=huffman_bs_len)
             throw runtime_error("ZSTD_decompress error in decompress()");
         const unsigned char *huffman_bs=huffman_bs_vec.data();
-        memcpy(&min_val,huffman_bs,sizeof(float));
-        huffman_bs+=sizeof(float);
-        memcpy(&max_val,huffman_bs,sizeof(float));
-        huffman_bs+=sizeof(float);
+        memcpy(&min_val,huffman_bs,sizeof(T));
+        huffman_bs+=sizeof(T);
+        memcpy(&max_val,huffman_bs,sizeof(T));
+        huffman_bs+=sizeof(T);
         uint64_t layer_num=huffman_bs[0];
         huffman_bs++;
         for (uint64_t i=0;i<layer_num;i++)
@@ -276,23 +262,31 @@ namespace asz
         compressed_data.resize(data_shape[0]*data_shape[1]*data_shape[2]);
         abs_eb=rel_eb*(max_val-min_val);
         //////// 读取原始数据 ////////
-        data.resize(data_shape[0]*data_shape[1]*data_shape[2]);
         ifstream data_file(original_data_path,ios::binary);
-        data_file.read(reinterpret_cast<char*>(data.data()),data.size()*sizeof(float));
+        if (sizeof(T)==sizeof(float))
+        {
+            data.resize(data_shape[0]*data_shape[1]*data_shape[2]);
+            data_file.read(reinterpret_cast<char*>(data.data()),data.size()*sizeof(float));
+        }
+        else
+        {
+            vector<float> float_data(data_shape[0]*data_shape[1]*data_shape[2]);
+            data_file.read(reinterpret_cast<char*>(float_data.data()),float_data.size()*sizeof(float));
+            data.resize(data_shape[0]*data_shape[1]*data_shape[2]);
+            data.assign(float_data.begin(),float_data.end());
+        }
         data_file.close();
         //////// 解压pivot points ////////
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
         pivot_num*=((data_shape[1]+pivot_stride[1]-1)/pivot_stride[1]);
         pivot_num*=((data_shape[2]+pivot_stride[2]-1)/pivot_stride[2]);
-        float pivot_eb=abs_eb*pivot_eb_ratio;
+        T pivot_eb=abs_eb*pivot_eb_ratio;
         for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
         for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1])
         for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
         {
             uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
             compressed_data[pos]=qb_vec_vec[0][qb_pos_vec[0]]*pivot_eb*2;
-            if (abs(data[pos]-compressed_data[pos])>1.02*pivot_eb)
-                throw runtime_error("data="+to_string(data[pos])+", compressed_data="+to_string(compressed_data[pos])+", err="+to_string(abs(data[pos]-compressed_data[pos]))+", pivot_eb="+to_string(pivot_eb));
             qb_pos_vec[0]++;
         }
         // //////// 依次处理每个大block ////////
@@ -300,7 +294,6 @@ namespace asz
         for (uint64_t block_i1=0;block_i1<block_num[1];block_i1++)
         for (uint64_t block_i2=0;block_i2<block_num[2];block_i2++)
         {
-            printf("block %lu %lu %lu\n",block_i0,block_i1,block_i2);
             uint64_t block_id=block_i0*block_num[1]*block_num[2]+block_i1*block_num[2]+block_i2;
             vector<vector<uint64_t>> block_loc(3);
             block_loc[0]={block_i0*block_shape[0],min((block_i0+1)*block_shape[0]+1,data_shape[0])};
@@ -311,11 +304,10 @@ namespace asz
             uint32_t layer_num=predictor_vec.size();
             for (uint32_t layer_id=0;layer_id<layer_num;layer_id++)
             {
-                printf("layer_id=%u\n",layer_id);
                 string predictor=predictor_vec[layer_id];
-                float layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
+                T layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
                 //////// 获取最好t2 ////////
-                float best_t=(float)t_int_vec[t_pos]/t_precision;
+                T best_t=(T)t_int_vec[t_pos]/t_precision;
                 t_pos++;
                 //////// 预测 ////////
                 if (predictor.substr(0,6)=="cubic0")
@@ -350,18 +342,19 @@ namespace asz
                 }
             }
         }
+        auto end_time=chrono::high_resolution_clock::now();
+        printf("Decompression time: %f s\n",chrono::duration<double>(end_time-start_time).count());
         
-        
-        float cr=(float)data.size()*sizeof(float)/zstd_bs_vec.size();
-        float br=8*sizeof(float)/cr;
-        float mse=0,max_err=0;
+        T cr=(T)data.size()*sizeof(float)/zstd_bs_vec.size();
+        T br=8*sizeof(float)/cr;
+        T mse=0,max_err=0;
         for (uint64_t i=0;i<data.size();i++)
         {
             mse+=(data[i]-compressed_data[i])*(data[i]-compressed_data[i]);
             max_err=max(max_err,abs(data[i]-compressed_data[i]));
         }
         mse/=data.size();
-        float psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
+        T psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
         printf("max_err= %f (%f\%)\n",max_err,max_err*100/abs_eb);
         printf("CR= %f\n",cr);
         printf("BR= %f\n",br);

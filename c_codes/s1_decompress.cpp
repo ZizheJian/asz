@@ -4,7 +4,7 @@ using namespace std;
 
 int main(int argc,char* argv[])
 {
-    auto param=asz::param_c();
+    auto param=asz::param_c<float>();
     for (int i=1;i<argc;i++)
     {
         string arg=argv[i];
@@ -48,7 +48,17 @@ int main(int argc,char* argv[])
     compressed_data_file.read(reinterpret_cast<char*>(param.zstd_bs_vec.data()),compressed_data_file_size);
     compressed_data_file.close();
 
-    param.generate_config("decompress");
-    param.decompress();
-    exit(0);
+    auto param_double=asz::param_c<double>();
+    if (param.rel_eb<1e-5)
+    {
+        param_double.copy_from(param);
+        param_double.generate_config("decompress");
+        param_double.decompress();
+        param.copy_from(param_double);
+    }
+    else
+    {
+        param.generate_config("decompress");
+        param.decompress();
+    }
 }

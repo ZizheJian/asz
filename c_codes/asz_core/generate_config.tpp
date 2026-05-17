@@ -2,7 +2,8 @@
 
 namespace asz
 {
-    void param_c::print_config()
+    template<typename T>
+    void param_c<T>::print_config()
     {
         printf("predictor_vec={");
         for (auto predictor_it=predictor_vec.begin();predictor_it!=predictor_vec.end();predictor_it++)
@@ -20,7 +21,8 @@ namespace asz
         printf("block_num={%lu,%lu,%lu};\n",block_num[0],block_num[1],block_num[2]);
     }
 
-    void param_c::generate_pivot_stride_and_block_shape_and_block_num()
+    template<typename T>
+    void param_c<T>::generate_pivot_stride_and_block_shape_and_block_num()
     {
         pivot_stride={1,1,1};
         for (auto predictor:predictor_vec)
@@ -38,7 +40,8 @@ namespace asz
             (data_shape[2]+block_shape[2]-1)/block_shape[2]};
     }
 
-    void param_c::generate_config_enumerate()
+    template<typename T>
+    void param_c<T>::generate_config_enumerate()
     {
         //////// 用于搜索一个合适的config ////////
         if (!config_generated)
@@ -234,9 +237,10 @@ namespace asz
         }
     }
 
-    void param_c::dot_sample_compress(vector<int64_t> &qb_vec,float &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::dot_sample_compress(vector<int64_t> &qb_vec,T &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb)
     {
-        float pred;
+        T pred;
         if (i<=half_stride)
         {
             if (i+half_stride>=right)
@@ -263,8 +267,9 @@ namespace asz
         mse+=(pred-qb*2*eb-data[pos])*(pred-qb*2*eb-data[pos]);
     }
 
-    void param_c::block_sample_compress_cubic0_120(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic0_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -283,8 +288,9 @@ namespace asz
                 stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic0_021(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic0_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -303,8 +309,9 @@ namespace asz
                 stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic0_012(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic0_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -323,8 +330,9 @@ namespace asz
                 stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic1_120(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic1_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -343,8 +351,9 @@ namespace asz
                 stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic1_021(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic1_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -362,8 +371,9 @@ namespace asz
             dot_sample_compress(qb_vec,mse,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic1_012(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic1_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -381,8 +391,9 @@ namespace asz
             dot_sample_compress(qb_vec,mse,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic2_120(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic2_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -400,8 +411,9 @@ namespace asz
             dot_sample_compress(qb_vec,mse,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic2_021(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic2_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -419,8 +431,9 @@ namespace asz
             dot_sample_compress(qb_vec,mse,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_sample_compress_cubic2_012(vector<int64_t> &qb_vec,float &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
-        vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_sample_compress_cubic2_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+        vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -441,7 +454,8 @@ namespace asz
     // 逐层生成配置
     // 对于每一层，先对每个predictor找到最好的t，然后用最好的t实际压缩得到br和psnr，选出最好的predictor
     // 尝试使用固定的t而不是最好的t
-    void param_c::generate_config(string task)
+    template<typename T>
+    void param_c<T>::generate_config(string task)
     {
         pivot_eb_ratio=0.10;
         eb_ratio=0.72;
@@ -454,23 +468,24 @@ namespace asz
         else
             throw invalid_argument("invalid task received in generate_config");
         
+        auto start_time=chrono::high_resolution_clock::now();
+        
         pivot_stride={1,1,1};
         for (uint64_t layer=0;layer<10;layer++)
         {
-            float layer_eb=abs_eb*pow(eb_ratio,layer);
-            float neg_2_layer_eb=1/(2*layer_eb);
-            float stat_eb=layer_eb*stat_eb_ratio;
-            float neg_2_stat_eb=1/(2*stat_eb);
-            float pivot_eb=abs_eb*pivot_eb_ratio;
-            float layer_default_slope=default_slope*pow(slope_ratio,layer);
+            T layer_eb=abs_eb*pow(eb_ratio,layer);
+            T neg_2_layer_eb=1/(2*layer_eb);
+            T stat_eb=layer_eb*stat_eb_ratio;
+            T neg_2_stat_eb=1/(2*stat_eb);
+            T layer_default_slope=default_slope*pow(slope_ratio,layer);
             vector<string> layer_candidate_predictors;
             if (layer<3)
                 layer_candidate_predictors=candidate_predictors;
             else
                 layer_candidate_predictors={"cubic0_012","cubic1_012","cubic2_012"};
-            unordered_map<string,unordered_map<float,float>> h1,psnr,dist;//每个predictor在不同t时的h1、psnr、dist
-            unordered_map<string,float> best_t;//每个predictor最好的t
-            unordered_map<string,float> qb_br,qb_mse,qb_psnr;//每个predictor在采样数据上的实测br、mse、psnr
+            unordered_map<string,unordered_map<T,T>> h1,psnr,dist;//每个predictor在不同t时的h1、psnr、dist
+            unordered_map<string,T> best_t;//每个predictor最好的t
+            unordered_map<string,T> qb_br,qb_mse,qb_psnr;//每个predictor在采样数据上的实测br、mse、psnr
             unordered_map<string,uint64_t> qb_num;//每个predictor的qb数量和pivot的qb数量
             for (string &predictor:layer_candidate_predictors)
             {
@@ -589,7 +604,7 @@ namespace asz
                     vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
                     uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
                     zstd_bs_vec.resize(zstd_bs_len);
-                    float cr=(float)qb_vec.size()*sizeof(float)/zstd_bs_len;
+                    T cr=(T)qb_vec.size()*sizeof(float)/zstd_bs_len;
                     qb_br[predictor]=8*sizeof(float)/cr;
                     qb_mse[predictor]=qb_mse[predictor]/qb_vec.size();
                     qb_psnr[predictor]=10*log10((max_val-min_val)*(max_val-min_val)/qb_mse[predictor]);
@@ -597,7 +612,7 @@ namespace asz
                 }
             }
             string best_layer_predictor="";
-            float best_dist=-1e8;
+            T best_dist=-1e8;
             for (auto &qb_predictor:layer_candidate_predictors)
             {
                 if (qb_num[qb_predictor]==0)
@@ -620,5 +635,8 @@ namespace asz
             predictor_vec.insert(predictor_vec.begin(),best_layer_predictor);
         }
         generate_pivot_stride_and_block_shape_and_block_num();
+        
+        auto end_time=chrono::high_resolution_clock::now();
+        printf("Generate config time: %f s\n",chrono::duration<double>(end_time-start_time).count());
     }
 }

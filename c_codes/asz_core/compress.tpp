@@ -2,9 +2,10 @@
 
 namespace asz
 {
-    void param_c::dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb)
     {
-        float pred;
+        T pred;
         if (i<=half_stride)
         {
             if (i+half_stride>=right)
@@ -31,7 +32,8 @@ namespace asz
         compressed_data[pos]=pred-qb*2*eb;
     }
 
-    void param_c::block_compress_cubic0_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic0_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -49,7 +51,8 @@ namespace asz
             dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic0_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic0_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -67,7 +70,8 @@ namespace asz
             dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic0_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic0_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -85,7 +89,8 @@ namespace asz
             dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic1_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic1_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -103,7 +108,8 @@ namespace asz
             dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic1_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic1_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -121,7 +127,8 @@ namespace asz
             dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic1_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic1_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -139,7 +146,8 @@ namespace asz
             dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic2_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic2_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -157,7 +165,8 @@ namespace asz
             dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic2_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic2_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -175,7 +184,8 @@ namespace asz
             dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
     }
 
-    void param_c::block_compress_cubic2_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,float t,float eb,float neg_2_eb)
+    template<typename T>
+    void param_c<T>::block_compress_cubic2_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -193,7 +203,8 @@ namespace asz
             dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
     }
 
-    float param_c::compress()
+    template<typename T>
+    T param_c<T>::compress()
     {
         printf("min_val=%f max_val=%f\n",min_val,max_val);
         compressed_data=data;
@@ -210,8 +221,8 @@ namespace asz
         pivot_num*=((data_shape[1]+pivot_stride[1]-1)/pivot_stride[1]);
         pivot_num*=((data_shape[2]+pivot_stride[2]-1)/pivot_stride[2]);
         qb_vec_vec[0].reserve(pivot_num);
-        float pivot_eb=abs_eb*pivot_eb_ratio;
-        float neg_2_pivot_eb=1/(2*pivot_eb);
+        T pivot_eb=abs_eb*pivot_eb_ratio;
+        T neg_2_pivot_eb=1/(2*pivot_eb);
         for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
         for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1])
         for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
@@ -237,12 +248,12 @@ namespace asz
             for (uint32_t layer_id=0;layer_id<layer_num;layer_id++)
             {
                 string predictor=predictor_vec[layer_id];
-                float layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
-                float neg_2_layer_eb=1/(2*layer_eb);
-                float layer_default_slope=default_slope*pow(slope_ratio,(int32_t)layer_num-(int32_t)layer_id+1);
+                T layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
+                T neg_2_layer_eb=1/(2*layer_eb);
+                T layer_default_slope=default_slope*pow(slope_ratio,(int32_t)layer_num-(int32_t)layer_id+1);
                 //////// 估计最好t2 ////////
-                float stat_eb=layer_eb*stat_eb_ratio;
-                float neg_2_stat_eb=1/(2*stat_eb);
+                T stat_eb=layer_eb*stat_eb_ratio;
+                T neg_2_stat_eb=1/(2*stat_eb);
                 unordered_map<tuple<int64_t,int64_t>,uint64_t> AB_map;
                 if ((predictor.substr(0,6)=="cubic0") && (block_loc[0][1]>block_loc[0][0]+3*stride[0]))
                 {
@@ -268,7 +279,7 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0]+3*stride[2]/2,block_loc[2][1]-3*stride[2]/2};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[2]/2,neg_2_stat_eb);
                 }
-                float best_t,best_h1,best_psnr;
+                T best_t,best_h1,best_psnr;
                 if (AB_map.empty())
                 {
                     best_t=0.3125;
@@ -277,7 +288,7 @@ namespace asz
                 }
                 else
                 {
-                    float h1=0,psnr=0;
+                    T h1=0,psnr=0;
                     bool any_t_tried=false;
                     for (auto t:candidate_t)
                     {
@@ -337,10 +348,10 @@ namespace asz
         //////// 编码 ////////
         vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
         unsigned char *huffman_bs=huffman_bs_vec.data();
-        memcpy(huffman_bs,&min_val,sizeof(float));
-        huffman_bs+=sizeof(float);
-        memcpy(huffman_bs,&max_val,sizeof(float));
-        huffman_bs+=sizeof(float);
+        memcpy(huffman_bs,&min_val,sizeof(T));
+        huffman_bs+=sizeof(T);
+        memcpy(huffman_bs,&max_val,sizeof(T));
+        huffman_bs+=sizeof(T);
         huffman_bs[0]=static_cast<unsigned char>(predictor_vec.size());
         huffman_bs++;
         for (auto &predictor:predictor_vec)
@@ -385,16 +396,16 @@ namespace asz
         auto end_time=chrono::high_resolution_clock::now();
         printf("Compression time: %f s\n",chrono::duration<double>(end_time-start_time).count());
 
-        float cr=(float)data.size()*sizeof(float)/zstd_bs_vec.size();
-        float br=8*sizeof(float)/cr;
-        float mse=0,max_err=0;
+        T cr=(T)data.size()*sizeof(float)/zstd_bs_vec.size();
+        T br=8*sizeof(float)/cr;
+        T mse=0,max_err=0;
         for (uint64_t i=0;i<data.size();i++)
         {
             mse+=(data[i]-compressed_data[i])*(data[i]-compressed_data[i]);
             max_err=max(max_err,abs(data[i]-compressed_data[i]));
         }
         mse/=data.size();
-        float psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
+        T psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
         printf("max_err= %f (%f\%)\n",max_err,max_err*100/abs_eb);
         printf("CR: %f, BR: %f, PSNR: %f\n",cr,br,psnr);
         printf("dist=%f\n",-default_slope*br+psnr);
