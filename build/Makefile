@@ -162,30 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s1_compress
+# Target rules for targets named s2_cubic_prediction
 
 # Build rule for target.
-s1_compress: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s1_compress
-.PHONY : s1_compress
+s2_cubic_prediction: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s2_cubic_prediction
+.PHONY : s2_cubic_prediction
 
 # fast build rule for target.
-s1_compress/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/build
-.PHONY : s1_compress/fast
-
-#=============================================================================
-# Target rules for targets named s1_decompress
-
-# Build rule for target.
-s1_decompress: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s1_decompress
-.PHONY : s1_decompress
-
-# fast build rule for target.
-s1_decompress/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/build
-.PHONY : s1_decompress/fast
+s2_cubic_prediction/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/build
+.PHONY : s2_cubic_prediction/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -369,53 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s1_compress.o: s1_compress.cpp.o
-.PHONY : s1_compress.o
+s2_cubic_prediction.o: s2_cubic_prediction.cpp.o
+.PHONY : s2_cubic_prediction.o
 
 # target to build an object file
-s1_compress.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/s1_compress.cpp.o
-.PHONY : s1_compress.cpp.o
+s2_cubic_prediction.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/s2_cubic_prediction.cpp.o
+.PHONY : s2_cubic_prediction.cpp.o
 
-s1_compress.i: s1_compress.cpp.i
-.PHONY : s1_compress.i
-
-# target to preprocess a source file
-s1_compress.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/s1_compress.cpp.i
-.PHONY : s1_compress.cpp.i
-
-s1_compress.s: s1_compress.cpp.s
-.PHONY : s1_compress.s
-
-# target to generate assembly for a file
-s1_compress.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_compress.dir/build.make CMakeFiles/s1_compress.dir/s1_compress.cpp.s
-.PHONY : s1_compress.cpp.s
-
-s1_decompress.o: s1_decompress.cpp.o
-.PHONY : s1_decompress.o
-
-# target to build an object file
-s1_decompress.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/s1_decompress.cpp.o
-.PHONY : s1_decompress.cpp.o
-
-s1_decompress.i: s1_decompress.cpp.i
-.PHONY : s1_decompress.i
+s2_cubic_prediction.i: s2_cubic_prediction.cpp.i
+.PHONY : s2_cubic_prediction.i
 
 # target to preprocess a source file
-s1_decompress.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/s1_decompress.cpp.i
-.PHONY : s1_decompress.cpp.i
+s2_cubic_prediction.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/s2_cubic_prediction.cpp.i
+.PHONY : s2_cubic_prediction.cpp.i
 
-s1_decompress.s: s1_decompress.cpp.s
-.PHONY : s1_decompress.s
+s2_cubic_prediction.s: s2_cubic_prediction.cpp.s
+.PHONY : s2_cubic_prediction.s
 
 # target to generate assembly for a file
-s1_decompress.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s1_decompress.dir/build.make CMakeFiles/s1_decompress.dir/s1_decompress.cpp.s
-.PHONY : s1_decompress.cpp.s
+s2_cubic_prediction.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/s2_cubic_prediction.cpp.s
+.PHONY : s2_cubic_prediction.cpp.s
 
 # Help Target
 help:
@@ -441,16 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s1_compress"
-	@echo "... s1_decompress"
+	@echo "... s2_cubic_prediction"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s1_compress.o"
-	@echo "... s1_compress.i"
-	@echo "... s1_compress.s"
-	@echo "... s1_decompress.o"
-	@echo "... s1_decompress.i"
-	@echo "... s1_decompress.s"
+	@echo "... s2_cubic_prediction.o"
+	@echo "... s2_cubic_prediction.i"
+	@echo "... s2_cubic_prediction.s"
 .PHONY : help
 
 

@@ -14,7 +14,7 @@ int main(int argc,char* argv[])
         {
             param.original_data_path=argv[++i];
             param.compressed_data_path=param.original_data_path+".asz";
-            param.decompressed_data_path=param.original_data_path+".bin";
+            param.decompressed_data_path=param.compressed_data_path+".bin";
             continue;
         }
         else if (arg=="-z")

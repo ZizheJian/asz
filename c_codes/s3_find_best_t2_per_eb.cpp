@@ -440,7 +440,7 @@ int main()
             best_t2_vec[i][best_sp_vec[i][rel_eb]][rel_eb]);
     }
 
-    // 对每个eb，每个预测方向，选择最好的遍历顺序，使用最好的t2
+    // 对每个eb，每个预测方向，检验遍历顺序的优劣能否用H1预测，使用最好的t2
     for (auto &rel_eb:rel_eb_vec)
     {
         for (const string &sp:{"cubic0","cubic1","cubic2"})
@@ -449,9 +449,22 @@ int main()
             for (auto &csv_path:csv_path_vec)
                 if (csv_path.find(sp)!=string::npos)
                     temp_csv_path_vec.push_back(csv_path);
-            string best_csv_path=find_best_sp(dist_2_vec[0][rel_eb],temp_csv_path_vec);
-            printf("%f %f ",aspt_vec[0][best_csv_path][{rel_eb,best_t2_vec[0][best_csv_path][rel_eb]}],standard_psnr[best_csv_path][{rel_eb,best_t2_vec[0][best_csv_path][rel_eb]}]);
+            double tau=calc_tau_2(dist_2_vec[0],dist_2_vec[1],rel_eb,temp_csv_path_vec);
+            printf("rel_eb=%f, sp=%s, tau=%f\n",rel_eb,sp.c_str(),tau);
         }
-        printf("\n");
+    }
+
+    // 对每个eb，每个遍历顺序，检验预测方向的优劣能否用H1预测，使用最好的t2
+    for(auto &rel_eb:rel_eb_vec)
+    {
+        for(const string &order:{"120","021","012"})
+        {
+            vector<string> temp_csv_path_vec;
+            for(const auto &csv_path:csv_path_vec)
+                if(csv_path.find("_"+order+".csv")!=string::npos)
+                    temp_csv_path_vec.push_back(csv_path);
+            double tau=calc_tau_2(dist_2_vec[0],dist_2_vec[1],rel_eb,temp_csv_path_vec);
+            printf("rel_eb=%f, order=%s, tau=%f\n",rel_eb,order.c_str(),tau);
+        }
     }
 }

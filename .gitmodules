@@ -1,11 +1,17 @@
-[submodule "c_codes/third_party/zstd"]
-	path = c_codes/third_party/zstd
+[submodule "third_party/zstd"]
+	path = third_party/zstd
 	url = https://github.com/facebook/zstd.git
-[submodule "c_codes/third_party/SZ3_master"]
-	path = c_codes/third_party/SZ3_master
+[submodule "third_party/SZ3_master"]
+	path = third_party/SZ3_master
 	url = https://github.com/szcompressor/SZ3.git
 	branch = master
-[submodule "c_codes/third_party/SZ3_QoZ"]
-	path = c_codes/third_party/SZ3_QoZ
+[submodule "third_party/SZ3_QoZ"]
+	path = third_party/SZ3_QoZ
 	url = https://github.com/szcompressor/SZ3.git
 	branch = QoZ
+[submodule "third_party/zfp"]
+	path = third_party/zfp
+	url = https://github.com/llnl/zfp.git
+[submodule "third_party/sperr"]
+	path = third_party/sperr
+	url = https://github.com/NCAR/SPERR.git
