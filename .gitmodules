@@ -15,3 +15,6 @@
 [submodule "third_party/sperr"]
 	path = third_party/sperr
 	url = https://github.com/NCAR/SPERR.git
+[submodule "third_party/csv_tools"]
+	path = third_party/csv_tools
+	url = git@github.com:ZizheJian/csv_tools.git

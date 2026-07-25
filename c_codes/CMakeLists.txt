@@ -1,16 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(ASTZ_tests)
 
-# set(CMAKE_CXX_STANDARD 11)
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)
 
 # 优化标志
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Ofast -march=native -mavx2 -mfma -Wno-dangling-else")
 
 add_subdirectory(asz_core)
-add_subdirectory(csv_tools)
-add_subdirectory(third_party/zstd)
+add_subdirectory(../third_party/csv_tools/c_codes ../build/csv_tools_build)
+add_subdirectory(../third_party/zstd ../build/zstd_build)
+
 
 set(CODE_NAME "" CACHE STRING "which target to build")
 

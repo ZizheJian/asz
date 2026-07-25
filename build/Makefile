@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s2_cubic_prediction
+# Target rules for targets named s2_many_prediction
 
 # Build rule for target.
-s2_cubic_prediction: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s2_cubic_prediction
-.PHONY : s2_cubic_prediction
+s2_many_prediction: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s2_many_prediction
+.PHONY : s2_many_prediction
 
 # fast build rule for target.
-s2_cubic_prediction/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/build
-.PHONY : s2_cubic_prediction/fast
+s2_many_prediction/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/build
+.PHONY : s2_many_prediction/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -184,7 +184,7 @@ clean-all: cmake_check_build_system
 
 # fast build rule for target.
 clean-all/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/build.make third_party/zstd/build/cmake/CMakeFiles/clean-all.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/CMakeFiles/clean-all.dir/build.make zstd_build/build/cmake/CMakeFiles/clean-all.dir/build
 .PHONY : clean-all/fast
 
 #=============================================================================
@@ -197,7 +197,7 @@ libzstd_shared: cmake_check_build_system
 
 # fast build rule for target.
 libzstd_shared/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/build.make third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/lib/CMakeFiles/libzstd_shared.dir/build.make zstd_build/build/cmake/lib/CMakeFiles/libzstd_shared.dir/build
 .PHONY : libzstd_shared/fast
 
 #=============================================================================
@@ -210,7 +210,7 @@ libzstd_static: cmake_check_build_system
 
 # fast build rule for target.
 libzstd_static/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/build.make third_party/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/lib/CMakeFiles/libzstd_static.dir/build.make zstd_build/build/cmake/lib/CMakeFiles/libzstd_static.dir/build
 .PHONY : libzstd_static/fast
 
 #=============================================================================
@@ -223,7 +223,7 @@ uninstall: cmake_check_build_system
 
 # fast build rule for target.
 uninstall/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/lib/CMakeFiles/uninstall.dir/build.make third_party/zstd/build/cmake/lib/CMakeFiles/uninstall.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/lib/CMakeFiles/uninstall.dir/build.make zstd_build/build/cmake/lib/CMakeFiles/uninstall.dir/build
 .PHONY : uninstall/fast
 
 #=============================================================================
@@ -236,7 +236,7 @@ zstd: cmake_check_build_system
 
 # fast build rule for target.
 zstd/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstd.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstd.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstd.dir/build
 .PHONY : zstd/fast
 
 #=============================================================================
@@ -249,7 +249,7 @@ zstdcat: cmake_check_build_system
 
 # fast build rule for target.
 zstdcat/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstdcat.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstdcat.dir/build
 .PHONY : zstdcat/fast
 
 #=============================================================================
@@ -262,7 +262,7 @@ unzstd: cmake_check_build_system
 
 # fast build rule for target.
 unzstd/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/unzstd.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/unzstd.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/unzstd.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/unzstd.dir/build
 .PHONY : unzstd/fast
 
 #=============================================================================
@@ -275,7 +275,7 @@ zstd.1: cmake_check_build_system
 
 # fast build rule for target.
 zstd.1/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstd.1.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstd.1.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstd.1.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstd.1.dir/build
 .PHONY : zstd.1/fast
 
 #=============================================================================
@@ -288,7 +288,7 @@ zstdgrep.1: cmake_check_build_system
 
 # fast build rule for target.
 zstdgrep.1/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdgrep.1.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdgrep.1.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstdgrep.1.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstdgrep.1.dir/build
 .PHONY : zstdgrep.1/fast
 
 #=============================================================================
@@ -301,7 +301,7 @@ zstdless.1: cmake_check_build_system
 
 # fast build rule for target.
 zstdless.1/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdless.1.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdless.1.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstdless.1.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstdless.1.dir/build
 .PHONY : zstdless.1/fast
 
 #=============================================================================
@@ -314,7 +314,7 @@ zstdcat.1: cmake_check_build_system
 
 # fast build rule for target.
 zstdcat.1/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.1.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdcat.1.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstdcat.1.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstdcat.1.dir/build
 .PHONY : zstdcat.1/fast
 
 #=============================================================================
@@ -327,7 +327,7 @@ unzstd.1: cmake_check_build_system
 
 # fast build rule for target.
 unzstd.1/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/unzstd.1.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/unzstd.1.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/unzstd.1.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/unzstd.1.dir/build
 .PHONY : unzstd.1/fast
 
 #=============================================================================
@@ -340,7 +340,7 @@ zstd-frugal: cmake_check_build_system
 
 # fast build rule for target.
 zstd-frugal/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstd-frugal.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstd-frugal.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstd-frugal.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstd-frugal.dir/build
 .PHONY : zstd-frugal/fast
 
 #=============================================================================
@@ -353,32 +353,32 @@ zstdmt: cmake_check_build_system
 
 # fast build rule for target.
 zstdmt/fast:
-	$(MAKE) $(MAKESILENT) -f third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make third_party/zstd/build/cmake/programs/CMakeFiles/zstdmt.dir/build
+	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s2_cubic_prediction.o: s2_cubic_prediction.cpp.o
-.PHONY : s2_cubic_prediction.o
+s2_many_prediction.o: s2_many_prediction.cpp.o
+.PHONY : s2_many_prediction.o
 
 # target to build an object file
-s2_cubic_prediction.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/s2_cubic_prediction.cpp.o
-.PHONY : s2_cubic_prediction.cpp.o
+s2_many_prediction.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/s2_many_prediction.cpp.o
+.PHONY : s2_many_prediction.cpp.o
 
-s2_cubic_prediction.i: s2_cubic_prediction.cpp.i
-.PHONY : s2_cubic_prediction.i
+s2_many_prediction.i: s2_many_prediction.cpp.i
+.PHONY : s2_many_prediction.i
 
 # target to preprocess a source file
-s2_cubic_prediction.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/s2_cubic_prediction.cpp.i
-.PHONY : s2_cubic_prediction.cpp.i
+s2_many_prediction.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/s2_many_prediction.cpp.i
+.PHONY : s2_many_prediction.cpp.i
 
-s2_cubic_prediction.s: s2_cubic_prediction.cpp.s
-.PHONY : s2_cubic_prediction.s
+s2_many_prediction.s: s2_many_prediction.cpp.s
+.PHONY : s2_many_prediction.s
 
 # target to generate assembly for a file
-s2_cubic_prediction.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_cubic_prediction.dir/build.make CMakeFiles/s2_cubic_prediction.dir/s2_cubic_prediction.cpp.s
-.PHONY : s2_cubic_prediction.cpp.s
+s2_many_prediction.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/s2_many_prediction.cpp.s
+.PHONY : s2_many_prediction.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s2_cubic_prediction"
+	@echo "... s2_many_prediction"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s2_cubic_prediction.o"
-	@echo "... s2_cubic_prediction.i"
-	@echo "... s2_cubic_prediction.s"
+	@echo "... s2_many_prediction.o"
+	@echo "... s2_many_prediction.i"
+	@echo "... s2_many_prediction.s"
 .PHONY : help
 
 

@@ -2,7 +2,7 @@ import os,subprocess,sys
 
 redbegin="\033[91m"
 redend="\033[0m"
-silent_build=True
+silent_build=False
 
 def run_command(command,silent=False):
     import pty,errno
@@ -33,7 +33,7 @@ def run_command(command,silent=False):
             exit()
         return output
     
-code_name_map={2:"s2_cubic_prediction",
+code_name_map={2:"s2_many_prediction",
                3:"s3_find_best_t2_per_eb",
                4:"s4_multi_prediction",
                5:"s5_find_best_t2_per_eb",

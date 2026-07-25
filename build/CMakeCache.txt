@@ -313,7 +313,7 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //which target to build
-CODE_NAME:STRING=s2_cubic_prediction
+CODE_NAME:STRING=s2_many_prediction
 
 //Visibility for ZDICTLIB_STATIC_API API
 ZDICTLIB_STATIC_API:STRING=
@@ -376,40 +376,40 @@ ZSTD_PROGRAMS_LINK_SHARED:BOOL=OFF
 ZSTD_ZLIB_SUPPORT:BOOL=OFF
 
 //Value Computed by CMake
-libzstd_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/lib
+libzstd_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/zstd_build/build/cmake/lib
 
 //Value Computed by CMake
 libzstd_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-libzstd_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/lib
+libzstd_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/third_party/zstd/build/cmake/lib
 
 //Value Computed by CMake
-programs_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake/programs
+programs_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/zstd_build/build/cmake/programs
 
 //Value Computed by CMake
 programs_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-programs_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake/programs
+programs_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/third_party/zstd/build/cmake/programs
 
 //Value Computed by CMake
-zstd-superbuild_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/third_party/zstd
+zstd-superbuild_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/zstd_build
 
 //Value Computed by CMake
 zstd-superbuild_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-zstd-superbuild_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd
+zstd-superbuild_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/third_party/zstd
 
 //Value Computed by CMake
-zstd_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/third_party/zstd/build/cmake
+zstd_BINARY_DIR:STATIC=/home/x-zjian1/ASTZ_tests/build/zstd_build/build/cmake
 
 //Value Computed by CMake
 zstd_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-zstd_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/c_codes/third_party/zstd/build/cmake
+zstd_SOURCE_DIR:STATIC=/home/x-zjian1/ASTZ_tests/third_party/zstd/build/cmake
 
 
 ########################
