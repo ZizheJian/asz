@@ -22,9 +22,9 @@
 using namespace std;
 
 void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<int64_t> &qb_vec,double max_val,double min_val,
-    double rel_eb,vector<double> &t_vec,double mse,double pred_mse,double pred_mae);
+    double rel_eb,vector<double> &t_vec,double mse,double pred_rmse,double pred_mae);
 
-void compress_1d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,double &pred_mae,vector<float> &data,
+void compress_1d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_rmse,double &pred_mae,vector<float> &data,
     vector<uint64_t> &data_shape,vector<uint64_t> &adjacent_pos_dist_vec,double abs_eb,double neg_2_eb,vector<double> t_vec,
     uint64_t i0,uint64_t i1,uint64_t i2)
 {
@@ -33,7 +33,7 @@ void compress_1d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,doub
     uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
     double pred=(0.25-t)*(data[pos-3*adjacent_pos_dist]+data[pos+3*adjacent_pos_dist]);
     pred+=(0.25+t)*(data[pos-adjacent_pos_dist]+data[pos+adjacent_pos_dist]);
-    pred_mse+=pow(pred-data[pos],2);
+    pred_rmse+=pow(pred-data[pos],2);
     pred_mae+=fabs(pred-data[pos]);
     int64_t qb=llround((pred-data[pos])*neg_2_eb);
     qb_vec.push_back(qb);
@@ -41,7 +41,7 @@ void compress_1d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,doub
     mse+=pow(decmp-data[pos],2);
 }
 
-void compress_2d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,double &pred_mae,vector<float> &data,
+void compress_2d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_rmse,double &pred_mae,vector<float> &data,
     vector<uint64_t> &data_shape,vector<uint64_t> &adjacent_pos_dist_vec,double abs_eb,double neg_2_eb,vector<double> t_vec,
     uint64_t i0,uint64_t i1,uint64_t i2)
 {
@@ -51,7 +51,7 @@ void compress_2d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,doub
     uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
     double pred=(0.25+t)*(data[pos-adjacent_pos_dist1]+data[pos+adjacent_pos_dist1]);
     pred+=(0.25-t)*(data[pos-adjacent_pos_dist2]+data[pos+adjacent_pos_dist2]);
-    pred_mse+=pow(pred-data[pos],2);
+    pred_rmse+=pow(pred-data[pos],2);
     pred_mae+=fabs(pred-data[pos]);
     int64_t qb=llround((pred-data[pos])*neg_2_eb);
     qb_vec.push_back(qb);
@@ -59,7 +59,7 @@ void compress_2d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,doub
     mse+=pow(decmp-data[pos],2);
 }
 
-void compress_1d6r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,double &pred_mae,vector<float> &data,
+void compress_1d6r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_rmse,double &pred_mae,vector<float> &data,
     vector<uint64_t> &data_shape,vector<uint64_t> &adjacent_pos_dist_vec,double abs_eb,double neg_2_eb,vector<double> t_vec,
     uint64_t i0,uint64_t i1,uint64_t i2)
 {
@@ -70,7 +70,7 @@ void compress_1d6r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_mse,doub
     double pred=(1.0/6-t1)*(data[pos-5*adjacent_pos_dist]+data[pos+5*adjacent_pos_dist]);
     pred+=(1.0/6-t2)*(data[pos-3*adjacent_pos_dist]+data[pos+3*adjacent_pos_dist]);
     pred+=(1.0/6+t1+t2)*(data[pos-adjacent_pos_dist]+data[pos+adjacent_pos_dist]);
-    pred_mse+=pow(pred-data[pos],2);
+    pred_rmse+=pow(pred-data[pos],2);
     pred_mae+=fabs(pred-data[pos]);
     int64_t qb=llround((pred-data[pos])*neg_2_eb);
     qb_vec.push_back(qb);
@@ -83,251 +83,251 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
 {
     string temp_csv_path=csv_path.substr(0,csv_path.size()-4)+"_"+predictor+".csv";
     vector<uint64_t> adjacent_pos_dist_vec;
-    if ((predictor.compare(0,5,"1d4r0")==0) || (predictor.compare(0,5,"1d6r0")==0))
+    if ((predictor.starts_with("1d4r0")) || (predictor.starts_with("1d6r0")))
         adjacent_pos_dist_vec.push_back(data_shape[1]*data_shape[2]);
-    else if ((predictor.compare(0,5,"1d4r1")==0) || (predictor.compare(0,5,"1d6r1")==0))
+    else if ((predictor.starts_with("1d4r1")) || (predictor.starts_with("1d6r1")))
         adjacent_pos_dist_vec.push_back(data_shape[2]);
-    else if ((predictor.compare(0,5,"1d4r2")==0) || (predictor.compare(0,5,"1d6r2")==0))
+    else if ((predictor.starts_with("1d4r2")) || (predictor.starts_with("1d6r2")))
         adjacent_pos_dist_vec.push_back(1);
-    else if (predictor.compare(0,5,"2d4r01")==0)
+    else if (predictor.starts_with("2d4r01"))
     {
         adjacent_pos_dist_vec.push_back(data_shape[1]*data_shape[2]);
         adjacent_pos_dist_vec.push_back(data_shape[2]);
     }
-    else if (predictor.compare(0,5,"2d4r02")==0)
+    else if (predictor.starts_with("2d4r02"))
     {
         adjacent_pos_dist_vec.push_back(data_shape[1]*data_shape[2]);
         adjacent_pos_dist_vec.push_back(1);
     }
-    else if (predictor.compare(0,5,"2d4r12")==0)
+    else if (predictor.starts_with("2d4r12"))
     {
         adjacent_pos_dist_vec.push_back(data_shape[2]);
         adjacent_pos_dist_vec.push_back(1);
     }
     else
         throw runtime_error("没见过的predictor");
-    if ((predictor.compare(0,4,"1d4r")==0) || (predictor.compare(0,4,"2d4r")==0))
+    if ((predictor.starts_with("1d4r")) || (predictor.starts_with("2d4r")))
         create_csv_header(temp_csv_path,"rel_eb","t1");
-    else if (predictor.compare(0,4,"1d6r")==0)
+    else if (predictor.starts_with("1d6r"))
         create_csv_header(temp_csv_path,"rel_eb","t1","t2");
     for (double rel_eb:rel_eb_vec)
     {
         double abs_eb=rel_eb*(max_val-min_val);
         double neg_2_eb=1/(2*abs_eb);
-        if (predictor.compare(0,4,"1d4r")==0)
+        if (predictor.starts_with("1d4r"))
         {
             vector<vector<double>> t_vec_vec;
             for (int i=0;i<=12;i++)
                 t_vec_vec.push_back({(float)i/32});
             for (vector<double> &t_vec:t_vec_vec)
             {
-                double mse=0,pred_mse=0,pred_mae=0;
+                double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
                 qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
                 if (predictor=="1d4r0_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=3;i0+3<data_shape[0];i0+=2)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r0_xx1")
                     for (uint64_t i0=3;i0+3<data_shape[0];i0+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=1)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r0_xx2")
                     for (uint64_t i0=3;i0+3<data_shape[0];i0+=2*stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=1)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r1_xx0")
                     for (uint64_t i1=3;i1+3<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=0;i0<data_shape[0];i0+=1)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r1_xx1")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i1=3;i1+3<data_shape[1];i1+=2)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r1_xx2")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i1=3;i1+3<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=1)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r2_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=3;i2+3<data_shape[2];i2+=2*stride)
                     for (uint64_t i0=0;i0<data_shape[0];i0+=1)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r2_xx1")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i2=3;i2+3<data_shape[2];i2+=2*stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=1)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d4r2_xx2")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=3;i2+3<data_shape[2];i2+=2)
-                        compress_1d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 lossless_encode_and_write_csv(temp_csv_path,stride,qb_vec,max_val,min_val,rel_eb,t_vec,
-                    mse,pred_mse,pred_mae);
+                    mse,pred_rmse,pred_mae);
             }
         }
-        else if (predictor.compare(0,4,"2d4r")==0)
+        else if (predictor.starts_with("2d4r"))
         {
             vector<vector<double>> t_vec_vec;
             for (int i=-6;i<=6;i++)
                 t_vec_vec.push_back({(float)i/24});
             for (vector<double> &t_vec:t_vec_vec)
             {
-                double mse=0,pred_mse=0,pred_mae=0;
+                double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
                 qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
                 if (predictor=="2d4r01_xx0")
                     for (uint64_t i1=1;i1+1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=1;i0+1<data_shape[0];i0+=2)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r01_xx1")
                     for (uint64_t i0=1;i0+1<data_shape[0];i0+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i1=1;i1+1<data_shape[1];i1+=1)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r01_xx2")
                     for (uint64_t i0=1;i0+1<data_shape[0];i0+=2*stride)
                     for (uint64_t i1=1;i1+1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=1)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r02_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=1;i2+1<data_shape[2];i2+=stride)
                     for (uint64_t i0=1;i0+1<data_shape[0];i0+=1)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r02_xx1")
                     for (uint64_t i0=1;i0+1<data_shape[0];i0+=stride)
                     for (uint64_t i2=1;i2+1<data_shape[2];i2+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=2)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r02_xx2")
                     for (uint64_t i0=1;i0+1<data_shape[0];i0+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=1;i2+1<data_shape[2];i2+=1)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r12_xx0")
                     for (uint64_t i1=1;i1+1<data_shape[1];i1+=stride)
                     for (uint64_t i2=1;i2+1<data_shape[2];i2+=2*stride)
                     for (uint64_t i0=0;i0<data_shape[0];i0+=1)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r12_xx1")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i2=1;i2+1<data_shape[2];i2+=2*stride)
                     for (uint64_t i1=1;i1+1<data_shape[1];i1+=1)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="2d4r12_xx2")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i1=1;i1+1<data_shape[1];i1+=stride)
                     for (uint64_t i2=1;i2+1<data_shape[2];i2+=2)
-                        compress_2d4r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 lossless_encode_and_write_csv(temp_csv_path,stride,qb_vec,max_val,min_val,rel_eb,t_vec,
-                    mse,pred_mse,pred_mae);
+                    mse,pred_rmse,pred_mae);
             }
         }
-        else if (predictor.compare(0,4,"1d6r")==0)
+        else if (predictor.starts_with("1d6r"))
         {
             vector<vector<double>> t_vec_vec;
-            for (auto i1:{0,11,22,33})
-            for (auto i2:{0,31,58,85})
-                t_vec_vec.push_back({(float)i1/279,(float)i2/186});
+            for (auto i1:{0,11,22,31,41})
+            for (auto i2:{0,113,248,341,453,567,680,793})
+                t_vec_vec.push_back({(float)i1/186,(float)i2/1488});
             for (vector<double> &t_vec:t_vec_vec)
             {
-                double mse=0,pred_mse=0,pred_mae=0;
+                double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
                 qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
                 if (predictor=="1d6r0_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=5;i0+5<data_shape[0];i0+=2)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r0_xx1")
                     for (uint64_t i0=5;i0+5<data_shape[0];i0+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=1)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r0_xx2")
                     for (uint64_t i0=5;i0+5<data_shape[0];i0+=2*stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=1)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r1_xx0")
                     for (uint64_t i1=5;i1+5<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=0;i0<data_shape[0];i0+=1)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r1_xx1")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i1=5;i1+5<data_shape[1];i1+=2)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r1_xx2")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i1=5;i1+5<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=1)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r2_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=5;i2+5<data_shape[2];i2+=2*stride)
                     for (uint64_t i0=0;i0<data_shape[0];i0+=1)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r2_xx1")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i2=5;i2+5<data_shape[2];i2+=2*stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=1)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 else if (predictor=="1d6r2_xx2")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=5;i2+5<data_shape[2];i2+=2)
-                        compress_1d6r_dot(qb_vec,mse,pred_mse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
+                        compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 lossless_encode_and_write_csv(temp_csv_path,stride,qb_vec,max_val,min_val,rel_eb,t_vec,
-                    mse,pred_mse,pred_mae);
+                    mse,pred_rmse,pred_mae);
             }
         }
     }
 }
 
 void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<int64_t> &qb_vec,
-    double max_val,double min_val,double rel_eb,vector<double> &t_vec,double mse,double pred_mse,double pred_mae)
+    double max_val,double min_val,double rel_eb,vector<double> &t_vec,double mse,double pred_rmse,double pred_mae)
 {
     string br_name=stride==1?"BR":"BR_s"+to_string(stride);
     string h1_name=stride==1?"H1":"H1_s"+to_string(stride);
-    string pred_mse_name=stride==1?"MSE":"MSE_s"+to_string(stride);
+    string pred_rmse_name=stride==1?"RMSE":"RMSE_s"+to_string(stride);
     string pred_mae_name=stride==1?"MAE":"MAE_s"+to_string(stride);
     string psnr_name=stride==1?"PSNR":"PSNR_s"+to_string(stride);
     double H1=get_H1(qb_vec);
@@ -345,13 +345,16 @@ void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<
     double cr=(double)(qb_vec.size()*sizeof(float))/zstd_bs_len;
     double br=(8*sizeof(float))/cr;
     mse/=qb_vec.size();
-    pred_mse/=qb_vec.size();
+    pred_rmse=sqrt(pred_rmse/qb_vec.size());
     pred_mae/=qb_vec.size();
     double psnr=10*log10(pow(max_val-min_val,2)/mse);
-    printf("rel_eb=%f, t1=%f\n",rel_eb,t_vec[0]);
+    if (t_vec.size()==1)
+        printf("rel_eb=%f, t1=%f\n",rel_eb,t_vec[0]);
+    else if (t_vec.size()==2)
+        printf("rel_eb=%f, t1=%f, t2=%f\n",rel_eb,t_vec[0],t_vec[1]);
     printf("BR=%f, CR=%f\n",br,cr);
     printf("H1=%f, H1_cr=%f\n",H1,(8*sizeof(float))/(H1));
-    printf("MSE=%f, MAE=%f\n",pred_mse,pred_mae);
+    printf("RMSE=%f, MAE=%f\n",pred_rmse,pred_mae);
     printf("PSNR=%f\n",psnr);
     printf("\n");
     vector<double> query_row_key;
@@ -359,7 +362,7 @@ void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<
     query_row_key.insert(query_row_key.end(),t_vec.begin(),t_vec.end());
     write_csv_item(temp_csv_path,query_row_key,br_name,br);
     write_csv_item(temp_csv_path,query_row_key,h1_name,H1);
-    write_csv_item(temp_csv_path,query_row_key,pred_mse_name,pred_mse);
+    write_csv_item(temp_csv_path,query_row_key,pred_rmse_name,pred_rmse);
     write_csv_item(temp_csv_path,query_row_key,pred_mae_name,pred_mae);
     write_csv_item(temp_csv_path,query_row_key,psnr_name,psnr);
 }

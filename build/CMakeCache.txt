@@ -313,7 +313,7 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //which target to build
-CODE_NAME:STRING=s2_many_prediction
+CODE_NAME:STRING=s3_conclude_sp_result
 
 //Visibility for ZDICTLIB_STATIC_API API
 ZDICTLIB_STATIC_API:STRING=

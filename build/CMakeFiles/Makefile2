@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /home/x-zjian1/ASTZ_tests/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/s2_many_prediction.dir/all
+all: CMakeFiles/s3_conclude_sp_result.dir/all
 all: asz_core/all
 all: csv_tools_build/all
 all: zstd_build/all
@@ -76,7 +76,7 @@ preinstall: zstd_build/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/s2_many_prediction.dir/clean
+clean: CMakeFiles/s3_conclude_sp_result.dir/clean
 clean: asz_core/clean
 clean: csv_tools_build/clean
 clean: zstd_build/clean
@@ -198,30 +198,30 @@ zstd_build/build/cmake/programs/clean: zstd_build/build/cmake/programs/CMakeFile
 .PHONY : zstd_build/build/cmake/programs/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/s2_many_prediction.dir
+# Target rules for target CMakeFiles/s3_conclude_sp_result.dir
 
 # All Build rule for target.
-CMakeFiles/s2_many_prediction.dir/all: zstd_build/build/cmake/lib/CMakeFiles/libzstd_static.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=66,67 "Built target s2_many_prediction"
-.PHONY : CMakeFiles/s2_many_prediction.dir/all
+CMakeFiles/s3_conclude_sp_result.dir/all: zstd_build/build/cmake/lib/CMakeFiles/libzstd_static.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/x-zjian1/ASTZ_tests/build/CMakeFiles --progress-num=66,67 "Built target s3_conclude_sp_result"
+.PHONY : CMakeFiles/s3_conclude_sp_result.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/s2_many_prediction.dir/rule: cmake_check_build_system
+CMakeFiles/s3_conclude_sp_result.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/x-zjian1/ASTZ_tests/build/CMakeFiles 34
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/s2_many_prediction.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/s3_conclude_sp_result.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/x-zjian1/ASTZ_tests/build/CMakeFiles 0
-.PHONY : CMakeFiles/s2_many_prediction.dir/rule
+.PHONY : CMakeFiles/s3_conclude_sp_result.dir/rule
 
 # Convenience name for target.
-s2_many_prediction: CMakeFiles/s2_many_prediction.dir/rule
-.PHONY : s2_many_prediction
+s3_conclude_sp_result: CMakeFiles/s3_conclude_sp_result.dir/rule
+.PHONY : s3_conclude_sp_result
 
 # clean rule for target.
-CMakeFiles/s2_many_prediction.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/clean
-.PHONY : CMakeFiles/s2_many_prediction.dir/clean
+CMakeFiles/s3_conclude_sp_result.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/clean
+.PHONY : CMakeFiles/s3_conclude_sp_result.dir/clean
 
 #=============================================================================
 # Target rules for target zstd_build/build/cmake/CMakeFiles/clean-all.dir

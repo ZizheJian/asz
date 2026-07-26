@@ -2,8 +2,6 @@ add_library(libasz INTERFACE)
 
 # 设置 C++ 标准（与根项目一致）
 set_target_properties(libasz PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED ON
     BUILD_SHARED_LIBS OFF
 )
 

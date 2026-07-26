@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s2_many_prediction
+# Target rules for targets named s3_conclude_sp_result
 
 # Build rule for target.
-s2_many_prediction: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s2_many_prediction
-.PHONY : s2_many_prediction
+s3_conclude_sp_result: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s3_conclude_sp_result
+.PHONY : s3_conclude_sp_result
 
 # fast build rule for target.
-s2_many_prediction/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/build
-.PHONY : s2_many_prediction/fast
+s3_conclude_sp_result/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/build
+.PHONY : s3_conclude_sp_result/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s2_many_prediction.o: s2_many_prediction.cpp.o
-.PHONY : s2_many_prediction.o
+s3_conclude_sp_result.o: s3_conclude_sp_result.cpp.o
+.PHONY : s3_conclude_sp_result.o
 
 # target to build an object file
-s2_many_prediction.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/s2_many_prediction.cpp.o
-.PHONY : s2_many_prediction.cpp.o
+s3_conclude_sp_result.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/s3_conclude_sp_result.cpp.o
+.PHONY : s3_conclude_sp_result.cpp.o
 
-s2_many_prediction.i: s2_many_prediction.cpp.i
-.PHONY : s2_many_prediction.i
+s3_conclude_sp_result.i: s3_conclude_sp_result.cpp.i
+.PHONY : s3_conclude_sp_result.i
 
 # target to preprocess a source file
-s2_many_prediction.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/s2_many_prediction.cpp.i
-.PHONY : s2_many_prediction.cpp.i
+s3_conclude_sp_result.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/s3_conclude_sp_result.cpp.i
+.PHONY : s3_conclude_sp_result.cpp.i
 
-s2_many_prediction.s: s2_many_prediction.cpp.s
-.PHONY : s2_many_prediction.s
+s3_conclude_sp_result.s: s3_conclude_sp_result.cpp.s
+.PHONY : s3_conclude_sp_result.s
 
 # target to generate assembly for a file
-s2_many_prediction.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s2_many_prediction.dir/build.make CMakeFiles/s2_many_prediction.dir/s2_many_prediction.cpp.s
-.PHONY : s2_many_prediction.cpp.s
+s3_conclude_sp_result.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/s3_conclude_sp_result.cpp.s
+.PHONY : s3_conclude_sp_result.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s2_many_prediction"
+	@echo "... s3_conclude_sp_result"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s2_many_prediction.o"
-	@echo "... s2_many_prediction.i"
-	@echo "... s2_many_prediction.s"
+	@echo "... s3_conclude_sp_result.o"
+	@echo "... s3_conclude_sp_result.i"
+	@echo "... s3_conclude_sp_result.s"
 .PHONY : help
 
 
