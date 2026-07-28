@@ -1,4 +1,4 @@
-/home/x-zjian1/ASTZ_tests/install/bin/s3_conclude_sp_result
+/home/x-zjian1/ASTZ_tests/install/bin/s4_verify_1d4r_proxy
 /home/x-zjian1/ASTZ_tests/install/include/asz_core/get_AB_map.tpp
 /home/x-zjian1/ASTZ_tests/install/include/asz_core/get_default_slope.tpp
 /home/x-zjian1/ASTZ_tests/install/include/asz_core/decompress.tpp

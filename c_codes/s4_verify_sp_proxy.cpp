@@ -1,5 +1,6 @@
-// 给定stencil pattern和eb，根据BR和PSNR，选择最好的t和遍历顺序
-// 用于比较不同stencil pattern的区别
+// 先固定stencil pattern和traversal order，遍历t，计算BR和PSNR
+// 再固定stencil pattern，遍历traversal order，计算BR和PSNR
+// 再用相同的斜率比较不同stencil pattern并打分
 
 #include <string>
 #include <vector>
@@ -32,11 +33,9 @@ namespace std
 int main()
 {
     string repository_path="/home/x-zjian1/ASTZ_tests";
-    // string data_name="Pf01";
-    string data_name="CLDICE";
+    string data_name="Pf01";
+    // string data_name="CLDICE";
     vector<string> predictor_name_vec={"1d4r0","1d4r1","1d4r2"};
-    // vector<string> predictor_name_vec={"2d4r01","2d4r02","2d4r12"};
-    // vector<string> predictor_name_vec={"1d6r0","1d6r1","1d6r2"};
     vector<string> traversal_order_vec={"xx0","xx1","xx2"};
     vector<string> csv_path_vec;
     for (auto &predictor_name:predictor_name_vec)
@@ -79,29 +78,34 @@ int main()
         }
     }
 
-    printf("计算平均BR和PSNR。。。。。。\n");
-    // 访问方式是avg_br[rel_eb]，avg_psnr[rel_eb]
-    unordered_map<double,double> avg_br,avg_psnr;
+    printf("第一轮 对每个stencil pattern和traversal order计算平均BR和PSNR。。。。。。\n");
+    // 访问方式是xxx[rel_eb][predictor_name][traversal_order]
+    unordered_map<double,unordered_map<string,unordered_map<string,double>>> avg_br_1,avg_psnr_1;
     for (auto &csv_path:csv_path_vec)
     for (auto &rel_eb:rel_eb_vec)
     for (auto &t_vec:t_vec_vec)
         for (auto &predictor_name:predictor_name_vec)
+        for (auto &traversal_order:traversal_order_vec)
         {
-            if (csv_path.find(predictor_name)==string::npos)
+            if ((csv_path.find(predictor_name)==string::npos) || (csv_path.find(traversal_order)==string::npos))
                 continue;
-            avg_br[rel_eb]+=data[csv_path][rel_eb][t_vec]["BR"];
-            avg_psnr[rel_eb]+=data[csv_path][rel_eb][t_vec]["PSNR"];
+            avg_br_1[rel_eb][predictor_name][traversal_order]+=data[csv_path][rel_eb][t_vec]["BR"];
+            avg_psnr_1[rel_eb][predictor_name][traversal_order]+=data[csv_path][rel_eb][t_vec]["PSNR"];
         }
     for (auto &rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    for (auto &traversal_order:traversal_order_vec)
     {
-        avg_br[rel_eb]/=(t_vec_vec.size()*traversal_order_vec.size()*predictor_name_vec.size());
-        avg_psnr[rel_eb]/=(t_vec_vec.size()*traversal_order_vec.size()*predictor_name_vec.size());
+        avg_br_1[rel_eb][predictor_name][traversal_order]/=(t_vec_vec.size());
+        avg_psnr_1[rel_eb][predictor_name][traversal_order]/=(t_vec_vec.size());
     }
 
-    printf("计算平均斜率。。。。。。\n");
-    // 访问方式是slope[rel_eb]
-    unordered_map<double,double> slope;
+    printf("第一轮 计算平均斜率。。。。。。\n");
+    // 访问方式是slope_1[rel_eb][predictor_name][traversal_order]
+    unordered_map<double,unordered_map<string,unordered_map<string,double>>> slope_1;
     for (auto &rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    for (auto &traversal_order:traversal_order_vec)
     {
         double left_rel_eb,right_rel_eb;
         if (rel_eb==rel_eb_vec[0])
@@ -112,76 +116,195 @@ int main()
             right_rel_eb=rel_eb;
         else
             right_rel_eb=*(find(rel_eb_vec.begin(),rel_eb_vec.end(),rel_eb)+1);
-        double delta_br=avg_br[right_rel_eb]-avg_br[left_rel_eb];
-        double delta_psnr=avg_psnr[right_rel_eb]-avg_psnr[left_rel_eb];
-        slope[rel_eb]=delta_psnr/delta_br;
-        printf("rel_eb=%f, slope=%f\n",rel_eb,slope[rel_eb]);
+        double delta_br=avg_br_1[right_rel_eb][predictor_name][traversal_order]-avg_br_1[left_rel_eb][predictor_name][traversal_order];
+        double delta_psnr=avg_psnr_1[right_rel_eb][predictor_name][traversal_order]-avg_psnr_1[left_rel_eb][predictor_name][traversal_order];
+        slope_1[rel_eb][predictor_name][traversal_order]=delta_psnr/delta_br;
     }
 
-    printf("计算每个点相对于平均斜率的距离。。。。。。\n");
-    // 访问方式是score[csv_path][rel_eb][t_vec]
-    unordered_map<string,unordered_map<double,unordered_map<vector<double>,double>>> score;
+    printf("第一轮 计算每个点的分数。。。。。。\n");
+    // 访问方式是score_1[rel_eb][predictor_name][traversal_order][t_vec]
+    unordered_map<double,unordered_map<string,unordered_map<string,unordered_map<vector<double>,double>>>> score_1;
     for (auto &csv_path:csv_path_vec)
     for (auto &rel_eb:rel_eb_vec)
     for (auto &t_vec:t_vec_vec)
         for (auto &predictor_name:predictor_name_vec)
+        for (auto &traversal_order:traversal_order_vec)    
         {
-            if (csv_path.find(predictor_name)==string::npos)
+            if ((csv_path.find(predictor_name)==string::npos) || (csv_path.find(traversal_order)==string::npos))
                 continue;
-            score[csv_path][rel_eb][t_vec]=-slope[rel_eb]*data[csv_path][rel_eb][t_vec]["BR"];
-            score[csv_path][rel_eb][t_vec]+=data[csv_path][rel_eb][t_vec]["PSNR"];
-            score[csv_path][rel_eb][t_vec]/=sqrt(slope[rel_eb]*slope[rel_eb]+1);
+            double temp_slope=slope_1[rel_eb][predictor_name][traversal_order];
+            double &temp_score=score_1[rel_eb][predictor_name][traversal_order][t_vec];
+            double temp_br=data[csv_path][rel_eb][t_vec]["BR"];
+            double temp_psnr=data[csv_path][rel_eb][t_vec]["PSNR"];
+            temp_score=(-temp_slope*temp_br+temp_psnr)/sqrt(temp_slope*temp_slope+1);
         }
 
-    printf("寻找每个predictor_name和rel_eb下的最好情况。。。。。。\n");
-    // 访问方式是xxx[predictor_name][rel_eb]
-    unordered_map<string,unordered_map<double,string>> best_traversal_order;
-    unordered_map<string,unordered_map<double,vector<double>>> best_t_vec;
-    unordered_map<string,unordered_map<double,double>> best_score;
+    printf("第一轮 寻找每个rel_eb、traversal order、stencil pattern下的最好情况。。。。。。\n");
+    // 访问方式是xxx[rel_eb][predictor_name][traversal_order]
+    unordered_map<double,unordered_map<string,unordered_map<string,vector<double>>>> best_t_vec;
+    unordered_map<double,unordered_map<string,unordered_map<string,double>>> best_score_1;
+    unordered_map<double,unordered_map<string,unordered_map<string,double>>> best_br_1;
+    unordered_map<double,unordered_map<string,unordered_map<string,double>>> best_psnr_1;
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    for (auto &traversal_order:traversal_order_vec)
+        best_score_1[rel_eb][predictor_name][traversal_order]=-1e10;
     for (auto &csv_path:csv_path_vec)
     for (auto &rel_eb:rel_eb_vec)
     for (auto &t_vec:t_vec_vec)
-    {
-        string predictor_name,traversal_order;
-        for (auto &temp_predictor_name:predictor_name_vec)
-            if (csv_path.find(temp_predictor_name)!=string::npos)
-                predictor_name=temp_predictor_name;
-        for (auto &temp_traversal_order:traversal_order_vec)
-            if (csv_path.find(temp_traversal_order)!=string::npos)
-                traversal_order=temp_traversal_order;
-        if (best_score[predictor_name][rel_eb]<score[csv_path][rel_eb][t_vec])
+        for (auto &predictor_name:predictor_name_vec)
+        for (auto &traversal_order:traversal_order_vec)
         {
-            best_score[predictor_name][rel_eb]=score[csv_path][rel_eb][t_vec];
-            best_traversal_order[predictor_name][rel_eb]=traversal_order;
-            best_t_vec[predictor_name][rel_eb]=t_vec;
+            if ((csv_path.find(predictor_name)==string::npos) || (csv_path.find(traversal_order)==string::npos))
+                continue;
+            if (best_score_1[rel_eb][predictor_name][traversal_order]<score_1[rel_eb][predictor_name][traversal_order][t_vec])
+            {
+                best_score_1[rel_eb][predictor_name][traversal_order]=score_1[rel_eb][predictor_name][traversal_order][t_vec];
+                best_t_vec[rel_eb][predictor_name][traversal_order]=t_vec;
+                best_br_1[rel_eb][predictor_name][traversal_order]=data[csv_path][rel_eb][t_vec]["BR"];
+                best_psnr_1[rel_eb][predictor_name][traversal_order]=data[csv_path][rel_eb][t_vec]["PSNR"];
+            }
+        }
+    
+    printf("第二轮 对每个stencil pattern计算平均BR和PSNR。。。。。。\n");
+    // 访问方式是xxx[rel_eb][predictor_name]
+    unordered_map<double,unordered_map<string,double>> avg_br_2,avg_psnr_2;
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    for (auto &traversal_order:traversal_order_vec)
+    {
+        avg_br_2[rel_eb][predictor_name]+=best_br_1[rel_eb][predictor_name][traversal_order];
+        avg_psnr_2[rel_eb][predictor_name]+=best_psnr_1[rel_eb][predictor_name][traversal_order];
+    }
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    {
+        avg_br_2[rel_eb][predictor_name]/=(traversal_order_vec.size());
+        avg_psnr_2[rel_eb][predictor_name]/=(traversal_order_vec.size());
+    }
+
+    printf("第二轮 计算平均斜率。。。。。。\n");
+    // 访问方式是slope_2[rel_eb][predictor_name]
+    unordered_map<double,unordered_map<string,double>> slope_2;
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    {
+        double left_rel_eb,right_rel_eb;
+        if (rel_eb==rel_eb_vec[0])
+            left_rel_eb=rel_eb;
+        else
+            left_rel_eb=*(find(rel_eb_vec.begin(),rel_eb_vec.end(),rel_eb)-1);
+        if (rel_eb==rel_eb_vec.back())
+            right_rel_eb=rel_eb;
+        else
+            right_rel_eb=*(find(rel_eb_vec.begin(),rel_eb_vec.end(),rel_eb)+1);
+        double delta_br=avg_br_2[right_rel_eb][predictor_name]-avg_br_2[left_rel_eb][predictor_name];
+        double delta_psnr=avg_psnr_2[right_rel_eb][predictor_name]-avg_psnr_2[left_rel_eb][predictor_name];
+        slope_2[rel_eb][predictor_name]=delta_psnr/delta_br;
+    }
+
+    printf("第二轮 计算每个点的分数。。。。。。\n");
+    // 访问方式是score_2[rel_eb][predictor_name][traversal_order]
+    unordered_map<double,unordered_map<string,unordered_map<string,double>>> score_2;
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    for (auto &traversal_order:traversal_order_vec)
+    {
+        double temp_slope=slope_2[rel_eb][predictor_name];
+        double &temp_score=score_2[rel_eb][predictor_name][traversal_order];
+        double temp_br=best_br_1[rel_eb][predictor_name][traversal_order];
+        double temp_psnr=best_psnr_1[rel_eb][predictor_name][traversal_order];
+        temp_score=(-temp_slope*temp_br+temp_psnr)/sqrt(temp_slope*temp_slope+1);
+    }
+
+    printf("第二轮 寻找每个rel_eb、stencil pattern下的最好情况。。。。。。\n");
+    // 访问方式是xxx[rel_eb][predictor_name]
+    unordered_map<double,unordered_map<string,string>> best_traversal_order;
+    unordered_map<double,unordered_map<string,double>> best_score_2;
+    unordered_map<double,unordered_map<string,double>> best_br_2;
+    unordered_map<double,unordered_map<string,double>> best_psnr_2;
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+        best_score_2[rel_eb][predictor_name]=-1e10;
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    for (auto &traversal_order:traversal_order_vec)
+    {
+        if (best_score_2[rel_eb][predictor_name]<score_2[rel_eb][predictor_name][traversal_order])
+        {
+            best_score_2[rel_eb][predictor_name]=score_2[rel_eb][predictor_name][traversal_order];
+            best_traversal_order[rel_eb][predictor_name]=traversal_order;
+            best_br_2[rel_eb][predictor_name]=best_br_1[rel_eb][predictor_name][traversal_order];
+            best_psnr_2[rel_eb][predictor_name]=best_psnr_1[rel_eb][predictor_name][traversal_order];
         }
     }
+
+    printf("第三轮 计算平均BR和PSNR。。。。。。\n");
+    // 访问方式是xxx[rel_eb]
+    unordered_map<double,double> avg_br_3,avg_psnr_3;
+    for (auto rel_eb:rel_eb_vec)
     for (auto &predictor_name:predictor_name_vec)
-    for (auto &rel_eb:rel_eb_vec)
     {
-        printf("predictor_name=%s, rel_eb=%f, best_traversal_order=%s, best_t_vec={",predictor_name.c_str(),rel_eb,best_traversal_order[predictor_name][rel_eb].c_str());
-        for (auto &x:best_t_vec[predictor_name][rel_eb])
-            printf("%f,",x);
-        printf("}\n");
+        avg_br_3[rel_eb]+=best_br_2[rel_eb][predictor_name];
+        avg_psnr_3[rel_eb]+=best_psnr_2[rel_eb][predictor_name];
+    }
+    for (auto rel_eb:rel_eb_vec)
+    {
+        avg_br_3[rel_eb]/=(predictor_name_vec.size());
+        avg_psnr_3[rel_eb]/=(predictor_name_vec.size());
+    }
+
+    printf("第三轮 计算平均斜率。。。。。。\n");
+    // 访问方式是slope_3[rel_eb]
+    unordered_map<double,double> slope_3;
+    for (auto rel_eb:rel_eb_vec)
+    {
+        double left_rel_eb,right_rel_eb;
+        if (rel_eb==rel_eb_vec[0])
+            left_rel_eb=rel_eb;
+        else
+            left_rel_eb=*(find(rel_eb_vec.begin(),rel_eb_vec.end(),rel_eb)-1);
+        if (rel_eb==rel_eb_vec.back())
+            right_rel_eb=rel_eb;
+        else
+            right_rel_eb=*(find(rel_eb_vec.begin(),rel_eb_vec.end(),rel_eb)+1);
+        double delta_br=avg_br_3[right_rel_eb]-avg_br_3[left_rel_eb];
+        double delta_psnr=avg_psnr_3[right_rel_eb]-avg_psnr_3[left_rel_eb];
+        slope_3[rel_eb]=delta_psnr/delta_br;
+    }
+
+    printf("第三轮 计算每个点的分数。。。。。。\n");
+    // 访问方式是score_3[rel_eb][predictor_name]
+    unordered_map<double,unordered_map<string,double>> score_3;
+    for (auto rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
+    {
+        double temp_slope=slope_3[rel_eb];
+        double &temp_score=score_3[rel_eb][predictor_name];
+        double temp_br=best_br_2[rel_eb][predictor_name];
+        double temp_psnr=best_psnr_2[rel_eb][predictor_name];
+        temp_score=(-temp_slope*temp_br+temp_psnr)/sqrt(temp_slope*temp_slope+1);
     }
 
     printf("输出结果。。。。。。\n");
-    string score_path=repository_path+"/csv/"+data_name+"_each_sp_best_score.csv";
-    string mse_path=repository_path+"/csv/"+data_name+"_each_sp_best_mse.csv";
-    string mae_path=repository_path+"/csv/"+data_name+"_each_sp_best_mae.csv";
-    create_csv_header(score_path,"rel_eb");
-    create_csv_header(mse_path,"rel_eb");
-    create_csv_header(mae_path,"rel_eb");
-    for (auto &predictor_name:predictor_name_vec)
+    string output_csv_path_score=repository_path+"/csv/"+data_name+"_each_sp_best_score.csv";
+    string output_csv_path_rmse=repository_path+"/csv/"+data_name+"_each_sp_best_rmse.csv";
+    string output_csv_path_mae=repository_path+"/csv/"+data_name+"_each_sp_best_mae.csv";
+    create_csv_header(output_csv_path_score,"rel_eb");
+    create_csv_header(output_csv_path_rmse,"rel_eb");
+    create_csv_header(output_csv_path_mae,"rel_eb");
     for (auto &rel_eb:rel_eb_vec)
+    for (auto &predictor_name:predictor_name_vec)
     {
-        string csv_path;
-        for (auto &temp_csv_path:csv_path_vec)
-            if (temp_csv_path.find(predictor_name)!=string::npos)
-            if (temp_csv_path.find(best_traversal_order[predictor_name][rel_eb])!=string::npos)
-                csv_path=temp_csv_path;
-        write_csv_item(score_path,rel_eb,predictor_name,score[csv_path][rel_eb][best_t_vec[predictor_name][rel_eb]]);
-        write_csv_item(mse_path,rel_eb,predictor_name,data[csv_path][rel_eb][best_t_vec[predictor_name][rel_eb]]["MSE"]);
-        write_csv_item(mae_path,rel_eb,predictor_name,data[csv_path][rel_eb][best_t_vec[predictor_name][rel_eb]]["MAE"]);
+        write_csv_item(output_csv_path_score,rel_eb,predictor_name,score_3[rel_eb][predictor_name]);
+        string traversal_order=best_traversal_order[rel_eb][predictor_name];
+        vector<double> t_vec=best_t_vec[rel_eb][predictor_name][traversal_order];
+        for (auto csv_path:csv_path_vec)
+        {
+            if ((csv_path.find(predictor_name)==string::npos) || (csv_path.find(traversal_order)==string::npos))
+                continue;
+            write_csv_item(output_csv_path_rmse,rel_eb,predictor_name,data[csv_path][rel_eb][t_vec]["RMSE"]);
+            write_csv_item(output_csv_path_mae,rel_eb,predictor_name,data[csv_path][rel_eb][t_vec]["MAE"]);
+        }
     }
 }

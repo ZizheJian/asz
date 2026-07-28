@@ -36,7 +36,7 @@ def run_command(command,silent=False):
 code_name_map={2:"s2_many_prediction",
                3:"s3_conclude_sp_result",
                4:"s4_verify_sp_proxy",
-               5:"s5_find_best_t2_per_eb",
+               5:"s5_conclude_coeff_result",
                6:"s6_quantic_prediction",
                7:"s7_find_best_t2_per_eb",
                8:"s8_get_AB_distribution"}

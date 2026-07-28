@@ -162,17 +162,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named s3_conclude_sp_result
+# Target rules for targets named s4_verify_1d4r_proxy
 
 # Build rule for target.
-s3_conclude_sp_result: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s3_conclude_sp_result
-.PHONY : s3_conclude_sp_result
+s4_verify_1d4r_proxy: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 s4_verify_1d4r_proxy
+.PHONY : s4_verify_1d4r_proxy
 
 # fast build rule for target.
-s3_conclude_sp_result/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/build
-.PHONY : s3_conclude_sp_result/fast
+s4_verify_1d4r_proxy/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s4_verify_1d4r_proxy.dir/build.make CMakeFiles/s4_verify_1d4r_proxy.dir/build
+.PHONY : s4_verify_1d4r_proxy/fast
 
 #=============================================================================
 # Target rules for targets named clean-all
@@ -356,29 +356,29 @@ zstdmt/fast:
 	$(MAKE) $(MAKESILENT) -f zstd_build/build/cmake/programs/CMakeFiles/zstdmt.dir/build.make zstd_build/build/cmake/programs/CMakeFiles/zstdmt.dir/build
 .PHONY : zstdmt/fast
 
-s3_conclude_sp_result.o: s3_conclude_sp_result.cpp.o
-.PHONY : s3_conclude_sp_result.o
+s4_verify_1d4r_proxy.o: s4_verify_1d4r_proxy.cpp.o
+.PHONY : s4_verify_1d4r_proxy.o
 
 # target to build an object file
-s3_conclude_sp_result.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/s3_conclude_sp_result.cpp.o
-.PHONY : s3_conclude_sp_result.cpp.o
+s4_verify_1d4r_proxy.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s4_verify_1d4r_proxy.dir/build.make CMakeFiles/s4_verify_1d4r_proxy.dir/s4_verify_1d4r_proxy.cpp.o
+.PHONY : s4_verify_1d4r_proxy.cpp.o
 
-s3_conclude_sp_result.i: s3_conclude_sp_result.cpp.i
-.PHONY : s3_conclude_sp_result.i
+s4_verify_1d4r_proxy.i: s4_verify_1d4r_proxy.cpp.i
+.PHONY : s4_verify_1d4r_proxy.i
 
 # target to preprocess a source file
-s3_conclude_sp_result.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/s3_conclude_sp_result.cpp.i
-.PHONY : s3_conclude_sp_result.cpp.i
+s4_verify_1d4r_proxy.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s4_verify_1d4r_proxy.dir/build.make CMakeFiles/s4_verify_1d4r_proxy.dir/s4_verify_1d4r_proxy.cpp.i
+.PHONY : s4_verify_1d4r_proxy.cpp.i
 
-s3_conclude_sp_result.s: s3_conclude_sp_result.cpp.s
-.PHONY : s3_conclude_sp_result.s
+s4_verify_1d4r_proxy.s: s4_verify_1d4r_proxy.cpp.s
+.PHONY : s4_verify_1d4r_proxy.s
 
 # target to generate assembly for a file
-s3_conclude_sp_result.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/s3_conclude_sp_result.dir/build.make CMakeFiles/s3_conclude_sp_result.dir/s3_conclude_sp_result.cpp.s
-.PHONY : s3_conclude_sp_result.cpp.s
+s4_verify_1d4r_proxy.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/s4_verify_1d4r_proxy.dir/build.make CMakeFiles/s4_verify_1d4r_proxy.dir/s4_verify_1d4r_proxy.cpp.s
+.PHONY : s4_verify_1d4r_proxy.cpp.s
 
 # Help Target
 help:
@@ -404,12 +404,12 @@ help:
 	@echo "... zstdmt"
 	@echo "... libzstd_shared"
 	@echo "... libzstd_static"
-	@echo "... s3_conclude_sp_result"
+	@echo "... s4_verify_1d4r_proxy"
 	@echo "... zstd"
 	@echo "... zstd-frugal"
-	@echo "... s3_conclude_sp_result.o"
-	@echo "... s3_conclude_sp_result.i"
-	@echo "... s3_conclude_sp_result.s"
+	@echo "... s4_verify_1d4r_proxy.o"
+	@echo "... s4_verify_1d4r_proxy.i"
+	@echo "... s4_verify_1d4r_proxy.s"
 .PHONY : help
 
 
