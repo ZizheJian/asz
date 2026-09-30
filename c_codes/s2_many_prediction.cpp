@@ -372,12 +372,12 @@ int main()
     string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin";
     vector<uint64_t> data_shape={100,500,500};
     vector<double> rel_eb_vec={1e-2,1e-3,1e-4,1e-5,1e-6};
-    string csv_path="/home/x-zjian1/ASTZ_tests/csv/Pf01.csv";
+    string csv_path="/home/x-zjian1/asz/csv/Pf01.csv";
 
     // string data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat";
     // vector<uint64_t> data_shape={26,1800,3600};
     // vector<double> rel_eb_vec={1e-2,1e-3,1e-4,1e-5,1e-6};
-    // string csv_path="/home/x-zjian1/ASTZ_tests/csv/CLDICE.csv";
+    // string csv_path="/home/x-zjian1/asz/csv/CLDICE.csv";
 
     uint64_t stride=1;
 

@@ -278,15 +278,15 @@ string find_best_sp(unordered_map<string,double> &dist_2,vector<string> &csv_pat
 int main()
 {
     vector<string> csv_path_vec;
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic0_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic0_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic0_012.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic1_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic1_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic1_012.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic2_120.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic2_021.csv");
-    csv_path_vec.push_back("/home/x-zjian1/ASTZ_tests/csv/CLDICE_center_quantic2_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic0_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic0_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic0_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic1_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic1_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic1_012.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic2_120.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic2_021.csv");
+    csv_path_vec.push_back("/home/x-zjian1/asz/csv/CLDICE_center_quantic2_012.csv");
     vector<double> rel_eb_vec;
     read_all_values_in_column(csv_path_vec[0],"rel_eb",rel_eb_vec);
     vector<double> t1_vec;

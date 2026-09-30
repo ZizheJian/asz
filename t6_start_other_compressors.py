@@ -12,7 +12,7 @@ results=[]
 if compressor=="sz3":
     os.makedirs("build/sz3_build",exist_ok=True)
     os.chdir("build/sz3_build")
-    os.system("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/sz3_install ../../c_codes/third_party/SZ3_master")
+    os.system("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/sz3_install ../../third_party/SZ3_master")
     os.system("make -j 4")
     os.system("make install")
     os.chdir("../..")
@@ -22,7 +22,7 @@ if compressor=="sz3":
 elif compressor=="qoz":
     os.makedirs("build/qoz_build",exist_ok=True)
     os.chdir("build/qoz_build")
-    os.system("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/qoz_install ../../c_codes/third_party/SZ3_QoZ")
+    os.system("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/qoz_install ../../third_party/SZ3_QoZ")
     os.system("make -j 4")
     os.system("make install")
     os.chdir("../..")

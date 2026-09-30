@@ -99,7 +99,7 @@ for compressor in compressor_list:
     elif compressor=="sz3":
         os.makedirs("build/sz3_build",exist_ok=True)
         os.chdir("build/sz3_build")
-        run_command("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/sz3_install ../../c_codes/third_party/SZ3_master",silent=silent_build)
+        run_command("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/sz3_install ../../third_party/SZ3_master",silent=silent_build)
         run_command("make -j 4",silent=silent_build)
         run_command("make install",silent=silent_build)
         os.chdir("../..")
@@ -122,7 +122,7 @@ for compressor in compressor_list:
     elif compressor=="qoz":
         os.makedirs("build/qoz_build",exist_ok=True)
         os.chdir("build/qoz_build")
-        run_command("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/qoz_install ../../c_codes/third_party/SZ3_QoZ",silent=silent_build)
+        run_command("cmake -DCMAKE_INSTALL_PREFIX:PATH=../../install/qoz_install ../../third_party/SZ3_QoZ",silent=silent_build)
         run_command("make -j 4",silent=silent_build)
         run_command("make install",silent=silent_build)
         os.chdir("../..")
@@ -145,7 +145,7 @@ for compressor in compressor_list:
     elif compressor=="zfp":
         os.makedirs("build/zfp_build",exist_ok=True)
         os.chdir("build/zfp_build")
-        run_command("cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH=../../install/zfp_install ../../c_codes/third_party/zfp",silent=silent_build)
+        run_command("cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH=../../install/zfp_install ../../third_party/zfp",silent=silent_build)
         run_command("make -j 4",silent=silent_build)
         run_command("make install",silent=silent_build)
         os.chdir("../..")
@@ -179,7 +179,7 @@ for compressor in compressor_list:
     elif compressor=="sperr":
         os.makedirs("build/sperr_build",exist_ok=True)
         os.chdir("build/sperr_build")
-        run_command("cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH=../../install/sperr_install ../../c_codes/third_party/sperr",silent=silent_build)
+        run_command("cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX:PATH=../../install/sperr_install ../../third_party/sperr",silent=silent_build)
         run_command("make -j 4",silent=silent_build)
         run_command("make install",silent=silent_build)
         os.chdir("../..")

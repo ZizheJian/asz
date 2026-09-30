@@ -32,7 +32,7 @@ namespace std
 
 int main()
 {
-    string repository_path="/home/x-zjian1/ASTZ_tests";
+    string repository_path="/home/x-zjian1/asz";
     string data_name="Pf01";
     // string data_name="CLDICE";
     // vector<string> predictor_name_vec={"1d4r0","1d4r1","1d4r2"};
