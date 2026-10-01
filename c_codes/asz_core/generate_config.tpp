@@ -16,6 +16,7 @@ namespace asz
         printf("eb_ratio=%.2f;\n",eb_ratio);
         printf("slope_ratio=%.2f;\n",slope_ratio);
         printf("max_layer_num=%lu;\n",max_layer_num);
+        printf("full_predictor_search_layer_num=%lu;\n",full_predictor_search_layer_num);
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
         printf("t_policy=%s;\n",t_policy.c_str());
         printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");
@@ -550,7 +551,7 @@ namespace asz
             T neg_2_stat_eb=1/(2*stat_eb);
             T layer_default_slope=default_slope*pow(slope_ratio,layer);
             vector<string> layer_candidate_predictors;
-            if (layer<3)
+            if (layer<full_predictor_search_layer_num)
                 layer_candidate_predictors=candidate_predictors;
             else
                 layer_candidate_predictors={"cubic0_012","cubic1_012","cubic2_012"};

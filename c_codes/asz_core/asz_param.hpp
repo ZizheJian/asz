@@ -96,6 +96,7 @@ namespace asz
             T eb_ratio=0.76;//相邻layer之间的误差比例
             T slope_ratio=0.54;//相邻layer之间的斜率比例
             uint64_t max_layer_num=12;//自动生成plan时允许的最大层数
+            uint64_t full_predictor_search_layer_num=4;//前几轮生成层搜索全部遍历顺序
             vector<string> predictor_vec;//预测器列表
             uint64_t block_pivot_ratio=4;//block边长和pivot间距的比值
             bool force_quintic=false;//整个dataset统一使用quintic内部预测
@@ -158,6 +159,7 @@ namespace asz
                 eb_ratio=other.eb_ratio;
                 slope_ratio=other.slope_ratio;
                 max_layer_num=other.max_layer_num;
+                full_predictor_search_layer_num=other.full_predictor_search_layer_num;
                 predictor_vec=other.predictor_vec;
                 block_pivot_ratio=other.block_pivot_ratio;
                 force_quintic=other.force_quintic;

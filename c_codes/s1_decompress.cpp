@@ -75,6 +75,11 @@ int main(int argc,char* argv[])
             param.max_layer_num=stoull(argv[++i]);
             continue;
         }
+        else if (arg=="--full-predictor-search-layer-num")
+        {
+            param.full_predictor_search_layer_num=stoull(argv[++i]);
+            continue;
+        }
         else if (arg=="--t-policy")
         {
             param.set_t_policy(argv[++i]);
@@ -92,6 +97,8 @@ int main(int argc,char* argv[])
         throw invalid_argument("block_pivot_ratio must be positive");
     if (param.max_layer_num==0||param.max_layer_num>63)
         throw invalid_argument("max_layer_num must be in [1,63]");
+    if (param.full_predictor_search_layer_num==0||param.full_predictor_search_layer_num>63)
+        throw invalid_argument("full_predictor_search_layer_num must be in [1,63]");
 
     ifstream compressed_data_file(param.compressed_data_path,ios::binary);
     if (!compressed_data_file)

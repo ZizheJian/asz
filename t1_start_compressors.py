@@ -10,7 +10,7 @@ config_directory=project_root/"configs"
 asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_root/"install/bin")).resolve()
 supported_compressors=("asz","sz3","qoz","zfp","sperr")
 traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
-asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num")
+asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num","full_predictor_search_layer_num")
 
 def run_command(command,silent=False,dry_run=False):
     command=[str(item) for item in command]
@@ -103,11 +103,11 @@ def prepare_methods(method_list,task_id):
                 raise ValueError(f"task {task_id}的method {method_id}只有asz可以设置{key}")
             if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value):
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须是有限数字")
-            if key in ("block_pivot_ratio","max_layer_num"):
+            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num"):
                 if not isinstance(value,int) or value<=0:
                     raise ValueError(f"task {task_id}的method {method_id}的{key}必须是正整数")
-                if key=="max_layer_num" and value>63:
-                    raise ValueError(f"task {task_id}的method {method_id}的max_layer_num不能超过63")
+                if key in ("max_layer_num","full_predictor_search_layer_num") and value>63:
+                    raise ValueError(f"task {task_id}的method {method_id}的{key}不能超过63")
             elif not 0<value<=1:
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须在(0,1]内")
         methods.append(prepared)
@@ -389,7 +389,7 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     compressed_path=Path(str(data_path)+".asz")
     reconstructed_path=Path(str(data_path)+".bin")
     common=["-f","-i",data_path,"-3",*shape,"-M","REL",f"{rel_eb:.17g}"]
-    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num"}
+    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num"}
     method_options=dict(method)
     if plan_predictor_family is not None:
         method_options.setdefault("predictor_family",plan_predictor_family)
