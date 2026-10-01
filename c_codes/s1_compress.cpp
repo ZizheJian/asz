@@ -39,6 +39,8 @@ void prepare_config(asz::param_c<T> &param,const vector<string> &predictor_plan)
         param.predictor_vec=predictor_plan;
         param.generate_pivot_stride_and_block_shape_and_block_num();
     }
+    if (param.predictor_vec.size()>63)
+        throw invalid_argument("predictor plan cannot contain more than 63 layers");
     if (param.auto_select_predictor_family)
         param.select_predictor_family();
     param.print_config();
@@ -119,6 +121,16 @@ int main(int argc,char* argv[])
             param.block_pivot_ratio=stoull(argv[++i]);
             continue;
         }
+        else if (arg=="--max-layer-num")
+        {
+            param.max_layer_num=stoull(argv[++i]);
+            continue;
+        }
+        else if (arg=="--t-policy")
+        {
+            param.set_t_policy(argv[++i]);
+            continue;
+        }
     }
 
     if (!(param.pivot_eb_ratio>0&&param.pivot_eb_ratio<=1))
@@ -129,6 +141,8 @@ int main(int argc,char* argv[])
         throw invalid_argument("slope_ratio must be in (0,1]");
     if (param.block_pivot_ratio==0)
         throw invalid_argument("block_pivot_ratio must be positive");
+    if (param.max_layer_num==0||param.max_layer_num>63)
+        throw invalid_argument("max_layer_num must be in [1,63]");
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);

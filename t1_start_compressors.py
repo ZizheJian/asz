@@ -10,7 +10,7 @@ config_directory=project_root/"configs"
 asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_root/"install/bin")).resolve()
 supported_compressors=("asz","sz3","qoz","zfp","sperr")
 traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
-asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio")
+asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num")
 
 def run_command(command,silent=False,dry_run=False):
     command=[str(item) for item in command]
@@ -71,7 +71,7 @@ def prepare_methods(method_list,task_id):
         if isinstance(method,str):
             prepared={"name":method,"compressor":method}
         elif isinstance(method,dict):
-            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family",*asz_parameter_keys}
+            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","t_policy",*asz_parameter_keys}
             unknown=method.keys()-allowed_keys
             if unknown:
                 raise ValueError(f"task {task_id}的method {method_id}包含未知参数：{','.join(sorted(unknown))}")
@@ -92,6 +92,9 @@ def prepare_methods(method_list,task_id):
         if "predictor_family" in prepared:
             if prepared["compressor"]!="asz" or prepared["predictor_family"] not in ("cubic","quintic"):
                 raise ValueError(f"task {task_id}的method {method_id}的predictor_family只能是cubic或quintic且只能用于asz")
+        if "t_policy" in prepared:
+            if prepared["compressor"]!="asz" or prepared["t_policy"] not in ("adaptive","fixed_4_16","fixed_5_16"):
+                raise ValueError(f"task {task_id}的method {method_id}的t_policy只能是adaptive、fixed_4_16或fixed_5_16且只能用于asz")
         for key in asz_parameter_keys:
             if key not in prepared:
                 continue
@@ -100,9 +103,11 @@ def prepare_methods(method_list,task_id):
                 raise ValueError(f"task {task_id}的method {method_id}只有asz可以设置{key}")
             if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value):
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须是有限数字")
-            if key=="block_pivot_ratio":
+            if key in ("block_pivot_ratio","max_layer_num"):
                 if not isinstance(value,int) or value<=0:
-                    raise ValueError(f"task {task_id}的method {method_id}的block_pivot_ratio必须是正整数")
+                    raise ValueError(f"task {task_id}的method {method_id}的{key}必须是正整数")
+                if key=="max_layer_num" and value>63:
+                    raise ValueError(f"task {task_id}的method {method_id}的max_layer_num不能超过63")
             elif not 0<value<=1:
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须在(0,1]内")
         methods.append(prepared)
@@ -141,6 +146,8 @@ def load_tasks(json_path):
         rel_eb_list=task["rel_eb_list"]
         if not isinstance(rel_eb_list,list) or not rel_eb_list or any(not isinstance(value,(int,float)) or value<=0 for value in rel_eb_list):
             raise ValueError(f"task {task_id}的rel_eb_list必须是非空正数列表")
+        if len(rel_eb_list)!=len(set(rel_eb_list)):
+            raise ValueError(f"task {task_id}的rel_eb_list不能包含重复项")
         methods=prepare_methods(task["method_list"],task_id)
         if "cleanup_after_each_test" in task and not isinstance(task["cleanup_after_each_test"],bool):
             raise ValueError(f"task {task_id}的cleanup_after_each_test必须是布尔值")
@@ -382,7 +389,7 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     compressed_path=Path(str(data_path)+".asz")
     reconstructed_path=Path(str(data_path)+".bin")
     common=["-f","-i",data_path,"-3",*shape,"-M","REL",f"{rel_eb:.17g}"]
-    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio"}
+    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num"}
     method_options=dict(method)
     if plan_predictor_family is not None:
         method_options.setdefault("predictor_family",plan_predictor_family)
@@ -392,6 +399,8 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
             common.extend([option_names[key],method_options[key]])
     if "predictor_family" in method_options:
         common.extend(["--predictor-family",method_options["predictor_family"]])
+    if "t_policy" in method_options:
+        common.extend(["--t-policy",method_options["t_policy"]])
     compress_command=[asz_executable_directory/"s1_compress",*common]
     if predictors is not None:
         compress_command.extend(["--predictor-plan",",".join(predictors)])

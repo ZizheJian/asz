@@ -15,7 +15,9 @@ namespace asz
         printf("pivot_eb_ratio=%.2f;\n",pivot_eb_ratio);
         printf("eb_ratio=%.2f;\n",eb_ratio);
         printf("slope_ratio=%.2f;\n",slope_ratio);
+        printf("max_layer_num=%lu;\n",max_layer_num);
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
+        printf("t_policy=%s;\n",t_policy.c_str());
         printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");
         printf("pivot_stride={%lu,%lu,%lu};\n",pivot_stride[0],pivot_stride[1],pivot_stride[2]);
         printf("block_shape={%lu,%lu,%lu};\n",block_shape[0],block_shape[1],block_shape[2]);
@@ -540,7 +542,7 @@ namespace asz
         auto start_time=chrono::high_resolution_clock::now();
         
         pivot_stride={1,1,1};
-        for (uint64_t layer=0;layer<10;layer++)
+        for (uint64_t layer=0;layer<max_layer_num;layer++)
         {
             T layer_eb=abs_eb*pow(eb_ratio,layer);
             T neg_2_layer_eb=1/(2*layer_eb);
@@ -583,16 +585,17 @@ namespace asz
                     pivot_stride[2]/=2;
                 }
                 // 估算h1和psnr，找到最好的t
+                T initial_t=candidate_t.front();
                 if (AB_map.empty())
-                    best_t[predictor]=0.25;
+                    best_t[predictor]=initial_t;
                 else
                 {
-                    best_t[predictor]=0.25;
-                    get_h1_psnr(h1[predictor][0.25],psnr[predictor][0.25],AB_map,0.25,layer_eb,stat_eb);
-                    dist[predictor][0.25]=-layer_default_slope*h1[predictor][0.25]+psnr[predictor][0.25];
+                    best_t[predictor]=initial_t;
+                    get_h1_psnr(h1[predictor][initial_t],psnr[predictor][initial_t],AB_map,initial_t,layer_eb,stat_eb);
+                    dist[predictor][initial_t]=-layer_default_slope*h1[predictor][initial_t]+psnr[predictor][initial_t];
                     for (auto t:candidate_t)
                     {
-                        if (t==0.25)
+                        if (t==initial_t)
                             continue;
                         get_h1_psnr(h1[predictor][t],psnr[predictor][t],AB_map,t,layer_eb,stat_eb);
                         dist[predictor][t]=-layer_default_slope*h1[predictor][t]+psnr[predictor][t];

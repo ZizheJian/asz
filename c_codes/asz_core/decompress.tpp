@@ -318,8 +318,11 @@ namespace asz
                 string predictor=predictor_vec[layer_id];
                 T layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
                 //////// 获取最好t2 ////////
-                T best_t=(T)t_int_vec[t_pos]/t_precision;
-                t_pos++;
+                if (t_int_vec.empty())
+                    throw runtime_error("compressed stream contains no t value");
+                T best_t=(T)t_int_vec[t_int_vec.size()==1?0:t_pos]/t_precision;
+                if (t_int_vec.size()!=1)
+                    t_pos++;
                 //////// 预测 ////////
                 if (predictor.substr(0,6)=="cubic0")
                 {

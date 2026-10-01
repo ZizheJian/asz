@@ -32,6 +32,17 @@ Compare dataset-wide fixed Lagrange quintic prediction against the current cubic
 python t1_start_compressors.py tuning_asz_quintic --skip-build
 ```
 
+Reproduce the final layer-count/error-ratio comparison and the fixed-`t` ablation:
+
+```bash
+python t1_start_compressors.py layer_eb_finalists --skip-build --no-csv
+python analyze_layer_eb_screen.py --result-prefix layer_eb_finalists_ --curve-baseline-method asz_l10_e72 --output results/layer_eb_finalists_ranking.csv
+python t1_start_compressors.py t_policy_tuning --skip-build --no-csv
+python analyze_layer_eb_screen.py --result-prefix t_policy_ --curve-baseline-method asz_t_adaptive --output results/t_policy_ranking.csv
+```
+
+The archived summaries are `csv/layer_eb_finalists_ranking.csv` and `csv/t_policy_ranking.csv`. Across the six tuning datasets, 12 layers with `eb_ratio=0.76` reduce equal-PSNR bitrate by 5.56% relative to the former 10-layer/0.72 default. Fixed `t=4/16` and `t=5/16` increase it by 9.54% and 11.78%, respectively, so adaptive per-block `t` remains the default.
+
 The JSON top level is a task list. Each task requires `data_path_list`, `data_shape`, `rel_eb_list`, and `method_list`. Every path in `data_path_list` uses the same shape. Methods may be the strings `asz`, `sz3`, `qoz`, `zfp`, and `sperr`, or named method objects as shown below. Relative plan and summary paths are resolved from the project root. Set `cleanup_after_each_test` to `true` to remove that method's compressed and reconstructed files after its result has been recorded.
 
 `sz3` uses the official `szcompressor/SZ3` master branch. `qoz` uses the independent `szcompressor/QoZ` 2.0 branch with the full QoZ 2.0 optimization level (`-q 4`). They are built and installed separately, but both link the project's `third_party/zstd` build so all three methods use the same Zstd version.
@@ -54,6 +65,8 @@ ASZ is audited from its actual compressed stream and reconstructed float32 file 
         "eb_ratio": 0.72,
         "slope_ratio": 0.54,
         "block_pivot_ratio": 4,
+        "max_layer_num": 12,
+        "t_policy": "adaptive",
         "predictor_family": "cubic",
         "write_plan": "plans/{stem}.json"
       },
@@ -72,7 +85,7 @@ ASZ is audited from its actual compressed stream and reconstructed float32 file 
 
 A named method's `name` controls its CSV column name while `compressor` selects the executable. This allows several ASZ plan strategies in one task without overwriting results. `read_plan` applies a saved plan; omitting it generates a plan from that file. `write_plan` saves generated plans and must contain `{stem}` or `{name}` when a task has multiple data paths.
 
-Named ASZ methods may override `pivot_eb_ratio`, `eb_ratio`, `slope_ratio`, and `block_pivot_ratio`. Unspecified values use `0.10`, `0.72`, and `0.54`. For `block_pivot_ratio`, the launcher passes `64` when `rel_eb<=1e-4` and `4` otherwise; an explicit value always overrides this rule. Both compression and decompression receive the selected value. The C++ executables themselves retain the default `4` for compatibility with existing compressed streams. When `predictor_family` is omitted, ASZ first generates the normal plan and compares cubic and quintic MSE on up to 200,000 samples along its final-layer direction, then applies the better family to the entire dataset. `predictor_family` may explicitly force `cubic` or `quintic` for controlled experiments. Version 2 plan files save the selected family; version 1 plans remain readable and default to cubic.
+Named ASZ methods may override `pivot_eb_ratio`, `eb_ratio`, `slope_ratio`, `block_pivot_ratio`, `max_layer_num`, and `t_policy`. Unspecified values use `0.10`, `0.76`, `0.54`, at most 12 generated layers, and adaptive per-block `t` selection. `max_layer_num` must be in `[1,63]`; generation may stop earlier when no valid predictor remains. `t_policy` may be `adaptive`, `fixed_4_16`, or `fixed_5_16`. Fixed policies encode one shared `t` value rather than per-block values. For `block_pivot_ratio`, the launcher passes `64` when `rel_eb<=1e-4` and `4` otherwise; an explicit value always overrides this rule. Both compression and decompression receive the selected values. The C++ executables themselves retain the default block ratio `4` for compatibility with existing compressed streams. When `predictor_family` is omitted, ASZ first generates the normal plan and compares cubic and quintic MSE on up to 200,000 samples along its final-layer direction, then applies the better family to the entire dataset. `predictor_family` may explicitly force `cubic` or `quintic` for controlled experiments. Version 2 plan files save the selected family; version 1 plans remain readable and default to cubic.
 
 `ASZ_EXECUTABLE_DIRECTORY` may point the launcher at an isolated build directory containing `s1_compress` and `s1_decompress`. If it is unset, the launcher uses `install/bin` as before.
 

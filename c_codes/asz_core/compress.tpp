@@ -218,6 +218,8 @@ namespace asz
         for (uint64_t i=0;i<qb_vec_vec.size();i++)
             qb_vec_vec[i].reserve((uint64_t)(data.size()*pow(2,(int64_t)i-(int64_t)qb_vec_vec.size()+1)));
         t_int_vec.clear();
+        if (t_policy!="adaptive")
+            t_int_vec.push_back(llround(candidate_t.front()*t_precision));
 
         auto start_time=chrono::high_resolution_clock::now();
         //////// 存储pivot points ////////
@@ -257,7 +259,7 @@ namespace asz
                 T stat_eb=layer_eb*stat_eb_ratio;
                 T neg_2_stat_eb=1/(2*stat_eb);
                 unordered_map<tuple<int64_t,int64_t>,uint64_t> AB_map;
-                if ((predictor.substr(0,6)=="cubic0") && (block_loc[0][1]>block_loc[0][0]+3*stride[0]))
+                if (t_policy=="adaptive" && (predictor.substr(0,6)=="cubic0") && (block_loc[0][1]>block_loc[0][0]+3*stride[0]))
                 {
                     vector<vector<uint64_t>> temp_block_loc(3);
                     temp_block_loc[0]={block_loc[0][0]+3*stride[0]/2,block_loc[0][1]-3*stride[0]/2};
@@ -265,7 +267,7 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[0]*data_shape[1]*data_shape[2]/2,neg_2_stat_eb);
                 }
-                else if ((predictor.substr(0,6)=="cubic1") && (block_loc[1][1]>block_loc[1][0]+3*stride[1]))
+                else if (t_policy=="adaptive" && (predictor.substr(0,6)=="cubic1") && (block_loc[1][1]>block_loc[1][0]+3*stride[1]))
                 {
                     vector<vector<uint64_t>> temp_block_loc(3);
                     temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
@@ -273,7 +275,7 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0],block_loc[2][1]};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[1]*data_shape[2]/2,neg_2_stat_eb);
                 }
-                else if ((predictor.substr(0,6)=="cubic2") && (block_loc[2][1]>block_loc[2][0]+3*stride[2]))
+                else if (t_policy=="adaptive" && (predictor.substr(0,6)=="cubic2") && (block_loc[2][1]>block_loc[2][0]+3*stride[2]))
                 {
                     vector<vector<uint64_t>> temp_block_loc(3);
                     temp_block_loc[0]={block_loc[0][0],block_loc[0][1]};
@@ -281,7 +283,7 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0]+3*stride[2]/2,block_loc[2][1]-3*stride[2]/2};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[2]/2,neg_2_stat_eb);
                 }
-                T best_t=0.25,best_h1=0,best_psnr=0;
+                T best_t=candidate_t.front(),best_h1=0,best_psnr=0;
                 if (!AB_map.empty())
                 {
                     get_h1_psnr(best_h1,best_psnr,AB_map,best_t,layer_eb,stat_eb);
@@ -299,7 +301,8 @@ namespace asz
                         }
                     }
                 }
-                t_int_vec.push_back(llround(best_t*t_precision));
+                if (t_policy=="adaptive")
+                    t_int_vec.push_back(llround(best_t*t_precision));
                 //////// 预测 ////////
                 if (predictor.substr(0,6)=="cubic0")
                 {

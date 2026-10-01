@@ -87,13 +87,15 @@ namespace asz
             uint64_t generate_config_sample_stride=8;
 
             vector<T> candidate_t;
+            string t_policy="adaptive";
             T default_slope;
 
             bool config_generated=false;
             //////// 可调整参数 ////////
             T pivot_eb_ratio=0.10;//pivoting point的误差比例
-            T eb_ratio=0.72;//相邻layer之间的误差比例
+            T eb_ratio=0.76;//相邻layer之间的误差比例
             T slope_ratio=0.54;//相邻layer之间的斜率比例
+            uint64_t max_layer_num=12;//自动生成plan时允许的最大层数
             vector<string> predictor_vec;//预测器列表
             uint64_t block_pivot_ratio=4;//block边长和pivot间距的比值
             bool force_quintic=false;//整个dataset统一使用quintic内部预测
@@ -106,9 +108,25 @@ namespace asz
 
             param_c()
             {
-                // 8/32=0.25, 10/32=0.3125
-                for (int t_i=6*t_precision/32;t_i<=12*t_precision/32;t_i++)
-                    candidate_t.push_back((T)t_i/t_precision);
+                set_t_policy("adaptive");
+            }
+
+            void set_t_policy(const string &policy)
+            {
+                t_policy=policy;
+                candidate_t.clear();
+                if (policy=="adaptive")
+                {
+                    // 8/32=0.25, 10/32=0.3125
+                    for (int t_i=6*t_precision/32;t_i<=12*t_precision/32;t_i++)
+                        candidate_t.push_back((T)t_i/t_precision);
+                }
+                else if (policy=="fixed_4_16")
+                    candidate_t.push_back((T)4/16);
+                else if (policy=="fixed_5_16")
+                    candidate_t.push_back((T)5/16);
+                else
+                    throw invalid_argument("t_policy must be adaptive, fixed_4_16, or fixed_5_16");
             }
 
             template<typename T2>
@@ -133,11 +151,13 @@ namespace asz
                 stat_eb_ratio=other.stat_eb_ratio;
                 generate_config_sample_stride=other.generate_config_sample_stride;
                 candidate_t.assign(other.candidate_t.begin(),other.candidate_t.end());
+                t_policy=other.t_policy;
                 default_slope=other.default_slope;
                 config_generated=other.config_generated;
                 pivot_eb_ratio=other.pivot_eb_ratio;
                 eb_ratio=other.eb_ratio;
                 slope_ratio=other.slope_ratio;
+                max_layer_num=other.max_layer_num;
                 predictor_vec=other.predictor_vec;
                 block_pivot_ratio=other.block_pivot_ratio;
                 force_quintic=other.force_quintic;
