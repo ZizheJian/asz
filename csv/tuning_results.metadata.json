@@ -7,20 +7,21 @@
     "bit_rate":"32 divided by the ratio of original bytes to actual compressed-stream bytes",
     "psnr":"independently recomputed from float32 source and reconstruction with double-precision squared-error accumulation",
     "asz_error_acceptance":"max_error <= 1.01 * rel_eb * data_range",
+    "asz_pivot_eb_ratio":0.05,
     "asz_predictor_family":"automatically selected per dataset and error bound from cubic versus quintic MSE on the generated plan's final-layer direction"
   },
   "comparison":{
     "baseline":"pointwise lower bit rate of SZ3 and QoZ at equal PSNR",
     "interpolation":"Pareto-filtered piecewise linear interpolation in log(bit rate) versus PSNR over the common PSNR interval",
     "aggregation":"geometric mean over PSNR within each dataset, followed by the equal-weight geometric mean of the six dataset rate ratios",
-    "equal_dataset_rate_saving_percent":25.300323,
+    "equal_dataset_rate_saving_percent":26.094578,
     "per_dataset":[
-      {"dataset":"APS_Kaz","common_psnr":[37.220350,110.427332],"rate_saving_percent":16.106004,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"Aramco","common_psnr":[50.631758,110.070339],"rate_saving_percent":26.354504,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"CLDICE","common_psnr":[48.318594,108.853596],"rate_saving_percent":35.422051,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"Isabel_Pf01","common_psnr":[50.924164,106.139980],"rate_saving_percent":28.838553,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"LETKF_PRES","common_psnr":[49.699956,106.545786],"rate_saving_percent":32.283529,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"VideoLLaVA","common_psnr":[38.730382,104.991915],"rate_saving_percent":9.632567,"winning_psnr_fraction_percent":98.652}
+      {"dataset":"APS_Kaz","common_psnr":[37.223466,110.427332],"rate_saving_percent":16.135719,"winning_psnr_fraction_percent":100.000},
+      {"dataset":"Aramco","common_psnr":[50.729967,110.070339],"rate_saving_percent":26.258127,"winning_psnr_fraction_percent":100.000},
+      {"dataset":"CLDICE","common_psnr":[48.582609,108.853596],"rate_saving_percent":35.290879,"winning_psnr_fraction_percent":100.000},
+      {"dataset":"Isabel_Pf01","common_psnr":[52.261134,106.139980],"rate_saving_percent":30.915397,"winning_psnr_fraction_percent":100.000},
+      {"dataset":"LETKF_PRES","common_psnr":[51.718870,106.545786],"rate_saving_percent":34.777396,"winning_psnr_fraction_percent":100.000},
+      {"dataset":"VideoLLaVA","common_psnr":[38.714002,104.991915],"rate_saving_percent":9.630532,"winning_psnr_fraction_percent":98.635}
     ]
   },
   "baseline_version_metadata":"csv/tuning_baselines.metadata.json"

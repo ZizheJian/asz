@@ -92,7 +92,7 @@ namespace asz
 
             bool config_generated=false;
             //////// 可调整参数 ////////
-            T pivot_eb_ratio=0.10;//pivoting point的误差比例
+            T pivot_eb_ratio=0.05;//pivoting point的误差比例
             T eb_ratio=0.76;//相邻layer之间的误差比例
             T slope_ratio=0.54;//相邻layer之间的斜率比例
             uint64_t max_layer_num=12;//自动生成plan时允许的最大层数

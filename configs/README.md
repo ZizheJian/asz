@@ -63,7 +63,7 @@ ASZ bitstreams intentionally do not embed experiment parameters such as `rel_eb`
       {
         "name": "asz_self_plan",
         "compressor": "asz",
-        "pivot_eb_ratio": 0.10,
+        "pivot_eb_ratio": 0.05,
         "eb_ratio": 0.72,
         "slope_ratio": 0.54,
         "block_pivot_ratio": 4,
@@ -88,9 +88,18 @@ ASZ bitstreams intentionally do not embed experiment parameters such as `rel_eb`
 
 The predictor-search-depth ablation is reproduced with `predictor_search_depth_tuning`; its archived equal-PSNR summary is `csv/predictor_search_depth_ranking.csv`. It must also be regenerated after changes to prediction-axis sampling or the shared RD analyzer.
 
+The pivot-error-ratio finalists are reproduced with:
+
+```bash
+python t1_start_compressors.py pivot_eb_ratio_finalists --skip-build --no-csv
+python analyze_layer_eb_screen.py --result-prefix pivot_eb_finalists_ --curve-baseline-method asz_p10 --output results/pivot_eb_finalists_ranking.csv
+```
+
+Across the six tuning datasets, `pivot_eb_ratio=0.05` reduces equal-PSNR bitrate by 1.26% relative to the former 0.10 default and is therefore the current fixed default.
+
 A named method's `name` controls its CSV column name while `compressor` selects the executable. This allows several ASZ plan strategies in one task without overwriting results. `read_plan` applies a saved plan; omitting it generates a plan from that file. `write_plan` saves generated plans and must contain `{stem}` or `{name}` when a task has multiple data paths.
 
-Named ASZ methods may override `pivot_eb_ratio`, `eb_ratio`, `slope_ratio`, `block_pivot_ratio`, `max_layer_num`, `full_predictor_search_layer_num`, and `t_policy`. Unspecified values use `0.10`, `0.76`, `0.54`, at most 12 generated layers, full prediction-axis/traversal-order search in the first four generated layers, and adaptive per-block `t` selection. `max_layer_num` and `full_predictor_search_layer_num` must be in `[1,63]`; generation may stop earlier when no valid predictor remains. `t_policy` may be `adaptive`, `fixed_4_16`, or `fixed_5_16`. Fixed policies encode one shared `t` value rather than per-block values. For `block_pivot_ratio`, the launcher passes `64` when `rel_eb<=1e-4` and `4` otherwise; an explicit value always overrides this rule. Both compression and decompression receive the selected values. The C++ executables themselves retain the default block ratio `4` for compatibility with existing compressed streams. When `predictor_family` is omitted, ASZ first generates the normal plan and compares cubic and quintic MSE on up to 200,000 samples along its final-layer direction, then applies the better family to the entire dataset. `predictor_family` may explicitly force `cubic` or `quintic` for controlled experiments. Version 2 plan files save the selected family; version 1 plans remain readable and default to cubic.
+Named ASZ methods may override `pivot_eb_ratio`, `eb_ratio`, `slope_ratio`, `block_pivot_ratio`, `max_layer_num`, `full_predictor_search_layer_num`, and `t_policy`. Unspecified values use `0.05`, `0.76`, `0.54`, at most 12 generated layers, full prediction-axis/traversal-order search in the first four generated layers, and adaptive per-block `t` selection. `max_layer_num` and `full_predictor_search_layer_num` must be in `[1,63]`; generation may stop earlier when no valid predictor remains. `t_policy` may be `adaptive`, `fixed_4_16`, or `fixed_5_16`. Fixed policies encode one shared `t` value rather than per-block values. For `block_pivot_ratio`, the launcher passes `64` when `rel_eb<=1e-4` and `4` otherwise; an explicit value always overrides this rule. Both compression and decompression receive the selected values. The C++ executables themselves retain the default block ratio `4` for compatibility with existing compressed streams. When `predictor_family` is omitted, ASZ first generates the normal plan and compares cubic and quintic MSE on up to 200,000 samples along its final-layer direction, then applies the better family to the entire dataset. `predictor_family` may explicitly force `cubic` or `quintic` for controlled experiments. Version 2 plan files save the selected family; version 1 plans remain readable and default to cubic.
 
 `ASZ_EXECUTABLE_DIRECTORY` may point the launcher at an isolated build directory containing `s1_compress` and `s1_decompress`. If it is unset, the launcher uses `install/bin` as before.
 

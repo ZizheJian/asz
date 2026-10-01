@@ -105,6 +105,7 @@ def main():
     ranking=[]
     for method,dataset_ratios in ratios.items():
         match=re.fullmatch(r"asz_l(\d+)_e(\d+)",method)
+        pivot_match=re.fullmatch(r"asz_p(\d+)",method)
         if set(dataset_ratios)!=set(dataset_suffixes):
             raise ValueError(f"{method}缺少数据集结果")
         overall_ratio=geometric_mean(dataset_ratios.values())
@@ -112,6 +113,7 @@ def main():
             "METHOD":method,
             "MAX_LAYER_NUM":int(match.group(1)) if match else "",
             "EB_RATIO":int(match.group(2))/100 if match else "",
+            "PIVOT_EB_RATIO":int(pivot_match.group(1))/10**len(pivot_match.group(1)) if pivot_match else "",
             "DATASET_COUNT":len(dataset_ratios),
             "VS_DEFAULT_PERCENT":100*(overall_ratio-1),
             "MEAN_COMMON_PSNR_WIN_PERCENT":100*sum(winning_fractions[method].values())/len(winning_fractions[method]),
