@@ -463,17 +463,17 @@ def run_zfp(task,rel_eb,value_range,dry_run):
     absolute_eb_text=f"{absolute_eb:.17g}" if isinstance(absolute_eb,float) else absolute_eb
     run_command([executable,"-f","-i",data_path,"-z",compressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
     run_command([executable,"-f","-z",compressed_path,"-o",decompressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
-    output=run_command([executable,"-f","-i",data_path,"-o",decompressed_path,*dimensions,"-a",absolute_eb_text,"-s"],silent=True,dry_run=dry_run)
     if dry_run:
         return None
-    result={}
-    for key in ("ratio","rate","psnr"):
-        match=re.search(rf"\b{key}=([0-9.eE+-]+)",output)
-        if match is None:
-            raise RuntimeError(f"未能解析zfp的{key}")
-        result[{"ratio":"cr","rate":"br","psnr":"psnr"}[key]]=float(match.group(1))
-    result["psnr"]+=20*math.log10(2)
-    return result
+    compressed_size=compressed_path.stat().st_size
+    if compressed_size<=0:
+        raise RuntimeError(f"压缩文件为空：{compressed_path}")
+    cr=data_path.stat().st_size/compressed_size
+    metrics=calculate_float32_metrics(data_path,decompressed_path)
+    tolerance=absolute_eb*1e-5+max(1.0,value_range)*1e-12
+    if metrics["max_error"]>absolute_eb+tolerance:
+        raise RuntimeError(f"zfp违反误差界：max_error={metrics['max_error']},absolute_eb={absolute_eb}")
+    return {"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size}
 
 def cleanup_test_outputs(data_path,compressor):
     suffixes={
@@ -500,15 +500,17 @@ def run_sperr(task,rel_eb,value_range,dry_run):
     absolute_eb_text=f"{absolute_eb:.17g}" if isinstance(absolute_eb,float) else absolute_eb
     run_command([executable,data_path,"-c","--ftype","32",*dimensions,"--bitstream",compressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
     run_command([executable,compressed_path,"-d","--ftype","32",*dimensions,"--decomp_f",decompressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
-    output=run_command([executable,data_path,"-c","--ftype","32",*dimensions,"--decomp_f",decompressed_path,"--print_stats","--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
     if dry_run:
         return None
-    bitrate_match=re.search(r"Bitrate = ([0-9.eE+-]+)",output)
-    psnr_match=re.search(r"PSNR = ([0-9.eE+-]+)",output)
-    if bitrate_match is None or psnr_match is None:
-        raise RuntimeError("未能解析sperr结果")
-    br=float(bitrate_match.group(1))
-    return {"br":br,"cr":32/br,"psnr":float(psnr_match.group(1))}
+    compressed_size=compressed_path.stat().st_size
+    if compressed_size<=0:
+        raise RuntimeError(f"压缩文件为空：{compressed_path}")
+    cr=data_path.stat().st_size/compressed_size
+    metrics=calculate_float32_metrics(data_path,decompressed_path)
+    tolerance=absolute_eb*1e-5+max(1.0,value_range)*1e-12
+    if metrics["max_error"]>absolute_eb+tolerance:
+        raise RuntimeError(f"sperr违反误差界：max_error={metrics['max_error']},absolute_eb={absolute_eb}")
+    return {"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size}
 
 def report_result(method_name,data_path,rel_eb,result,write_csv):
     time_text=""

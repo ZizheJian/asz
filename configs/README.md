@@ -41,15 +41,17 @@ python t1_start_compressors.py t_policy_tuning --skip-build --no-csv
 python analyze_layer_eb_screen.py --result-prefix t_policy_ --curve-baseline-method asz_t_adaptive --output results/t_policy_ranking.csv
 ```
 
-The archived summaries are `csv/layer_eb_finalists_ranking.csv` and `csv/t_policy_ranking.csv`. Across the six tuning datasets, 12 layers with `eb_ratio=0.76` reduce equal-PSNR bitrate by 5.56% relative to the former 10-layer/0.72 default. Fixed `t=4/16` and `t=5/16` increase it by 9.54% and 11.78%, respectively, so adaptive per-block `t` remains the default.
+The archived summaries are `csv/layer_eb_finalists_ranking.csv` and `csv/t_policy_ranking.csv`. The analyzer first removes dominated RD points, integrates the log-bitrate difference over the common PSNR interval, and then takes the equal-dataset geometric mean. The archived numerical summaries predate the prediction-axis sampling-boundary fix and must be regenerated before they are used in the paper.
 
 The JSON top level is a task list. Each task requires `data_path_list`, `data_shape`, `rel_eb_list`, and `method_list`. Every path in `data_path_list` uses the same shape. Methods may be the strings `asz`, `sz3`, `qoz`, `zfp`, and `sperr`, or named method objects as shown below. Relative plan and summary paths are resolved from the project root. Set `cleanup_after_each_test` to `true` to remove that method's compressed and reconstructed files after its result has been recorded.
 
 `sz3` uses the official `szcompressor/SZ3` master branch. `qoz` uses the independent `szcompressor/QoZ` 2.0 branch with the full QoZ 2.0 optimization level (`-q 4`). They are built and installed separately, but both link the project's `third_party/zstd` build so all three methods use the same Zstd version.
 
-For SZ3 and QoZ, the launcher keeps the compressed stream until it has computed CR and BR from the actual file size. It independently recomputes PSNR and maximum absolute error from the reconstructed float32 data, checks the REL error bound, and then removes both files when `cleanup_after_each_test` is enabled.
+For SZ3, QoZ, ZFP, and SPERR, the launcher keeps the compressed stream until it has computed CR and BR from the actual file size. It independently recomputes PSNR and maximum absolute error from the reconstructed float32 data, checks the REL error bound, and then removes both files when `cleanup_after_each_test` is enabled. ZFP and SPERR tool-reported rounded statistics are not used.
 
 ASZ is audited from its actual compressed stream and reconstructed float32 file in the same way. Its maximum-error acceptance threshold is `1.01*rel_eb*data_range` to allow up to 1% floating-point overshoot.
+
+ASZ bitstreams intentionally do not embed experiment parameters such as `rel_eb`, the pivot/error/slope ratios, or `t_precision`. Compression and decompression must therefore use the same configuration; preserving that configuration is the user's responsibility.
 
 ```json
 [
@@ -84,7 +86,7 @@ ASZ is audited from its actual compressed stream and reconstructed float32 file 
 ]
 ```
 
-The predictor-search-depth ablation is reproduced with `predictor_search_depth_tuning`; its archived equal-PSNR summary is `csv/predictor_search_depth_ranking.csv`. Searching all prediction-axis/traversal-order combinations in four generated layers reduces equal-PSNR bitrate by 0.91% relative to three layers across the six tuning datasets, while two layers increase it by 0.89%.
+The predictor-search-depth ablation is reproduced with `predictor_search_depth_tuning`; its archived equal-PSNR summary is `csv/predictor_search_depth_ranking.csv`. It must also be regenerated after changes to prediction-axis sampling or the shared RD analyzer.
 
 A named method's `name` controls its CSV column name while `compressor` selects the executable. This allows several ASZ plan strategies in one task without overwriting results. `read_plan` applies a saved plan; omitting it generates a plan from that file. `write_plan` saves generated plans and must contain `{stem}` or `{name}` when a task has multiple data paths.
 

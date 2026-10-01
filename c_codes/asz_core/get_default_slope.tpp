@@ -27,13 +27,13 @@ namespace asz
             }
             else if (predictor.substr(0,6)=="cubic1")
             {
-                block_loc={{3,data_shape[0]-3},{1,data_shape[1]},{0,data_shape[2]}};
+                block_loc={{0,data_shape[0]},{3,data_shape[1]-3},{0,data_shape[2]}};
                 stride={1,2,1};
                 get_AB_map(AB_map,data,block_loc,stride,data_shape[2],neg_2_stat_eb);
             }
             else if (predictor.substr(0,6)=="cubic2")
             {
-                block_loc={{3,data_shape[0]-3},{0,data_shape[1]},{1,data_shape[2]}};
+                block_loc={{0,data_shape[0]},{0,data_shape[1]},{3,data_shape[2]-3}};
                 stride={1,1,2};
                 get_AB_map(AB_map,data,block_loc,stride,1,neg_2_stat_eb);
             }
