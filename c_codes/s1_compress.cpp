@@ -2,9 +2,52 @@
 
 using namespace std;
 
+vector<string> parse_predictor_plan(const string &text)
+{
+    vector<string> predictors;
+    size_t begin=0;
+    while (begin<=text.size())
+    {
+        size_t end=text.find(',',begin);
+        string predictor=text.substr(begin,end==string::npos?string::npos:end-begin);
+        bool valid=false;
+        for (int direction=0;direction<3;direction++)
+            for (const char *traversal_order:{"120","021","012"})
+                if (predictor=="cubic"+to_string(direction)+"_"+traversal_order)
+                    valid=true;
+        if (!valid)
+            throw invalid_argument("invalid predictor in plan: "+predictor);
+        predictors.push_back(predictor);
+        if (end==string::npos)
+            break;
+        begin=end+1;
+    }
+    if (predictors.empty())
+        throw invalid_argument("predictor plan cannot be empty");
+    return predictors;
+}
+
+template<typename T>
+void prepare_config(asz::param_c<T> &param,const vector<string> &predictor_plan)
+{
+    param.get_default_slope();
+    printf("default_slope=%f\n",param.default_slope);
+    if (predictor_plan.empty())
+        param.generate_config("compress");
+    else
+    {
+        param.predictor_vec=predictor_plan;
+        param.generate_pivot_stride_and_block_shape_and_block_num();
+    }
+    if (param.auto_select_predictor_family)
+        param.select_predictor_family();
+    param.print_config();
+}
+
 int main(int argc,char* argv[])
 {
     auto param=asz::param_c<float>();
+    vector<string> predictor_plan;
     for (int i=1;i<argc;i++)
     {
         string arg=argv[i];
@@ -39,7 +82,53 @@ int main(int argc,char* argv[])
             param.rel_eb=stof(argv[++i]);
             continue;
         }
+        else if (arg=="--predictor-plan")
+        {
+            predictor_plan=parse_predictor_plan(argv[++i]);
+            continue;
+        }
+        else if (arg=="--predictor-family")
+        {
+            string family=argv[++i];
+            param.auto_select_predictor_family=false;
+            if (family=="cubic")
+                param.force_quintic=false;
+            else if (family=="quintic")
+                param.force_quintic=true;
+            else
+                throw invalid_argument("predictor_family must be cubic or quintic");
+            continue;
+        }
+        else if (arg=="--pivot-eb-ratio")
+        {
+            param.pivot_eb_ratio=stof(argv[++i]);
+            continue;
+        }
+        else if (arg=="--eb-ratio")
+        {
+            param.eb_ratio=stof(argv[++i]);
+            continue;
+        }
+        else if (arg=="--slope-ratio")
+        {
+            param.slope_ratio=stof(argv[++i]);
+            continue;
+        }
+        else if (arg=="--block-pivot-ratio")
+        {
+            param.block_pivot_ratio=stoull(argv[++i]);
+            continue;
+        }
     }
+
+    if (!(param.pivot_eb_ratio>0&&param.pivot_eb_ratio<=1))
+        throw invalid_argument("pivot_eb_ratio must be in (0,1]");
+    if (!(param.eb_ratio>0&&param.eb_ratio<=1))
+        throw invalid_argument("eb_ratio must be in (0,1]");
+    if (!(param.slope_ratio>0&&param.slope_ratio<=1))
+        throw invalid_argument("slope_ratio must be in (0,1]");
+    if (param.block_pivot_ratio==0)
+        throw invalid_argument("block_pivot_ratio must be positive");
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);
@@ -55,24 +144,22 @@ int main(int argc,char* argv[])
     {
         param_double.copy_from(param);
         param_double.abs_eb=param_double.rel_eb*(param_double.max_val-param_double.min_val);
-        param_double.get_default_slope();
-        printf("default_slope=%f\n",param_double.default_slope);
-        param_double.generate_config("compress");
-        param_double.print_config();
+        prepare_config(param_double,predictor_plan);
         param_double.compress();
         param.copy_from(param_double);
     }
     else
     {
         param.abs_eb=param.rel_eb*(param.max_val-param.min_val);
-        param.get_default_slope();
-        printf("default_slope=%f\n",param.default_slope);
-        param.generate_config("compress");
-        param.print_config();
+        prepare_config(param,predictor_plan);
         param.compress();
     }
     ofstream compressed_data_file(param.compressed_data_path,ios::binary);
+    if (!compressed_data_file)
+        throw runtime_error("cannot open compressed output: "+param.compressed_data_path);
     compressed_data_file.write(reinterpret_cast<const char*>(param.zstd_bs_vec.data()),param.zstd_bs_vec.size());
+    if (!compressed_data_file)
+        throw runtime_error("cannot write compressed output: "+param.compressed_data_path);
     compressed_data_file.close();
     exit(0);
 

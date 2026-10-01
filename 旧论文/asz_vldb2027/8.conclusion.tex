@@ -1,0 +1,38 @@
+% The novelty remains limited, as the work appears to extend SZ/QoZ rather than introduce a fundamentally new compression approach.
+% The tangent-based criterion is not clearly shown to be a major contributor.
+% The broader applicability to ZFP, MGARD, SPERR, or AI-based compressors is not demonstrated.
+
+% 改成“面向error-bounded compression的高效configuration exploration and optimization framework，ASZ是它在interpolation-based compression上的完整实例”
+% 重新定义novelty
+%   数学化“压缩配置搜索”问题
+%   提出将可搜索的配置分为“压缩器设计者需要搜索的”、“用户对于一个数据集需要搜索的”、“用户对于特定数据文件可以online搜索的”
+%   对于interpolation based compressor，哪些配置值得搜索？哪些配置不值得搜索？值得搜索的配置应该在哪里搜索？
+%   ASZ 是实例，而不是全部贡献
+% 一张design space表，表明SZ3、QoZ、ASZ的搜索空间的区别
+% 更多的图来证明可以用h1-psnr替代bitrate-psnr，同时比较其他评价标准是否准确
+% 遍历顺序也是一项需要搜索的配置
+% 数学上分析cubic interpolation的系数理应非常普适，但也可能有其他系数在特定数据上更好
+% 提出rate-distortion图像被严重拉伸，实际上的图像中的斜率不等于dPSNR/dBR，加入用户可以指定PSNR被拉伸的倍数的功能
+% 提到data management，加上end to end测试
+% 用一个表格挑一下rate-distortion中的几个点汇报数据
+% introduction中加上asz相对于qoz的具体数值
+% 提到参数跨eb的能力？
+
+% 引用Automatic configuration tuning、Physical design optimization的相关文章，这个领域的主要目的是搜索诸如buffer size、thread count之类的配置，也会用到分层搜索
+
+\section{Conclusion}\label{sec:conclusion}
+
+In this paper, we propose ASZ, an adaptive prediction-based error-bounded lossy compressor that improves rate-distortion performance through systematic exploration of stencil patterns and predictor coefficients. By employing efficient predictor evaluation, ASZ is able to explore a substantially larger predictor space while still maintaining practical runtime overhead.
+
+Experimental results on datasets from multiple domains demonstrate that ASZ consistently achieves better rate-distortion performance than state-of-the-art prediction-based compressors. Runtime analysis further shows that the additional overhead mainly comes from stencil pattern exploration, while tangent estimation and adaptive coefficient selection introduce relatively small costs. Moreover, the stencil-pattern exploration stage can potentially be amortized or reused across similar datasets, further improving the practicality of the framework. Overall, this work demonstrates that systematically enlarging the predictor search space is a promising direction for improving prediction-based error-bounded lossy compression.
+
+There are several directions for future work. First, ASZ currently focuses on interpolation-based predictors with relatively simple tunable coefficients, while extending the framework to higher-order adaptive prediction functions may further improve compression performance. 
+Second, improving the approximation of the actual bitrate may further improve the accuracy of the predictors. 
+Finally, integrating ASZ with parallel and GPU-based compression frameworks is another promising direction for improving scalability and throughput.
+
+
+column width = \the\columnwidth
+
+\makeatletter
+font size: \f@size pt
+\makeatother

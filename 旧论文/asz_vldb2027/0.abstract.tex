@@ -1,0 +1,15 @@
+% 科学数据系统需要针对 data characteristics 和 quality targets 自动选择 compression configurations；
+% configuration evaluation 需要完整 compression，导致只能搜索很小空间；
+% ASZ 将 configuration evaluation 分解成 RD-aware objective、entropy-distortion proxy、reusable residual statistics；
+% 在 interpolation compressor 中实例化为 joint stencil/coefficient search；
+% 搜索规模、估计 speedup、oracle regret；
+% 最终 RD gain、runtime、跨 timestep amortization；
+% 非预测 compressor 上的 selector generality。
+
+\begin{abstract}
+Error-bounded lossy compression is widely used to reduce storage, I/O, and data-movement costs in scientific data management. The performance of a lossy compressor, however, depends not only on its underlying compression algorithm but also on how its configurable components are selected and organized for the target data. Existing compressors typically explore only limited configuration spaces or evaluate candidate configurations by repeatedly executing expensive compression pipelines, making systematic tuning difficult.
+
+In this paper, we propose a hierarchical configuration-tuning framework that organizes tuning decisions according to their potential benefit, evaluation cost, and scope of reuse. We use this framework to systematically analyze the tunable dimensions of prediction-based error-bounded compressors, including stencil patterns, predictor coefficients, and traversal orders, among others. We also develop accurate and inexpensive proxy metrics that enable efficient evaluation of candidate configurations. Based on these findings, we develop ASZ, which applies the resulting tuning strategies at their appropriate stages.
+
+Experiments on eight datasets from different domains show that ASZ consistently improves rate–distortion performance over state-of-the-art prediction-based compressors while maintaining comparable compression time. Compared with QoZ, ASZ commonly achieves up to 2× higher compression ratios at the same reconstruction quality, with improvements exceeding 10× on highly anisotropic datasets. These results demonstrate that hierarchical configuration tuning is an effective and practical approach for improving error-bounded lossy compression.
+\end{abstract}

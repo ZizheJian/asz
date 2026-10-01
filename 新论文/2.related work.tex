@@ -1,0 +1,56 @@
+\section{Related Work}\label{sec:related work}
+
+In this section, we review related work on prediction-based error-bounded lossy compression, with a particular focus on interpolation-based predictors and predictor evaluation methodologies.
+
+\subsection{Error-Bounded Lossy Compression}\label{sec:related work:compressors}
+
+Error-bounded lossy compression is widely used in scientific data management to reduce storage and data-movement costs. Compared with lossless compression, it can usually achieve substantially greater data reduction by allowing controlled numerical distortion. Under a pointwise absolute error bound $\epsilon$, the reconstruction error of every data value must satisfy
+\begin{equation}
+    |x_i-\hat{x}_i| \leq \epsilon,
+\end{equation}
+where $x_i$ and $\hat{x}_i$ denote the original and reconstructed values, respectively.
+
+Error-bounded compressors are commonly evaluated from two complementary perspectives: storage reduction and reconstructed data quality~\cite{cappello2019use,di2025survey,cappello2025support}.
+\begin{itemize}
+    \item \textbf{Storage reduction} can be measured using either compression ratio or bit rate. Compression ratio, denoted by $\mathrm{CR}$, is defined as the ratio of the original data size to the compressed data size. Bit rate, denoted by $\mathrm{BR}$, is the average number of compressed bits used to represent each data value. For an input representation using $b_{\mathrm{ori}}$ bits per value, they satisfy
+    \begin{equation}
+        \mathrm{CR}\cdot \mathrm{BR}=b_{\mathrm{ori}}.
+    \end{equation}
+    Thus, a lower bit rate corresponds to a higher compression ratio.
+
+    \item \textbf{Reconstructed data quality} is commonly measured using peak signal-to-noise ratio (PSNR):
+    \begin{equation}
+        \mathrm{PSNR}=20\log_{10}\bigl(\mathrm{range}(X)\bigr)-10\log_{10}(\mathrm{MSE}),
+    \end{equation}
+    where $\mathrm{range}(X)$ is the value range of the original data and $\mathrm{MSE}$ is the mean squared reconstruction error. If the reconstruction errors were uniformly distributed over $[-\epsilon,\epsilon]$, their expected MSE would be $\epsilon^2/3$. In practice, however, different compressors can produce substantially different error distributions under the same error bound. Compressors whose reconstruction errors are more concentrated around zero can therefore achieve higher PSNR.
+\end{itemize}
+
+These two objectives are typically considered jointly through rate--distortion analysis. A rate--distortion curve plots bit rate on the horizontal axis and PSNR on the vertical axis, with each point representing the performance of a compressor under a particular error-bound setting. When multiple compressors are compared, curves closer to the upper-left region are preferred.
+
+Existing error-bounded lossy compressors can broadly be categorized into prediction-based and transform-based approaches. Prediction-based compressors typically process data values in a predefined order. For each value, a predictor estimates its value from previously reconstructed data, after which the prediction residual is quantized under the user-specified error bound. The resulting quantization symbols are subsequently encoded by lossless compression. Their compression performance therefore depends not only on prediction accuracy, but also on the distribution and ordering of the generated symbols.
+
+Existing prediction-based compressors differ primarily in their predictor structures. SZ3~\cite{liang2022sz3,zhao2021optimizing} employs one-dimensional linear or cubic interpolation predictors, while QoZ~\cite{liu2022dynamic,liu2024high} further expands the predictor design space by introducing multidimensional interpolation, varying the number of reference points, and providing additional coefficient choices for cubic interpolation. Other work~\cite{liu2021improving} has studied the choice of lossless encoder after prediction and quantization, showing that Zstandard offers a favorable balance between compression ratio and runtime performance. These methods follow a broadly shared workflow, referred to in this paper as the SZ compression pipeline and described in detail in Section~4.1. ASZ is built upon the same pipeline.
+
+Representative transform-based compressors include ZFP~\cite{lindstrom2014fixed,diffenderfer2019error} and SPERR~\cite{li2023lossy}. ZFP partitions multidimensional floating-point data into small fixed-size blocks, applies a decorrelating transform, and encodes the resulting coefficients using an embedded bit-plane representation. Lossy compression is achieved by truncating the bitstream according to a user-specified storage, precision, or absolute-error constraint. SPERR applies a wavelet transform to the input data, encodes the transform coefficients using SPECK~\cite{Pearlman2004speck}, and compresses the remaining residual information using Zstandard~\cite{ycollet2021zstd}.
+
+\subsection{Configuration Tuning in Lossy Compression}\label{sec:related work:tuning}
+
+\subsubsection{Tuning in Prediction-Based Compressors}\mbox{}
+
+The compression performance of prediction-based compressors depends strongly on predictor effectiveness because these compressors encode prediction residuals. A more accurate predictor generally produces residuals that are more concentrated around zero and therefore easier to encode. Besides selecting better predictors, prediction-based compressors may expose other tunable configurations, including error-bound scaling, data traversal order, and the choice of lossless encoder. We systematically analyze these configuration dimensions in Section~\ref{sec:tunable dimensions:analysis}.
+
+Several prediction-based compressors perform data-dependent tuning during preprocessing. Existing candidate-evaluation strategies can broadly be divided into the following categories:
+
+\begin{itemize}
+\item \textbf{Compression-Based Evaluation.} These methods~\cite{liang2022sz3,zhao2021optimizing,jian2024cliz} evaluate candidate configurations by executing the entire compression pipeline on sampled data and directly measuring the resulting compression performance. Such evaluation generally provides reliable measurements when the samples are representative, but incurs relatively high per-candidate overhead and therefore limits the number of configurations that can be explored.
+
+\item \textbf{Proxy-Based Performance Estimation.} These methods estimate rate--distortion performance without executing the complete compression pipeline. For example, Liang et al.~\cite{liang2019significantly} develop a framework that selects among multiple compression methods. When evaluating the SZ-based method, they estimate bit rate using the entropy of quantized symbols, adjust the error bounds to obtain comparable bit rates across candidate methods, and then compare the resulting PSNR. Jin et al.~\cite{jin2022improving} similarly use entropy to estimate bit rate and construct analytical models for selecting configurations that either minimize bit rate under a user-specified quality requirement or maximize data quality under a storage constraint. Such methods can substantially reduce tuning overhead, although their estimates may require compressor-specific assumptions or empirical corrections and are not always sufficiently reliable to distinguish among candidate configurations.
+
+\item \textbf{Heuristic Predictor Selection.} Some methods select predictors using inexpensive statistics that do not explicitly estimate the final bit rate or PSNR. For example, QoZ and HPEZ~\cite{liu2022dynamic,liu2024high} use mean absolute prediction error (MAE) to compare candidate predictors and guide configuration selection. These criteria are inexpensive to compute, but they optimize indirect indicators rather than directly evaluating the final rate--distortion outcome.
+\end{itemize}
+
+\subsubsection{Tuning in Transform-Based Compressors}\mbox{}
+
+Transform-based compressors expose configuration choices primarily in the selection of transforms, as well as in the compression and encoding of the resulting coefficients. For example, ZFP~\cite{lindstrom2014fixed,diffenderfer2019error} has evolved through refinements to its block transform and embedded coding design. Similarly, MRCZ~\cite{jian2027mrcz} improves compression performance by selecting a more effective transform, while the error bound used to encode transform coefficients controls both bit rate and reconstructed data quality.
+
+Unlike the data-dependent tuning commonly used by prediction-based compressors, these configuration choices are often explored offline by compressor developers and fixed in the final implementation. This is partly because transform design often involves many numerical parameters and tightly coupled choices. Even small adjustments may require substantial expertise and computational effort, while not always yielding commensurate gains. Moreover, effective transforms often generalize well across datasets, making offline design and broad reuse more attractive than repeated input-specific tuning.

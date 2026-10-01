@@ -6,7 +6,11 @@ namespace asz
     void param_c<T>::dot_decompress(vector<int64_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb)
     {
         T pred;
-        if (i<=half_stride)
+        if (force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
+        {
+            pred=(T)((75.0/128)*(compressed_data[pos-dist]+compressed_data[pos+dist])-(25.0/256)*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist])+(3.0/256)*(compressed_data[pos-5*dist]+compressed_data[pos+5*dist]));
+        }
+        else if (i<=half_stride)
         {
             if (i+half_stride>=right)
                 pred=compressed_data[pos-dist];
@@ -27,7 +31,7 @@ namespace asz
                 pred+=(0.25+t)*(compressed_data[pos-dist]+compressed_data[pos+dist]);
             }
         }
-        compressed_data[pos]=pred-qb_vec[qb_pos]*eb*2;
+        compressed_data[pos]=(T)((double)pred-(double)qb_vec[qb_pos]*2*(double)eb);
         qb_pos++;
     }
 
@@ -216,7 +220,15 @@ namespace asz
         huffman_bs+=sizeof(T);
         memcpy(&max_val,huffman_bs,sizeof(T));
         huffman_bs+=sizeof(T);
-        uint64_t layer_num=huffman_bs[0];
+        unsigned char format_and_layer_num=huffman_bs[0];
+        uint64_t layer_num;
+        if (format_and_layer_num&0x40)
+        {
+            force_quintic=format_and_layer_num&0x80;
+            layer_num=format_and_layer_num&0x3F;
+        }
+        else
+            layer_num=format_and_layer_num;
         huffman_bs++;
         for (uint64_t i=0;i<layer_num;i++)
         {
@@ -286,7 +298,7 @@ namespace asz
         for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
         {
             uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-            compressed_data[pos]=qb_vec_vec[0][qb_pos_vec[0]]*pivot_eb*2;
+            compressed_data[pos]=(T)((double)qb_vec_vec[0][qb_pos_vec[0]]*(double)pivot_eb*2);
             qb_pos_vec[0]++;
         }
         // //////// 依次处理每个大block ////////
@@ -294,7 +306,6 @@ namespace asz
         for (uint64_t block_i1=0;block_i1<block_num[1];block_i1++)
         for (uint64_t block_i2=0;block_i2<block_num[2];block_i2++)
         {
-            uint64_t block_id=block_i0*block_num[1]*block_num[2]+block_i1*block_num[2]+block_i2;
             vector<vector<uint64_t>> block_loc(3);
             block_loc[0]={block_i0*block_shape[0],min((block_i0+1)*block_shape[0]+1,data_shape[0])};
             block_loc[1]={block_i1*block_shape[1],min((block_i1+1)*block_shape[1]+1,data_shape[1])};
@@ -355,7 +366,7 @@ namespace asz
         }
         mse/=data.size();
         T psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
-        printf("max_err= %f (%f\%)\n",max_err,max_err*100/abs_eb);
+        printf("max_err= %f (%f%%)\n",max_err,max_err*100/abs_eb);
         printf("CR= %f\n",cr);
         printf("BR= %f\n",br);
         printf("PSNR= %f\n",psnr);

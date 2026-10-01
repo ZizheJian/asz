@@ -20,6 +20,7 @@
 #include "../third_party/zstd/lib/zstd.h"
 
 using namespace std;
+using namespace csv_tools;
 
 void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<int64_t> &qb_vec,double max_val,double min_val,
     double rel_eb,vector<double> &t_vec,double mse,double pred_rmse,double pred_mae);

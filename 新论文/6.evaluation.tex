@@ -1,0 +1,100 @@
+% 加上generalizability的测试
+
+\section{Performance Evaluation}\label{sec:performance}
+
+This section evaluates the proposed compressors ASZ on datasets from different domains. We assess the effectiveness of ASZ from multiple perspectives, including data distortion, compressibility and compression throughput, and compare them against several state-of-the-art error-bounded lossy compressors.
+
+\subsection{Experimental Setup}\label{sec:performance:setup}
+
+\subsubsection{Evaluation Platform}
+All experiments were conducted on [Supercomputer A]\footnote{Details are hidden due to the double-blind policy.} with one AMD EPYC 7763 64-Core processor used.
+ASZ is compiled using GCC 11.2.0 using \verb|-Ofast| and \verb|-mavx2|, while baseline compressors were built separately using their default configuration.
+
+\subsubsection{Datasets}
+
+Table~\ref{tab:datasets} summarizes the datasets used in our evaluation. They originate from multiple domains and include scientific simulation data, real-world measurements, and data used in neural networks.
+
+\begin{table}[htb]
+    \centering
+    \caption{Overview of Datasets}
+    \label{tab:datasets}
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{lc|lc}
+        \toprule
+        Dataset    & Shape                      & Dataset & Shape \\
+        \midrule
+        Videollava & $8\times257\times4096$     & XPCS    & $998\times128\times128$ \\
+        ISABEL     & $100\times500\times500$    & Aramco  & $449\times449\times235$ \\
+        LETKF      & $98\times1200\times1200$   & CLDICE  & $26\times1800\times3600$ \\
+        APSU004    & $1024\times1558\times1813$ & E017    & $1024\times1813\times1558$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{Baseline Compressors}
+
+We use SZ3~\cite{liang2022sz3,zhao2021optimizing} and QoZ~\cite{liu2022dynamic,liu2024high} as baseline compressors in our evaluation. Both are state-of-the-art prediction-based error-bounded lossy compressors built upon the SZ compression framework and are discussed in Sections~\ref{sec:related work} and~\ref{sec:tunable dimensions}. Since ASZ is also built upon the SZ compression framework,these two compressors provide the most relevant baselines for evaluating the effectiveness of our proposed techniques.
+
+\subsection{Rate-Distortion Results}
+
+We present the rate-distortion curves for all datasets in Table~\ref{tab:datasets} across all compressors. The X-axis shows the bitrate, and the Y-axis shows PSNR, a key metric for data quality. These curves capture the tradeoff between compressibility and reconstruction quality, with better performance indicated by points closer to the upper-left.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{figs/5/rate-distortion.pdf}
+    \caption{Evaluation of rate-distortion curves between ASZ and baseline compressors}
+    \label{fig:rate-distortion}
+\end{figure}
+
+Figure~\ref{fig:rate-distortion} presents the rate-distortion results. Overall, \textbf{\textit{ASZ consistently outperforms all baseline compressors across all evaluated datasets and error bounds}}. Under the same PSNR, ASZ can usually achieve $2\times$ higher compression ratio than the baseline compressors. Meanwhile, it shows particularly strong performance in two scenarios.
+
+First, \textbf{\textit{ASZ shows particularly strong performance under large error bounds}}. Existing compressors, such as SZ3, typically switch between linear interpolation prediction under large error bounds and cubic interpolation prediction under small error bounds.  However, the predictor behavior in the medium-error-bound regime has not been systematically studied. ASZ addresses this issue by using higher-granularity coefficient tuning according to the local data characteristics and target error bound, enabling more accurate prediction and improved compression performance.
+
+Second, \textbf{\textit{ASZ achieves especially large improvements on certain datasets}}, represented by APSU004, where ASZ can provide more than $60$\,dB higher PSNR under the same bitrate, or over $10\times$ higher compression ratio under the same PSNR compared with baseline compressors. For these datasets, one dimension is significantly more predictable than the others. ASZ is able to completely disable predictors along less predictable dimensions and rely only on the dominant predictive direction. In contrast, existing baseline compressors lack such adaptive predictor selection capability and therefore cannot fully exploit this type of anisotropic predictability.
+
+\subsection{Compression Performance Breakdown}
+
+% First, summarize what you will discuss.
+In this section, we conduct ablation studies to evaluate the contribution of the major components in ASZ. We focus on three key mechanisms that distinguish ASZ from the traditional SZ compression framework:
+
+\begin{itemize}
+\item ASZ estimates the tangent of the rate-distortion curve and evaluates predictors by their displacement along the normal direction. As comparisons, we additionally evaluate two special cases where the tangent direction is set to be parallel to the bitrate axis or the PSNR axis.
+\item ASZ adapts stencil patterns according to local data characteristics instead of using fixed prediction layouts. As a comparison, we use a baseline configuration where the stencil pattern of each level cyclically traverses each dimension in order.
+\item ASZ tunes predictor coefficients with finer granularity to improve prediction accuracy under different error-bound regimes. As comparisons, we use baseline configurations where all predictor coefficients are fixed to those of linear interpolation or cubic interpolation in SZ3.
+\end{itemize}
+
+We use three representative medium-scale datasets, Videollava, CLDICE and NyxBD, as examples. The results are shown in Figure~\ref{fig:performance breakdown}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]{figs/5/performance breakdown.pdf}
+    \caption{Ablation study of major ASZ components.}
+    \label{fig:performance breakdown}
+\end{figure}
+
+The first column of Figure~\ref{fig:performance breakdown} compares ASZ with two alternative configurations where the tangent direction is forced to be horizontal or vertical. We can observe that the rate-distortion curve of the vertical-tangent configuration is very close to that of ASZ. This is because, in most cases, the slope of the tangent estimated by ASZ ranges from approximately 5 to 5000 and therefore remains significantly larger than 1. From a geometric perspective, such steep tangent directions are much closer to the vertical case than to the horizontal case.
+
+The second column compares ASZ-based stencil pattern selection with the default strategy that cyclically predicts along each dimension in order. The results show that allowing ASZ to adaptively select stencil patterns consistently achieves better rate-distortion performance.
+
+The third column compares adaptive predictor coefficient selection in ASZ with fixed linear and cubic interpolation coefficients. In most cases, cubic interpolation outperforms linear interpolation, although there are also datasets where linear interpolation performs significantly better, such as Videollava. In several cases, using fixed coefficients can slightly outperform adaptive coefficient selection because coefficient storage overhead is eliminated. However, no single fixed predictor consistently performs best across all datasets and error-bound settings. ASZ provides a more robust and adaptive solution by dynamically selecting predictor coefficients according to the data characteristics and compression regime.
+
+\subsection{Runtime Analysis}
+
+In this section, we compare the runtime of ASZ with other baseline compressors and further analyze the runtime breakdown of ASZ. Specifically, we measure the time spent in the major stages of ASZ, including tangent estimation, stencil pattern selection, and compression. We additionally evaluate the runtime impact of disabling stencil pattern selection or adaptive coefficient tuning.
+
+In Figure~\ref{fig:runtime}, we present the runtime of different compressors for compressing CLDICE with a relative error bound of $10^{-4}$ and NyxBD with a relative error bound of $10^{-6}$. We choose these two error bounds because they are located at the middle of the error-bound ranges shown in Figure~\ref{fig:rate-distortion}(c) and (d).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figs/5/runtime.pdf}
+    \caption{Runtime comparison and breakdown of ASZ and baseline compressors.}
+    \label{fig:runtime}
+\end{figure}
+
+First, we can find that the runtime of tangent estimation is barely visible in the figure. This is because tangent estimation takes only about $5\times10^{-3}$ seconds, which is much smaller than the other stages and can be considered nearly free in practice.
+
+Most of the runtime overhead of ASZ is spent on stencil pattern searching. However, stencil patterns can be selected offline in advance. In practice, such stencil patterns are often reusable across similar datasets, for example, datasets with the same shape generated by the same instrument or produced by the same simulation algorithm. The workflow involves selecting a representative dataset to estimate the tangent and determine the stencil patterns offline, and then, for each dataset to be compressed, ASZ only performs tangent estimation and compression using the preselected stencil patterns. Although tangent estimation still needs to be repeated for each dataset, its runtime overhead is negligible in practice. Excluding the overhead of stencil pattern search, the runtime of the compression stage in ASZ lies between that of SZ3 and QoZ.
+
+Without stencil pattern selection, the runtime of the compression stage in ASZ may either increase or decrease. When suitable stencil patterns are not provided, the predictors in ASZ can produce quantized prediction errors with a more scattered distribution, which increases the runtime of the lossless compression stage in the SZ compression framework. Similar behavior has also been observed in SZ3 and QoZ. On the other hand, the default stencil patterns are designed to maximize contiguous memory access, which can reduce prediction overhead and improve runtime efficiency during prediction. These two effects compete with each other, and it is unclear which one will dominate in practice.
+
+When stencil pattern selection is enabled while adaptive coefficient tuning is replaced with fixed third-order interpolation coefficients, the compression stage in ASZ can become even faster than that of SZ3.

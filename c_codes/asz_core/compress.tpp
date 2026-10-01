@@ -6,7 +6,11 @@ namespace asz
     void param_c<T>::dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb)
     {
         T pred;
-        if (i<=half_stride)
+        if (force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
+        {
+            pred=(T)((75.0/128)*(compressed_data[pos-dist]+compressed_data[pos+dist])-(25.0/256)*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist])+(3.0/256)*(compressed_data[pos-5*dist]+compressed_data[pos+5*dist]));
+        }
+        else if (i<=half_stride)
         {
             if (i+half_stride>=right)
                 pred=compressed_data[pos-dist];
@@ -27,9 +31,9 @@ namespace asz
                 pred+=(0.25+t)*(compressed_data[pos-dist]+compressed_data[pos+dist]);
             }
         }
-        int64_t qb=llround((pred-data[pos])*neg_2_eb);
+        int64_t qb=llround(((double)pred-(double)data[pos])/(2*(double)eb));
         qb_vec.push_back(qb);
-        compressed_data[pos]=pred-qb*2*eb;
+        compressed_data[pos]=(T)((double)pred-(double)qb*2*(double)eb);
     }
 
     template<typename T>
@@ -222,22 +226,20 @@ namespace asz
         pivot_num*=((data_shape[2]+pivot_stride[2]-1)/pivot_stride[2]);
         qb_vec_vec[0].reserve(pivot_num);
         T pivot_eb=abs_eb*pivot_eb_ratio;
-        T neg_2_pivot_eb=1/(2*pivot_eb);
         for (uint64_t i0=0;i0<data_shape[0];i0+=pivot_stride[0])
         for (uint64_t i1=0;i1<data_shape[1];i1+=pivot_stride[1])
         for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
         {
             uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-            int64_t qb=llround(data[pos]*neg_2_pivot_eb);
+            int64_t qb=llround((double)data[pos]/(2*(double)pivot_eb));
             qb_vec_vec[0].push_back(qb);
-            compressed_data[pos]=qb*pivot_eb*2;
+            compressed_data[pos]=(T)((double)qb*(double)pivot_eb*2);
         }
         //////// 依次处理每个大block ////////
         for (uint64_t block_i0=0;block_i0<block_num[0];block_i0++)
         for (uint64_t block_i1=0;block_i1<block_num[1];block_i1++)
         for (uint64_t block_i2=0;block_i2<block_num[2];block_i2++)
         {
-            uint64_t block_id=block_i0*block_num[1]*block_num[2]+block_i1*block_num[2]+block_i2;
             vector<vector<uint64_t>> block_loc(3);
             block_loc[0]={block_i0*block_shape[0],min((block_i0+1)*block_shape[0]+1,data_shape[0])};
             block_loc[1]={block_i1*block_shape[1],min((block_i1+1)*block_shape[1]+1,data_shape[1])};
@@ -250,7 +252,7 @@ namespace asz
                 string predictor=predictor_vec[layer_id];
                 T layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
                 T neg_2_layer_eb=1/(2*layer_eb);
-                T layer_default_slope=default_slope*pow(slope_ratio,(int32_t)layer_num-(int32_t)layer_id+1);
+                T layer_default_slope=default_slope*pow(slope_ratio,(int32_t)layer_num-(int32_t)layer_id-1);
                 //////// 估计最好t2 ////////
                 T stat_eb=layer_eb*stat_eb_ratio;
                 T neg_2_stat_eb=1/(2*stat_eb);
@@ -279,28 +281,21 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0]+3*stride[2]/2,block_loc[2][1]-3*stride[2]/2};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[2]/2,neg_2_stat_eb);
                 }
-                T best_t,best_h1,best_psnr;
-                if (AB_map.empty())
+                T best_t=0.25,best_h1=0,best_psnr=0;
+                if (!AB_map.empty())
                 {
-                    best_t=0.3125;
-                    best_h1=0;
-                    best_psnr=0;
-                }
-                else
-                {
-                    T h1=0,psnr=0;
-                    bool any_t_tried=false;
+                    get_h1_psnr(best_h1,best_psnr,AB_map,best_t,layer_eb,stat_eb);
                     for (auto t:candidate_t)
                     {
-                        get_h1_psnr(h1,psnr,AB_map,t,layer_eb,stat_eb);
-                        if (psnr==INFINITY)
+                        if (t==best_t || best_psnr==INFINITY)
                             continue;
-                        if ((!any_t_tried) || (-layer_default_slope*(h1-best_h1)+(psnr-best_psnr)>0))
+                        T h1=0,psnr=0;
+                        get_h1_psnr(h1,psnr,AB_map,t,layer_eb,stat_eb);
+                        if (psnr==INFINITY || -layer_default_slope*(h1-best_h1)+(psnr-best_psnr)>0)
                         {
                             best_t=t;
                             best_h1=h1;
                             best_psnr=psnr;
-                            any_t_tried=true;
                         }
                     }
                 }
@@ -352,7 +347,7 @@ namespace asz
         huffman_bs+=sizeof(T);
         memcpy(huffman_bs,&max_val,sizeof(T));
         huffman_bs+=sizeof(T);
-        huffman_bs[0]=static_cast<unsigned char>(predictor_vec.size());
+        huffman_bs[0]=static_cast<unsigned char>(predictor_vec.size())|0x40|(force_quintic?0x80:0);
         huffman_bs++;
         for (auto &predictor:predictor_vec)
         {
@@ -406,7 +401,7 @@ namespace asz
         }
         mse/=data.size();
         T psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
-        printf("max_err= %f (%f\%)\n",max_err,max_err*100/abs_eb);
+        printf("max_err= %f (%f%%)\n",max_err,max_err*100/abs_eb);
         printf("CR: %f, BR: %f, PSNR: %f\n",cr,br,psnr);
         printf("dist=%f\n",-default_slope*br+psnr);
         return -default_slope*br+psnr;

@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "description": "ASZ baseline approximating SZ3's default [0,1,2] interpolation-direction sequence and natural traversal order under ASZ's 10-layer budget.",
+  "plans": [
+    {
+      "rel_eb": 0.01,
+      "layers": [
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]}
+      ]
+    },
+    {
+      "rel_eb": 0.001,
+      "layers": [
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]}
+      ]
+    },
+    {
+      "rel_eb": 0.0001,
+      "layers": [
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]}
+      ]
+    },
+    {
+      "rel_eb": 0.00001,
+      "layers": [
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]}
+      ]
+    },
+    {
+      "rel_eb": 0.000001,
+      "layers": [
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]},
+        {"prediction_direction":1,"traversal_order":[0,1,2]},
+        {"prediction_direction":2,"traversal_order":[0,1,2]},
+        {"prediction_direction":0,"traversal_order":[0,1,2]}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "data_path_list": ["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_Kaz/xpcs-998x128x128.bin.f32"],
+    "data_shape": [998,128,128],
+    "rel_eb_list": [0.1,0.01,0.001,0.0001],
+    "method_list": ["asz","sz3","qoz"]
+  }
+]

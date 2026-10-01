@@ -9,6 +9,7 @@
 #include "../third_party/csv_tools/c_codes/csv.hpp"
 
 using namespace std;
+using namespace csv_tools;
 
 inline void hash_combine(uint64_t &v1,uint64_t v2) //v2应该是std::hash产生的uint64_t
 {

@@ -45,9 +45,9 @@ namespace asz
         }
         //////// 计算所有predictor、所有t的平均斜率 ////////
         vector<T> average_h1(temp_abs_eb_vec.size()),average_psnr(temp_abs_eb_vec.size());
-        for (int i=0;i<temp_abs_eb_vec.size();i++)
+        for (size_t i=0;i<temp_abs_eb_vec.size();i++)
         {
-            int valid_case_num=0;
+            size_t valid_case_num=0;
             for (auto &predictor:candidate_predictors)
             for (auto t:candidate_t)
             {
@@ -57,13 +57,13 @@ namespace asz
                 average_psnr[i]+=psnr[predictor][{temp_abs_eb_vec[i],t}];
                 valid_case_num++;
             }
+            if (valid_case_num==0)
+                throw runtime_error("In get_default_slope, for rel_eb "+to_string(temp_abs_eb_vec[i]/(max_val-min_val))+", no valid case is found to calculate average h1 and psnr");
             average_h1[i]/=valid_case_num;
             average_psnr[i]/=valid_case_num;
             if (valid_case_num!=candidate_predictors.size()*candidate_t.size())
-                printf("Warning: for rel_eb %f, only %d/%d valid cases are used to calculate average h1 and psnr\n",
+                printf("Warning: for rel_eb %f, only %zu/%zu valid cases are used to calculate average h1 and psnr\n",
                     temp_abs_eb_vec[i]/(max_val-min_val),valid_case_num,candidate_predictors.size()*candidate_t.size());
-            if (valid_case_num==0)
-                throw runtime_error("In get_default_slope, for rel_eb "+to_string(temp_abs_eb_vec[i]/(max_val-min_val))+", no valid case is found to calculate average h1 and psnr");
         }
         if (temp_abs_eb_vec.size()==3)
         {

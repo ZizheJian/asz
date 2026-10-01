@@ -11,6 +11,7 @@ def add_csv(method,csv_path,rel_eb,br,psnr):
                 if width<len(records[-1]):
                     raise ValueError(f"{csv_path}的第一行的长度小于后续行的长度")
                 records[-1]+=[""]*(width-len(records[-1]))
+        records[0][0]="REL_EB"
         row_index=0
         for i in range(1,len(records)+1):
             if i==len(records) or rel_eb>float(records[i][0])*1.001:

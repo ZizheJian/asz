@@ -16,9 +16,83 @@ namespace asz
         printf("eb_ratio=%.2f;\n",eb_ratio);
         printf("slope_ratio=%.2f;\n",slope_ratio);
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
+        printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");
         printf("pivot_stride={%lu,%lu,%lu};\n",pivot_stride[0],pivot_stride[1],pivot_stride[2]);
         printf("block_shape={%lu,%lu,%lu};\n",block_shape[0],block_shape[1],block_shape[2]);
         printf("block_num={%lu,%lu,%lu};\n",block_num[0],block_num[1],block_num[2]);
+    }
+
+    template<typename T>
+    void param_c<T>::select_predictor_family()
+    {
+        if (predictor_vec.empty())
+            throw runtime_error("cannot select predictor family without a predictor plan");
+        int direction=predictor_vec.back()[5]-'0';
+        uint64_t direction_size=data_shape[direction]/2;
+        if (direction_size==0)
+        {
+            force_quintic=false;
+            printf("Predictor family selection: direction=%d, no final-layer samples, family=cubic\n",direction);
+            return;
+        }
+        uint64_t sample_space=direction_size;
+        for (int axis=0;axis<3;axis++)
+            if (axis!=direction)
+                sample_space*=data_shape[axis];
+        uint64_t sample_num=min<uint64_t>(sample_space,200000);
+        mt19937_64 random_generator(0);
+        long double cubic_squared_error=0,quintic_squared_error=0;
+        auto evaluate_sample=[&](uint64_t logical_index)
+        {
+            uint64_t coordinate[3];
+            for (int axis=2;axis>=0;axis--)
+            {
+                uint64_t axis_size=axis==direction?direction_size:data_shape[axis];
+                coordinate[axis]=logical_index%axis_size;
+                logical_index/=axis_size;
+            }
+            coordinate[direction]=2*coordinate[direction]+1;
+            uint64_t pos=coordinate[0]*data_shape[1]*data_shape[2]+coordinate[1]*data_shape[2]+coordinate[2];
+            uint64_t dist=direction==0?data_shape[1]*data_shape[2]:direction==1?data_shape[2]:1;
+            uint64_t block_id=coordinate[direction]/block_shape[direction];
+            uint64_t right=min((block_id+1)*block_shape[direction]+1,data_shape[direction]);
+            uint64_t i=coordinate[direction];
+            double cubic_prediction;
+            if (i<=1)
+            {
+                if (i+1>=right)
+                    cubic_prediction=data[pos-dist];
+                else if (i+3>=right)
+                    cubic_prediction=((double)data[pos-dist]+data[pos+dist])/2;
+                else
+                    cubic_prediction=(3*(double)data[pos-dist]+6*(double)data[pos+dist]-data[pos+3*dist])/8;
+            }
+            else if (i+1>=right)
+                cubic_prediction=(-(double)data[pos-3*dist]+3*(double)data[pos-dist])/2;
+            else if (i+3>=right)
+                cubic_prediction=(-(double)data[pos-3*dist]+6*(double)data[pos-dist]+3*(double)data[pos+dist])/8;
+            else
+                cubic_prediction=-(data[pos-3*dist]+(double)data[pos+3*dist])/16+9*(data[pos-dist]+(double)data[pos+dist])/16;
+            double quintic_prediction=cubic_prediction;
+            if (i>=5&&i+5<right)
+                quintic_prediction=(75.0/128)*(data[pos-dist]+(double)data[pos+dist])-(25.0/256)*(data[pos-3*dist]+(double)data[pos+3*dist])+(3.0/256)*(data[pos-5*dist]+(double)data[pos+5*dist]);
+            long double cubic_error=cubic_prediction-(double)data[pos];
+            long double quintic_error=quintic_prediction-(double)data[pos];
+            cubic_squared_error+=cubic_error*cubic_error;
+            quintic_squared_error+=quintic_error*quintic_error;
+        };
+        if (sample_num==sample_space)
+            for (uint64_t sample_id=0;sample_id<sample_num;sample_id++)
+                evaluate_sample(sample_id);
+        else
+            for (uint64_t sample_id=0;sample_id<sample_num;sample_id++)
+            {
+                uint64_t segment_begin=(uint64_t)((unsigned __int128)sample_id*sample_space/sample_num);
+                uint64_t segment_end=(uint64_t)((unsigned __int128)(sample_id+1)*sample_space/sample_num);
+                evaluate_sample(segment_begin+random_generator()%(segment_end-segment_begin));
+            }
+        force_quintic=quintic_squared_error<cubic_squared_error;
+        printf("Predictor family selection: direction=%d, samples=%lu, cubic_mse=%.12Le, quintic_mse=%.12Le, family=%s\n",direction,sample_num,cubic_squared_error/sample_num,quintic_squared_error/sample_num,force_quintic?"quintic":"cubic");
     }
 
     template<typename T>
@@ -457,11 +531,6 @@ namespace asz
     template<typename T>
     void param_c<T>::generate_config(string task)
     {
-        pivot_eb_ratio=0.10;
-        eb_ratio=0.72;
-        slope_ratio=0.54;
-        block_pivot_ratio=4;
-
         if (task=="compress");
         else if (task=="decompress")
             return;
@@ -515,13 +584,17 @@ namespace asz
                 }
                 // 估算h1和psnr，找到最好的t
                 if (AB_map.empty())
-                    best_t[predictor]=0.3125;
+                    best_t[predictor]=0.25;
                 else
                 {
-                    best_t[predictor]=candidate_t[0];
+                    best_t[predictor]=0.25;
+                    get_h1_psnr(h1[predictor][0.25],psnr[predictor][0.25],AB_map,0.25,layer_eb,stat_eb);
+                    dist[predictor][0.25]=-layer_default_slope*h1[predictor][0.25]+psnr[predictor][0.25];
                     for (auto t:candidate_t)
                     {
-                        get_h1_psnr(h1[predictor][t],psnr[predictor][t],AB_map,t,abs_eb,stat_eb);
+                        if (t==0.25)
+                            continue;
+                        get_h1_psnr(h1[predictor][t],psnr[predictor][t],AB_map,t,layer_eb,stat_eb);
                         dist[predictor][t]=-layer_default_slope*h1[predictor][t]+psnr[predictor][t];
                         if (dist[predictor][t]>dist[predictor][best_t[predictor]])
                             best_t[predictor]=t;
@@ -617,15 +690,15 @@ namespace asz
             {
                 if (qb_num[qb_predictor]==0)
                     continue;
-                if (qb_psnr[qb_predictor]==INFINITY)
-                    continue;
-                if (-layer_default_slope*qb_br[qb_predictor]+qb_psnr[qb_predictor]>best_dist)
+                if (best_layer_predictor.empty() || -layer_default_slope*qb_br[qb_predictor]+qb_psnr[qb_predictor]>best_dist)
                 {
                     best_dist=-layer_default_slope*qb_br[qb_predictor]+qb_psnr[qb_predictor];
                     best_layer_predictor=qb_predictor;
                 }
             }
             printf("best_layer_predictor=%s, best_dist=%f\n",best_layer_predictor.c_str(),best_dist);
+            if (best_layer_predictor.empty())
+                break;
             if (best_layer_predictor.substr(0,6)=="cubic0")
                 pivot_stride[0]*=2;
             else if (best_layer_predictor.substr(0,6)=="cubic1")

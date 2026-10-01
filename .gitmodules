@@ -1,14 +1,6 @@
 [submodule "third_party/zstd"]
 	path = third_party/zstd
 	url = https://github.com/facebook/zstd.git
-[submodule "third_party/SZ3_master"]
-	path = third_party/SZ3_master
-	url = https://github.com/szcompressor/SZ3.git
-	branch = master
-[submodule "third_party/SZ3_QoZ"]
-	path = third_party/SZ3_QoZ
-	url = https://github.com/szcompressor/SZ3.git
-	branch = QoZ
 [submodule "third_party/zfp"]
 	path = third_party/zfp
 	url = https://github.com/llnl/zfp.git
@@ -18,3 +10,11 @@
 [submodule "third_party/csv_tools"]
 	path = third_party/csv_tools
 	url = git@github.com:ZizheJian/csv_tools.git
+[submodule "third_party/SZ3"]
+	path = third_party/SZ3
+	url = https://github.com/szcompressor/SZ3.git
+	branch = master
+[submodule "third_party/QoZ"]
+	path = third_party/QoZ
+	url = https://github.com/szcompressor/QoZ.git
+	branch = 2.0

@@ -1,0 +1,221 @@
+% VLDB-Template enhances the ACM master template, acmart.cls v2.19 (2026/06/27):
+% https://www.acm.org/publications/proceedings-template
+% The ACM Latex guide provides further information about the ACM template
+%
+% This bundle pins acmart.cls v2.19 (rather than relying on whatever version
+% ships with an author's local TeX install or Overleaf project) to guarantee
+% consistent formatting across all PVLDB submissions.
+
+\documentclass[sigconf, nonacm]{acmart}
+
+%%% do not modify the following VLDB block %%
+%%% VLDB block start %%%
+\usepackage{pvldb}% VLDB/PVLDB formatting overrides, see pvldb.sty for details.
+                      % Do not remove -- required for consistent proceedings
+                      % formatting across all VLDB submissions.
+%%% VLDB block end %%%
+
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{wrapfig}
+\usepackage[many]{tcolorbox}    	% for COLORED BOXES (tikz and xcolor included)
+\usepackage{setspace}               % for LINE SPACING
+\usepackage{multicol}
+\usepackage{caption}
+\usepackage[ruled,vlined]{algorithm2e}
+
+%% The following must be set for each paper (values below are placeholders).
+%% Everything else (volume/issue/year defaults, the PVLDB Reference Format
+%% block, license footer, and Artifact Availability block) is handled by
+%% pvldb.sty -- see that file if you need to change shared defaults.
+\renewcommand\vldbdoi{XX.XX/XXX.XX}
+\renewcommand\vldbpages{XXX-XXX}
+% leave empty if no availability url should be set
+\renewcommand\vldbavailabilityurl{URL_TO_YOUR_ARTIFACTS} 
+
+\begin{document}
+\title{ASZ: Hierarchical Configuration Tuning for Prediction-Based Error-Bounded Lossy Compression}
+
+%%
+%% The "author" command and its associated commands are used to define the authors and their affiliations.
+%1
+\author{Zizhe Jian}
+\affiliation{%
+  \institution{University of California, Riverside}
+  \city{Riverside}
+  \state{California}
+  \country{United States}
+}
+\email{zjian106@ucr.edu}
+%2
+\author{Yafan Huang}
+\affiliation{%
+  \institution{University of Iowa}
+  \city{Iowa City}
+  \state{Iowa}
+  \country{United States}
+}
+\email{yafan-huang@uiowa.edu}
+%3
+\author{Zhuoxun Yang}
+\affiliation{%
+  \institution{Florida State University}
+  \city{Tallahassee}
+  \state{Florida}
+  \country{United States}
+}
+\email{zy24b@fsu.edu}
+%4
+\author{Sheng Di}
+\affiliation{%
+  \institution{Argonne National Laboratory}
+  \city{Lemont}
+  \state{Illinois}
+  \country{United States}
+}
+\email{sdi1@anl.gov}
+%5
+\author{Bo Jiang}
+\affiliation{%
+  \institution{Temple University}
+  \city{Philadelphia}
+  \state{Pennsylvania}
+  \country{United States}
+}
+\email{jiang.bo@temple.edu}
+%6
+\author{Shixun Wu}
+\affiliation{%
+  \institution{University of California, Riverside}
+  \city{Riverside}
+  \state{California}
+  \country{United States}
+}
+\email{swu264@ucr.edu}
+%7
+\author{Jiajun Huang}
+\affiliation{%
+  \institution{University of South Florida}
+  \city{Tampa}
+  \state{Florida}
+  \country{United States}
+}
+\email{jiajunhuang@usf.edu}
+%8
+\author{Kai Zhao}
+\affiliation{%
+  \institution{University of California, Riverside}
+  \city{Riverside}
+  \state{California}
+  \country{United States}
+}
+\email{kai.zhao@fsu.edu}
+%10
+\author{Jinyang Liu}
+\affiliation{%
+  \institution{University of Houston}
+  \city{Houston}
+  \state{Texas}
+  \country{United States}
+}
+\email{jliu217@central.uh.edu}
+%11
+\author{Robert Underwood}
+\affiliation{%
+  \institution{Argonne National Laboratory}
+  \city{Lemont}
+  \state{Illinois}
+  \country{United States}
+}
+\email{runderwood@anl.gov}
+%12
+\author{Miaoqi Chu}
+\affiliation{%
+  \institution{Argonne National Laboratory}
+  \city{Lemont}
+  \state{Illinois}
+  \country{United States}
+}
+\email{mqichu@anl.gov}
+%13
+\author{Peco Myint}
+\affiliation{%
+  \institution{Argonne National Laboratory}
+  \city{Lemont}
+  \state{Illinois}
+  \country{United States}
+}
+\email{pmyint@anl.gov}
+%14
+\author{Nicholas Schwarz}
+\affiliation{%
+  \institution{Argonne National Laboratory}
+  \city{Lemont}
+  \state{Illinois}
+  \country{United States}
+}
+\email{nschwarz@anl.gov}
+%15
+\author{Sian Jin}
+\affiliation{%
+  \institution{Temple University}
+  \city{Philadelphia}
+  \state{Pennsylvania}
+  \country{United States}
+}
+\email{sian.jin@temple.edu}
+%16
+\author{Zizhong Chen}
+\affiliation{%
+  \institution{University of California, Riverside}
+  \city{Riverside}
+  \state{California}
+  \country{United States}
+}
+\email{chen@cs.ucr.edu}
+%17
+\author{Franck Cappello}
+\affiliation{%
+  \institution{Argonne National Laboratory}
+  \city{Lemont}
+  \state{Illinois}
+  \country{United States}
+}
+\email{cappello@mcs.anl.gov}
+
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+\input{0.abstract}
+
+\maketitle
+
+%%% do not modify the following VLDB block %%
+%%% VLDB block start %%%
+\vldbtopmatter
+%%% VLDB block end %%%
+
+\input{box}
+\input{1.introduction}
+\input{2.related work}
+\input{3.hierarchical configuration tuning}
+\input{4.tunable dimensions}
+\input{5.asz}
+\input{6.evaluation}
+\input{7.discussion}
+\input{8.conclusion}
+
+\begin{acks}
+This research was supported by the U.S. Department of Energy, Office of Science, Advanced Scientific Computing Research (ASCR), under contract DE-AC02-06CH11357, and supported by the National Science Foundation under Grant OAC-2003709, OAC-2104023, OAC-2311875, OAC-2330367, OAC-2311756, and OAC-2313122. We acknowledge the computing resources provided on Bebop (operated by Laboratory Computing Resource Center at Argonne) and ACCESS Anvil machine operated by Purdue University.
+\end{acks}
+
+%\clearpage
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{reference}
+
+\end{document}
+\endinput

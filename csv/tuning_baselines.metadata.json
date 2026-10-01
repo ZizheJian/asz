@@ -1,0 +1,26 @@
+{
+  "config": "configs/tuning_baselines.json",
+  "error_bound_mode": "REL",
+  "rel_eb_list": [0.1,0.01,0.001,0.0001,0.00001],
+  "point_count": 30,
+  "data_type": "float32",
+  "sz3": {
+    "version": "3.4.0",
+    "source_commit": "d5aeef009d90bf7832e516762b095d7668c135db"
+  },
+  "qoz": {
+    "version": "2.0.0.0",
+    "source_commit": "a506cb0b1599f810c6f56e75edfdc418f9fd226f",
+    "level": 4
+  },
+  "zstd": {
+    "version": "1.6.0",
+    "source_commit": "01b7154f1172432f8abe9b3bb9909e14a1176b7d"
+  },
+  "measurement": {
+    "compression_ratio": "original_file_bytes/compressed_file_bytes",
+    "bit_rate": "32/compression_ratio",
+    "psnr": "independently recomputed from original and reconstructed float32 files",
+    "validation": "reported CR and PSNR must match independent measurements and max_error must not exceed REL*(max-min)"
+  }
+}

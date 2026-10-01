@@ -91,11 +91,13 @@ namespace asz
 
             bool config_generated=false;
             //////// 可调整参数 ////////
-            T pivot_eb_ratio;//pivoting point的误差比例
-            T eb_ratio;//相邻layer之间的误差比例
-            T slope_ratio;//相邻layer之间的斜率比例
+            T pivot_eb_ratio=0.10;//pivoting point的误差比例
+            T eb_ratio=0.72;//相邻layer之间的误差比例
+            T slope_ratio=0.54;//相邻layer之间的斜率比例
             vector<string> predictor_vec;//预测器列表
-            uint64_t block_pivot_ratio;//block边长和pivot间距的比值
+            uint64_t block_pivot_ratio=4;//block边长和pivot间距的比值
+            bool force_quintic=false;//整个dataset统一使用quintic内部预测
+            bool auto_select_predictor_family=true;
             
 
             vector<uint64_t> block_shape;//block的形状
@@ -138,6 +140,8 @@ namespace asz
                 slope_ratio=other.slope_ratio;
                 predictor_vec=other.predictor_vec;
                 block_pivot_ratio=other.block_pivot_ratio;
+                force_quintic=other.force_quintic;
+                auto_select_predictor_family=other.auto_select_predictor_family;
                 block_shape=other.block_shape;
                 pivot_stride=other.pivot_stride;
                 block_num=other.block_num;
@@ -151,6 +155,7 @@ namespace asz
             void generate_pivot_stride_and_block_shape_and_block_num();
             void generate_config_enumerate();
             void generate_config(string task);
+            void select_predictor_family();
             void block_sample_compress_cubic0_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
             void block_sample_compress_cubic0_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
@@ -197,7 +202,7 @@ namespace asz
 }
 
 #include "huffman.hpp"
-#include "../third_party/zstd/lib/zstd.h"
+#include "../../third_party/zstd/lib/zstd.h"
 #include "get_AB_map.tpp"
 #include "get_h_psnr.tpp"
 #include "get_default_slope.tpp"
