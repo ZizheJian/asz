@@ -36,9 +36,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_loc(3);
+        array<uint64_t,3> target_block_loc;
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
         if (block_loc[1][0]==0)
             target_block_loc[1]=0;
@@ -55,9 +55,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_loc(3);
+        array<uint64_t,3> target_block_loc;
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
         if (block_loc[1][0]==0)
             target_block_loc[1]=0;
@@ -74,9 +74,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_loc(3);
+        array<uint64_t,3> target_block_loc;
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
         if (block_loc[1][0]==0)
             target_block_loc[1]=0;
@@ -93,9 +93,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_left(3);
+        array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
             target_block_left[0]=0;
         else
@@ -112,9 +112,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_left(3);
+        array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
             target_block_left[0]=0;
         else
@@ -131,9 +131,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_left(3);
+        array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
             target_block_left[0]=0;
         else
@@ -150,9 +150,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_left(3);
+        array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
             target_block_left[0]=0;
         else
@@ -169,9 +169,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_left(3);
+        array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
             target_block_left[0]=0;
         else
@@ -188,9 +188,9 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
-        vector<uint64_t> target_block_left(3);
+        array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
             target_block_left[0]=0;
         else
@@ -215,6 +215,7 @@ namespace asz
         vector<unsigned char> huffman_bs_vec(huffman_bs_len);
         if (ZSTD_decompress(huffman_bs_vec.data(),huffman_bs_len,zstd_bs_vec.data(),zstd_bs_vec.size())!=huffman_bs_len)
             throw runtime_error("ZSTD_decompress error in decompress()");
+        auto zstd_end_time=chrono::high_resolution_clock::now();
         const unsigned char *huffman_bs=huffman_bs_vec.data();
         memcpy(&min_val,huffman_bs,sizeof(T));
         huffman_bs+=sizeof(T);
@@ -230,8 +231,11 @@ namespace asz
         else
             layer_num=format_and_layer_num;
         huffman_bs++;
+        predictor_vec.clear();
         for (uint64_t i=0;i<layer_num;i++)
         {
+            if (huffman_bs[0]<'0'||huffman_bs[0]>'2'||huffman_bs[1]<'0'||huffman_bs[1]>'2')
+                throw runtime_error("compressed stream contains an invalid predictor");
             string predictor="cubic";
             predictor+=huffman_bs[0];
             predictor+="_";
@@ -268,26 +272,21 @@ namespace asz
             huffman_encoder.load(huffman_bs);
             huffman_encoder.decode(huffman_bs,qb_vec_vec[i].data(),0);
         }
+        auto huffman_end_time=chrono::high_resolution_clock::now();
         generate_pivot_stride_and_block_shape_and_block_num();
         uint64_t t_pos=0;
         vector<uint64_t> qb_pos_vec(qb_vec_vec.size(),0);
         compressed_data.resize(data_shape[0]*data_shape[1]*data_shape[2]);
         abs_eb=rel_eb*(max_val-min_val);
-        //////// 读取原始数据 ////////
-        ifstream data_file(original_data_path,ios::binary);
-        if (sizeof(T)==sizeof(float))
+        vector<unsigned char> predictor_direction(layer_num),predictor_order(layer_num);
+        vector<T> layer_eb_vec(layer_num);
+        for (uint64_t layer_id=0;layer_id<layer_num;layer_id++)
         {
-            data.resize(data_shape[0]*data_shape[1]*data_shape[2]);
-            data_file.read(reinterpret_cast<char*>(data.data()),data.size()*sizeof(float));
+            predictor_direction[layer_id]=predictor_vec[layer_id][5]-'0';
+            predictor_order[layer_id]=predictor_vec[layer_id][9]-'0';
+            layer_eb_vec[layer_id]=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
         }
-        else
-        {
-            vector<float> float_data(data_shape[0]*data_shape[1]*data_shape[2]);
-            data_file.read(reinterpret_cast<char*>(float_data.data()),float_data.size()*sizeof(float));
-            data.resize(data_shape[0]*data_shape[1]*data_shape[2]);
-            data.assign(float_data.begin(),float_data.end());
-        }
-        data_file.close();
+        auto setup_end_time=chrono::high_resolution_clock::now();
         //////// 解压pivot points ////////
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
         pivot_num*=((data_shape[1]+pivot_stride[1]-1)/pivot_stride[1]);
@@ -306,17 +305,11 @@ namespace asz
         for (uint64_t block_i1=0;block_i1<block_num[1];block_i1++)
         for (uint64_t block_i2=0;block_i2<block_num[2];block_i2++)
         {
-            vector<vector<uint64_t>> block_loc(3);
-            block_loc[0]={block_i0*block_shape[0],min((block_i0+1)*block_shape[0]+1,data_shape[0])};
-            block_loc[1]={block_i1*block_shape[1],min((block_i1+1)*block_shape[1]+1,data_shape[1])};
-            block_loc[2]={block_i2*block_shape[2],min((block_i2+1)*block_shape[2]+1,data_shape[2])};
-            auto stride=pivot_stride;
+            array<array<uint64_t,2>,3> block_loc={{{block_i0*block_shape[0],min((block_i0+1)*block_shape[0]+1,data_shape[0])},{block_i1*block_shape[1],min((block_i1+1)*block_shape[1]+1,data_shape[1])},{block_i2*block_shape[2],min((block_i2+1)*block_shape[2]+1,data_shape[2])}}};
+            array<uint64_t,3> stride={pivot_stride[0],pivot_stride[1],pivot_stride[2]};
             //////// 逐层解压 ////////
-            uint32_t layer_num=predictor_vec.size();
             for (uint32_t layer_id=0;layer_id<layer_num;layer_id++)
             {
-                string predictor=predictor_vec[layer_id];
-                T layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
                 //////// 获取最好t2 ////////
                 if (t_int_vec.empty())
                     throw runtime_error("compressed stream contains no t value");
@@ -324,54 +317,48 @@ namespace asz
                 if (t_int_vec.size()!=1)
                     t_pos++;
                 //////// 预测 ////////
-                if (predictor.substr(0,6)=="cubic0")
+                if (predictor_direction[layer_id]==0)
                 {
-                    if (predictor=="cubic0_120")
-                        block_decompress_cubic0_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
-                    else if (predictor=="cubic0_021")
-                        block_decompress_cubic0_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
-                    else if (predictor=="cubic0_012")
-                        block_decompress_cubic0_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
+                    if (predictor_order[layer_id]==0)
+                        block_decompress_cubic0_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
+                    else if (predictor_order[layer_id]==1)
+                        block_decompress_cubic0_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
+                    else
+                        block_decompress_cubic0_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
                     stride[0]/=2;
                 }
-                else if (predictor.substr(0,6)=="cubic1")
+                else if (predictor_direction[layer_id]==1)
                 {
-                    if (predictor=="cubic1_120")
-                        block_decompress_cubic1_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
-                    else if (predictor=="cubic1_021")
-                        block_decompress_cubic1_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
-                    else if (predictor=="cubic1_012")
-                        block_decompress_cubic1_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
+                    if (predictor_order[layer_id]==0)
+                        block_decompress_cubic1_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
+                    else if (predictor_order[layer_id]==1)
+                        block_decompress_cubic1_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
+                    else
+                        block_decompress_cubic1_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
                     stride[1]/=2;
                 }
-                else if (predictor.substr(0,6)=="cubic2")
+                else
                 {
-                    if (predictor=="cubic2_120")
-                        block_decompress_cubic2_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
-                    else if (predictor=="cubic2_021")
-                        block_decompress_cubic2_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
-                    else if (predictor=="cubic2_012")
-                        block_decompress_cubic2_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb);
+                    if (predictor_order[layer_id]==0)
+                        block_decompress_cubic2_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
+                    else if (predictor_order[layer_id]==1)
+                        block_decompress_cubic2_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
+                    else
+                        block_decompress_cubic2_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
                     stride[2]/=2;
                 }
             }
         }
         auto end_time=chrono::high_resolution_clock::now();
+        printf("Zstd decompression time: %f s\n",chrono::duration<double>(zstd_end_time-start_time).count());
+        printf("Huffman decompression time: %f s\n",chrono::duration<double>(huffman_end_time-zstd_end_time).count());
+        printf("Reconstruction setup time: %f s\n",chrono::duration<double>(setup_end_time-huffman_end_time).count());
+        printf("Prediction reconstruction time: %f s\n",chrono::duration<double>(end_time-setup_end_time).count());
         printf("Decompression time: %f s\n",chrono::duration<double>(end_time-start_time).count());
         
-        T cr=(T)data.size()*sizeof(float)/zstd_bs_vec.size();
+        T cr=(T)compressed_data.size()*sizeof(float)/zstd_bs_vec.size();
         T br=8*sizeof(float)/cr;
-        T mse=0,max_err=0;
-        for (uint64_t i=0;i<data.size();i++)
-        {
-            mse+=(data[i]-compressed_data[i])*(data[i]-compressed_data[i]);
-            max_err=max(max_err,abs(data[i]-compressed_data[i]));
-        }
-        mse/=data.size();
-        T psnr=10*log10((max_val-min_val)*(max_val-min_val)/mse);
-        printf("max_err= %f (%f%%)\n",max_err,max_err*100/abs_eb);
         printf("CR= %f\n",cr);
         printf("BR= %f\n",br);
-        printf("PSNR= %f\n",psnr);
     }
 }

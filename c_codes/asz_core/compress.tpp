@@ -211,6 +211,7 @@ namespace asz
     T param_c<T>::compress()
     {
         printf("min_val=%f max_val=%f\n",min_val,max_val);
+        auto start_time=chrono::high_resolution_clock::now();
         compressed_data=data;
         for (auto &qb_vec:qb_vec_vec)
             qb_vec.clear();
@@ -222,7 +223,6 @@ namespace asz
         if (t_policy!="adaptive")
             t_int_vec.push_back(llround(candidate_t.front()*t_precision));
 
-        auto start_time=chrono::high_resolution_clock::now();
         //////// 存储pivot points ////////
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
         pivot_num*=((data_shape[1]+pivot_stride[1]-1)/pivot_stride[1]);

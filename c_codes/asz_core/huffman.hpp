@@ -584,7 +584,6 @@ class huffman_encoder_class
                     tree.veccode.resize(tree.maxval);
                     tree.veclen.resize(tree.maxval);
                 }
-
             if (tree.n==0)
             {
                 tree.setConstructed();

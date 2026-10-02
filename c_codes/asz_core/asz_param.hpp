@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <array>
 #include <tuple>
 #include <functional>
 #include <vector>
@@ -229,15 +230,15 @@ namespace asz
             void block_compress_cubic2_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
             void dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb);
             void decompress();
-            void block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
-            void block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb);
+            void block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
             void dot_decompress(vector<int64_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb);
     };
 }
