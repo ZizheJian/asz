@@ -146,9 +146,29 @@ int main(int argc,char* argv[])
             param.stat_eb_ratio=stof(argv[++i]);
             continue;
         }
+        else if (arg=="--t-precision")
+        {
+            param.t_precision=stoi(argv[++i]);
+            continue;
+        }
+        else if (arg=="--t-min")
+        {
+            param.t_min=stof(argv[++i]);
+            continue;
+        }
+        else if (arg=="--t-max")
+        {
+            param.t_max=stof(argv[++i]);
+            continue;
+        }
         else if (arg=="--t-policy")
         {
-            param.set_t_policy(argv[++i]);
+            param.t_policy=argv[++i];
+            continue;
+        }
+        else if (arg=="--report-t-histogram")
+        {
+            param.report_t_histogram=true;
             continue;
         }
     }
@@ -171,6 +191,15 @@ int main(int argc,char* argv[])
         throw invalid_argument("h1_block_sampling_num must be positive");
     if (!(param.stat_eb_ratio>0&&param.stat_eb_ratio<=1))
         throw invalid_argument("stat_eb_ratio must be in (0,1]");
+    if (param.t_precision<16||param.t_precision%16!=0)
+        throw invalid_argument("t_precision must be a positive multiple of 16");
+    if (!(param.t_min>=0&&param.t_min<=param.t_max&&param.t_max<=0.5))
+        throw invalid_argument("t range must satisfy 0 <= t_min <= t_max <= 0.5");
+    if (abs(param.t_min*param.t_precision-round(param.t_min*param.t_precision))>1e-6||abs(param.t_max*param.t_precision-round(param.t_max*param.t_precision))>1e-6)
+        throw invalid_argument("t_min and t_max must be representable at t_precision");
+    if (param.t_min>(float)4/16||param.t_max<(float)5/16)
+        throw invalid_argument("t range must include 4/16 and 5/16");
+    param.set_t_policy(param.t_policy);
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);

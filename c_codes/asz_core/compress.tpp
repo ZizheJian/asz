@@ -218,6 +218,7 @@ namespace asz
         for (uint64_t i=0;i<qb_vec_vec.size();i++)
             qb_vec_vec[i].reserve((uint64_t)(data.size()*pow(2,(int64_t)i-(int64_t)qb_vec_vec.size()+1)));
         t_int_vec.clear();
+        uint64_t t_fallback_count=0;
         if (t_policy!="adaptive")
             t_int_vec.push_back(llround(candidate_t.front()*t_precision));
 
@@ -283,7 +284,7 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0]+3*stride[2]/2,block_loc[2][1]-3*stride[2]/2};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[2]/2,neg_2_stat_eb);
                 }
-                T best_t=candidate_t.front(),best_h1=0,best_psnr=0;
+                T best_t=t_policy=="adaptive"?(T)4/16:candidate_t.front(),best_h1=0,best_psnr=0;
                 if (!AB_map.empty())
                 {
                     get_h1_psnr(best_h1,best_psnr,AB_map,best_t,layer_eb,stat_eb);
@@ -301,6 +302,8 @@ namespace asz
                         }
                     }
                 }
+                else if (t_policy=="adaptive")
+                    t_fallback_count++;
                 if (t_policy=="adaptive")
                     t_int_vec.push_back(llround(best_t*t_precision));
                 //////// 预测 ////////
@@ -341,6 +344,21 @@ namespace asz
             total_qb_num+=qb_vec.size();
         printf("total_qb_num=%lu\n",total_qb_num);
         printf("t_int_vec.size()=%lu\n",t_int_vec.size());
+        if (report_t_histogram)
+        {
+            map<int64_t,uint64_t> t_histogram;
+            for (auto t_int:t_int_vec)
+                t_histogram[t_int]++;
+            printf("T histogram:");
+            bool first=true;
+            for (const auto &[t_int,count]:t_histogram)
+            {
+                printf("%s%lld=%lu",first?"":",",(long long)t_int,count);
+                first=false;
+            }
+            printf("\n");
+            printf("T fallback count:%lu\n",t_fallback_count);
+        }
         if (total_qb_num!=data.size())
             throw runtime_error("total_qb_num!=data.size()");
         //////// 编码 ////////

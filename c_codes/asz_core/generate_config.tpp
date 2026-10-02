@@ -20,6 +20,8 @@ namespace asz
         printf("generate_config_sample_stride=%lu;\n",generate_config_sample_stride);
         printf("h1_block_sampling_num=%lu;\n",h1_block_sampling_num);
         printf("stat_eb_ratio=%.3f;\n",stat_eb_ratio);
+        printf("t_precision=%d;\n",t_precision);
+        printf("t_range=[%.6f,%.6f];\n",t_min,t_max);
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
         printf("t_policy=%s;\n",t_policy.c_str());
         printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");
@@ -589,7 +591,7 @@ namespace asz
                     pivot_stride[2]/=2;
                 }
                 // 估算h1和psnr，找到最好的t
-                T initial_t=candidate_t.front();
+                T initial_t=t_policy=="adaptive"?(T)4/16:candidate_t.front();
                 if (AB_map.empty())
                     best_t[predictor]=initial_t;
                 else

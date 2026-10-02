@@ -55,10 +55,17 @@ namespace asz
         }
         if (!use_infinite_slope)
         {
-            if (average_h1[temp_abs_eb_vec.size()-1]==average_h1[0])
+            T h1_difference=average_h1[temp_abs_eb_vec.size()-1]-average_h1[0];
+            T psnr_difference=average_psnr[temp_abs_eb_vec.size()-1]-average_psnr[0];
+            T h1_scale=max((T)1,max(abs(average_h1[temp_abs_eb_vec.size()-1]),abs(average_h1[0])));
+            T h1_tolerance=numeric_limits<T>::epsilon()*h1_scale*64;
+            if (h1_difference<=h1_tolerance||psnr_difference<=0)
                 default_slope=1e4;
             else
-                default_slope=(average_psnr[temp_abs_eb_vec.size()-1]-average_psnr[0])/(average_h1[temp_abs_eb_vec.size()-1]-average_h1[0]);
+            {
+                T estimated_slope=psnr_difference/h1_difference;
+                default_slope=estimated_slope>1e4?1e4:estimated_slope;
+            }
         }
         
         auto end_time=chrono::high_resolution_clock::now();

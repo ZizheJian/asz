@@ -10,6 +10,8 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <limits>
+#include <map>
 #include <unordered_map>
 #include <random>
 #include <chrono>
@@ -81,7 +83,9 @@ namespace asz
             vector<int64_t> t_int_vec;
 
             vector<string> candidate_predictors={"cubic0_120","cubic0_021","cubic0_012","cubic1_120","cubic1_021","cubic1_012","cubic2_120","cubic2_021","cubic2_012"};
-            int t_precision=16;//必须大于等于32
+            int t_precision=32;
+            T t_min=(T)1/16;
+            T t_max=(T)6/16;
             uint64_t h1_block_sampling_num=256;
             T stat_eb_ratio=0.2;
             uint64_t generate_config_sample_stride=5;
@@ -101,6 +105,7 @@ namespace asz
             uint64_t block_pivot_ratio=4;//block边长和pivot间距的比值
             bool force_quintic=false;//整个dataset统一使用quintic内部预测
             bool auto_select_predictor_family=true;
+            bool report_t_histogram=false;
             
 
             vector<uint64_t> block_shape;//block的形状
@@ -118,8 +123,9 @@ namespace asz
                 candidate_t.clear();
                 if (policy=="adaptive")
                 {
-                    // 8/32=0.25, 10/32=0.3125
-                    for (int t_i=6*t_precision/32;t_i<=12*t_precision/32;t_i++)
+                    int t_min_i=llround(t_min*t_precision);
+                    int t_max_i=llround(t_max*t_precision);
+                    for (int t_i=t_min_i;t_i<=t_max_i;t_i++)
                         candidate_t.push_back((T)t_i/t_precision);
                 }
                 else if (policy=="fixed_4_16")
@@ -148,6 +154,8 @@ namespace asz
                 t_int_vec=other.t_int_vec;
                 candidate_predictors=other.candidate_predictors;
                 t_precision=other.t_precision;
+                t_min=other.t_min;
+                t_max=other.t_max;
                 h1_block_sampling_num=other.h1_block_sampling_num;
                 stat_eb_ratio=other.stat_eb_ratio;
                 generate_config_sample_stride=other.generate_config_sample_stride;
@@ -164,6 +172,7 @@ namespace asz
                 block_pivot_ratio=other.block_pivot_ratio;
                 force_quintic=other.force_quintic;
                 auto_select_predictor_family=other.auto_select_predictor_family;
+                report_t_histogram=other.report_t_histogram;
                 block_shape=other.block_shape;
                 pivot_stride=other.pivot_stride;
                 block_num=other.block_num;
