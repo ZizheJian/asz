@@ -146,6 +146,31 @@ int main(int argc,char* argv[])
             param.stat_eb_ratio=stof(argv[++i]);
             continue;
         }
+        else if (arg=="--predictor-family-sample-limit")
+        {
+            param.predictor_family_sample_limit=stoull(argv[++i]);
+            continue;
+        }
+        else if (arg=="--predictor-family-mse-ratio-threshold")
+        {
+            param.predictor_family_mse_ratio_threshold=stof(argv[++i]);
+            continue;
+        }
+        else if (arg=="--default-slope-invalid-ratio-threshold")
+        {
+            param.default_slope_invalid_ratio_threshold=stof(argv[++i]);
+            continue;
+        }
+        else if (arg=="--default-slope-fallback")
+        {
+            param.default_slope_fallback=stof(argv[++i]);
+            continue;
+        }
+        else if (arg=="--default-slope-eb-span")
+        {
+            param.default_slope_eb_span=stof(argv[++i]);
+            continue;
+        }
         else if (arg=="--t-precision")
         {
             param.t_precision=stoi(argv[++i]);
@@ -191,6 +216,16 @@ int main(int argc,char* argv[])
         throw invalid_argument("h1_block_sampling_num must be positive");
     if (!(param.stat_eb_ratio>0&&param.stat_eb_ratio<=1))
         throw invalid_argument("stat_eb_ratio must be in (0,1]");
+    if (param.predictor_family_sample_limit==0)
+        throw invalid_argument("predictor_family_sample_limit must be positive");
+    if (!(param.predictor_family_mse_ratio_threshold>=0&&isfinite(param.predictor_family_mse_ratio_threshold)))
+        throw invalid_argument("predictor_family_mse_ratio_threshold must be nonnegative and finite");
+    if (!(param.default_slope_invalid_ratio_threshold>0&&param.default_slope_invalid_ratio_threshold<=1))
+        throw invalid_argument("default_slope_invalid_ratio_threshold must be in (0,1]");
+    if (!(param.default_slope_fallback>0&&isfinite(param.default_slope_fallback)))
+        throw invalid_argument("default_slope_fallback must be positive and finite");
+    if (!(param.default_slope_eb_span>1&&isfinite(param.default_slope_eb_span)))
+        throw invalid_argument("default_slope_eb_span must be greater than 1 and finite");
     if (param.t_precision<16||param.t_precision%16!=0)
         throw invalid_argument("t_precision must be a positive multiple of 16");
     if (!(param.t_min>=0&&param.t_min<=param.t_max&&param.t_max<=0.5))

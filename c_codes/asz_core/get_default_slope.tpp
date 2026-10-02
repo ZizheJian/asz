@@ -7,7 +7,7 @@ namespace asz
     {
         auto start_time=chrono::high_resolution_clock::now();
 
-        vector<T> temp_abs_eb_vec={abs_eb*2.0f,abs_eb*0.5f};
+        vector<T> temp_abs_eb_vec={abs_eb*default_slope_eb_span,abs_eb/default_slope_eb_span};
         T stat_eb=abs_eb*stat_eb_ratio*0.5f;
         T neg_2_stat_eb=1/(2*stat_eb);
         vector<T> average_h1(temp_abs_eb_vec.size()),average_psnr(temp_abs_eb_vec.size());
@@ -37,36 +37,46 @@ namespace asz
                 valid_case_num[i]++;
             }
         }
-        bool use_infinite_slope=false;
+        bool use_fallback=false;
+        string fallback_reason="none";
+        T max_invalid_ratio=0;
+        size_t total_case_num=3*candidate_t.size();
         for (size_t i=0;i<temp_abs_eb_vec.size();i++)
         {
-            if (valid_case_num[i]==0)
-            {
-                printf("Warning: all default-slope candidates have zero estimated MSE at rel_eb %f; using slope=1e4\n",temp_abs_eb_vec[i]/(max_val-min_val));
-                default_slope=1e4;
-                use_infinite_slope=true;
-                break;
-            }
-            average_h1[i]/=valid_case_num[i];
-            average_psnr[i]/=valid_case_num[i];
-            if (valid_case_num[i]!=3*candidate_t.size())
-                printf("Warning: for rel_eb %f, only %zu/%zu valid cases are used to calculate average h1 and psnr\n",
-                    temp_abs_eb_vec[i]/(max_val-min_val),valid_case_num[i],3*candidate_t.size());
+            T invalid_ratio=1-(T)valid_case_num[i]/total_case_num;
+            max_invalid_ratio=max(max_invalid_ratio,invalid_ratio);
+            if (valid_case_num[i]!=total_case_num)
+                printf("Warning: for rel_eb %f, only %zu/%zu valid default-slope cases were found\n",
+                    temp_abs_eb_vec[i]/(max_val-min_val),valid_case_num[i],total_case_num);
         }
-        if (!use_infinite_slope)
+        if (max_invalid_ratio>=default_slope_invalid_ratio_threshold)
+        {
+            default_slope=default_slope_fallback;
+            use_fallback=true;
+            fallback_reason="invalid_ratio";
+        }
+        else
+            for (size_t i=0;i<temp_abs_eb_vec.size();i++)
+            {
+                average_h1[i]/=valid_case_num[i];
+                average_psnr[i]/=valid_case_num[i];
+            }
+        if (!use_fallback)
         {
             T h1_difference=average_h1[temp_abs_eb_vec.size()-1]-average_h1[0];
             T psnr_difference=average_psnr[temp_abs_eb_vec.size()-1]-average_psnr[0];
             T h1_scale=max((T)1,max(abs(average_h1[temp_abs_eb_vec.size()-1]),abs(average_h1[0])));
             T h1_tolerance=numeric_limits<T>::epsilon()*h1_scale*64;
             if (h1_difference<=h1_tolerance||psnr_difference<=0)
-                default_slope=1e4;
-            else
             {
-                T estimated_slope=psnr_difference/h1_difference;
-                default_slope=estimated_slope>1e4?1e4:estimated_slope;
+                default_slope=default_slope_fallback;
+                use_fallback=true;
+                fallback_reason="invalid_difference";
             }
+            else
+                default_slope=psnr_difference/h1_difference;
         }
+        printf("Default slope statistics: max_invalid_ratio=%.6f, fallback=%s, reason=%s, slope=%.6f\n",max_invalid_ratio,use_fallback?"true":"false",fallback_reason.c_str(),default_slope);
         
         auto end_time=chrono::high_resolution_clock::now();
         printf("Get default slope time: %f s\n",chrono::duration<double>(end_time-start_time).count());

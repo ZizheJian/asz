@@ -11,7 +11,7 @@ asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_
 supported_compressors=("asz","sz3","qoz","zfp","sperr")
 traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
 asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","t_precision")
-asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","t_min","t_max")
+asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","predictor_family_sample_limit","predictor_family_mse_ratio_threshold","default_slope_invalid_ratio_threshold","default_slope_fallback","default_slope_eb_span","t_min","t_max")
 asz_block_policy_keys=("coarse_block_pivot_ratio","fine_block_pivot_ratio")
 
 def run_command(command,silent=False,dry_run=False):
@@ -107,7 +107,7 @@ def prepare_methods(method_list,task_id):
                 raise ValueError(f"task {task_id}的method {method_id}只有asz可以设置{key}")
             if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value):
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须是有限数字")
-            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","generate_config_sample_stride","h1_block_sampling_num","t_precision"):
+            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","generate_config_sample_stride","h1_block_sampling_num","predictor_family_sample_limit","t_precision"):
                 if not isinstance(value,int) or value<=0:
                     raise ValueError(f"task {task_id}的method {method_id}的{key}必须是正整数")
                 if key in ("max_layer_num","full_predictor_search_layer_num") and value>63:
@@ -117,6 +117,15 @@ def prepare_methods(method_list,task_id):
             elif key in ("t_min","t_max"):
                 if not 0<=value<=0.5:
                     raise ValueError(f"task {task_id}的method {method_id}的{key}必须在[0,0.5]内")
+            elif key=="default_slope_fallback":
+                if value<=0:
+                    raise ValueError(f"task {task_id}的method {method_id}的default_slope_fallback必须为正数")
+            elif key=="default_slope_eb_span":
+                if value<=1:
+                    raise ValueError(f"task {task_id}的method {method_id}的default_slope_eb_span必须大于1")
+            elif key=="predictor_family_mse_ratio_threshold":
+                if value<0:
+                    raise ValueError(f"task {task_id}的method {method_id}的predictor_family_mse_ratio_threshold必须为非负数")
             elif not 0<value<=1:
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须在(0,1]内")
         if ("t_min" in prepared)!=("t_max" in prepared):
@@ -249,6 +258,29 @@ def parse_predictor_family(output):
     if len(matches)!=1:
         raise RuntimeError(f"未能唯一解析ASZ predictor_family，实际找到{len(matches)}个")
     return matches[0]
+
+def parse_predictor_family_selection(output):
+    time_matches=re.findall(r"^Predictor family selection time: ([0-9.eE+-]+) s\r?$",output,re.MULTILINE)
+    if len(time_matches)!=1:
+        raise RuntimeError(f"未能唯一解析ASZ predictor family selection time，实际找到{len(time_matches)}个")
+    result={"predictor_family_selection_time":float(time_matches[0])}
+    matches=re.findall(r"^Predictor family selection: direction=([0-2]), samples=([0-9]+), cubic_mse=([0-9.eE+-]+), quintic_mse=([0-9.eE+-]+), family=(cubic|quintic)\r?$",output,re.MULTILINE)
+    if len(matches)==1:
+        direction,samples,cubic_mse,quintic_mse,family=matches[0]
+        result.update({"predictor_family_direction":int(direction),"predictor_family_samples":int(samples),"cubic_mse":float(cubic_mse),"quintic_mse":float(quintic_mse),"predictor_family":family,"predictor_family_fallback":False})
+        return result
+    fallback_matches=re.findall(r"^Predictor family selection: direction=([0-2]), no final-layer samples, family=cubic\r?$",output,re.MULTILINE)
+    if len(fallback_matches)==1:
+        result.update({"predictor_family_direction":int(fallback_matches[0]),"predictor_family":"cubic","predictor_family_fallback":True})
+        return result
+    raise RuntimeError("未能唯一解析ASZ predictor family selection")
+
+def parse_default_slope_statistics(output):
+    matches=re.findall(r"^Default slope statistics: max_invalid_ratio=([0-9.eE+-]+), fallback=(true|false), reason=([a-z_]+), slope=([0-9.eE+-]+)\r?$",output,re.MULTILINE)
+    if len(matches)!=1:
+        raise RuntimeError(f"未能唯一解析ASZ default slope statistics，实际找到{len(matches)}个")
+    invalid_ratio,fallback,reason,slope=matches[0]
+    return {"default_slope_max_invalid_ratio":float(invalid_ratio),"default_slope_fallback_used":fallback=="true","default_slope_fallback_reason":reason,"default_slope":float(slope)}
 
 def plan_document(plan_entries):
     plans=[]
@@ -426,7 +458,7 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     compressed_path=Path(str(data_path)+".asz")
     reconstructed_path=Path(str(data_path)+".bin")
     common=["-f","-i",data_path,"-3",*shape,"-M","REL",f"{rel_eb:.17g}"]
-    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num","generate_config_sample_stride":"--generate-config-sample-stride","h1_block_sampling_num":"--h1-block-sampling-num","stat_eb_ratio":"--stat-eb-ratio","t_precision":"--t-precision","t_min":"--t-min","t_max":"--t-max"}
+    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num","generate_config_sample_stride":"--generate-config-sample-stride","h1_block_sampling_num":"--h1-block-sampling-num","stat_eb_ratio":"--stat-eb-ratio","predictor_family_sample_limit":"--predictor-family-sample-limit","predictor_family_mse_ratio_threshold":"--predictor-family-mse-ratio-threshold","default_slope_invalid_ratio_threshold":"--default-slope-invalid-ratio-threshold","default_slope_fallback":"--default-slope-fallback","default_slope_eb_span":"--default-slope-eb-span","t_precision":"--t-precision","t_min":"--t-min","t_max":"--t-max"}
     method_options=dict(method)
     if plan_predictor_family is not None:
         method_options.setdefault("predictor_family",plan_predictor_family)
@@ -472,7 +504,15 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     if "t_histogram" in reported:
         result["t_histogram"]=reported["t_histogram"]
         result["t_fallback_count"]=reported["t_fallback_count"]
-    return result,parse_predictors(compression_output),parse_predictor_family(compression_output)
+    actual_predictor_family=parse_predictor_family(compression_output)
+    result.update(parse_default_slope_statistics(compression_output))
+    if method_options.get("predictor_family") is None:
+        result.update(parse_predictor_family_selection(compression_output))
+        if result["predictor_family"]!=actual_predictor_family:
+            raise RuntimeError("ASZ predictor family selection与最终配置不一致")
+    else:
+        result["predictor_family"]=actual_predictor_family
+    return result,parse_predictors(compression_output),actual_predictor_family
 
 def run_sz_variant(compressor,task,rel_eb,dry_run):
     data_path=task["data_path"]
@@ -640,12 +680,12 @@ def write_comparison_summary(path,records,baseline_method):
     path.parent.mkdir(parents=True,exist_ok=True)
     temporary_path=path.with_name(path.name+".tmp")
     with open(temporary_path,"w",newline="",encoding="utf-8") as summary_file:
-        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT","GENERATE_CONFIG_TIME","COMPRESSION_TIME","DECOMPRESSION_TIME","T_HISTOGRAM","T_FALLBACK_COUNT"]
+        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT","GENERATE_CONFIG_TIME","PREDICTOR_FAMILY_SELECTION_TIME","COMPRESSION_TIME","DECOMPRESSION_TIME","DEFAULT_SLOPE","DEFAULT_SLOPE_MAX_INVALID_RATIO","DEFAULT_SLOPE_FALLBACK_USED","DEFAULT_SLOPE_FALLBACK_REASON","PREDICTOR_FAMILY","PREDICTOR_FAMILY_DIRECTION","PREDICTOR_FAMILY_SAMPLES","PREDICTOR_FAMILY_FALLBACK","CUBIC_MSE","QUINTIC_MSE","T_HISTOGRAM","T_FALLBACK_COUNT"]
         writer=csv.DictWriter(summary_file,fieldnames=fieldnames,lineterminator="\n")
         writer.writeheader()
         for record in records:
             baseline_cr=baselines[(record["data_path"],record["rel_eb"])]["cr"]
-            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr,"GENERATE_CONFIG_TIME":record.get("generate_config_time",""),"COMPRESSION_TIME":record.get("compression_time",""),"DECOMPRESSION_TIME":record.get("decompression_time",""),"T_HISTOGRAM":record.get("t_histogram",""),"T_FALLBACK_COUNT":record.get("t_fallback_count","")})
+            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr,"GENERATE_CONFIG_TIME":record.get("generate_config_time",""),"PREDICTOR_FAMILY_SELECTION_TIME":record.get("predictor_family_selection_time",""),"COMPRESSION_TIME":record.get("compression_time",""),"DECOMPRESSION_TIME":record.get("decompression_time",""),"DEFAULT_SLOPE":record.get("default_slope",""),"DEFAULT_SLOPE_MAX_INVALID_RATIO":record.get("default_slope_max_invalid_ratio",""),"DEFAULT_SLOPE_FALLBACK_USED":record.get("default_slope_fallback_used",""),"DEFAULT_SLOPE_FALLBACK_REASON":record.get("default_slope_fallback_reason",""),"PREDICTOR_FAMILY":record.get("predictor_family",""),"PREDICTOR_FAMILY_DIRECTION":record.get("predictor_family_direction",""),"PREDICTOR_FAMILY_SAMPLES":record.get("predictor_family_samples",""),"PREDICTOR_FAMILY_FALLBACK":record.get("predictor_family_fallback",""),"CUBIC_MSE":record.get("cubic_mse",""),"QUINTIC_MSE":record.get("quintic_mse",""),"T_HISTOGRAM":record.get("t_histogram",""),"T_FALLBACK_COUNT":record.get("t_fallback_count","")})
     os.replace(temporary_path,path)
     print(f"写入比较汇总：{path}",flush=True)
 

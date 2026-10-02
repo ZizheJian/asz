@@ -117,7 +117,7 @@ def main():
             "MAX_LAYER_NUM":int(match.group(1)) if match else "",
             "EB_RATIO":int(match.group(2))/100 if match else "",
             "PIVOT_EB_RATIO":int(pivot_match.group(1))/10**len(pivot_match.group(1)) if pivot_match else "",
-            "SLOPE_RATIO":int(slope_match.group(1))/10**len(slope_match.group(1)) if slope_match else "",
+            "SLOPE_RATIO":int(slope_match.group(1))/100 if slope_match else "",
             "DATASET_COUNT":len(dataset_ratios),
             "VS_DEFAULT_PERCENT":100*(overall_ratio-1),
             "MEAN_COMMON_PSNR_WIN_PERCENT":100*sum(winning_fractions[method].values())/len(winning_fractions[method]),

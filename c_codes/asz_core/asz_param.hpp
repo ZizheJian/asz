@@ -89,6 +89,11 @@ namespace asz
             uint64_t h1_block_sampling_num=256;
             T stat_eb_ratio=0.2;
             uint64_t generate_config_sample_stride=5;
+            uint64_t predictor_family_sample_limit=10000;
+            T predictor_family_mse_ratio_threshold=0.97;
+            T default_slope_invalid_ratio_threshold=1;
+            T default_slope_fallback=1000;
+            T default_slope_eb_span=1.5;
 
             vector<T> candidate_t;
             string t_policy="adaptive";
@@ -159,6 +164,11 @@ namespace asz
                 h1_block_sampling_num=other.h1_block_sampling_num;
                 stat_eb_ratio=other.stat_eb_ratio;
                 generate_config_sample_stride=other.generate_config_sample_stride;
+                predictor_family_sample_limit=other.predictor_family_sample_limit;
+                predictor_family_mse_ratio_threshold=other.predictor_family_mse_ratio_threshold;
+                default_slope_invalid_ratio_threshold=other.default_slope_invalid_ratio_threshold;
+                default_slope_fallback=other.default_slope_fallback;
+                default_slope_eb_span=other.default_slope_eb_span;
                 candidate_t.assign(other.candidate_t.begin(),other.candidate_t.end());
                 t_policy=other.t_policy;
                 default_slope=other.default_slope;

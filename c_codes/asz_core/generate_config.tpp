@@ -20,6 +20,11 @@ namespace asz
         printf("generate_config_sample_stride=%lu;\n",generate_config_sample_stride);
         printf("h1_block_sampling_num=%lu;\n",h1_block_sampling_num);
         printf("stat_eb_ratio=%.3f;\n",stat_eb_ratio);
+        printf("predictor_family_sample_limit=%lu;\n",predictor_family_sample_limit);
+        printf("predictor_family_mse_ratio_threshold=%.6f;\n",predictor_family_mse_ratio_threshold);
+        printf("default_slope_invalid_ratio_threshold=%.3f;\n",default_slope_invalid_ratio_threshold);
+        printf("default_slope_fallback=%.6f;\n",default_slope_fallback);
+        printf("default_slope_eb_span=%.6f;\n",default_slope_eb_span);
         printf("t_precision=%d;\n",t_precision);
         printf("t_range=[%.6f,%.6f];\n",t_min,t_max);
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
@@ -33,6 +38,7 @@ namespace asz
     template<typename T>
     void param_c<T>::select_predictor_family()
     {
+        auto start_time=chrono::high_resolution_clock::now();
         if (predictor_vec.empty())
             throw runtime_error("cannot select predictor family without a predictor plan");
         int direction=predictor_vec.back()[5]-'0';
@@ -41,13 +47,15 @@ namespace asz
         {
             force_quintic=false;
             printf("Predictor family selection: direction=%d, no final-layer samples, family=cubic\n",direction);
+            auto end_time=chrono::high_resolution_clock::now();
+            printf("Predictor family selection time: %f s\n",chrono::duration<double>(end_time-start_time).count());
             return;
         }
         uint64_t sample_space=direction_size;
         for (int axis=0;axis<3;axis++)
             if (axis!=direction)
                 sample_space*=data_shape[axis];
-        uint64_t sample_num=min<uint64_t>(sample_space,200000);
+        uint64_t sample_num=min(sample_space,predictor_family_sample_limit);
         mt19937_64 random_generator(0);
         long double cubic_squared_error=0,quintic_squared_error=0;
         auto evaluate_sample=[&](uint64_t logical_index)
@@ -99,8 +107,10 @@ namespace asz
                 uint64_t segment_end=(uint64_t)((unsigned __int128)(sample_id+1)*sample_space/sample_num);
                 evaluate_sample(segment_begin+random_generator()%(segment_end-segment_begin));
             }
-        force_quintic=quintic_squared_error<cubic_squared_error;
+        force_quintic=quintic_squared_error<cubic_squared_error*predictor_family_mse_ratio_threshold;
         printf("Predictor family selection: direction=%d, samples=%lu, cubic_mse=%.12Le, quintic_mse=%.12Le, family=%s\n",direction,sample_num,cubic_squared_error/sample_num,quintic_squared_error/sample_num,force_quintic?"quintic":"cubic");
+        auto end_time=chrono::high_resolution_clock::now();
+        printf("Predictor family selection time: %f s\n",chrono::duration<double>(end_time-start_time).count());
     }
 
     template<typename T>
