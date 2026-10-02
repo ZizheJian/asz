@@ -83,8 +83,8 @@ namespace asz
             vector<string> candidate_predictors={"cubic0_120","cubic0_021","cubic0_012","cubic1_120","cubic1_021","cubic1_012","cubic2_120","cubic2_021","cubic2_012"};
             int t_precision=16;//必须大于等于32
             uint64_t h1_block_sampling_num=256;
-            T stat_eb_ratio=0.1;
-            uint64_t generate_config_sample_stride=8;
+            T stat_eb_ratio=0.2;
+            uint64_t generate_config_sample_stride=5;
 
             vector<T> candidate_t;
             string t_policy="adaptive";
@@ -95,7 +95,7 @@ namespace asz
             T pivot_eb_ratio=0.05;//pivoting point的误差比例
             T eb_ratio=0.76;//相邻layer之间的误差比例
             T slope_ratio=0.54;//相邻layer之间的斜率比例
-            uint64_t max_layer_num=12;//自动生成plan时允许的最大层数
+            uint64_t max_layer_num=14;//自动生成plan时允许的最大层数
             uint64_t full_predictor_search_layer_num=4;//前几轮生成层搜索全部遍历顺序
             vector<string> predictor_vec;//预测器列表
             uint64_t block_pivot_ratio=4;//block边长和pivot间距的比值

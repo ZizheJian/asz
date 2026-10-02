@@ -131,6 +131,21 @@ int main(int argc,char* argv[])
             param.full_predictor_search_layer_num=stoull(argv[++i]);
             continue;
         }
+        else if (arg=="--generate-config-sample-stride")
+        {
+            param.generate_config_sample_stride=stoull(argv[++i]);
+            continue;
+        }
+        else if (arg=="--h1-block-sampling-num")
+        {
+            param.h1_block_sampling_num=stoull(argv[++i]);
+            continue;
+        }
+        else if (arg=="--stat-eb-ratio")
+        {
+            param.stat_eb_ratio=stof(argv[++i]);
+            continue;
+        }
         else if (arg=="--t-policy")
         {
             param.set_t_policy(argv[++i]);
@@ -150,6 +165,12 @@ int main(int argc,char* argv[])
         throw invalid_argument("max_layer_num must be in [1,63]");
     if (param.full_predictor_search_layer_num==0||param.full_predictor_search_layer_num>63)
         throw invalid_argument("full_predictor_search_layer_num must be in [1,63]");
+    if (param.generate_config_sample_stride==0)
+        throw invalid_argument("generate_config_sample_stride must be positive");
+    if (param.h1_block_sampling_num==0)
+        throw invalid_argument("h1_block_sampling_num must be positive");
+    if (!(param.stat_eb_ratio>0&&param.stat_eb_ratio<=1))
+        throw invalid_argument("stat_eb_ratio must be in (0,1]");
 
     param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
     ifstream data_file(param.original_data_path,ios::binary);
@@ -182,25 +203,5 @@ int main(int argc,char* argv[])
     if (!compressed_data_file)
         throw runtime_error("cannot write compressed output: "+param.compressed_data_path);
     compressed_data_file.close();
-    exit(0);
-
-    //////// 搜索配置 ////////
-    // float best_dist=-1e8;
-    // for (int attempt=0;attempt<100;attempt++)
-    // {
-    //     printf("Attempt %d\n",attempt);
-    //     asz::param_c backup_param;
-    //     backup_param.copy_from(param);
-    //     param.generate_config_enumerate();
-    //     float dist=param.compress();
-    //     if (dist<best_dist)
-    //         param.copy_from(backup_param);
-    //     else
-    //     {
-    //         printf("\033[32mFound better configuration\n\033[0m");
-    //         best_dist=dist;
-    //     }
-    //     printf("\n");
-    // }
-    // param.print_config();
+    return 0;
 }

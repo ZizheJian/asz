@@ -69,11 +69,12 @@ def compare_curves(candidate,baseline):
 def main():
     parser=argparse.ArgumentParser(description="按等PSNR bitrate汇总max_layer_num和eb_ratio粗筛结果")
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
-    parser.add_argument("--result-prefix",default="layer_eb_")
+    parser.add_argument("--result-prefix",action="append")
     parser.add_argument("--baseline",type=Path,default=project_root/"csv/tuning_results.csv")
     parser.add_argument("--curve-baseline-method")
     parser.add_argument("--output",type=Path,default=project_root/"results/layer_eb_ranking.csv")
     arguments=parser.parse_args()
+    result_prefixes=arguments.result_prefix or ["layer_eb_"]
 
     baseline_rows=read_rows(arguments.baseline)
     baseline={}
@@ -82,11 +83,12 @@ def main():
 
     result_curves={}
     for dataset,suffix in dataset_suffixes.items():
-        path=arguments.result_directory/f"{arguments.result_prefix}{suffix}"
-        if not path.is_file():
-            raise FileNotFoundError(f"缺少筛选结果：{path}")
-        for row in read_rows(path):
-            result_curves.setdefault(row["METHOD"],{}).setdefault(dataset,[]).append((float(row["PSNR"]),float(row["BR"])))
+        for result_prefix in result_prefixes:
+            path=arguments.result_directory/f"{result_prefix}{suffix}"
+            if not path.is_file():
+                raise FileNotFoundError(f"缺少筛选结果：{path}")
+            for row in read_rows(path):
+                result_curves.setdefault(row["METHOD"],{}).setdefault(dataset,[]).append((float(row["PSNR"]),float(row["BR"])))
 
     ratios={}
     winning_fractions={}
@@ -106,6 +108,7 @@ def main():
     for method,dataset_ratios in ratios.items():
         match=re.fullmatch(r"asz_l(\d+)_e(\d+)",method)
         pivot_match=re.fullmatch(r"asz_p(\d+)",method)
+        slope_match=re.fullmatch(r"asz_s(\d+)",method)
         if set(dataset_ratios)!=set(dataset_suffixes):
             raise ValueError(f"{method}缺少数据集结果")
         overall_ratio=geometric_mean(dataset_ratios.values())
@@ -114,6 +117,7 @@ def main():
             "MAX_LAYER_NUM":int(match.group(1)) if match else "",
             "EB_RATIO":int(match.group(2))/100 if match else "",
             "PIVOT_EB_RATIO":int(pivot_match.group(1))/10**len(pivot_match.group(1)) if pivot_match else "",
+            "SLOPE_RATIO":int(slope_match.group(1))/10**len(slope_match.group(1)) if slope_match else "",
             "DATASET_COUNT":len(dataset_ratios),
             "VS_DEFAULT_PERCENT":100*(overall_ratio-1),
             "MEAN_COMMON_PSNR_WIN_PERCENT":100*sum(winning_fractions[method].values())/len(winning_fractions[method]),

@@ -11,6 +11,8 @@ asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_
 supported_compressors=("asz","sz3","qoz","zfp","sperr")
 traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
 asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num","full_predictor_search_layer_num")
+asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio")
+asz_block_policy_keys=("coarse_block_pivot_ratio","fine_block_pivot_ratio")
 
 def run_command(command,silent=False,dry_run=False):
     command=[str(item) for item in command]
@@ -71,7 +73,7 @@ def prepare_methods(method_list,task_id):
         if isinstance(method,str):
             prepared={"name":method,"compressor":method}
         elif isinstance(method,dict):
-            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","t_policy",*asz_parameter_keys}
+            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","t_policy",*asz_parameter_keys,*asz_compress_parameter_keys,*asz_block_policy_keys}
             unknown=method.keys()-allowed_keys
             if unknown:
                 raise ValueError(f"task {task_id}的method {method_id}包含未知参数：{','.join(sorted(unknown))}")
@@ -95,7 +97,7 @@ def prepare_methods(method_list,task_id):
         if "t_policy" in prepared:
             if prepared["compressor"]!="asz" or prepared["t_policy"] not in ("adaptive","fixed_4_16","fixed_5_16"):
                 raise ValueError(f"task {task_id}的method {method_id}的t_policy只能是adaptive、fixed_4_16或fixed_5_16且只能用于asz")
-        for key in asz_parameter_keys:
+        for key in (*asz_parameter_keys,*asz_compress_parameter_keys):
             if key not in prepared:
                 continue
             value=prepared[key]
@@ -103,13 +105,22 @@ def prepare_methods(method_list,task_id):
                 raise ValueError(f"task {task_id}的method {method_id}只有asz可以设置{key}")
             if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value):
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须是有限数字")
-            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num"):
+            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","generate_config_sample_stride","h1_block_sampling_num"):
                 if not isinstance(value,int) or value<=0:
                     raise ValueError(f"task {task_id}的method {method_id}的{key}必须是正整数")
                 if key in ("max_layer_num","full_predictor_search_layer_num") and value>63:
                     raise ValueError(f"task {task_id}的method {method_id}的{key}不能超过63")
             elif not 0<value<=1:
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须在(0,1]内")
+        policy_key_count=sum(key in prepared for key in asz_block_policy_keys)
+        if policy_key_count==1:
+            raise ValueError(f"task {task_id}的method {method_id}必须同时设置coarse_block_pivot_ratio和fine_block_pivot_ratio")
+        if policy_key_count:
+            if prepared["compressor"]!="asz" or "block_pivot_ratio" in prepared:
+                raise ValueError(f"task {task_id}的method {method_id}的粗细block ratio策略只能用于asz且不能同时设置block_pivot_ratio")
+            for key in asz_block_policy_keys:
+                if isinstance(prepared[key],bool) or not isinstance(prepared[key],int) or prepared[key]<=0:
+                    raise ValueError(f"task {task_id}的method {method_id}的{key}必须是正整数")
         methods.append(prepared)
     names=[method["name"] for method in methods]
     if len(names)!=len(set(names)):
@@ -322,6 +333,9 @@ def parse_asz_result(output):
         if not matches:
             raise RuntimeError(f"未能解析ASZ的{key}")
         result[key]=float(matches[-1])
+    matches=re.findall(r"^Generate config time: ([0-9.eE+-]+)",output,re.MULTILINE)
+    if matches:
+        result["generate_config_time"]=float(matches[-1])
     return result
 
 def parse_sz_result(output,compressor):
@@ -389,11 +403,14 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     compressed_path=Path(str(data_path)+".asz")
     reconstructed_path=Path(str(data_path)+".bin")
     common=["-f","-i",data_path,"-3",*shape,"-M","REL",f"{rel_eb:.17g}"]
-    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num"}
+    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num","generate_config_sample_stride":"--generate-config-sample-stride","h1_block_sampling_num":"--h1-block-sampling-num","stat_eb_ratio":"--stat-eb-ratio"}
     method_options=dict(method)
     if plan_predictor_family is not None:
         method_options.setdefault("predictor_family",plan_predictor_family)
-    method_options.setdefault("block_pivot_ratio",64 if rel_eb<=1e-4 else 4)
+    if all(key in method_options for key in asz_block_policy_keys):
+        method_options["block_pivot_ratio"]=method_options["fine_block_pivot_ratio"] if rel_eb<=1e-4 else method_options["coarse_block_pivot_ratio"]
+    else:
+        method_options.setdefault("block_pivot_ratio",96 if rel_eb<=1e-4 else 3)
     for key in asz_parameter_keys:
         if key in method_options:
             common.extend([option_names[key],method_options[key]])
@@ -402,6 +419,9 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     if "t_policy" in method_options:
         common.extend(["--t-policy",method_options["t_policy"]])
     compress_command=[asz_executable_directory/"s1_compress",*common]
+    for key in asz_compress_parameter_keys:
+        if key in method_options:
+            compress_command.extend([option_names[key],method_options[key]])
     if predictors is not None:
         compress_command.extend(["--predictor-plan",",".join(predictors)])
     compression_output=run_command(compress_command,dry_run=dry_run)
@@ -422,6 +442,8 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     if not math.isclose(reported["cr"],cr,rel_tol=1e-5,abs_tol=1e-6):
         raise RuntimeError(f"asz报告的CR与压缩文件不一致：reported={reported['cr']},actual={cr}")
     result={"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size,"compression_time":reported["compression_time"],"decompression_time":reported["decompression_time"]}
+    if "generate_config_time" in reported:
+        result["generate_config_time"]=reported["generate_config_time"]
     return result,parse_predictors(compression_output),parse_predictor_family(compression_output)
 
 def run_sz_variant(compressor,task,rel_eb,dry_run):
@@ -516,6 +538,8 @@ def report_result(method_name,data_path,rel_eb,result,write_csv):
     time_text=""
     if "compression_time" in result:
         time_text=f",compression_time={result['compression_time']},decompression_time={result['decompression_time']}"
+    if "generate_config_time" in result:
+        time_text+=f",generate_config_time={result['generate_config_time']}"
     audit_text=""
     if "max_error" in result:
         audit_text=f",max_error={result['max_error']},absolute_eb={result['absolute_eb']},compressed_bytes={result['compressed_bytes']}"
@@ -588,12 +612,12 @@ def write_comparison_summary(path,records,baseline_method):
     path.parent.mkdir(parents=True,exist_ok=True)
     temporary_path=path.with_name(path.name+".tmp")
     with open(temporary_path,"w",newline="",encoding="utf-8") as summary_file:
-        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT"]
+        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT","GENERATE_CONFIG_TIME","COMPRESSION_TIME","DECOMPRESSION_TIME"]
         writer=csv.DictWriter(summary_file,fieldnames=fieldnames,lineterminator="\n")
         writer.writeheader()
         for record in records:
             baseline_cr=baselines[(record["data_path"],record["rel_eb"])]["cr"]
-            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr})
+            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr,"GENERATE_CONFIG_TIME":record.get("generate_config_time",""),"COMPRESSION_TIME":record.get("compression_time",""),"DECOMPRESSION_TIME":record.get("decompression_time","")})
     os.replace(temporary_path,path)
     print(f"写入比较汇总：{path}",flush=True)
 

@@ -17,6 +17,9 @@ namespace asz
         printf("slope_ratio=%.2f;\n",slope_ratio);
         printf("max_layer_num=%lu;\n",max_layer_num);
         printf("full_predictor_search_layer_num=%lu;\n",full_predictor_search_layer_num);
+        printf("generate_config_sample_stride=%lu;\n",generate_config_sample_stride);
+        printf("h1_block_sampling_num=%lu;\n",h1_block_sampling_num);
+        printf("stat_eb_ratio=%.3f;\n",stat_eb_ratio);
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
         printf("t_policy=%s;\n",t_policy.c_str());
         printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");

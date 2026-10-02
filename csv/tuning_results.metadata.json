@@ -1,27 +1,34 @@
 {
   "generated_at":"2026-10-01",
   "datasets":["APS_Kaz","Aramco","CLDICE","Isabel_Pf01","LETKF_PRES","VideoLLaVA"],
-  "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+  "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
   "point_count":30,
   "metrics":{
     "bit_rate":"32 divided by the ratio of original bytes to actual compressed-stream bytes",
     "psnr":"independently recomputed from float32 source and reconstruction with double-precision squared-error accumulation",
     "asz_error_acceptance":"max_error <= 1.01 * rel_eb * data_range",
     "asz_pivot_eb_ratio":0.05,
-    "asz_predictor_family":"automatically selected per dataset and error bound from cubic versus quintic MSE on the generated plan's final-layer direction"
+    "asz_predictor_family":"automatically selected per dataset and error bound from cubic versus quintic MSE on the generated plan's final-layer direction",
+    "asz_max_layer_num":14,
+    "asz_eb_ratio":0.76,
+    "asz_coarse_block_pivot_ratio":3,
+    "asz_fine_block_pivot_ratio":96,
+    "asz_generate_config_sample_stride":5,
+    "asz_h1_block_sampling_num":256,
+    "asz_stat_eb_ratio":0.2
   },
   "comparison":{
     "baseline":"pointwise lower bit rate of SZ3 and QoZ at equal PSNR",
     "interpolation":"Pareto-filtered piecewise linear interpolation in log(bit rate) versus PSNR over the common PSNR interval",
     "aggregation":"geometric mean over PSNR within each dataset, followed by the equal-weight geometric mean of the six dataset rate ratios",
-    "equal_dataset_rate_saving_percent":26.094578,
+    "equal_dataset_rate_saving_percent":28.831825,
     "per_dataset":[
-      {"dataset":"APS_Kaz","common_psnr":[37.223466,110.427332],"rate_saving_percent":16.135719,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"Aramco","common_psnr":[50.729967,110.070339],"rate_saving_percent":26.258127,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"CLDICE","common_psnr":[48.582609,108.853596],"rate_saving_percent":35.290879,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"Isabel_Pf01","common_psnr":[52.261134,106.139980],"rate_saving_percent":30.915397,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"LETKF_PRES","common_psnr":[51.718870,106.545786],"rate_saving_percent":34.777396,"winning_psnr_fraction_percent":100.000},
-      {"dataset":"VideoLLaVA","common_psnr":[38.714002,104.991915],"rate_saving_percent":9.630532,"winning_psnr_fraction_percent":98.635}
+      {"dataset":"APS_Kaz","common_psnr":[37.375752,110.427332],"rate_saving_percent":18.955576,"winning_psnr_fraction_percent":100.0},
+      {"dataset":"Aramco","common_psnr":[50.732429,110.070339],"rate_saving_percent":27.933132,"winning_psnr_fraction_percent":100.0},
+      {"dataset":"CLDICE","common_psnr":[48.264107,108.853596],"rate_saving_percent":35.222318,"winning_psnr_fraction_percent":100.0},
+      {"dataset":"Isabel_Pf01","common_psnr":[53.003194,106.13998],"rate_saving_percent":32.11027,"winning_psnr_fraction_percent":100.0},
+      {"dataset":"LETKF_PRES","common_psnr":[52.558365,106.545786],"rate_saving_percent":43.76498,"winning_psnr_fraction_percent":100.0},
+      {"dataset":"VideoLLaVA","common_psnr":[38.906585,104.991915],"rate_saving_percent":10.046134,"winning_psnr_fraction_percent":99.391}
     ]
   },
   "baseline_version_metadata":"csv/tuning_baselines.metadata.json"
