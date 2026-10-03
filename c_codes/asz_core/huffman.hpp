@@ -111,6 +111,7 @@ class huffman_encoder_class
                     mpcode.clear();
                     vecfreq.clear();
                     mpfreq.clear();
+                    decode_table.clear();
 
                     offset=0;
                     mbft=0;
@@ -118,6 +119,7 @@ class huffman_encoder_class
                     n=0;
                     maxval=0;
                     limit=0;
+                    decode_table_bits=0;
                 }
 
                 HuffmanTree()
@@ -131,6 +133,41 @@ class huffman_encoder_class
                 std::vector<Node> ht;
                 std::vector<uint64_t> vecfreq;//以vector形式存储的freq
                 unordered_map<uint64_t,uint64_t> mpfreq;//以map形式存储的freq
+
+                struct DecodeEntry
+                {
+                    Node *node=nullptr;
+                    T symbol=0;
+                    unsigned char len=0;
+                };
+                std::vector<DecodeEntry> decode_table;
+                unsigned char decode_table_bits=0;
+                static constexpr uint64_t decode_table_symbol_limit=1024;
+                static constexpr unsigned char decode_table_bit_limit=12;
+
+                void buildDecodeTable()
+                {
+                    // Small alphabets benefit from a prefix table; large ones retain the cache-friendlier tree walk.
+                    if (n>decode_table_symbol_limit)
+                        return;
+                    decode_table_bits=std::min<unsigned char>(limit,decode_table_bit_limit);
+                    decode_table.resize(1ull<<decode_table_bits);
+                    for (uint64_t prefix=0;prefix<decode_table.size();prefix++)
+                    {
+                        Node *u=&ht[root];
+                        unsigned char len=0;
+                        while (len<decode_table_bits&&!u->isLeaf())
+                            u=u->p[(prefix>>len++)&1];
+                        DecodeEntry &entry=decode_table[prefix];
+                        if (u->isLeaf())
+                        {
+                            entry.symbol=(T)(u->c+offset);
+                            entry.len=len;
+                        }
+                        else
+                            entry.node=u;
+                    }
+                }
 
                 void addElementInMap(uint64_t c,uint64_t freqc)
                 {
@@ -315,9 +352,11 @@ class huffman_encoder_class
         {
             if (tree.maxval==1)
             {
-                uint64_t len=bytesToInt64_bigEndian(bytes)^0x1234abcd;
+                uint64_t count=bytesToInt64_bigEndian(bytes)^0x1234abcd;
                 bytes+=8;
-                for (uint64_t i=0;i<len;i++)
+                if (targetLength&&count!=targetLength)
+                    throw runtime_error("Huffman payload length does not match its value count");
+                for (uint64_t i=0;i<count;i++)
                     out[i]=tree.offset;
                 return;
             }
@@ -326,79 +365,130 @@ class huffman_encoder_class
 
             uint64_t len=bytesToInt64_bigEndian(bytes)^0x1234abcd;
             bytes+=8;
+            if (tree.decode_table.empty())
+            {
+                uint64_t outLen=0,byte_index=0,bit_pos=0;
+                Node *u=&tree.ht[tree.root];
+                for (;bit_pos+8<len;bit_pos+=8,byte_index++)
+                {
+                    unsigned char b=bytes[byte_index];
+#pragma GCC unroll 8
+                    for (unsigned char bit=0;bit<8;bit++)
+                    {
+                        u=u->p[(b>>bit)&1];
+                        if (u->isLeaf())
+                        {
+                            out[outLen++]=(T)(u->c+tree.offset);
+                            u=&tree.ht[tree.root];
+                        }
+                    }
+                }
+                if (bit_pos<len)
+                {
+                    unsigned char b=bytes[byte_index];
+                    for (uint64_t bit=0;bit<len-bit_pos;bit++)
+                    {
+                        u=u->p[(b>>bit)&1];
+                        if (u->isLeaf())
+                        {
+                            out[outLen++]=(T)(u->c+tree.offset);
+                            u=&tree.ht[tree.root];
+                        }
+                    }
+                }
+                if (targetLength&&outLen!=targetLength)
+                    throw runtime_error("Huffman payload length does not match its value count");
+                bytes+=(len+7)>>3;
+                return;
+            }
             uint64_t outLen=0;
-
-            uint64_t byteIndex=0;
-            uint64_t i=0;
-            unsigned char b;
-            Node *u=&tree.ht[tree.root];
+            uint64_t bit_pos=0;
             auto offset=tree.offset;
+            uint64_t payload_bytes=(len+7)>>3;
+            uint64_t table_mask=(1ull<<tree.decode_table_bits)-1;
+            Node *zero_leaf=tree.ht[tree.root].p[0]->isLeaf()?tree.ht[tree.root].p[0]:nullptr;
+            Node *one_leaf=tree.ht[tree.root].p[1]->isLeaf()?tree.ht[tree.root].p[1]:nullptr;
 
-            for (;i+8<len;i+=8,byteIndex++)
+            while ((bit_pos>>3)+8<=payload_bytes&&bit_pos+tree.limit<=len)
             {
-                b=bytes[byteIndex];
+                unsigned char shift=bit_pos&7;
+                uint64_t acc=bytesToInt64_littleEndian(bytes+(bit_pos>>3))>>shift;
+                unsigned char available=64-shift;
+                do
+                {
+                    if (targetLength&&outLen>=targetLength)
+                        throw runtime_error("Huffman payload contains too many values");
+                    Node *run_leaf=nullptr;
+                    uint64_t run=0;
+                    if (zero_leaf&&(acc&0xFF)==0)
+                    {
+                        run_leaf=zero_leaf;
+                        run=acc?__builtin_ctzll(acc):64;
+                    }
+                    else if (one_leaf&&(acc&0xFF)==0xFF)
+                    {
+                        run_leaf=one_leaf;
+                        uint64_t inv=~acc;
+                        run=inv?__builtin_ctzll(inv):64;
+                    }
+                    if (run_leaf)
+                    {
+                        run=min<uint64_t>(run,available);
+                        run=min<uint64_t>(run,len-bit_pos);
+                        if (targetLength)
+                            run=min<uint64_t>(run,targetLength-outLen);
+                    }
+                    if (run>=8)
+                    {
+                        fill(out+outLen,out+outLen+run,(T)(run_leaf->c+offset));
+                        outLen+=run;
+                        acc=run==64?0:acc>>run;
+                        available-=run;
+                        bit_pos+=run;
+                        continue;
+                    }
+                    const typename HuffmanTree::DecodeEntry &entry=tree.decode_table[acc&table_mask];
+                    if (entry.len)
+                    {
+                        out[outLen++]=entry.symbol;
+                        acc>>=entry.len;
+                        available-=entry.len;
+                        bit_pos+=entry.len;
+                    }
+                    else
+                    {
+                        Node *u=entry.node;
+                        acc>>=tree.decode_table_bits;
+                        available-=tree.decode_table_bits;
+                        bit_pos+=tree.decode_table_bits;
+                        while (!u->isLeaf())
+                        {
+                            u=u->p[acc&1];
+                            acc>>=1;
+                            available--;
+                            bit_pos++;
+                        }
+                        out[outLen++]=(T)(u->c+offset);
+                    }
+                } while (available>=tree.limit&&bit_pos+tree.limit<=len);
+            }
 
-                u=u->p[b&1];
+            Node *u=&tree.ht[tree.root];
+            while (bit_pos<len)
+            {
+                u=u->p[readBit(bytes,bit_pos++)];
                 if (u->isLeaf())
                 {
-                    out[outLen++]=u->c+offset;
-                    u=&tree.ht[tree.root];
-                }
-                u=u->p[(b>>1)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+offset;
-                    u=&tree.ht[tree.root];
-                }
-                u=u->p[(b>>2)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+offset;
-                    u=&tree.ht[tree.root];
-                }
-                u=u->p[(b>>3)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+offset;
-                    u=&tree.ht[tree.root];
-                }
-                u=u->p[(b>>4)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+offset;
-                    u=&tree.ht[tree.root];
-                }
-                u=u->p[(b>>5)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+offset;
-                    u=&tree.ht[tree.root];
-                }
-                u=u->p[(b>>6)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+offset;
-                    u=&tree.ht[tree.root];
-                }
-                u=u->p[(b>>7)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+offset;
+                    if (targetLength&&outLen>=targetLength)
+                        throw runtime_error("Huffman payload contains too many values");
+                    out[outLen++]=(T)(u->c+offset);
                     u=&tree.ht[tree.root];
                 }
             }
-
-            b=bytes[byteIndex];
-
-            for (uint64_t j=0;j<len-i;j++)
-            {
-                u=u->p[(b>>j)&1];
-                if (u->isLeaf())
-                {
-                    out[outLen++]=u->c+tree.offset;
-                    u=&tree.ht[tree.root];
-                }
-            }
+            if (u!=&tree.ht[tree.root])
+                throw runtime_error("Huffman payload ends inside a code");
+            if (targetLength&&outLen!=targetLength)
+                throw runtime_error("Huffman payload contains too few values");
 
             bytes+=(len+7)>>3;
         }
@@ -466,6 +556,14 @@ class huffman_encoder_class
             return res;
         }
 
+        inline uint64_t bytesToInt64_littleEndian(const unsigned char *b)
+        {
+            uint64_t res=0;
+            for (uint64_t i=0;i<8;i++)
+                res|=(uint64_t)b[i]<<(i<<3);
+            return res;
+        }
+
         static void writeBytesBit(unsigned char*& c,unsigned char val,unsigned char& mask,unsigned char& index) 
         {
             assert(val==0 || val==1);
@@ -522,7 +620,9 @@ class huffman_encoder_class
             unsigned char mask=0,index=0;
 
             writeBytesByte(c,(tree.usemp<<7)|((tree.n==1)<<6)|tree.mbft);
-            writeBytes(c,tree.offset,sizeof(T)<<3,mask,index);
+            uint64_t offset_bits=(uint64_t)(int64_t)tree.offset;
+            for (uint64_t i=0;i<sizeof(int64_t);i++)
+                *c++=(offset_bits>>(i<<3))&0xFF;
             int64ToBytes_bigEndian(c,tree.n);
             c+=sizeof(uint64_t);
             int64ToBytes_bigEndian(c,tree.maxval);
@@ -566,11 +666,10 @@ class huffman_encoder_class
             tree.mbft=(*bytes)&0x3f;
             ++bytes;
 
-            for (uint64_t i=0;i<sizeof(T);i++)
-            {
-                tree.offset|=static_cast<T>(*bytes)<<(i<<3);
-                ++bytes;
-            }
+            uint64_t offset_bits=0;
+            for (uint64_t i=0;i<sizeof(int64_t);i++)
+                offset_bits|=(uint64_t)*bytes++<<(i<<3);
+            tree.offset=(T)(int64_t)offset_bits;
 
             tree.n=bytesToInt64_bigEndian(bytes);
             bytes+=sizeof(uint64_t);
@@ -649,6 +748,7 @@ class huffman_encoder_class
                 tree.dfs_mp(&tree.ht[tree.root]);
             else
                 tree.dfs_vec(&tree.ht[tree.root]);
+            tree.buildDecodeTable();
 
             tree.setConstructed();
         }

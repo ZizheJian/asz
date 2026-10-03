@@ -68,6 +68,34 @@ namespace std
 
 namespace asz
 {
+    using qb_t=int32_t;
+
+    template<typename BlockLoc,typename Stride>
+    inline array<uint64_t,3> get_layer_qb_shape(const BlockLoc &block_loc,const Stride &stride,unsigned char direction)
+    {
+        array<uint64_t,3> qb_shape;
+        for (uint64_t dim=0;dim<3;dim++)
+        {
+            uint64_t start=dim==direction?block_loc[dim][0]+stride[dim]/2:(block_loc[dim][0]==0?0:block_loc[dim][0]+stride[dim]);
+            qb_shape[dim]=start>=block_loc[dim][1]?0:(block_loc[dim][1]-start+stride[dim]-1)/stride[dim];
+        }
+        return qb_shape;
+    }
+
+    inline uint64_t get_layer_qb_num(const array<uint64_t,3> &qb_shape)
+    {
+        return qb_shape[0]*qb_shape[1]*qb_shape[2];
+    }
+
+    inline uint64_t get_qb_index(uint64_t i0,uint64_t i1,uint64_t i2,const array<uint64_t,3> &qb_shape,unsigned char order)
+    {
+        if (order==0)
+            return (i1*qb_shape[2]+i2)*qb_shape[0]+i0;
+        if (order==1)
+            return (i0*qb_shape[2]+i2)*qb_shape[1]+i1;
+        return (i0*qb_shape[1]+i1)*qb_shape[2]+i2;
+    }
+
     template<typename T>
     class param_c
     {
@@ -80,7 +108,7 @@ namespace asz
             vector<T> data;
             vector<unsigned char> zstd_bs_vec;
             vector<T> compressed_data;
-            vector<vector<int64_t>> qb_vec_vec;
+            vector<vector<qb_t>> qb_vec_vec;
             vector<int64_t> t_int_vec;
 
             vector<string> candidate_predictors={"cubic0_120","cubic0_021","cubic0_012","cubic1_120","cubic1_021","cubic1_012","cubic2_120","cubic2_021","cubic2_012"};
@@ -198,48 +226,48 @@ namespace asz
             void generate_config_enumerate();
             void generate_config(string task);
             void select_predictor_family();
-            void block_sample_compress_cubic0_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic0_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void block_sample_compress_cubic0_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic0_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void block_sample_compress_cubic0_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic0_012(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void block_sample_compress_cubic1_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic1_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void block_sample_compress_cubic1_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic1_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void block_sample_compress_cubic1_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic1_012(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void block_sample_compress_cubic2_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic2_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void block_sample_compress_cubic2_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic2_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_sample_compress_cubic2_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+            void block_sample_compress_cubic2_012(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
-            void dot_sample_compress(vector<int64_t> &qb_vec,T &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,
+            void dot_sample_compress(vector<qb_t> &qb_vec,T &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,
                 T neg_2_eb);
             T compress();
-            void block_compress_cubic0_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic0_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic0_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic1_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic1_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic1_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic2_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic2_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic2_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb);
+            void block_compress_cubic0_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
+            void block_compress_cubic0_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
+            void block_compress_cubic0_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order=2);
+            void block_compress_cubic1_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
+            void block_compress_cubic1_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
+            void block_compress_cubic1_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order=2);
+            void block_compress_cubic2_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
+            void block_compress_cubic2_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
+            void block_compress_cubic2_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order=2);
+            void dot_compress(vector<qb_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb,uint64_t qb_pos=numeric_limits<uint64_t>::max());
             void decompress();
-            void block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void dot_decompress(vector<int64_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb);
+            void block_decompress_cubic0_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic0_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic0_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order=2);
+            void block_decompress_cubic1_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic1_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic1_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order=2);
+            void block_decompress_cubic2_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic2_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
+            void block_decompress_cubic2_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order=2);
+            void dot_decompress(vector<qb_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,uint64_t qb_index=numeric_limits<uint64_t>::max());
     };
 }
 

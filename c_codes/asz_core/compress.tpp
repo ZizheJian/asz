@@ -3,7 +3,7 @@
 namespace asz
 {
     template<typename T>
-    void param_c<T>::dot_compress(vector<int64_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb)
+    void param_c<T>::dot_compress(vector<qb_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb,uint64_t qb_pos)
     {
         T pred;
         if (force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
@@ -31,13 +31,16 @@ namespace asz
                 pred+=(0.25+t)*(compressed_data[pos-dist]+compressed_data[pos+dist]);
             }
         }
-        int64_t qb=llround(((double)pred-(double)data[pos])/(2*(double)eb));
-        qb_vec.push_back(qb);
+        qb_t qb=(qb_t)llround(((double)pred-(double)data[pos])/(2*(double)eb));
+        if (qb_pos==numeric_limits<uint64_t>::max())
+            qb_vec.push_back(qb);
+        else
+            qb_vec[qb_pos]=qb;
         compressed_data[pos]=(T)((double)pred-(double)qb*2*(double)eb);
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic0_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic0_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -56,7 +59,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic0_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic0_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -75,7 +78,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic0_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic0_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order)
     {
         vector<uint64_t> target_block_loc(3);
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -87,14 +90,18 @@ namespace asz
             target_block_loc[2]=0;
         else
             target_block_loc[2]=block_loc[2][0]+stride[2];
-        for (uint64_t i0=target_block_loc[0];i0<block_loc[0][1];i0+=stride[0])
-        for (uint64_t i1=target_block_loc[1];i1<block_loc[1][1];i1+=stride[1])
-        for (uint64_t i2=target_block_loc[2];i2<block_loc[2][1];i2+=stride[2])
-            dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb);
+        auto qb_shape=get_layer_qb_shape(block_loc,stride,0);
+        uint64_t qb_base=qb_vec.size();
+        qb_vec.resize(qb_base+get_layer_qb_num(qb_shape));
+        uint64_t qb_inner_stride=qb_order==0?qb_shape[0]:qb_order==1?qb_shape[1]:1;
+        for (uint64_t i0=target_block_loc[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+        for (uint64_t i1=target_block_loc[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+        for (uint64_t i2=target_block_loc[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+            dot_compress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,neg_2_eb,qb_index);
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic1_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic1_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -113,7 +120,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic1_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic1_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -132,7 +139,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic1_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic1_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -144,14 +151,18 @@ namespace asz
             target_block_left[2]=0;
         else
             target_block_left[2]=block_loc[2][0]+stride[2];
-        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
-        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
-        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
-            dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb);
+        auto qb_shape=get_layer_qb_shape(block_loc,stride,1);
+        uint64_t qb_base=qb_vec.size();
+        qb_vec.resize(qb_base+get_layer_qb_num(qb_shape));
+        uint64_t qb_inner_stride=qb_order==0?qb_shape[0]:qb_order==1?qb_shape[1]:1;
+        for (uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+        for (uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+        for (uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+            dot_compress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,neg_2_eb,qb_index);
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic2_120(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic2_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -170,7 +181,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic2_021(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic2_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -189,7 +200,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_compress_cubic2_012(vector<int64_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
+    void param_c<T>::block_compress_cubic2_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order)
     {
         vector<uint64_t> target_block_left(3);
         if (block_loc[0][0]==0)
@@ -201,10 +212,14 @@ namespace asz
         else
             target_block_left[1]=block_loc[1][0]+stride[1];
         target_block_left[2]=block_loc[2][0]+stride[2]/2;
-        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
-        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
-        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
-            dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb);
+        auto qb_shape=get_layer_qb_shape(block_loc,stride,2);
+        uint64_t qb_base=qb_vec.size();
+        qb_vec.resize(qb_base+get_layer_qb_num(qb_shape));
+        uint64_t qb_inner_stride=qb_order==0?qb_shape[0]:qb_order==1?qb_shape[1]:1;
+        for (uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+        for (uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+        for (uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+            dot_compress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,neg_2_eb,qb_index);
     }
 
     template<typename T>
@@ -234,7 +249,7 @@ namespace asz
         for (uint64_t i2=0;i2<data_shape[2];i2+=pivot_stride[2])
         {
             uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-            int64_t qb=llround((double)data[pos]/(2*(double)pivot_eb));
+            qb_t qb=(qb_t)llround((double)data[pos]/(2*(double)pivot_eb));
             qb_vec_vec[0].push_back(qb);
             compressed_data[pos]=(T)((double)qb*(double)pivot_eb*2);
         }
@@ -307,36 +322,24 @@ namespace asz
                 if (t_policy=="adaptive")
                     t_int_vec.push_back(llround(best_t*t_precision));
                 //////// 预测 ////////
+                unsigned char direction=predictor[5]-'0';
+                unsigned char order=predictor[9]-'0';
+                vector<qb_t> &layer_qbs=qb_vec_vec[layer_id+1];
                 if (predictor.substr(0,6)=="cubic0")
                 {
-                    if (predictor=="cubic0_120")
-                        block_compress_cubic0_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    else if (predictor=="cubic0_021")
-                        block_compress_cubic0_021(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    else if (predictor=="cubic0_012")
-                        block_compress_cubic0_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    stride[0]/=2;
+                    block_compress_cubic0_012(layer_qbs,block_loc,stride,best_t,layer_eb,neg_2_layer_eb,order);
                 }
                 else if (predictor.substr(0,6)=="cubic1")
                 {
-                    if (predictor=="cubic1_120")
-                        block_compress_cubic1_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    else if (predictor=="cubic1_021")
-                        block_compress_cubic1_021(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    else if (predictor=="cubic1_012")
-                        block_compress_cubic1_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    stride[1]/=2;
+                    block_compress_cubic1_012(layer_qbs,block_loc,stride,best_t,layer_eb,neg_2_layer_eb,order);
                 }
                 else if (predictor.substr(0,6)=="cubic2")
                 {
-                    if (predictor=="cubic2_120")
-                        block_compress_cubic2_120(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    else if (predictor=="cubic2_021")
-                        block_compress_cubic2_021(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    else if (predictor=="cubic2_012")
-                        block_compress_cubic2_012(qb_vec_vec[layer_id+1],block_loc,stride,best_t,layer_eb,neg_2_layer_eb);
-                    stride[2]/=2;
+                    block_compress_cubic2_012(layer_qbs,block_loc,stride,best_t,layer_eb,neg_2_layer_eb,order);
                 }
+                else
+                    throw runtime_error("unsupported predictor direction");
+                stride[direction]/=2;
             }
         }
         uint64_t total_qb_num=0;
@@ -397,7 +400,7 @@ namespace asz
             huffman_bs+=8;
             if (qb_vec_vec[i].empty())
                 continue;
-            huffman_encoder_class<int64_t> huffman_encoder;
+            huffman_encoder_class<qb_t> huffman_encoder;
             huffman_encoder.preprocess_encode(qb_vec_vec[i].data(),qb_vec_vec[i].size());
             huffman_encoder.save(huffman_bs);
             huffman_encoder.encode(qb_vec_vec[i].data(),qb_vec_vec[i].size(),huffman_bs);

@@ -3,7 +3,7 @@
 namespace asz
 {
     template<typename T>
-    void param_c<T>::dot_decompress(vector<int64_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb)
+    void param_c<T>::dot_decompress(vector<qb_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,uint64_t qb_index)
     {
         T pred;
         if (force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
@@ -31,12 +31,14 @@ namespace asz
                 pred+=(0.25+t)*(compressed_data[pos-dist]+compressed_data[pos+dist]);
             }
         }
-        compressed_data[pos]=(T)((double)pred-(double)qb_vec[qb_pos]*2*(double)eb);
-        qb_pos++;
+        uint64_t current_qb_pos=qb_index==numeric_limits<uint64_t>::max()?qb_pos:qb_index;
+        compressed_data[pos]=(T)((double)pred-(double)qb_vec[current_qb_pos]*2*(double)eb);
+        if (qb_index==numeric_limits<uint64_t>::max())
+            qb_pos++;
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic0_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic0_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
         array<uint64_t,3> target_block_loc;
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -55,7 +57,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic0_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic0_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
         array<uint64_t,3> target_block_loc;
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -74,7 +76,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic0_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic0_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order)
     {
         array<uint64_t,3> target_block_loc;
         target_block_loc[0]=block_loc[0][0]+stride[0]/2;
@@ -86,14 +88,21 @@ namespace asz
             target_block_loc[2]=0;
         else
             target_block_loc[2]=block_loc[2][0]+stride[2];
-        for (uint64_t i0=target_block_loc[0];i0<block_loc[0][1];i0+=stride[0])
-        for (uint64_t i1=target_block_loc[1];i1<block_loc[1][1];i1+=stride[1])
-        for (uint64_t i2=target_block_loc[2];i2<block_loc[2][1];i2+=stride[2])
-            dot_decompress(qb_vec,qb_pos,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb);
+        auto qb_shape=get_layer_qb_shape(block_loc,stride,0);
+        uint64_t qb_num=get_layer_qb_num(qb_shape);
+        if (qb_pos>qb_vec.size() || qb_num>qb_vec.size()-qb_pos)
+            throw runtime_error("compressed stream has too few QBs");
+        uint64_t qb_base=qb_pos;
+        uint64_t qb_inner_stride=qb_order==0?qb_shape[0]:qb_order==1?qb_shape[1]:1;
+        for (uint64_t i0=target_block_loc[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+        for (uint64_t i1=target_block_loc[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+        for (uint64_t i2=target_block_loc[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+            dot_decompress(qb_vec,qb_pos,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[0]*data_shape[1]*data_shape[2]/2,t,eb,qb_index);
+        qb_pos+=qb_num;
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic1_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic1_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
         array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
@@ -112,7 +121,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic1_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic1_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
         array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
@@ -131,7 +140,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic1_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic1_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order)
     {
         array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
@@ -143,14 +152,21 @@ namespace asz
             target_block_left[2]=0;
         else
             target_block_left[2]=block_loc[2][0]+stride[2];
-        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
-        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
-        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
-            dot_decompress(qb_vec,qb_pos,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb);
+        auto qb_shape=get_layer_qb_shape(block_loc,stride,1);
+        uint64_t qb_num=get_layer_qb_num(qb_shape);
+        if (qb_pos>qb_vec.size() || qb_num>qb_vec.size()-qb_pos)
+            throw runtime_error("compressed stream has too few QBs");
+        uint64_t qb_base=qb_pos;
+        uint64_t qb_inner_stride=qb_order==0?qb_shape[0]:qb_order==1?qb_shape[1]:1;
+        for (uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+        for (uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+        for (uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+            dot_decompress(qb_vec,qb_pos,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[1]*data_shape[2]/2,t,eb,qb_index);
+        qb_pos+=qb_num;
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic2_120(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic2_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
         array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
@@ -169,7 +185,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic2_021(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic2_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
     {
         array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
@@ -188,7 +204,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_decompress_cubic2_012(vector<int64_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb)
+    void param_c<T>::block_decompress_cubic2_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order)
     {
         array<uint64_t,3> target_block_left;
         if (block_loc[0][0]==0)
@@ -200,10 +216,17 @@ namespace asz
         else
             target_block_left[1]=block_loc[1][0]+stride[1];
         target_block_left[2]=block_loc[2][0]+stride[2]/2;
-        for (uint64_t i0=target_block_left[0];i0<block_loc[0][1];i0+=stride[0])
-        for (uint64_t i1=target_block_left[1];i1<block_loc[1][1];i1+=stride[1])
-        for (uint64_t i2=target_block_left[2];i2<block_loc[2][1];i2+=stride[2])
-            dot_decompress(qb_vec,qb_pos,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb);
+        auto qb_shape=get_layer_qb_shape(block_loc,stride,2);
+        uint64_t qb_num=get_layer_qb_num(qb_shape);
+        if (qb_pos>qb_vec.size() || qb_num>qb_vec.size()-qb_pos)
+            throw runtime_error("compressed stream has too few QBs");
+        uint64_t qb_base=qb_pos;
+        uint64_t qb_inner_stride=qb_order==0?qb_shape[0]:qb_order==1?qb_shape[1]:1;
+        for (uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+        for (uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+        for (uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+            dot_decompress(qb_vec,qb_pos,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,stride[2]/2,t,eb,qb_index);
+        qb_pos+=qb_num;
     }
 
     template<typename T>
@@ -268,9 +291,9 @@ namespace asz
             qb_vec_vec[i].resize(len);
             if (len==0)
                 continue;
-            huffman_encoder_class<int64_t> huffman_encoder;
+            huffman_encoder_class<qb_t> huffman_encoder;
             huffman_encoder.load(huffman_bs);
-            huffman_encoder.decode(huffman_bs,qb_vec_vec[i].data(),0);
+            huffman_encoder.decode(huffman_bs,qb_vec_vec[i].data(),len);
         }
         auto huffman_end_time=chrono::high_resolution_clock::now();
         generate_pivot_stride_and_block_shape_and_block_num();
@@ -317,36 +340,27 @@ namespace asz
                 if (t_int_vec.size()!=1)
                     t_pos++;
                 //////// 预测 ////////
+                unsigned char direction=predictor_direction[layer_id];
+                unsigned char order=predictor_order[layer_id];
+                if (direction>2 || order>2)
+                    throw runtime_error("compressed stream contains an invalid predictor");
+                vector<qb_t> &layer_qbs=qb_vec_vec[layer_id+1];
+                uint64_t &layer_qb_pos=qb_pos_vec[layer_id+1];
                 if (predictor_direction[layer_id]==0)
                 {
-                    if (predictor_order[layer_id]==0)
-                        block_decompress_cubic0_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    else if (predictor_order[layer_id]==1)
-                        block_decompress_cubic0_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    else
-                        block_decompress_cubic0_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    stride[0]/=2;
+                    block_decompress_cubic0_012(layer_qbs,layer_qb_pos,block_loc,stride,best_t,layer_eb_vec[layer_id],order);
                 }
                 else if (predictor_direction[layer_id]==1)
                 {
-                    if (predictor_order[layer_id]==0)
-                        block_decompress_cubic1_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    else if (predictor_order[layer_id]==1)
-                        block_decompress_cubic1_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    else
-                        block_decompress_cubic1_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    stride[1]/=2;
+                    block_decompress_cubic1_012(layer_qbs,layer_qb_pos,block_loc,stride,best_t,layer_eb_vec[layer_id],order);
+                }
+                else if (predictor_direction[layer_id]==2)
+                {
+                    block_decompress_cubic2_012(layer_qbs,layer_qb_pos,block_loc,stride,best_t,layer_eb_vec[layer_id],order);
                 }
                 else
-                {
-                    if (predictor_order[layer_id]==0)
-                        block_decompress_cubic2_120(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    else if (predictor_order[layer_id]==1)
-                        block_decompress_cubic2_021(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    else
-                        block_decompress_cubic2_012(qb_vec_vec[layer_id+1],qb_pos_vec[layer_id+1],block_loc,stride,best_t,layer_eb_vec[layer_id]);
-                    stride[2]/=2;
-                }
+                    throw runtime_error("unsupported predictor direction");
+                stride[direction]/=2;
             }
         }
         auto end_time=chrono::high_resolution_clock::now();

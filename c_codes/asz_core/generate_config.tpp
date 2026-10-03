@@ -330,7 +330,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::dot_sample_compress(vector<int64_t> &qb_vec,T &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb)
+    void param_c<T>::dot_sample_compress(vector<qb_t> &qb_vec,T &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb)
     {
         T pred;
         if (i<=half_stride)
@@ -354,13 +354,13 @@ namespace asz
                 pred+=(0.25+t)*(data[pos-dist]+data[pos+dist]);
             }
         }
-        int64_t qb=llround((pred-data[pos])*neg_2_eb);
+        qb_t qb=(qb_t)llround((pred-data[pos])*neg_2_eb);
         qb_vec.push_back(qb);
         mse+=(pred-qb*2*eb-data[pos])*(pred-qb*2*eb-data[pos]);
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic0_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic0_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
@@ -381,7 +381,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic0_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic0_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
@@ -402,7 +402,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic0_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic0_012(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_loc(3);
@@ -423,7 +423,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic1_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic1_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
@@ -444,7 +444,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic1_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic1_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
@@ -464,7 +464,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic1_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic1_012(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
@@ -484,7 +484,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic2_120(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic2_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
@@ -504,7 +504,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic2_021(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic2_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
@@ -524,7 +524,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::block_sample_compress_cubic2_012(vector<int64_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
+    void param_c<T>::block_sample_compress_cubic2_012(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
         vector<uint64_t> &stride,T t,T eb,T neg_2_eb)
     {
         vector<uint64_t> target_block_left(3);
@@ -620,7 +620,7 @@ namespace asz
                     }
                 }
                 // 用最好的t实际压缩得到br和psnr
-                vector<int64_t> qb_vec;
+                vector<qb_t> qb_vec;
                 block_loc={{0,data_shape[0]},{0,data_shape[1]},{0,data_shape[2]}};
                 if (predictor.substr(0,6)=="cubic0")
                 {
@@ -687,7 +687,7 @@ namespace asz
                 {
                     vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
                     unsigned char *huffman_bs=huffman_bs_vec.data();
-                    huffman_encoder_class<int64_t> huffman_encoder;
+                    huffman_encoder_class<qb_t> huffman_encoder;
                     huffman_encoder.preprocess_encode(qb_vec.data(),qb_vec.size());
                     huffman_encoder.save(huffman_bs);
                     huffman_encoder.encode(qb_vec.data(),qb_vec.size(),huffman_bs);
