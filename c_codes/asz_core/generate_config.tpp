@@ -27,8 +27,17 @@ namespace asz
         printf("default_slope_eb_span=%.6f;\n",default_slope_eb_span);
         printf("t_precision=%d;\n",t_precision);
         printf("t_range=[%.6f,%.6f];\n",t_min,t_max);
+        printf("t_candidates={");
+        for (auto candidate_it=candidate_t.begin();candidate_it!=candidate_t.end();candidate_it++)
+            printf("%s%.6f",candidate_it==candidate_t.begin()?"":",",*candidate_it);
+        printf("};\n");
+        printf("block_t_candidates={");
+        for (auto candidate_it=block_candidate_t.begin();candidate_it!=block_candidate_t.end();candidate_it++)
+            printf("%s%.6f",candidate_it==block_candidate_t.begin()?"":",",*candidate_it);
+        printf("};\n");
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
         printf("t_policy=%s;\n",t_policy.c_str());
+        printf("block_t_policy=%s;\n",block_t_policy.c_str());
         printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");
         printf("pivot_stride={%lu,%lu,%lu};\n",pivot_stride[0],pivot_stride[1],pivot_stride[2]);
         printf("block_shape={%lu,%lu,%lu};\n",block_shape[0],block_shape[1],block_shape[2]);

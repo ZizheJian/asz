@@ -73,7 +73,7 @@ def prepare_methods(method_list,task_id):
         if isinstance(method,str):
             prepared={"name":method,"compressor":method}
         elif isinstance(method,dict):
-            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","t_policy","report_t_histogram",*asz_parameter_keys,*asz_compress_parameter_keys,*asz_block_policy_keys}
+            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","t_policy","block_t_policy","report_t_histogram",*asz_parameter_keys,*asz_compress_parameter_keys,*asz_block_policy_keys}
             unknown=method.keys()-allowed_keys
             if unknown:
                 raise ValueError(f"task {task_id}的method {method_id}包含未知参数：{','.join(sorted(unknown))}")
@@ -97,6 +97,9 @@ def prepare_methods(method_list,task_id):
         if "t_policy" in prepared:
             if prepared["compressor"]!="asz" or prepared["t_policy"] not in ("adaptive","fixed_4_16","fixed_5_16"):
                 raise ValueError(f"task {task_id}的method {method_id}的t_policy只能是adaptive、fixed_4_16或fixed_5_16且只能用于asz")
+        if "block_t_policy" in prepared:
+            if prepared["compressor"]!="asz" or prepared["block_t_policy"] not in ("peaks","full"):
+                raise ValueError(f"task {task_id}的method {method_id}的block_t_policy只能是peaks或full且只能用于asz")
         if "report_t_histogram" in prepared and (prepared["compressor"]!="asz" or not isinstance(prepared["report_t_histogram"],bool)):
             raise ValueError(f"task {task_id}的method {method_id}的report_t_histogram只能是ASZ布尔参数")
         for key in (*asz_parameter_keys,*asz_compress_parameter_keys):
@@ -136,6 +139,9 @@ def prepare_methods(method_list,task_id):
             t_precision=prepared.get("t_precision",32)
             if any(not math.isclose(prepared[key]*t_precision,round(prepared[key]*t_precision),abs_tol=1e-9) for key in ("t_min","t_max")):
                 raise ValueError(f"task {task_id}的method {method_id}的t_min和t_max必须能t_precision精确表示")
+        if prepared.get("t_policy","adaptive")=="adaptive" and prepared.get("block_t_policy","peaks")=="peaks":
+            if prepared.get("t_precision",32)%32 or prepared.get("t_min",1/16)>1/16 or prepared.get("t_max",6/16)<11/32:
+                raise ValueError(f"task {task_id}的method {method_id}使用peaks时需要t_precision是32的倍数且t范围覆盖[1/16,11/32]")
         policy_key_count=sum(key in prepared for key in asz_block_policy_keys)
         if policy_key_count==1:
             raise ValueError(f"task {task_id}的method {method_id}必须同时设置coarse_block_pivot_ratio和fine_block_pivot_ratio")
@@ -477,6 +483,8 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     if "t_policy" in method_options:
         common.extend(["--t-policy",method_options["t_policy"]])
     compress_command=[asz_executable_directory/"s1_compress",*common]
+    if "block_t_policy" in method_options:
+        compress_command.extend(["--block-t-policy",method_options["block_t_policy"]])
     for key in asz_compress_parameter_keys:
         if key in method_options:
             compress_command.extend([option_names[key],method_options[key]])

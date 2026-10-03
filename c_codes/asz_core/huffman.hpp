@@ -53,12 +53,17 @@ class huffman_encoder_class
                 };
 
             public:
+                struct EncodeEntry
+                {
+                    unsigned char len=0;
+                    int code=0;
+                };
+
                 void dfs_mp(Node *u)
                 {
                     if (u->isLeaf())
                     {
-                        mplen[u->c]=len;
-                        mpcode[u->c]=vec;
+                        mpencode[u->c]={len,vec};
                         limit=std::max(limit,len);
                         return;
                     }
@@ -93,8 +98,7 @@ class huffman_encoder_class
 
                 std::vector<unsigned char> veclen;
                 std::vector<int> veccode;
-                unordered_map<uint64_t,unsigned char> mplen;
-                unordered_map<uint64_t,int> mpcode;
+                unordered_map<uint64_t,EncodeEntry> mpencode;
 
                 T offset;
                 // minimum bits for T
@@ -107,8 +111,7 @@ class huffman_encoder_class
                     ht.clear();
                     veclen.clear();
                     veccode.clear();
-                    mplen.clear();
-                    mpcode.clear();
+                    mpencode.clear();
                     vecfreq.clear();
                     mpfreq.clear();
                     decode_table.clear();
@@ -142,14 +145,10 @@ class huffman_encoder_class
                 };
                 std::vector<DecodeEntry> decode_table;
                 unsigned char decode_table_bits=0;
-                static constexpr uint64_t decode_table_symbol_limit=1024;
                 static constexpr unsigned char decode_table_bit_limit=12;
 
                 void buildDecodeTable()
                 {
-                    // Small alphabets benefit from a prefix table; large ones retain the cache-friendlier tree walk.
-                    if (n>decode_table_symbol_limit)
-                        return;
                     decode_table_bits=std::min<unsigned char>(limit,decode_table_bit_limit);
                     decode_table.resize(1ull<<decode_table_bits);
                     for (uint64_t prefix=0;prefix<decode_table.size();prefix++)
@@ -197,10 +196,7 @@ class huffman_encoder_class
                         ht[0].c=0;
                         ht.push_back(Node(0,&ht[0],nullptr));
                         if (usemp) 
-                        {
-                            mplen[0]=1;
-                            mpcode[0]=0;
-                        }
+                            mpencode[0]={1,0};
                         else
                         {
                             veclen[0]=1;
@@ -326,10 +322,9 @@ class huffman_encoder_class
                 for (uint64_t i=0;i<num_bin;i++)
                 {
                     const T& it=bins[i];
-                    const unsigned char& len_i=tree.mplen[it-tree.offset];
-                    const int& code_i=tree.mpcode[it-tree.offset];
-                    len+=len_i;
-                    writeBytes(bytes,code_i,len_i,mask,index);
+                    const auto& entry=tree.mpencode.at(it-tree.offset);
+                    len+=entry.len;
+                    writeBytes(bytes,entry.code,entry.len,mask,index);
                 }
             else
                 for (uint64_t i=0;i<num_bin;i++) 
@@ -696,10 +691,7 @@ class huffman_encoder_class
                 tree.ht[0]=Node(0,&tree.ht[1]);
                 tree.ht[1]=Node(0);
                 if (tree.usemp)
-                {
-                    tree.mplen[0]=1;
-                    tree.mpcode[0]=0;
-                }
+                    tree.mpencode[0]={1,0};
                 else
                 {
                     tree.veclen[0]=1;

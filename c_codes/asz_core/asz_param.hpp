@@ -125,7 +125,9 @@ namespace asz
             T default_slope_eb_span=1.5;
 
             vector<T> candidate_t;
+            vector<T> block_candidate_t;
             string t_policy="adaptive";
+            string block_t_policy="peaks";
             T default_slope;
 
             bool config_generated=false;
@@ -155,12 +157,23 @@ namespace asz
             {
                 t_policy=policy;
                 candidate_t.clear();
+                block_candidate_t.clear();
+                if (block_t_policy!="peaks"&&block_t_policy!="full")
+                    throw invalid_argument("block_t_policy must be peaks or full");
                 if (policy=="adaptive")
                 {
                     int t_min_i=llround(t_min*t_precision);
                     int t_max_i=llround(t_max*t_precision);
                     for (int t_i=t_min_i;t_i<=t_max_i;t_i++)
                         candidate_t.push_back((T)t_i/t_precision);
+                    if (block_t_policy=="peaks")
+                    {
+                        if (t_precision%32||t_min>(T)1/16||t_max<(T)11/32)
+                            throw invalid_argument("peaks block_t_policy requires t_precision divisible by 32 and t range covering [1/16,11/32]");
+                        block_candidate_t={(T)1/16,(T)1/4,(T)9/32,(T)5/16,(T)11/32};
+                    }
+                    else
+                        block_candidate_t=candidate_t;
                 }
                 else if (policy=="fixed_4_16")
                     candidate_t.push_back((T)4/16);
@@ -168,6 +181,8 @@ namespace asz
                     candidate_t.push_back((T)5/16);
                 else
                     throw invalid_argument("t_policy must be adaptive, fixed_4_16, or fixed_5_16");
+                if (policy!="adaptive")
+                    block_candidate_t=candidate_t;
             }
 
             template<typename T2>
@@ -199,7 +214,9 @@ namespace asz
                 default_slope_fallback=other.default_slope_fallback;
                 default_slope_eb_span=other.default_slope_eb_span;
                 candidate_t.assign(other.candidate_t.begin(),other.candidate_t.end());
+                block_candidate_t.assign(other.block_candidate_t.begin(),other.block_candidate_t.end());
                 t_policy=other.t_policy;
+                block_t_policy=other.block_t_policy;
                 default_slope=other.default_slope;
                 config_generated=other.config_generated;
                 pivot_eb_ratio=other.pivot_eb_ratio;

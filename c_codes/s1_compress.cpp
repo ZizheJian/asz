@@ -50,6 +50,7 @@ int main(int argc,char* argv[])
 {
     auto param=asz::param_c<float>();
     vector<string> predictor_plan;
+    bool t_min_set=false,t_max_set=false;
     for (int i=1;i<argc;i++)
     {
         string arg=argv[i];
@@ -179,16 +180,23 @@ int main(int argc,char* argv[])
         else if (arg=="--t-min")
         {
             param.t_min=stof(argv[++i]);
+            t_min_set=true;
             continue;
         }
         else if (arg=="--t-max")
         {
             param.t_max=stof(argv[++i]);
+            t_max_set=true;
             continue;
         }
         else if (arg=="--t-policy")
         {
             param.t_policy=argv[++i];
+            continue;
+        }
+        else if (arg=="--block-t-policy")
+        {
+            param.block_t_policy=argv[++i];
             continue;
         }
         else if (arg=="--report-t-histogram")
@@ -228,6 +236,8 @@ int main(int argc,char* argv[])
         throw invalid_argument("default_slope_eb_span must be greater than 1 and finite");
     if (param.t_precision<16||param.t_precision%16!=0)
         throw invalid_argument("t_precision must be a positive multiple of 16");
+    if (t_min_set!=t_max_set)
+        throw invalid_argument("t_min and t_max must be supplied together");
     if (!(param.t_min>=0&&param.t_min<=param.t_max&&param.t_max<=0.5))
         throw invalid_argument("t range must satisfy 0 <= t_min <= t_max <= 0.5");
     if (abs(param.t_min*param.t_precision-round(param.t_min*param.t_precision))>1e-6||abs(param.t_max*param.t_precision-round(param.t_max*param.t_precision))>1e-6)

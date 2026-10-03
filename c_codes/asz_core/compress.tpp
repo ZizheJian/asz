@@ -236,7 +236,7 @@ namespace asz
         t_int_vec.clear();
         uint64_t t_fallback_count=0;
         if (t_policy!="adaptive")
-            t_int_vec.push_back(llround(candidate_t.front()*t_precision));
+            t_int_vec.push_back(llround(block_candidate_t.front()*t_precision));
 
         //////// 存储pivot points ////////
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
@@ -299,11 +299,11 @@ namespace asz
                     temp_block_loc[2]={block_loc[2][0]+3*stride[2]/2,block_loc[2][1]-3*stride[2]/2};
                     get_AB_map(AB_map,compressed_data,temp_block_loc,stride,stride[2]/2,neg_2_stat_eb);
                 }
-                T best_t=t_policy=="adaptive"?(T)4/16:candidate_t.front(),best_h1=0,best_psnr=0;
+                T best_t=t_policy=="adaptive"?(T)4/16:block_candidate_t.front(),best_h1=0,best_psnr=0;
                 if (!AB_map.empty())
                 {
                     get_h1_psnr(best_h1,best_psnr,AB_map,best_t,layer_eb,stat_eb);
-                    for (auto t:candidate_t)
+                    for (auto t:block_candidate_t)
                     {
                         if (t==best_t || best_psnr==INFINITY)
                             continue;
@@ -365,6 +365,7 @@ namespace asz
         if (total_qb_num!=data.size())
             throw runtime_error("total_qb_num!=data.size()");
         //////// 编码 ////////
+        auto huffman_start_time=chrono::high_resolution_clock::now();
         vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
         unsigned char *huffman_bs=huffman_bs_vec.data();
         memcpy(huffman_bs,&min_val,sizeof(T));
@@ -405,6 +406,7 @@ namespace asz
             huffman_encoder.save(huffman_bs);
             huffman_encoder.encode(qb_vec_vec[i].data(),qb_vec_vec[i].size(),huffman_bs);
         }
+        auto huffman_end_time=chrono::high_resolution_clock::now();
 
         uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
         uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
@@ -413,6 +415,8 @@ namespace asz
         zstd_bs+=ZSTD_compress(zstd_bs,max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
         zstd_bs_vec.resize(zstd_bs-zstd_bs_vec.data());
         auto end_time=chrono::high_resolution_clock::now();
+        printf("Huffman compression time: %f s\n",chrono::duration<double>(huffman_end_time-huffman_start_time).count());
+        printf("Zstd compression time: %f s\n",chrono::duration<double>(end_time-huffman_end_time).count());
         printf("Compression time: %f s\n",chrono::duration<double>(end_time-start_time).count());
 
         T cr=(T)data.size()*sizeof(float)/zstd_bs_vec.size();
