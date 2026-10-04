@@ -5,14 +5,14 @@ from analyze_layer_eb_screen import compare_curves,geometric_mean
 
 project_root=Path(__file__).resolve().parent
 dataset_files={
-    "APS_Kaz":"final_eight_aps_kaz.csv",
-    "Aramco":"final_eight_aramco.csv",
-    "CLDICE":"final_eight_cldice.csv",
-    "Isabel":"final_eight_isabel.csv",
-    "LETKF":"final_eight_letkf.csv",
-    "VideoLLaVA":"final_eight_videollava.csv",
-    "E017":"final_eight_e017.csv",
-    "APSU":"final_eight_apsu.csv",
+    "APS_Kaz":"aps_kaz.csv",
+    "Aramco":"aramco.csv",
+    "CLDICE":"cldice.csv",
+    "Isabel":"isabel.csv",
+    "LETKF":"letkf.csv",
+    "VideoLLaVA":"videollava.csv",
+    "E017":"e017.csv",
+    "APSU":"apsu.csv",
 }
 methods=("asz","sz3","qoz")
 
@@ -33,6 +33,7 @@ def read_curves(path):
 def main():
     parser=argparse.ArgumentParser(description="汇总最终八数据上的ASZ、SZ3和QoZ等PSNR bitrate结果")
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
+    parser.add_argument("--file-prefix",default="final_eight_")
     parser.add_argument("--output",type=Path,default=project_root/"results/final_eight_comparison.csv")
     arguments=parser.parse_args()
 
@@ -40,7 +41,7 @@ def main():
     ratios={baseline:[] for baseline in ("sz3","qoz")}
     winning_fractions={baseline:[] for baseline in ("sz3","qoz")}
     for dataset,filename in dataset_files.items():
-        path=arguments.result_directory/filename
+        path=arguments.result_directory/f"{arguments.file_prefix}{filename}"
         if not path.is_file():
             raise FileNotFoundError(f"缺少最终结果：{path}")
         curves=read_curves(path)

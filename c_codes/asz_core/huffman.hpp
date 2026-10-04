@@ -4,6 +4,8 @@
 #include <map>
 #include <queue>
 #include <stack>
+#include <stdexcept>
+#include <string>
 #include <vector>
 #include <unordered_map>
 #include <cstdio>
@@ -481,7 +483,7 @@ class huffman_encoder_class
                 }
             }
             if (u!=&tree.ht[tree.root])
-                throw runtime_error("Huffman payload ends inside a code");
+                throw runtime_error("Huffman payload ends inside a code: output="+to_string(outLen)+",target="+to_string(targetLength)+",bits="+to_string(bit_pos)+"/"+to_string(len)+",alphabet="+to_string(tree.n)+",max_code_length="+to_string(tree.limit));
             if (targetLength&&outLen!=targetLength)
                 throw runtime_error("Huffman payload contains too few values");
 
@@ -605,7 +607,7 @@ class huffman_encoder_class
                 *c++=mask;
         }
 
-        static unsigned char readBit(const unsigned char* const &c,int i)
+        static unsigned char readBit(const unsigned char* const &c,uint64_t i)
         { 
             return ((*(c+(i>>3)))>>(i&7))&1;
         }

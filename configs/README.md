@@ -12,6 +12,14 @@ Reuse existing builds:
 python t1_start_compressors.py isabel_pf01 --skip-build
 ```
 
+Refresh only ASZ on the frozen eight-dataset evaluation grid while reusing the existing SZ3/QoZ baselines:
+
+```bash
+bash submit_final_eight_asz_refresh.sh
+```
+
+The launcher submits separate 18-core small-dataset, 64-core E017, and 64-core APSU jobs, followed by an automatic merge job that depends on all three succeeding. On Anvil's shared partition, the fixed allocation of 1,896 MB per core gives these jobs about 33.3, 118.5, and 118.5 GiB without an explicit memory request. The two large jobs retain headroom over the previously observed roughly 110 GiB peak. The jobs write `results/final_eight_asz_refresh_*.csv`, merge the refreshed ASZ rows with the existing baseline rows into `results/final_eight_frozen_*.csv`, and write `results/final_eight_frozen_comparison.csv`. They never overwrite the previous `final_eight_*.csv` files. APS_Kaz, E017, and APSU use their refined integer-data error-bound grids; the other five datasets use `1e-1` through `1e-5`.
+
 Regenerate the SZ3/QoZ baselines for the six tuning datasets:
 
 ```bash

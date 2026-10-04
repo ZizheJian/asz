@@ -105,6 +105,7 @@ def save_overview(curves_by_dataset,pdf_path,png_path,dpi):
 def main():
     parser=argparse.ArgumentParser(description="绘制最终八数据的ASZ、SZ3和QoZ RD曲线")
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
+    parser.add_argument("--file-prefix",default="final_eight_frozen_")
     parser.add_argument("--output-directory",type=Path,default=project_root/"新论文/figs/5/rd-final-eight")
     parser.add_argument("--overview-pdf",type=Path,default=project_root/"新论文/figs/5/rate-distortion-eight.pdf")
     parser.add_argument("--overview-png",type=Path,default=project_root/"新论文/figs/5/rate-distortion-eight.png")
@@ -112,7 +113,7 @@ def main():
     arguments=parser.parse_args()
 
     plt.rcParams.update({"font.family":"sans-serif","font.size":11,"axes.titlesize":12,"axes.labelsize":11,"xtick.labelsize":9,"ytick.labelsize":9,"legend.fontsize":12,"pdf.fonttype":42,"ps.fonttype":42})
-    curves_by_dataset={title:read_curves(arguments.result_directory/filename) for title,filename,_ in datasets}
+    curves_by_dataset={title:read_curves(arguments.result_directory/filename.replace("final_eight_",arguments.file_prefix,1)) for title,filename,_ in datasets}
     save_individuals(curves_by_dataset,arguments.output_directory,arguments.dpi)
     save_overview(curves_by_dataset,arguments.overview_pdf,arguments.overview_png,arguments.dpi)
     print(f"写入8张独立RD图：{arguments.output_directory}")
