@@ -3,9 +3,9 @@ from pathlib import Path
 from statistics import median
 
 cases=(
-    ("APS_Kaz",Path("/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_Kaz/xpcs-998x128x128.bin.f32"),(998,128,128),0.01),
-    ("Aramco",Path("/anvil/projects/x-cis240192/x-zjian1-in-cis240192/aramco/aramco-snapshot-1800.f32"),(449,449,235),0.01),
-    ("E017",Path("/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32"),(1024,1813,1558),0.001),
+    ("APS_Kaz",Path("/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_Kaz/xpcs-998x128x128.bin.f32"),(998,128,128),0.01),
+    ("Aramco",Path("/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/aramco/aramco-snapshot-1800.f32"),(449,449,235),0.01),
+    ("E017",Path("/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32"),(1024,1813,1558),0.001),
 )
 number_pattern=r"([0-9.eE+-]+)"
 

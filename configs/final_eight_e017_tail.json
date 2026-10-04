@@ -1,6 +1,6 @@
 [
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32"],
     "data_shape":[1024,1813,1558],
     "rel_eb_list":[0.00001],
     "method_list":["asz","sz3","qoz"],

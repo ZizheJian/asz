@@ -1,3 +1,3 @@
 [
-  {"data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/xpcs_datasets/APSU_TestData_004/APSU_TestData_004.h5.f32"],"data_shape":[1024,1558,1813],"rel_eb_list":[0.1,0.01,0.001,0.0003,0.00013],"method_list":["asz"],"cleanup_after_each_test":true,"comparison_baseline":"asz","summary_csv":"results/final_eight_asz_refresh_apsu.csv"}
+  {"data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_004/APSU_TestData_004.h5.f32"],"data_shape":[1024,1558,1813],"rel_eb_list":[0.1,0.01,0.001,0.0003,0.00013],"method_list":["asz"],"cleanup_after_each_test":true,"comparison_baseline":"asz","summary_csv":"results/final_eight_asz_refresh_apsu.csv"}
 ]

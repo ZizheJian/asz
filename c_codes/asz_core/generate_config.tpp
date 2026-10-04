@@ -174,47 +174,6 @@ namespace asz
             // slope_ratio=0.54;
             // block_pivot_ratio=2;
 
-            //////// CLDICE_center 1e-5 ////////
-            // predictor_vec={"cubic1_021","cubic2_012","cubic1_012","cubic2_021","cubic1_021","cubic2_021"};
-            // pivot_eb_ratio=0.14;
-            // eb_ratio=0.74;
-            // slope_ratio=0.52;
-            // block_pivot_ratio=1;
-            //////// CLDICE_center 1e-3 ////////
-            // predictor_vec={"cubic2_021","cubic2_021","cubic2_021","cubic1_012","cubic2_012","cubic1_012","cubic2_012","cubic1_012","cubic2_021","cubic1_012","cubic2_021"};
-            // pivot_eb_ratio=0.09;
-            // eb_ratio=0.71;
-            // slope_ratio=0.47;
-            // block_pivot_ratio=5;
-
-            //////// Nyx_baryon_density_center 1e-5 //////// 好
-            // predictor_vec={"cubic2_120","cubic1_012","cubic2_021","cubic0_120","cubic1_120","cubic2_021","cubic0_120","cubic1_120","cubic2_120"};
-            // pivot_eb_ratio=0.10;
-            // eb_ratio=0.71;
-            // slope_ratio=0.53;
-            // block_pivot_ratio=4;
-            //////// Nyx_baryon_density_center 1e-3 //////// 好
-            // predictor_vec={"cubic0_012","cubic1_120","cubic1_012","cubic2_021","cubic0_012","cubic1_021","cubic2_012","cubic0_012","cubic0_012","cubic1_012","cubic2_012"};
-            // pivot_eb_ratio=0.07;
-            // eb_ratio=0.71;
-            // slope_ratio=0.54;
-            // block_pivot_ratio=3;
-
-            
-
-            //////// APSU_004_center 1e-5 //////// 好
-            // predictor_vec={"cubic0_120"};
-            // pivot_eb_ratio=0.22;
-            // eb_ratio=0.85;
-            // slope_ratio=0.47;
-            // block_pivot_ratio=9;
-            //////// APSU_004_center 1e-3 //////// 好
-            // predictor_vec={"cubic0_120","cubic0_120","cubic0_120"};
-            // pivot_eb_ratio=0.17;
-            // eb_ratio=0.78;
-            // slope_ratio=0.48;
-            // block_pivot_ratio=8;
-
             generate_pivot_stride_and_block_shape_and_block_num();
             config_generated=true;
             print_config();

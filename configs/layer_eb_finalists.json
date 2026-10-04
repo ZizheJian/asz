@@ -1,6 +1,6 @@
 [
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_Kaz/xpcs-998x128x128.bin.f32"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_Kaz/xpcs-998x128x128.bin.f32"],
     "data_shape":[998,128,128],
     "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
     "method_list":[
@@ -13,7 +13,7 @@
     "summary_csv":"results/layer_eb_finalists_aps_kaz.csv"
   },
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/aramco/aramco-snapshot-1800.f32"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/aramco/aramco-snapshot-1800.f32"],
     "data_shape":[449,449,235],
     "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
     "method_list":[
@@ -26,7 +26,7 @@
     "summary_csv":"results/layer_eb_finalists_aramco.csv"
   },
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat"],
     "data_shape":[26,1800,3600],
     "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
     "method_list":[
@@ -39,7 +39,7 @@
     "summary_csv":"results/layer_eb_finalists_cldice.csv"
   },
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/ISABEL/P/Pf01.bin"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf01.bin"],
     "data_shape":[100,500,500],
     "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
     "method_list":[
@@ -52,7 +52,7 @@
     "summary_csv":"results/layer_eb_finalists_isabel.csv"
   },
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/SCALE_LETKF/PRES-98x1200x1200.dat"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/PRES-98x1200x1200.dat"],
     "data_shape":[98,1200,1200],
     "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
     "method_list":[
@@ -65,7 +65,7 @@
     "summary_csv":"results/layer_eb_finalists_letkf.csv"
   },
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/embeddings/videollava/embeds_0[(8, 257, 4096)].bin"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/embeddings/videollava/embeds_0[(8, 257, 4096)].bin"],
     "data_shape":[8,257,4096],
     "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
     "method_list":[

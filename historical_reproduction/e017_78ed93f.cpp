@@ -10,7 +10,7 @@ int main(int argc,char **argv)
         return 2;
     }
     auto param=asz::param_c();
-    param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32";
+    param.original_data_path="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32";
     param.data_shape={1024,1813,1558};
     param.rel_eb=stof(argv[1]);
     uint64_t data_num=param.data_shape[0]*param.data_shape[1]*param.data_shape[2];

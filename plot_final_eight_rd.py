@@ -17,6 +17,11 @@ datasets=(
     ("E017","final_eight_e017.csv","e017"),
     ("APSU004","final_eight_apsu.csv","apsu004"),
 )
+middle_time_step_overrides={
+    "CLDICE":("CLDICE t31","final_eight_middle_cldice_t31.csv","cldice_t31"),
+    "Isabel Pf01":("Isabel Pf24","final_eight_middle_isabel_pf24.csv","isabel_pf24"),
+    "VideoLLaVA":("VideoLLaVA #5","final_eight_videollava_embeds5.csv","videollava_embeds5"),
+}
 methods=("asz","sz3","qoz")
 styles={
     "asz":{"label":"ASZ","color":"#000000","linestyle":"-","marker":"o"},
@@ -50,7 +55,7 @@ def pareto_frontier(points):
             best_psnr=psnr
     return frontier
 
-def draw_dataset(ax,title,curves,title_prefix=""):
+def draw_dataset(ax,title,curves,title_prefix="",x_scale="linear"):
     all_points=[]
     for method in methods:
         points=curves[method]
@@ -59,25 +64,31 @@ def draw_dataset(ax,title,curves,title_prefix=""):
         frontier=pareto_frontier(points)
         ax.plot([point[0] for point in frontier],[point[1] for point in frontier],label=style["label"],color=style["color"],linestyle=style["linestyle"],linewidth=2.1)
         ax.plot([point[0] for point in points],[point[1] for point in points],color=style["color"],linestyle="None",marker=style["marker"],markersize=5.5,markeredgewidth=1.0,markerfacecolor="white")
+    min_bitrate=min(point[0] for point in all_points)
     max_bitrate=max(point[0] for point in all_points)
     min_psnr=min(point[1] for point in all_points)
     max_psnr=max(point[1] for point in all_points)
     psnr_padding=max(2.0,(max_psnr-min_psnr)*0.04)
-    ax.set_xlim(0,max_bitrate*1.05)
+    ax.set_xscale(x_scale)
+    if x_scale=="log":
+        ax.set_xlim(min_bitrate*.85,max_bitrate*1.08)
+    else:
+        ax.set_xlim(0,max_bitrate*1.05)
     ax.set_ylim(math.floor((min_psnr-psnr_padding)/5)*5,math.ceil((max_psnr+psnr_padding)/5)*5)
     ax.set_title(f"{title_prefix}{title}",pad=7)
     ax.grid(True,color="#bdbdbd",linestyle="--",linewidth=0.7,alpha=0.55)
-    ax.xaxis.set_major_locator(MaxNLocator(nbins=5,min_n_ticks=3))
+    if x_scale=="linear":
+        ax.xaxis.set_major_locator(MaxNLocator(nbins=5,min_n_ticks=3))
     ax.yaxis.set_major_locator(MaxNLocator(nbins=5,min_n_ticks=4))
     ax.tick_params(direction="in",top=True,right=True)
     for spine in ax.spines.values():
         spine.set_linewidth(1.0)
 
-def save_individuals(curves_by_dataset,output_directory,dpi):
+def save_individuals(dataset_specs,curves_by_dataset,output_directory,dpi,x_scale):
     output_directory.mkdir(parents=True,exist_ok=True)
-    for title,_,stem in datasets:
+    for title,_,stem in dataset_specs:
         figure,axis=plt.subplots(figsize=(4.2,3.2))
-        draw_dataset(axis,title,curves_by_dataset[title])
+        draw_dataset(axis,title,curves_by_dataset[title],x_scale=x_scale)
         axis.set_xlabel("Bitrate (bits/value)")
         axis.set_ylabel("PSNR (dB)")
         axis.legend(frameon=False,fontsize=9,loc="best")
@@ -86,10 +97,10 @@ def save_individuals(curves_by_dataset,output_directory,dpi):
         figure.savefig(output_directory/f"{stem}.png",dpi=dpi,bbox_inches="tight")
         plt.close(figure)
 
-def save_overview(curves_by_dataset,pdf_path,png_path,dpi):
+def save_overview(dataset_specs,curves_by_dataset,pdf_path,png_path,dpi,x_scale):
     figure,axes=plt.subplots(2,4,figsize=(13.2,6.2))
-    for index,((title,_,_),axis) in enumerate(zip(datasets,axes.flat)):
-        draw_dataset(axis,title,curves_by_dataset[title],f"({chr(ord('a')+index)}) ")
+    for index,((title,_,_),axis) in enumerate(zip(dataset_specs,axes.flat)):
+        draw_dataset(axis,title,curves_by_dataset[title],f"({chr(ord('a')+index)}) ",x_scale)
         if index//4==1:
             axis.set_xlabel("Bitrate (bits/value)")
         if index%4==0:
@@ -110,12 +121,18 @@ def main():
     parser.add_argument("--overview-pdf",type=Path,default=project_root/"新论文/figs/5/rate-distortion-eight.pdf")
     parser.add_argument("--overview-png",type=Path,default=project_root/"新论文/figs/5/rate-distortion-eight.png")
     parser.add_argument("--dpi",type=int,default=300)
+    parser.add_argument("--x-scale",choices=("linear","log"),default="linear")
+    parser.add_argument("--middle-time-steps",action="store_true",help="CLDICE和Isabel使用中间time step")
     arguments=parser.parse_args()
 
     plt.rcParams.update({"font.family":"sans-serif","font.size":11,"axes.titlesize":12,"axes.labelsize":11,"xtick.labelsize":9,"ytick.labelsize":9,"legend.fontsize":12,"pdf.fonttype":42,"ps.fonttype":42})
-    curves_by_dataset={title:read_curves(arguments.result_directory/filename.replace("final_eight_",arguments.file_prefix,1)) for title,filename,_ in datasets}
-    save_individuals(curves_by_dataset,arguments.output_directory,arguments.dpi)
-    save_overview(curves_by_dataset,arguments.overview_pdf,arguments.overview_png,arguments.dpi)
+    dataset_specs=tuple(middle_time_step_overrides.get(title,(title,filename,stem)) for title,filename,stem in datasets) if arguments.middle_time_steps else datasets
+    override_filenames={filename for _,filename,_ in middle_time_step_overrides.values()}
+    def result_path(filename):
+        return arguments.result_directory/(filename if filename in override_filenames else filename.replace("final_eight_",arguments.file_prefix,1))
+    curves_by_dataset={title:read_curves(result_path(filename)) for title,filename,_ in dataset_specs}
+    save_individuals(dataset_specs,curves_by_dataset,arguments.output_directory,arguments.dpi,arguments.x_scale)
+    save_overview(dataset_specs,curves_by_dataset,arguments.overview_pdf,arguments.overview_png,arguments.dpi,arguments.x_scale)
     print(f"写入8张独立RD图：{arguments.output_directory}")
     print(f"写入总览图：{arguments.overview_pdf}")
     print(f"写入总览预览：{arguments.overview_png}")
