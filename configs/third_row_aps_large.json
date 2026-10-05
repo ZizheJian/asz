@@ -1,0 +1,11 @@
+[
+  {
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0471_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part1_001.h5.f32"],
+    "data_shape":[128,1813,1558],
+    "rel_eb_list":[0.01,0.001,0.0001],
+    "method_list":["asz","sz3","qoz"],
+    "cleanup_after_each_test":true,
+    "comparison_baseline":"asz",
+    "summary_csv":"results/third_row_aps_cssi_l0471.csv"
+  }
+]

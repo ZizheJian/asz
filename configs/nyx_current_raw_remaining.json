@@ -1,0 +1,17 @@
+[
+  {
+    "data_path_list":[
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/dark_matter_density.f32",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/temperature.f32",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/velocity_x.f32",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/velocity_y.f32",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/velocity_z.f32"
+    ],
+    "data_shape":[1024,1024,1024],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":["asz","sz3","qoz"],
+    "cleanup_after_each_test":true,
+    "comparison_baseline":"asz",
+    "summary_csv":"results/nyx_current_raw_remaining.csv"
+  }
+]
