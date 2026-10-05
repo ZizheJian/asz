@@ -1,0 +1,28 @@
+[
+  {
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf24.bin"],
+    "data_shape":[100,500,500],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":[{"name":"asz_middle_plan_source","compressor":"asz","write_plan":"plans/transfer/isabel_p24.json"}],
+    "cleanup_after_each_test":true
+  },
+  {
+    "data_path_list":[
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf01.bin",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf12.bin",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf36.bin",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf48.bin"
+    ],
+    "data_shape":[100,500,500],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":[
+      {"name":"asz_middle_plan","compressor":"asz","read_plan":"plans/transfer/isabel_p24.json"},
+      {"name":"asz_self_plan","compressor":"asz","write_plan":"plans/transfer/isabel_self/{stem}.json"},
+      "sz3",
+      "qoz"
+    ],
+    "comparison_baseline":"asz_self_plan",
+    "summary_csv":"results/isabel_plan_transfer_pilot.csv",
+    "cleanup_after_each_test":true
+  }
+]

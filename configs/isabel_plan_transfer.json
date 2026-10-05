@@ -9,7 +9,7 @@
       {
         "name": "asz_pf24_self",
         "compressor": "asz",
-        "write_plan": "plans/isabel_pf24.json"
+        "write_plan": "plans/transfer/isabel_p24.json"
       }
     ],
     "cleanup_after_each_test": true
@@ -70,21 +70,18 @@
       {
         "name": "asz_pf24_plan",
         "compressor": "asz",
-        "read_plan": "plans/isabel_pf24.json"
+        "read_plan": "plans/transfer/isabel_p24.json"
       },
       {
         "name": "asz_self_plan",
         "compressor": "asz",
-        "write_plan": "plans/isabel_self/{stem}.json"
+        "write_plan": "plans/transfer/isabel_self/{stem}.json"
       },
-      {
-        "name": "asz_sz3_style_plan",
-        "compressor": "asz",
-        "read_plan": "plans/isabel_sz3_style.json"
-      }
+      "sz3",
+      "qoz"
     ],
     "comparison_baseline": "asz_self_plan",
-    "summary_csv": "csv/isabel_plan_transfer_summary.csv",
+    "summary_csv": "results/isabel_plan_transfer.csv",
     "cleanup_after_each_test": true
   }
 ]
