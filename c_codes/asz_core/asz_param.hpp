@@ -185,55 +185,6 @@ namespace asz
                     block_candidate_t=candidate_t;
             }
 
-            template<typename T2>
-            void copy_from(param_c<T2> &other)
-            {
-                original_data_path=other.original_data_path;
-                compressed_data_path=other.compressed_data_path;
-                decompressed_data_path=other.decompressed_data_path;
-                data_shape=other.data_shape;
-                min_val=other.min_val;
-                max_val=other.max_val;
-                rel_eb=other.rel_eb;
-                abs_eb=other.abs_eb;
-                data.assign(other.data.begin(),other.data.end());
-                zstd_bs_vec=other.zstd_bs_vec;
-                compressed_data.assign(other.compressed_data.begin(),other.compressed_data.end());
-                qb_vec_vec=other.qb_vec_vec;
-                t_int_vec=other.t_int_vec;
-                candidate_predictors=other.candidate_predictors;
-                t_precision=other.t_precision;
-                t_min=other.t_min;
-                t_max=other.t_max;
-                h1_block_sampling_num=other.h1_block_sampling_num;
-                stat_eb_ratio=other.stat_eb_ratio;
-                generate_config_sample_stride=other.generate_config_sample_stride;
-                predictor_family_sample_limit=other.predictor_family_sample_limit;
-                predictor_family_mse_ratio_threshold=other.predictor_family_mse_ratio_threshold;
-                default_slope_invalid_ratio_threshold=other.default_slope_invalid_ratio_threshold;
-                default_slope_fallback=other.default_slope_fallback;
-                default_slope_eb_span=other.default_slope_eb_span;
-                candidate_t.assign(other.candidate_t.begin(),other.candidate_t.end());
-                block_candidate_t.assign(other.block_candidate_t.begin(),other.block_candidate_t.end());
-                t_policy=other.t_policy;
-                block_t_policy=other.block_t_policy;
-                default_slope=other.default_slope;
-                config_generated=other.config_generated;
-                pivot_eb_ratio=other.pivot_eb_ratio;
-                eb_ratio=other.eb_ratio;
-                slope_ratio=other.slope_ratio;
-                max_layer_num=other.max_layer_num;
-                full_predictor_search_layer_num=other.full_predictor_search_layer_num;
-                predictor_vec=other.predictor_vec;
-                block_pivot_ratio=other.block_pivot_ratio;
-                force_quintic=other.force_quintic;
-                auto_select_predictor_family=other.auto_select_predictor_family;
-                report_t_histogram=other.report_t_histogram;
-                block_shape=other.block_shape;
-                pivot_stride=other.pivot_stride;
-                block_num=other.block_num;
-            }
-
             void get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<T> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,
                 uint64_t dist,T neg_2_stat_eb);
             void get_h1_psnr(T &h1,T &psnr,unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,T t,T abs_eb,T stat_eb);

@@ -653,13 +653,15 @@ namespace asz
                 //////// lossless compress qb ////////
                 if (!qb_vec.empty())
                 {
-                    vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
-                    unsigned char *huffman_bs=huffman_bs_vec.data();
                     huffman_encoder_class<qb_t> huffman_encoder;
                     huffman_encoder.preprocess_encode(qb_vec.data(),qb_vec.size());
+                    uint64_t huffman_bs_len=huffman_encoder.save_size()+huffman_encoder.encode_size();
+                    vector<unsigned char> huffman_bs_vec(huffman_bs_len);
+                    unsigned char *huffman_bs=huffman_bs_vec.data();
                     huffman_encoder.save(huffman_bs);
                     huffman_encoder.encode(qb_vec.data(),qb_vec.size(),huffman_bs);
-                    uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
+                    if (huffman_bs!=huffman_bs_vec.data()+huffman_bs_vec.size())
+                        throw runtime_error("Huffman encoded size mismatch");
                     uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
                     vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
                     uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);

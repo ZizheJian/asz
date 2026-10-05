@@ -366,8 +366,16 @@ namespace asz
             throw runtime_error("total_qb_num!=data.size()");
         //////// 编码 ////////
         auto huffman_start_time=chrono::high_resolution_clock::now();
-        vector<unsigned char> huffman_bs_vec(data.size()*sizeof(float)*2);
-        unsigned char *huffman_bs=huffman_bs_vec.data();
+        vector<unsigned char> huffman_bs_vec;
+        auto append_huffman_bytes=[&huffman_bs_vec](uint64_t len)
+        {
+            if (len>numeric_limits<size_t>::max()-huffman_bs_vec.size())
+                throw length_error("Huffman stream is too large");
+            size_t offset=huffman_bs_vec.size();
+            huffman_bs_vec.resize(offset+(size_t)len);
+            return huffman_bs_vec.data()+offset;
+        };
+        unsigned char *huffman_bs=append_huffman_bytes(2*sizeof(T)+1+2*predictor_vec.size());
         memcpy(huffman_bs,&min_val,sizeof(T));
         huffman_bs+=sizeof(T);
         memcpy(huffman_bs,&max_val,sizeof(T));
@@ -382,33 +390,43 @@ namespace asz
         }
         {
             uint64_t len=t_int_vec.size();
+            huffman_bs=append_huffman_bytes(8);
             for (int i=0;i<8;i++)
                 huffman_bs[i]=(len>>(i*8))&0xFF;
-            huffman_bs+=8;
             if (!t_int_vec.empty())
             {
                 huffman_encoder_class<int64_t> huffman_t_int_encoder;
                 huffman_t_int_encoder.preprocess_encode(t_int_vec.data(),t_int_vec.size());
+                uint64_t encoded_size=huffman_t_int_encoder.save_size()+huffman_t_int_encoder.encode_size();
+                huffman_bs=append_huffman_bytes(encoded_size);
+                unsigned char *huffman_end=huffman_bs+encoded_size;
                 huffman_t_int_encoder.save(huffman_bs);
                 huffman_t_int_encoder.encode(t_int_vec.data(),t_int_vec.size(),huffman_bs);
+                if (huffman_bs!=huffman_end)
+                    throw runtime_error("Huffman encoded size mismatch");
             }
         }
         for (uint64_t i=0;i<qb_vec_vec.size();i++)
         {   
             uint64_t len=qb_vec_vec[i].size();
+            huffman_bs=append_huffman_bytes(8);
             for (int j=0;j<8;j++)
                 huffman_bs[j]=(len>>(j*8))&0xFF;
-            huffman_bs+=8;
             if (qb_vec_vec[i].empty())
                 continue;
             huffman_encoder_class<qb_t> huffman_encoder;
             huffman_encoder.preprocess_encode(qb_vec_vec[i].data(),qb_vec_vec[i].size());
+            uint64_t encoded_size=huffman_encoder.save_size()+huffman_encoder.encode_size();
+            huffman_bs=append_huffman_bytes(encoded_size);
+            unsigned char *huffman_end=huffman_bs+encoded_size;
             huffman_encoder.save(huffman_bs);
             huffman_encoder.encode(qb_vec_vec[i].data(),qb_vec_vec[i].size(),huffman_bs);
+            if (huffman_bs!=huffman_end)
+                throw runtime_error("Huffman encoded size mismatch");
         }
         auto huffman_end_time=chrono::high_resolution_clock::now();
 
-        uint64_t huffman_bs_len=huffman_bs-huffman_bs_vec.data();
+        uint64_t huffman_bs_len=huffman_bs_vec.size();
         uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
         zstd_bs_vec.resize(max_zstd_bs_len);
         unsigned char *zstd_bs=zstd_bs_vec.data();

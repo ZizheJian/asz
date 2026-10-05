@@ -257,11 +257,13 @@ class huffman_encoder_class
         };
 
         HuffmanTree tree;
+        uint64_t encoded_bit_count=0;
 
     public:
         void preprocess_encode(const T* const bins,uint64_t num_bin)
         {
             tree.init();
+            encoded_bit_count=0;
             T __minval,__maxval;
             __minval=*bins;
             __maxval=*bins;
@@ -300,6 +302,39 @@ class huffman_encoder_class
                         tree.addElementInVector(i,freq[i]);
             }
             tree.constructHuffmanTree();
+            if (tree.maxval!=1)
+            {
+                if (tree.usemp)
+                    for (uint64_t i=0;i<tree.n;i++)
+                    {
+                        uint64_t symbol=tree.ht[i].c;
+                        encoded_bit_count+=tree.mpfreq.at(symbol)*tree.mpencode.at(symbol).len;
+                    }
+                else
+                    for (uint64_t i=0;i<tree.n;i++)
+                    {
+                        uint64_t symbol=tree.ht[i].c;
+                        encoded_bit_count+=tree.vecfreq[symbol]*tree.veclen[symbol];
+                    }
+            }
+        }
+
+        uint64_t save_size()
+        {
+            assert(tree.isConstructed());
+            uint64_t size=1+sizeof(int64_t)+sizeof(uint64_t)+sizeof(uint64_t);
+            if (tree.n>1)
+            {
+                uint64_t tree_bit_count=tree.n*((uint64_t)tree.mbft+2)-1;
+                size+=(tree_bit_count+7)>>3;
+            }
+            return size;
+        }
+
+        uint64_t encode_size()
+        {
+            assert(tree.isConstructed());
+            return sizeof(uint64_t)+(tree.maxval==1?0:(encoded_bit_count+7)>>3);
         }
 
         uint64_t encode(const T *bins,uint64_t num_bin,unsigned char*& bytes)

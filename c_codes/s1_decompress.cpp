@@ -116,19 +116,8 @@ int main(int argc,char* argv[])
     compressed_data_file.read(reinterpret_cast<char*>(param.zstd_bs_vec.data()),compressed_data_file_size);
     compressed_data_file.close();
 
-    auto param_double=asz::param_c<double>();
-    if (param.rel_eb<1e-5)
-    {
-        param_double.copy_from(param);
-        param_double.generate_config("decompress");
-        param_double.decompress();
-        param.copy_from(param_double);
-    }
-    else
-    {
-        param.generate_config("decompress");
-        param.decompress();
-    }
+    param.generate_config("decompress");
+    param.decompress();
     ofstream decompressed_data_file(param.decompressed_data_path,ios::binary);
     if (!decompressed_data_file)
         throw runtime_error("cannot open decompressed output: "+param.decompressed_data_path);

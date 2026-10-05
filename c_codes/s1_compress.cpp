@@ -255,21 +255,9 @@ int main(int argc,char* argv[])
     if (param.min_val==param.max_val)
         throw runtime_error("max_val==min_val");
     
-    auto param_double=asz::param_c<double>();
-    if (param.rel_eb<1e-5)
-    {
-        param_double.copy_from(param);
-        param_double.abs_eb=param_double.rel_eb*(param_double.max_val-param_double.min_val);
-        prepare_config(param_double,predictor_plan);
-        param_double.compress();
-        param.copy_from(param_double);
-    }
-    else
-    {
-        param.abs_eb=param.rel_eb*(param.max_val-param.min_val);
-        prepare_config(param,predictor_plan);
-        param.compress();
-    }
+    param.abs_eb=param.rel_eb*(param.max_val-param.min_val);
+    prepare_config(param,predictor_plan);
+    param.compress();
     ofstream compressed_data_file(param.compressed_data_path,ios::binary);
     if (!compressed_data_file)
         throw runtime_error("cannot open compressed output: "+param.compressed_data_path);
