@@ -21,7 +21,7 @@ datasets=(
     ("CESM CLDICE t31","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/CLDICE_26x1800x3600.dat","final_eighteen_refresh_cldice_t31.csv","final_eight_middle_cldice_t31.csv"),
     ("CESM T t31","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/T_26x1800x3600.dat","final_eighteen_refresh_cesm_t31.csv","candidate_cesm_t31.csv"),
     ("CESM Q t31","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/Q_26x1800x3600.dat","final_eighteen_cesm_q_t31.csv","final_eighteen_cesm_q_t31.csv"),
-    ("EXAFEL","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/EXAFEL/SDRBENCH-EXAFEL-data-130x1480x1552.f32","final_eighteen_refresh_exafel_3d.csv","candidate_exafel_3d.csv"),
+    ("Nyx baryon density","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32","final_eighteen_nyx_baryon_density.csv","final_eighteen_nyx_baryon_density.csv"),
     ("APS CSSI L0471","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0471_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part1_001.h5.f32","final_eighteen_aps_cssi_l0471.csv","final_eighteen_aps_cssi_l0471.csv"),
     ("APSU004","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_004/APSU_TestData_004.h5.f32","final_eighteen_refresh_apsu004.csv","final_eight_apsu.csv"),
     ("E017","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32","final_eighteen_refresh_e017.csv","final_eight_e017.csv"),

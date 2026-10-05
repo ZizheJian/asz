@@ -36,15 +36,6 @@
     "summary_csv":"results/final_eighteen_refresh_cesm_t31.csv"
   },
   {
-    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/EXAFEL/SDRBENCH-EXAFEL-data-130x1480x1552.f32"],
-    "data_shape":[130,1480,1552],
-    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
-    "method_list":["asz"],
-    "cleanup_after_each_test":true,
-    "comparison_baseline":"asz",
-    "summary_csv":"results/final_eighteen_refresh_exafel_3d.csv"
-  },
-  {
     "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf24.bin"],
     "data_shape":[100,500,500],
     "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
