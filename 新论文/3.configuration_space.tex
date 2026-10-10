@@ -1,0 +1,35 @@
+\section{Reshaping the Predictor Configuration Space}
+\label{sec:configuration-space}
+
+\subsection{Parameterized Predictor Families}
+
+% TODO: 用P=(S,w)统一表示由stencil S和conditional coefficients w共同定义的predictor。
+% TODO: 分别定义1D4R、2D4R和1D6R的reference locations、orientations和参数化方式。
+% TODO: 说明比较stencil families时必须先为每个family选择其较优coefficients。
+
+\subsection{Efficient Coefficient Evaluation}
+
+% TODO: 定义tangent-based BR--PSNR目标以及用于coefficient selection的H1--PSNR proxy。
+% TODO: 推导1D4R的e(t)=At+B并说明如何复用coefficient-independent statistics。
+% TODO: 在本节直接验证真实BR--PSNR、H1--PSNR、H1、PSNR、MSE和MAE的ranking agreement。
+% TODO: 在本节直接比较逐candidate计算与复用A/B statistics的时间。
+
+\subsubsection{Multimodal Coefficient Choices}
+
+% TODO: 展示按每个数据归一化后再跨数据汇总的coefficient-selection histogram。
+% TODO: 解释最优coefficient呈多个峰，而不是集中在单一interpolation coefficient附近。
+% TODO: 验证两个可能机制：不同局部平滑度对应不同predictor regimes；量化使目标函数关于coefficient呈分段变化。
+% TODO: 只有在机制和跨数据稳定性得到验证后，才用这些峰构造较小的online candidate set。
+
+\subsection{Predictor-Family Selection and Pruning}
+
+% TODO: 在各family都经过coefficient tuning后比较1D4R、2D4R和1D6R。
+% TODO: 说明为什么删除QoZ使用的2D4R是主动剪枝，而不是遗漏实现。
+% TODO: 说明何时保留higher-order predictor，并给出相应的局部design-space evidence。
+% TODO: 在本节直接比较固定SZ3/QoZ coefficients、tunable 1D4R、2D4R和higher-order predictors。
+
+\subsection{Quantization-Bin Serialization Order}
+
+% TODO: 说明QB order不改变预测值和重建误差，却会改变Huffman bitstream的局部结构和Zstd结果。
+% TODO: 区分cache-friendly computation order与compression-friendly serialization order。
+% TODO: 在本节直接比较固定与tuned QB serialization orders。

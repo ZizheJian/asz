@@ -1,0 +1,26 @@
+\section{Efficient Joint Search and ASZ}
+\label{sec:asz}
+
+\subsection{Layer-Wise Joint Configuration}
+
+% TODO: 定义每层配置c_l=(S_l,w_l,O_l)以及完整plan C=(c_1,...,c_L)。
+% TODO: 分析直接联合搜索所有层时的组合复杂度。
+
+\subsection{Reverse-Greedy Plan Generation}
+
+% TODO: 说明如何逐层固定高影响决策、为什么不回溯以及如何评价direction/order candidates。
+% TODO: 将reverse greedy描述为降低联合搜索维数，而不是删除最终配置维度。
+% TODO: 在本节直接比较固定SZ3 cycle、QoZ grouped sequence、forward greedy和reverse greedy。
+
+\subsection{Hierarchical Tuning Granularity}
+
+% TODO: 区分可写入dataset-level plan的layer decisions和仍需online选择的block-level coefficients。
+% TODO: 只使用抽象candidate sets和layer limit；具体经验参数放入实验设置表。
+
+\subsection{Compression and Decompression}
+
+% TODO: 给出完整压缩/解压流程、plan使用方式以及computation/serialization order的解耦。
+
+\subsection{Algorithm and Complexity}
+
+% TODO: 给出伪代码、搜索复杂度、运行复杂度和plan storage overhead。

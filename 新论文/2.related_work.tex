@@ -1,0 +1,43 @@
+\section{Related Work}
+\label{sec:related-work}
+
+\subsection{Data-Adaptive Compression in Database Systems}
+\label{sec:related-work:database}
+
+Database compression adapts encoding choices to different value distributions and local patterns. BtrBlocks~\cite{kuschewski2023btrblocks} uses sampling to select encoding schemes and cascades for columnar data lakes. ALP~\cite{afroozeh2023alp} adapts floating-point encoding configurations through sampling. These systems focus on lossless compression, whereas ASZ selects prediction and encoding configurations for error-bounded lossy compression.
+
+\subsection{Error-Bounded Lossy Compression}
+\label{sec:related-work:compression}
+
+Error-bounded lossy compression supports scientific data management by reducing storage requirements and data movement through I/O and network transfers while controlling reconstruction error~\cite{cappello2019use,di2025survey}.
+
+Prediction-based compressors such as SZ3~\cite{zhao2021optimizing,liang2022sz3} and QoZ~\cite{liu2022dynamic,liu2024high} predict data values, often through weighted combinations of neighboring values, and encode the quantized prediction errors. Transform-based compressors such as ZFP~\cite{lindstrom2014fixed}, SPERR~\cite{li2023lossy}, and MGARD~\cite{gong2023mgard} use block transforms, wavelets, and multilevel decompositions, respectively.
+
+\subsection{Tuning Dimensions}
+\label{sec:related-work:dimensions}
+
+Within prediction-based compression, tuning efforts are mainly focused on prediction stencils and directions. SZ3, QoZ, and GPU-based cuSZ-Hi~\cite{wu2025boosting} tune the direction of interpolation-based prediction. Stencil choices include Lorenzo prediction of different orders spanning different numbers of spatial dimensions in SZauto~\cite{zhao2020significantly}, and linear or cubic interpolation in SZ3. QoZ and cuSZ-Hi further select among interpolation formulas and one-dimensional or multidimensional prediction. Dimension freezing in QoZ and dimension fusion in CliZ~\cite{jian2024cliz} also restrict prediction along selected dimensions. Regarding selection granularity, QoZ and cuSZ-Hi select configurations per interpolation level, while QoZ also supports block-wise selection. Other tuned settings include block size and the number of quantization bins in SZauto, level-wise error bounds in QoZ, and partition-wise error bounds in Jin et al.~\cite{jin2022improving}.
+
+Tuning also extends to selecting or combining prediction and transform methods. SZ2~\cite{liang2018error} and SZauto select between Lorenzo and regression predictors at the block level, while Jin et al. also consider interpolation in predictor selection. Liang et al.~\cite{liang2019significantly} and FAZ~\cite{liu2023faz} incorporate transform methods into this selection, while also tuning encoding strategies and other configuration choices.
+
+At the entropy-coding stage, CliZ tunes whether to group quantization bins based on domain-specific patterns in their distributions for separate Huffman encoding. For subsequent lossless compression, Liu et al.~\cite{liu2021improving} compare backends for SZ2.1 and recommend Zstd~\cite{ycollet2021zstd} for its balance of compression ratio and compression/decompression speed on the evaluated datasets. Motivated by these findings, ASZ fixes its lossless pipeline to Huffman coding followed by Zstd and excludes lossless module selection from its tuning space.
+
+\subsection{Candidate Evaluation}
+\label{sec:related-work:evaluation}
+
+To compare the configuration choices reviewed above, existing tuning methods use three types of evaluation criteria.
+
+\begin{enumerate}
+\item \emph{Compression-Based Evaluation.} Methods such as SZ3, SZauto, QoZ, CliZ, and FAZ run the compressor, often on sampled data, and directly measure the resulting compression ratio, with decompression and quality measurement when required. FRaZ~\cite{underwood2020fraz} and OptZConfig~\cite{underwood2022optzconfig} also use compression-based evaluation, but focus on meeting user-specified compression-ratio or quality requirements.
+
+\item \emph{Compression-Result Estimation.} These methods estimate compression ratio or reconstruction quality instead of directly measuring the complete compression result. For example, Liang et al. estimate coefficient-encoding sizes for their transform-based predictor, using discrete entropy for SZ-based encoding and bit counts for bit-plane encoding. Similarly, Jin et al. use the discrete entropy of quantized prediction errors to approximate Huffman coding size. To account for subsequent lossless compression, they further adjust this approximation based on the fraction quantized to zero. They also derive quality metrics such as PSNR from the estimated reconstruction-error distribution and use the results to guide predictor and error-bound selection.
+
+\item \emph{Alternative Evaluation Criteria.} These methods select configurations using other criteria without explicitly estimating the final compression ratio or reconstruction quality. Common criteria include mean squared prediction error (MSE) and mean absolute prediction error (MAE). SZ2, SZauto, cuSZ-Hi, and QoZ use prediction-error criteria to select predictors or interpolation configurations. QoZ also uses MSE to determine multidimensional interpolation weights and identify a candidate dimension for freezing.
+\end{enumerate}
+
+\subsection{Cross-File Configuration Reuse}
+\label{sec:related-work:reuse}
+
+Scientific datasets often contain related files, such as consecutive time steps of the same physical field or outputs from the same simulation model. When these files have compatible data layouts, similar value distributions, and comparable spatial correlations, configurations selected for one file may remain effective for others. Reusing configurations across such files amortizes tuning cost and avoids repeating the search for every input.
+
+FRaZ and OptZConfig support reuse by first testing a previous or supplied configuration and skipping further search if it meets the current requirements. CliZ takes an offline--online approach, separating pipeline selection from compression and reusing selected pipelines across climate fields or snapshots within the same model.
