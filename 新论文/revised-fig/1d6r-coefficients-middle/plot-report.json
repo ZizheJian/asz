@@ -1,0 +1,66 @@
+{
+  "input_directory": "/home/x-zjian1/asz/results/1d6r-coefficients-three-20261011",
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/1d6r-coefficients-three-20261011/selected.csv": "b4f3027035e784b9b8496916ad9497a0c946b64ace1270747d8564fd313d341e",
+    "/home/x-zjian1/asz/results/1d6r-coefficients-three-20261011/report.json": "5b985246324bccf0dc68ccb0c0ed81e17c7970d5b601f3fab24c2c7eeef75bf7"
+  },
+  "plot_source_sha256": "3f24d9bf0ec195f8244ebda6760710c461b9412ca50572599d1cfe37cfcb389f",
+  "layout_source_sha256": "c4f4466efc2c491b7e053b17286417f47c7b560378c0ff43f2955491200dc4e3",
+  "datasets": {
+    "aramco": {
+      "coefficient_curves": 42,
+      "points_per_curve": 5
+    },
+    "letkf": {
+      "coefficient_curves": 42,
+      "points_per_curve": 5
+    },
+    "qmcpack": {
+      "coefficient_curves": 42,
+      "points_per_curve": 5
+    }
+  },
+  "selection": "fixed 1D6R coefficient pair; independently select one of nine measured direction/QB-order configurations at each error bound; no coefficient is removed before selection",
+  "flat_reference_policy": "expand the symmetric error-bound index neighborhood until its averaged endpoints differ, only for a fully flat original reference with unequal current candidate bit rates; still reject a fully flat dataset or nonmonotone expanded reference",
+  "expanded_references": [
+    {
+      "dataset": "letkf",
+      "rel_eb": 0.1,
+      "slope_left_eb": 0.1,
+      "slope_right_eb": 0.001
+    }
+  ],
+  "dimensions_inches": [
+    3.5,
+    1.1339904245639336
+  ],
+  "variant_dimensions_inches": {
+    "main": [
+      3.5,
+      1.1339904245639336
+    ],
+    "-detail": [
+      3.5,
+      1.1339904245639336
+    ]
+  },
+  "panel_width_height_ratio": 1.618,
+  "font_size_pt": 8,
+  "curves": "one fixed coefficient pair per curve; exact selected measured coordinates, connected in error-bound order; no smoothing, markers, coordinate jitter or synthesized endpoints",
+  "best_per_error_bound": "dashed curve may change coefficient pair; it is not another fixed-coefficient setting or an interpolated envelope",
+  "detail": "the same complete curves, clipped to a view containing the last two quintic and best-per-bound observations; no new measurement or reselection",
+  "products": [
+    "/home/x-zjian1/asz/\u65b0\u8bba\u6587/revised-fig/1d6r-coefficients-middle/iv-1d6r-coefficients.pdf",
+    "/home/x-zjian1/asz/\u65b0\u8bba\u6587/revised-fig/1d6r-coefficients-middle/iv-1d6r-coefficients.png",
+    "/home/x-zjian1/asz/\u65b0\u8bba\u6587/revised-fig/1d6r-coefficients-middle/iv-1d6r-coefficients-detail.pdf",
+    "/home/x-zjian1/asz/\u65b0\u8bba\u6587/revised-fig/1d6r-coefficients-middle/iv-1d6r-coefficients-detail.png"
+  ],
+  "paper_placeholder": false,
+  "style_encoding": "fixed quintic: red solid; best per error bound: black dashed; all other coefficient pairs: identical light-gray thin solid",
+  "legend_labels": [
+    "Fixed quintic",
+    "Best per error bound",
+    "Other coefficients"
+  ],
+  "shared_xlabel_position": "below the subfigure captions"
+}

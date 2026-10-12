@@ -1,15 +1,98 @@
-\section{Reshaping the Predictor Configuration Space}
+\section{Variable-Coefficient Interpolation and Quantization-Bin Serialization}
 \label{sec:configuration-space}
 
-\subsection{Parameterized Predictor Families}
+This section reduces ASZ's predictor search space and develops efficient evaluation of the remaining choices. Our comparisons favor coefficient-tunable 1D4R over 2D4R and identify fixed-quintic 1D6R as a complementary predictor; ASZ therefore retains the two one-dimensional predictors and excludes 2D4R. We also examine coefficient evaluation, quantization-bin serialization, and sample-based evaluation of the remaining tuning dimensions.
 
-% TODO: 用P=(S,w)统一表示由stencil S和conditional coefficients w共同定义的predictor。
-% TODO: 分别定义1D4R、2D4R和1D6R的reference locations、orientations和参数化方式。
-% TODO: 说明比较stencil families时必须先为每个family选择其较优coefficients。
+\subsection{Variable-Coefficient Predictors}
+\label{sec:configuration-space:predictors}
+
+SZ3's cubic interpolation is derived to reproduce a local cubic polynomial from four reference values. In practice, however, scientific fields can depart from this model through measurement noise or nonpolynomial variation. The predictor also uses reconstructed reference values, which may differ from the originals because of quantization. For example, when outer references are less informative, two-point linear interpolation avoids relying on them. Four-point equal-weight averaging is also a candidate when detailed local fitting is unreliable. Consequently, coefficients derived for polynomial interpolation may not be the most suitable for compression.
+
+We therefore consider using variable-coefficient predictors. For example, we generalize SZ3's cubic interpolation to the following one-dimensional four-reference (1D4R) form, using local coordinates centered on the target:
+\begin{equation}
+\label{eq:configuration-space:1d4r-prediction}
+p(t)=(\tfrac14-t)(\hat x_{-3h}+\hat x_{3h})+(\tfrac14+t)(\hat x_{-h}+\hat x_h),
+\end{equation}
+where $h$ is the spacing from the target to its nearest references. We assign equal coefficients to references symmetric about the target and require the four coefficients to sum to one so that constant-valued data are predicted exactly. The predictor recovers SZ3's cubic interpolation at $t=5/16$, reduces to SZ3's linear interpolation at $t=1/4$, and becomes four-point equal-weight averaging at $t=0$. We select $t$ according to rate--distortion performance.
+
+In addition, we consider variable-coefficient two-dimensional four-reference (2D4R) and one-dimensional six-reference (1D6R) predictors. The 2D4R predictor follows QoZ's two-dimensional linear prediction, which combines linear predictions along two axes~\cite{liu2024high}. Using local coordinates with the target at $(0,0)$, we write
+\begin{equation}
+\label{eq:configuration-space:2d4r-prediction}
+p(t)=(\tfrac14+t)(\hat x_{-h_1,0}+\hat x_{h_1,0})+(\tfrac14-t)(\hat x_{0,-h_2}+\hat x_{0,h_2}),
+\end{equation}
+where $h_1$ and $h_2$ are the distances from the target to its references along the first and second coordinate axes, respectively. The coefficients control the relative contributions of the two directional predictions.
+
+The 1D6R predictor generalizes six-point quintic interpolation by allowing its coefficients to vary. With the target again at the local origin, we write
+\begin{equation}
+\label{eq:configuration-space:1d6r-prediction}
+\begin{aligned}
+p(t_1,t_2)&=(\tfrac16-t_1)(\hat x_{-5h}+\hat x_{5h})\\
+&\quad+(\tfrac16-t_2)(\hat x_{-3h}+\hat x_{3h})\\
+&\quad+(\tfrac16+t_1+t_2)(\hat x_{-h}+\hat x_h),
+\end{aligned}
+\end{equation}
+
+% TODO: 核实六点五次插值对应的既有压缩器及版本。旧稿归属于QoZ，但当前QoZ实现中的六点公式和reference位置均不同，不能直接沿用该归属。
+% TODO: 补充三种predictor families的reference layouts及orientations示意图。
+
+\subsection{Predictor Selection and Pruning}
+\label{sec:configuration-space:families}
+
+In this section, we compare 1D4R with 2D4R and 1D6R to reduce the predictor search space while retaining competitive rate--distortion performance. The comparisons suggest excluding 2D4R, retaining coefficient-tunable 1D4R and using fixed-quintic 1D6R.
+
+\subsubsection{1D4R versus 2D4R}
+
+We first compare the variable-coefficient predictors 1D4R and 2D4R. Each predictor contributes three curves: one per coordinate axis for 1D4R and one per coordinate plane for 2D4R. As shown in Fig.~\ref{fig:configuration-space:1d4r-vs-2d4r}, the best 1D4R orientations provide a better overall rate--distortion trade-off on all three datasets, motivating the exclusion of 2D4R.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\columnwidth]{revised-fig/raster300/iv-1d4r-vs-2d4r-legacy-middle.png}
+\caption{Rate--distortion comparison of 1D4R and 2D4R. Each curve represents one orientation after selecting the best coefficients. We observe a better overall rate--distortion trade-off with 1D4R in all three cases.}
+\label{fig:configuration-space:1d4r-vs-2d4r}
+\end{figure}
+
+One possible explanation lies in how the two predictors correct their underlying linear predictions. In 1D4R, outer references provide a higher-order correction to inner two-point linear interpolation. Adjustable coefficients control its strength or disable it at $t=1/4$. The correction may remain consistently useful or useless within a local region. By contrast, 2D4R is mathematically equivalent to a weighted average of two linear predictions, one along each axis. Their errors may cancel at one target but not at a nearby target, limiting the spatial extent over which the same blending weights remain effective.
+
+The observed advantage concerns coefficient-tunable predictors. It does not contradict QoZ's use of multidimensional interpolation, which combines predefined per-axis linear or cubic interpolation formulas. QoZ can adapt the directional blending weights, but it does not perform the rate--distortion-guided search over per-axis reference coefficients considered here.
+
+\subsubsection{1D4R versus 1D6R}
+
+We next compare 1D4R and 1D6R to assess the benefit of two additional references and examine 1D6R's coefficient choices.
+
+Figure~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the two predictors. Each predictor has three prediction directions, one along each coordinate axis, and therefore contributes three curves to each plot. Their rate--distortion performance is nearly identical in most cases, while 1D6R offers advantages on some data files.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\columnwidth]{revised-fig/raster300/iv-1d4r-vs-1d6r-legacy-middle.png}
+\caption{Rate--distortion comparison of 1D4R and 1D6R. Each predictor contributes three curves, one per axis. The two predictors perform nearly identically in (a)--(c), whereas 1D6R offers advantages in (d)--(f).}
+\label{fig:configuration-space:1d4r-vs-1d6r}
+\end{figure}
+
+To further investigate the datasets on which 1D6R offers an advantage over 1D4R, we compare the rate--distortion curves of 1D6R under different coefficient settings, as shown in Fig.~\ref{fig:configuration-space:1d6r-coefficients}. Each curve retains one coefficient pair after selecting its best orientation at each error bound.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\columnwidth]{revised-fig/raster300/iv-1d6r-coefficients.png}
+\caption{Rate--distortion curves for 42 fixed 1D6R coefficient pairs. Fixed quintic interpolation is among the strongest settings overall.}
+\label{fig:configuration-space:1d6r-coefficients}
+\end{figure}
+
+We next explain why coefficient tuning offers less benefit for 1D6R than for 1D4R. In both predictors, tuning controls a higher-order correction to a lower-order interpolation formula. For 1D4R, its single parameter can continuously weaken the cubic correction and disable it entirely, recovering two-point linear interpolation when the outer references are unreliable. In fixed-quintic 1D6R, however, each of the two additional outermost references has a weight of only about $1.2\%$ and therefore provides only a small correction to cubic interpolation. Small coefficient changes have little effect, whereas large changes eliminate its ability to cancel the higher-order error left by cubic interpolation. Consistent with this narrow useful tuning range, Fig.~\ref{fig:configuration-space:1d6r-coefficients} shows little gain from tuning 1D6R's two coefficients. We therefore tune 1D4R but retain fixed-quintic coefficients for 1D6R.
+
+% TODO: 最佳系数来自指定的有限网格，而非所有实数系数的全局最优。正式报告各family的网格范围和步长。
+% 第一组实测结果：results/predictor-family-legacy-middle-21244405。单轮、固定原始参考值、stencil-specific目标集合；机制段落是可能的解释，不是1D4R必然胜出的理论证明。
+% 第二组实验：Fig. 3为单栏两行三列。上排Isabel Pf24、CESM T t31、LETKF QV (log10)，下排Aramco 1800、LETKF PRES、QMCPACK orbital 0。使用results/predictor-family-4r6r-middle-21250842-recovered、results/predictor-family-4r6r-supplement-21274865-recovered及results/predictor-family-4r6r-qmcpack-orbital0-20261011。CLDICE原始测量仍保留，未计入当前六图；上排三例接近重合，Aramco与QMCPACK明显受益、PRES较温和。QMCPACK依据已有原始参考MSE选择为收益案例，因此此图不能用于估计总体收益出现频率。
+% 固定系数比较：results/1d6r-coefficients-three-20261011，每个数据42个系数各选5个方向/QB顺序最优点。QMCPACK为新增完整穷举，其他数据复用原始CSV。只有PRES的0.1端点局部参考完全重合且各轴码率不等，显式--expand-flat-reference扩至0.1与0.001的平均RD点，其他评分参考不变；具体端点及原CSV哈希保存在CSV/JSON。图4红线为固定五次系数，黑虚线为各误差界独立选择系数的最优点连线，并非另一个固定系数或插值后的包络。QMCPACK的5个误差界均选择固定五次系数，按三个方向分别选择时15个点也均为固定五次系数。
+% TODO: PRES在1e-5下过渡系数(247/1536,379/1536)、x方向、xx2优于固定五次系数：BR=0.043723358585859、PSNR=113.0988287234236；固定五次最佳BR=0.053443181818182、PSNR=109.41677733253238，甚至被1D4R的BR=0.051559848484848、PSNR=112.171002012328898压倒。因此结论为固定五次系数总体表现较好，不能写“总是最优”；仍需量化固定系数的完整压缩损失。
+% TODO: results/predictor-family-paper-refined与revised-fig/predictor-family-refined为共享目标、原始参考值固定的采样单轮诊断，不能当作完整ASZ压缩器结果。历史完整压缩器选择器验证的来源为results/predictor_family_rd_extremes_*.csv，仍需扩展数据和误差界检验泛化。
+% 第二组候选使用transition模式的42组有理数参数，覆盖全部13组1D4R；shared1d模式统一四点和六点预测的目标位置。结论依据实际RD结果，不能由ASZ选择记录代替。
 
 \subsection{Efficient Coefficient Evaluation}
+\label{sec:configuration-space:coefficient-evaluation}
 
-% TODO: 定义tangent-based BR--PSNR目标以及用于coefficient selection的H1--PSNR proxy。
+Selecting coefficients for compression is not equivalent to fitting a local polynomial or minimizing prediction error. Quantization and data-dependent lossless encoding make the rate--distortion objective difficult to optimize in closed form. Full compression for every candidate would also be costly. We therefore develop a proxy for candidate comparison and reuse coefficient-independent statistics to reduce evaluation work.
+
+% TODO: 在评价指标定义处集中说明真实BR--PSNR评分及斜率估计，并定义用于coefficient selection的H1--PSNR proxy。
 % TODO: 推导1D4R的e(t)=At+B并说明如何复用coefficient-independent statistics。
 % TODO: 在本节直接验证真实BR--PSNR、H1--PSNR、H1、PSNR、MSE和MAE的ranking agreement。
 % TODO: 在本节直接比较逐candidate计算与复用A/B statistics的时间。
@@ -21,15 +104,18 @@
 % TODO: 验证两个可能机制：不同局部平滑度对应不同predictor regimes；量化使目标函数关于coefficient呈分段变化。
 % TODO: 只有在机制和跨数据稳定性得到验证后，才用这些峰构造较小的online candidate set。
 
-\subsection{Predictor-Family Selection and Pruning}
-
-% TODO: 在各family都经过coefficient tuning后比较1D4R、2D4R和1D6R。
-% TODO: 说明为什么删除QoZ使用的2D4R是主动剪枝，而不是遗漏实现。
-% TODO: 说明何时保留higher-order predictor，并给出相应的局部design-space evidence。
-% TODO: 在本节直接比较固定SZ3/QoZ coefficients、tunable 1D4R、2D4R和higher-order predictors。
-
 \subsection{Quantization-Bin Serialization Order}
 
 % TODO: 说明QB order不改变预测值和重建误差，却会改变Huffman bitstream的局部结构和Zstd结果。
 % TODO: 区分cache-friendly computation order与compression-friendly serialization order。
 % TODO: 在本节直接比较固定与tuned QB serialization orders。
+
+\subsection{Sample-Based Evaluation of Remaining Choices}
+\label{sec:configuration-space:sample-evaluation}
+
+For choices without a dedicated fast criterion, such as prediction direction and QB serialization order, ASZ uses sample-based trial encoding during plan generation. For each available direction--order candidate, we first select its interpolation coefficient using the coefficient-evaluation proxy. At the current layer's spacing and error bound, we predict and quantize sampled targets using original reference values, serialize the resulting QBs in the candidate order, and encode them with Huffman followed by Zstd. We rank candidates using the measured encoded size per sampled target and the sampled reconstruction PSNR under the layer-specific rate--distortion slope. This trial evaluates one sampled layer; Section~\ref{sec:asz} describes how these choices form the multilevel prediction plan.
+
+MSE and MAE alone do not account for encoded size, while H1--PSNR omits sequence structure exploited by Zstd. In particular, for a fixed target set and coefficients, changing only QB serialization leaves the predictions, reconstructed values, and QB histogram unchanged. Consequently, these criteria cannot distinguish such candidates, even though their Zstd-compressed sizes can differ. Sample-based trial encoding captures this order dependence without repeating a full multilevel compression for every candidate.
+
+% TODO: 若篇幅允许，增加紧凑的ranking表或图，在各数据集和error bound下比较H1--PSNR、预测MSE、预测MAE和sample-based trial encoding选择方向的准确性及RD损失，并报告各判据的评估时间。方向选择是否失效须由实测支持，不能由QB顺序的不变性直接推出。
+% TODO: QB-order对照需固定目标集合、方向和系数，只改变排列；同时报告相同的H1/PSNR/MSE/MAE和实测编码大小。并列排名单独报告，不将无法区分记成正确。验证sample-based判据时，另用共享其他设置的完整压缩结果作为每个数据集--error-bound案例的参考，区分单层采样试编码和完整多层码流。
