@@ -27,9 +27,13 @@ where $R_X=\max_i x_i-\min_i x_i$ is the original value range of a nonconstant f
 
 Different compressors or configurations can achieve different PSNR values under the same error bound. We therefore assess compression effectiveness by considering bit rate and PSNR together. A better rate--distortion result has a lower bit rate at the same PSNR, or a higher PSNR at the same bit rate. Varying the error bound produces a rate--distortion curve that shows this trade-off across quality levels.
 
-To improve compression effectiveness, we consider tuning compression configurations for the given input data and error bound. Configuration tuning selects a configuration from a space of candidates. Accurate selection requires candidate evaluations that reliably reflect rate--distortion performance.
+To improve compression effectiveness, we consider tuning compression configurations for the given input data and error bound. Configuration tuning selects a configuration from a space of candidates. We assess a tuning method along three aspects.
 
-Tuning also incurs computational overhead, motivating efficient candidate evaluation and search. Reusing a configuration across files can avoid repeated configuration search and amortize preprocessing costs. However, its compression ratio and reconstruction quality may differ from those achieved with a configuration selected specifically for the new input. We therefore recommend experimentally assessing its generalizability rather than assuming that it remains effective across all related files.
+First, selection accuracy. Candidate evaluations must reliably reflect rate--distortion performance. We measure accuracy against the result of exhaustively compressing with every candidate, or against another designated reference, using two quantities: the fraction of cases in which the selected candidate matches the reference choice, and the loss in compression effectiveness, such as the increase in bit rate at equal PSNR, when it does not.
+
+Second, tuning cost. Evaluating and searching more candidates raises the computational overhead of tuning, which motivates efficient candidate evaluation and search.
+
+Third, reusability across files. Reusing a configuration across related files, such as the time steps of one simulation, avoids repeating the search and amortizes preprocessing cost. Two questions govern how far this can go. The first is the range over which one fixed configuration remains usable, for example the span of time steps, and how much compression effectiveness it loses at most within that range compared with a configuration selected for each file. The second is how many files are needed to generate the configuration so that this loss stays acceptable. This number determines how much of the preprocessing time the remaining files can amortize.
 
 \subsection{The SZ Compression Pipeline}
 \label{sec:background:pipeline}
