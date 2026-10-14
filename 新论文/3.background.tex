@@ -27,7 +27,7 @@ where $R_X=\max_i x_i-\min_i x_i$ is the original value range of a nonconstant f
 
 Different compressors or configurations can achieve different PSNR values under the same error bound. We therefore assess compression effectiveness by considering bit rate and PSNR together. A better rate--distortion result has a lower bit rate at the same PSNR, or a higher PSNR at the same bit rate. Varying the error bound produces a rate--distortion curve that shows this trade-off across quality levels.
 
-To improve compression effectiveness, we consider tuning compression configurations for the given input data and error bound. Configuration tuning selects a configuration $c$ from a candidate space $\mathcal C$. Accurate selection requires candidate evaluations that reliably reflect rate--distortion performance.
+To improve compression effectiveness, we consider tuning compression configurations for the given input data and error bound. Configuration tuning selects a configuration from a space of candidates. Accurate selection requires candidate evaluations that reliably reflect rate--distortion performance.
 
 Tuning also incurs computational overhead, motivating efficient candidate evaluation and search. Reusing a configuration across files can avoid repeated configuration search and amortize preprocessing costs. However, its compression ratio and reconstruction quality may differ from those achieved with a configuration selected specifically for the new input. We therefore recommend experimentally assessing its generalizability rather than assuming that it remains effective across all related files.
 
