@@ -25,7 +25,7 @@ We first summarize the configurations commonly tuned by existing prediction-base
 
 \item \emph{Prediction Axes.} Compressors such as SZ3, QoZ, cuSZ-Hi, and CliZ~\cite{jian2024cliz} tune how prediction is applied across spatial axes. QoZ and CliZ can also avoid prediction along less smooth axes throughout the compression procedure.
 
-\item \emph{Prediction Coefficients.} Prediction coefficients are the weights assigned to the neighboring values in a stencil. SZ3 uses one fixed coefficient set for linear interpolation and one for cubic interpolation, while QoZ and cuSZ-Hi each provide an additional coefficient set for cubic interpolation. These compressors select among predefined sets rather than directly tuning individual coefficients. For multidimensional prediction, QoZ gives larger weights to axes with smaller prediction errors.
+\item \emph{Prediction Coefficients.} Prediction coefficients are the weights assigned to the neighboring values in a stencil. SZ3 uses one fixed coefficient set for linear interpolation and one for cubic interpolation, while QoZ and cuSZ-Hi both provide the same additional coefficient set for cubic interpolation. These compressors select among predefined sets rather than directly tuning individual coefficients. For multidimensional prediction, QoZ gives larger weights to axes with smaller prediction errors.
 
 \item \emph{Quantization.} Quantization converts each prediction error into an integer code. SZauto tunes the number of codes. QoZ and cuSZ-Hi use different error bounds for different prediction rounds, while Jin et al.~\cite{jin2022improving} use different error bounds for different data partitions.
 
