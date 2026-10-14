@@ -31,7 +31,7 @@ To improve compression effectiveness, we consider tuning compression configurati
 
 First, selection accuracy. Candidate evaluations must reliably reflect rate--distortion performance. We measure accuracy against the result of exhaustively compressing with every candidate, or against another designated reference, using two quantities: the fraction of cases in which the selected candidate matches the reference choice, and the loss in compression effectiveness, such as the increase in bit rate at equal PSNR, when it does not.
 
-Second, tuning cost. Evaluating and searching more candidates raises the computational overhead of tuning, which motivates efficient candidate evaluation and search.
+Second, tuning cost. Evaluating and searching more candidates raises the computational overhead of tuning, which motivates efficient candidate evaluation and search. Because the tuning decisions depend on one another, the time spent on an individual decision is hard to isolate. We therefore report the total preprocessing time together with the time complexity of the search.
 
 Third, reusability across files. Reusing a configuration across related files, such as the time steps of one simulation, avoids repeating the search and amortizes preprocessing cost. Two questions govern how far this can go. The first is the range over which one fixed configuration remains usable, for example the span of time steps, and how much compression effectiveness it loses at most within that range compared with a configuration selected for each file. The second is how many files are needed to generate the configuration so that this loss stays acceptable. This number determines how much of the preprocessing time the remaining files can amortize.
 
