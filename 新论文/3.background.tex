@@ -50,14 +50,14 @@ q_i=\operatorname{round}\!\left(\frac{e_i}{\Delta}\right),\qquad \hat x_i=p_i+\D
 \end{equation}
 Choosing $\Delta\leq2\epsilon_{\mathrm{abs}}$ ensures $|x_i-\hat x_i|\leq\epsilon_{\mathrm{abs}}$ in exact arithmetic.
 
-The prediction and quantization steps above are repeated across the grid in a coarse-to-fine order. Starting from a small set of known values, the compressor progressively predicts and reconstructs additional grid points, making them available as references for subsequent predictions and thereby reducing the spacing between reference points.
+The prediction and quantization steps above are repeated across the grid in a coarse-to-fine order. Starting from a small set of known values, the compressor progressively predicts and reconstructs additional grid points, making them available as references for subsequent predictions and thereby reducing the spacing between reference points. We call one pass that predicts a set of targets along a single direction at a given spacing a \emph{prediction round}. A round uses only values reconstructed in earlier rounds.
 
-Finally, the quantization-bin indices are losslessly encoded using Huffman coding followed by Zstd.
+Finally, the quantization-bin (QB) indices are losslessly encoded using Huffman coding followed by Zstd. The QB indices are presented to the encoder in the order in which the targets are visited, so the serialization order is a by-product of the traversal rather than a separate choice.
 
 \subsection{Interpolation and Tuning in SZ3 and QoZ}
 \label{sec:background:interpolation}
 
-Figure~\ref{fig:background:stencils} illustrates representative reference layouts. The prediction direction specifies the spatial axis along which a one-dimensional stencil is applied. For an interior target at position $i$ along this axis, let $h$ denote the current spacing from the target to its nearest references. The basic linear and cubic predictors in SZ3 use
+SZ3 and QoZ use multilevel interpolation as their predictor. Figure~\ref{fig:background:stencils} illustrates representative reference layouts. The prediction direction specifies the spatial axis along which a one-dimensional stencil is applied. For an interior target at position $i$ along this axis, let $h$ denote the current spacing from the target to its nearest references. The basic linear and cubic predictors in SZ3 use
 \begin{equation}
 \label{eq:background:interpolation}
 \begin{aligned}
@@ -75,17 +75,24 @@ Linear interpolation uses two references, whereas cubic interpolation uses four.
 \label{fig:background:stencils}
 \end{figure}
 
-For multidimensional data, SZ3's basic interpolation scheme applies one-dimensional predictors in successive directional rounds. An axis permutation determines the order of these rounds among the rounds that share one spacing and is repeated as the spacing decreases. Changing the permutation changes which axis predicts each group of targets and which reconstructed values are available to later rounds. Sampled compression tests select the interpolation formula and axis ordering, but the coefficients within each formula remain fixed.
+\paragraph{SZ3.} For three-dimensional data, SZ3 applies a one-dimensional predictor along each axis in turn, so every spacing is covered by three rounds. An axis permutation fixes the order of these three rounds, and the same permutation is repeated as the spacing decreases. Changing the permutation changes which axis predicts each group of targets and which reconstructed values are available to later rounds. SZ3 selects one interpolation formula, linear or cubic, and one axis permutation for the whole field through sampled compression tests. The coefficients within each formula remain fixed.
 
-QoZ extends this design by selecting a linear or cubic interpolator and an axis order separately for every three consecutive rounds. Sampled prediction errors guide these selections, while the coefficients within each interpolator remain fixed.
+\paragraph{QoZ.} QoZ makes these choices more flexible. It selects the interpolator and the axis order separately for every three consecutive rounds, guided by sampled prediction errors. It also enlarges the predictor choices. Besides the basic cubic formula, it provides an alternative four-reference cubic formula with coefficients $(-3,23,23,-3)/40$ at offsets $(-3h,-h,h,3h)$, and a multidimensional interpolation that combines predictions along several axes, weighting each axis by its direction-wise MSE. QoZ can freeze a dimension, avoiding interpolation along that axis when doing so improves compression, and it can optionally repeat the selection within individual blocks. These alternatives broaden the coefficient choices without searching arbitrary coefficient combinations.
 
-QoZ further expands the predictor choices and optionally tunes them within individual blocks. Its choices include alternative cubic formulas and multidimensional interpolation that combines predictions along available axes. For example, another four-reference cubic formula uses coefficients $(-3,23,23,-3)/40$ at offsets $(-3h,-h,h,3h)$. These alternatives broaden the coefficient choices without searching arbitrary coefficient combinations. Direction-wise MSE is used to derive weights for combining predictions across axes. QoZ can also freeze a dimension, avoiding interpolation along that axis when doing so improves compression.
+\begin{table}[t]
+\centering
+\caption{Tunable dimensions of the interpolation predictor in SZ3 and QoZ.}
+\label{tab:background:tuning}
+\small\begin{tabular}{@{}p{0.26\linewidth}p{0.26\linewidth}p{0.36\linewidth}@{}}
+\toprule
+Dimension & SZ3 & QoZ \\
+\midrule
+Stencil & one for all rounds & per three rounds, plus multidimensional \\
+Direction order & one for all rounds & per three rounds, optionally per block \\
+Coefficients & fixed per stencil & predefined alternative sets \\
+QB serialization order & traversal order & traversal order \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-QoZ additionally tunes the precision assigned to different rounds. Let $k=1$ index the finest three rounds and larger $k$ index each successively coarser three rounds. For the rounds with index $k$, it sets
-\begin{equation}
-\label{eq:background:round-bound}
-\epsilon_k=\frac{\epsilon_{\mathrm{abs}}}{\min(\alpha^{k-1},\beta)},\qquad \alpha\geq1,\ \beta\geq1.
-\end{equation}
-Here, $\alpha$ controls how quickly the error bound tightens toward coarser rounds and $\beta$ caps this tightening. More accurate coarse-round references can improve later predictions. Trial compression on sampled data selects these settings according to the resulting compression ratio and reconstruction quality.
-
-These mechanisms illustrate how prediction stencils, coefficients, directions, and quantization precision jointly affect compression. They provide the baseline for our study of predictor configurations and quantization-bin serialization order in the following sections.
+Both compressors choose among a small number of predefined candidates using sampled trial compression, which keeps tuning cheap. Table~\ref{tab:background:tuning} summarizes what they can and cannot adapt. Rounds that share a spacing are tuned together, coefficients come only from predefined sets, and the QB serialization order is never a tuning target. These dimensions are where ASZ expands the configuration space in the following sections.
