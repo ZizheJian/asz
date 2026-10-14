@@ -21,7 +21,7 @@ Transform-based compressors such as ZFP~\cite{lindstrom2014fixed}, SPERR~\cite{l
 We first summarize the configurations commonly tuned by existing prediction-based compressors.
 
 \begin{enumerate}
-\item \emph{Prediction Stencils.} A prediction stencil specifies which reconstructed neighboring values are used to predict a target. SZauto~\cite{zhao2020significantly} tunes the order and dimensionality of Lorenzo stencils. SZ3 considers Lorenzo prediction as well as linear and cubic interpolation stencils. QoZ and GPU-based cuSZ-Hi~\cite{wu2025boosting} select a linear, cubic, or multidimensional interpolation stencil separately for each level.
+\item \emph{Prediction Stencils.} A prediction stencil specifies which reconstructed neighboring values are used to predict a target. SZauto~\cite{zhao2020significantly} tunes the order and dimensionality of Lorenzo stencils. SZ3 considers Lorenzo prediction as well as linear and cubic interpolation stencils. QoZ and GPU-based cuSZ-Hi~\cite{wu2025boosting} select a linear, cubic, or multidimensional interpolation stencil separately for every three consecutive rounds.
 
 \item \emph{Prediction Axes.} Compressors such as SZ3, QoZ, cuSZ-Hi, and CliZ~\cite{jian2024cliz} tune how prediction is applied across spatial axes. QoZ and CliZ can also avoid prediction along less smooth axes throughout the compression procedure.
 
@@ -50,7 +50,7 @@ To compare the configuration choices reviewed above, existing tuning methods use
 \subsection{Search Space Decomposition}
 \label{sec:related-work:search}
 
-Searching all combinations of multiple tuning dimensions is expensive. Compressors therefore divide the joint search space into smaller subspaces and search them separately. For example, SZ3 first searches combinations of linear or cubic interpolation stencils and axis orders, then compares the best interpolation configuration with Lorenzo prediction. For 3D data, QoZ and cuSZ-Hi group three axis-wise prediction rounds into each interpolation level and tune each level independently. They handle level-wise error-bound parameters separately from interpolation configurations.
+Searching all combinations of multiple tuning dimensions is expensive. Compressors therefore divide the joint search space into smaller subspaces and search them separately. For example, SZ3 first searches combinations of linear or cubic interpolation stencils and axis orders, then compares the best interpolation configuration with Lorenzo prediction. For 3D data, QoZ and cuSZ-Hi tune every three consecutive axis-wise prediction rounds independently. They handle the error-bound parameters of these rounds separately from interpolation configurations.
 
 \subsection{Cross-File Configuration Reuse}
 \label{sec:related-work:reuse}

@@ -1,14 +1,7 @@
 \section{Optimization Strategies}
 \label{sec:optimization-strategies}
 
-This section presents ASZ's five optimization strategies in dependency order: independent round-wise configuration, predictor expansion and pruning, efficient coefficient evaluation, QB serialization-order tuning, and reverse-greedy plan generation.
-
-\subsection{Independent Round-Wise Configuration}
-\label{sec:configuration-space:round-wise}
-
-Existing multilevel interpolation compressors constrain stencil and direction choices through predefined schedules that couple multiple prediction rounds. ASZ preserves the data dependencies of multilevel prediction but removes this configuration coupling. The execution order remains constrained because a round can use only values reconstructed by earlier rounds. Within that valid order, however, the configuration $c_r$ of every round is selected independently of the configurations assigned to the other rounds.
-
-This separation allows two rounds at different resolutions to use different stencil families, prediction directions, and QB serialization orders without following a fixed stencil or repeated direction cycle. The complete plan $C$ can therefore represent any feasible sequence drawn from the per-round candidate sets. This freedom creates a much larger joint space, motivating the compact predictor set, low-cost coefficient evaluation, serialization-order tuning, and reverse-greedy search described next.
+Section~\ref{sec:overview} introduced the round-wise plan $C$. This section presents the four strategies that make its configuration space useful and tractable: predictor expansion and pruning, efficient coefficient evaluation, QB serialization-order tuning, and reverse-greedy plan generation.
 
 \subsection{Tunable-Coefficient Predictors}
 \label{sec:configuration-space:predictors}
@@ -190,7 +183,7 @@ For choices without a dedicated fast criterion, such as prediction direction and
 MSE and MAE alone do not account for encoded size, while $H_1$--PSNR omits sequence structure exploited by Zstd. In particular, for a fixed target set and coefficients, changing only QB serialization leaves the predictions, reconstructed values, and QB histogram unchanged. Consequently, these criteria cannot distinguish such candidates, even though their Zstd-compressed sizes can differ. Sample-based trial encoding captures this order dependence without repeating a full multilevel compression for every candidate.
 
 % TODO: 若篇幅允许，增加紧凑的ranking表或图，在各数据集和error bound下比较H1--PSNR、预测MSE、预测MAE和sample-based trial encoding选择方向的准确性及RD损失，并报告各判据的评估时间。方向选择是否失效须由实测支持，不能由QB顺序的不变性直接推出。
-% TODO: QB-order对照需固定目标集合、方向和系数，只改变排列；同时报告相同的H1/PSNR/MSE/MAE和实测编码大小。并列排名单独报告，不将无法区分记成正确。验证sample-based判据时，另用共享其他设置的完整压缩结果作为每个数据集--error-bound案例的参考，区分单层采样试编码和完整多层码流。
+% TODO: QB-order对照需固定目标集合、方向和系数，只改变排列；同时报告相同的H1/PSNR/MSE/MAE和实测编码大小。并列排名单独报告，不将无法区分记成正确。验证sample-based判据时，另用共享其他设置的完整压缩结果作为每个数据集--error-bound案例的参考，区分单轮采样试编码和完整多轮码流。
 
 \subsubsection{Plan Generation}
 
@@ -198,3 +191,7 @@ Plan generation starts from the finest unresolved prediction round and proceeds 
 
 % TODO: 将reverse greedy描述为降低联合搜索维数，而不是删除最终配置维度。
 % TODO: 在本节直接比较固定SZ3 cycle、QoZ grouped sequence、forward greedy和reverse greedy。
+
+\subsection{Complexity and Plan Overhead}
+
+% TODO: 给出伪代码、搜索复杂度、运行复杂度和plan storage overhead。

@@ -75,17 +75,17 @@ Linear interpolation uses two references, whereas cubic interpolation uses four.
 \label{fig:background:stencils}
 \end{figure}
 
-For multidimensional data, SZ3's basic interpolation scheme applies one-dimensional predictors in successive directional rounds. An axis permutation determines the order of these rounds within each refinement level and is repeated as the spacing decreases. Changing the permutation changes which axis predicts each group of targets and which reconstructed values are available to later rounds. Sampled compression tests select the interpolation formula and axis ordering, but the coefficients within each formula remain fixed.
+For multidimensional data, SZ3's basic interpolation scheme applies one-dimensional predictors in successive directional rounds. An axis permutation determines the order of these rounds among the rounds that share one spacing and is repeated as the spacing decreases. Changing the permutation changes which axis predicts each group of targets and which reconstructed values are available to later rounds. Sampled compression tests select the interpolation formula and axis ordering, but the coefficients within each formula remain fixed.
 
-QoZ extends this design by selecting a linear or cubic interpolator and an axis order separately at different levels. Sampled prediction errors guide these selections, while the coefficients within each interpolator remain fixed.
+QoZ extends this design by selecting a linear or cubic interpolator and an axis order separately for every three consecutive rounds. Sampled prediction errors guide these selections, while the coefficients within each interpolator remain fixed.
 
 QoZ further expands the predictor choices and optionally tunes them within individual blocks. Its choices include alternative cubic formulas and multidimensional interpolation that combines predictions along available axes. For example, another four-reference cubic formula uses coefficients $(-3,23,23,-3)/40$ at offsets $(-3h,-h,h,3h)$. These alternatives broaden the coefficient choices without searching arbitrary coefficient combinations. Direction-wise MSE is used to derive weights for combining predictions across axes. QoZ can also freeze a dimension, avoiding interpolation along that axis when doing so improves compression.
 
-QoZ additionally tunes the precision assigned to different levels. With level $l=1$ denoting the finest level, it sets
+QoZ additionally tunes the precision assigned to different rounds. Let $k=1$ index the finest three rounds and larger $k$ index each successively coarser three rounds. For the rounds with index $k$, it sets
 \begin{equation}
-\label{eq:background:level-bound}
-\epsilon_l=\frac{\epsilon_{\mathrm{abs}}}{\min(\alpha^{l-1},\beta)},\qquad \alpha\geq1,\ \beta\geq1.
+\label{eq:background:round-bound}
+\epsilon_k=\frac{\epsilon_{\mathrm{abs}}}{\min(\alpha^{k-1},\beta)},\qquad \alpha\geq1,\ \beta\geq1.
 \end{equation}
-Here, $\alpha$ controls how quickly the error bound tightens toward coarser levels and $\beta$ caps this tightening. More accurate coarse-level references can improve later predictions. Trial compression on sampled data selects these settings according to the resulting compression ratio and reconstruction quality.
+Here, $\alpha$ controls how quickly the error bound tightens toward coarser rounds and $\beta$ caps this tightening. More accurate coarse-round references can improve later predictions. Trial compression on sampled data selects these settings according to the resulting compression ratio and reconstruction quality.
 
 These mechanisms illustrate how prediction stencils, coefficients, directions, and quantization precision jointly affect compression. They provide the baseline for our study of predictor configurations and quantization-bin serialization order in the following sections.
