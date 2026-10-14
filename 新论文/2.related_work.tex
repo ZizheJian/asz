@@ -4,23 +4,35 @@
 \subsection{Data-Adaptive Compression in Database Systems}
 \label{sec:related-work:database}
 
-Database compression adapts encoding choices to different value distributions and local patterns. BtrBlocks~\cite{kuschewski2023btrblocks} uses sampling to select encoding schemes and cascades for columnar data lakes. ALP~\cite{afroozeh2023alp} adapts floating-point encoding configurations through sampling. These systems focus on lossless compression, whereas ASZ selects prediction and encoding configurations for error-bounded lossy compression.
+Database compression research has long recognized that the effectiveness of different methods depends on data characteristics~\cite{li1987compression}. Modern database compressors adapt encoding choices to different value distributions and local patterns. For example, BtrBlocks~\cite{kuschewski2023btrblocks} is a storage format designed to compress database columns in data lakes. It selects a sequence of encoding operations for each column block. To select each operation, it uses simple statistics to identify promising encodings and tests only these candidates on sampled data. ALP~\cite{afroozeh2023alp} compresses one-dimensional floating-point data by scaling and rounding values to integers, while storing values that cannot be recovered exactly from this conversion as exceptions. It samples the data to select scaling parameters that minimize the total encoded size. These systems focus on lossless compression, whereas ASZ tunes prediction and encoding configurations for error-bounded lossy compression.
 
 \subsection{Error-Bounded Lossy Compression}
 \label{sec:related-work:compression}
 
 Error-bounded lossy compression supports scientific data management by reducing storage requirements and data movement through I/O and network transfers while controlling reconstruction error~\cite{cappello2019use,di2025survey}.
 
-Prediction-based compressors such as SZ3~\cite{zhao2021optimizing,liang2022sz3} and QoZ~\cite{liu2022dynamic,liu2024high} predict data values, often through weighted combinations of neighboring values, and encode the quantized prediction errors. Transform-based compressors such as ZFP~\cite{lindstrom2014fixed}, SPERR~\cite{li2023lossy}, and MGARD~\cite{gong2023mgard} use block transforms, wavelets, and multilevel decompositions, respectively.
+Prediction-based compressors such as SZ3~\cite{zhao2021optimizing,liang2022sz3} and QoZ~\cite{liu2022dynamic,liu2024high} often predict each data value as a weighted combination of neighboring values. They then quantize the prediction error and encode the resulting quantization-bin index. ASZ belongs to this class and follows the SZ pipeline used by SZ3 and QoZ.
+
+Transform-based compressors such as ZFP~\cite{lindstrom2014fixed}, SPERR~\cite{li2023lossy}, and MGARD~\cite{gong2023mgard} use block transforms, wavelets, and multilevel decompositions, respectively.
 
 \subsection{Tuning Dimensions}
 \label{sec:related-work:dimensions}
 
-Within prediction-based compression, tuning efforts are mainly focused on prediction stencils and directions. SZ3, QoZ, and GPU-based cuSZ-Hi~\cite{wu2025boosting} tune the direction of interpolation-based prediction. Stencil choices include Lorenzo prediction of different orders spanning different numbers of spatial dimensions in SZauto~\cite{zhao2020significantly}, and linear or cubic interpolation in SZ3. QoZ and cuSZ-Hi further select among interpolation formulas and one-dimensional or multidimensional prediction. Dimension freezing in QoZ and dimension fusion in CliZ~\cite{jian2024cliz} also restrict prediction along selected dimensions. Regarding selection granularity, QoZ and cuSZ-Hi select configurations per interpolation level, while QoZ also supports block-wise selection. Other tuned settings include block size and the number of quantization bins in SZauto, level-wise error bounds in QoZ, and partition-wise error bounds in Jin et al.~\cite{jin2022improving}.
+We first summarize the configurations commonly tuned by existing prediction-based compressors.
 
-Tuning also extends to selecting or combining prediction and transform methods. SZ2~\cite{liang2018error} and SZauto select between Lorenzo and regression predictors at the block level, while Jin et al. also consider interpolation in predictor selection. Liang et al.~\cite{liang2019significantly} and FAZ~\cite{liu2023faz} incorporate transform methods into this selection, while also tuning encoding strategies and other configuration choices.
+\begin{enumerate}
+\item \emph{Prediction Stencils.} A prediction stencil specifies which reconstructed neighboring values are used to predict a target. SZauto~\cite{zhao2020significantly} tunes the order and dimensionality of Lorenzo stencils. SZ3 considers Lorenzo prediction as well as linear and cubic interpolation stencils. QoZ and GPU-based cuSZ-Hi~\cite{wu2025boosting} select a linear, cubic, or multidimensional interpolation stencil separately for each level.
 
-At the entropy-coding stage, CliZ tunes whether to group quantization bins based on domain-specific patterns in their distributions for separate Huffman encoding. For subsequent lossless compression, Liu et al.~\cite{liu2021improving} compare backends for SZ2.1 and recommend Zstd~\cite{ycollet2021zstd} for its balance of compression ratio and compression/decompression speed on the evaluated datasets. Motivated by these findings, ASZ fixes its lossless pipeline to Huffman coding followed by Zstd and excludes lossless module selection from its tuning space.
+\item \emph{Prediction Axes.} Compressors such as SZ3, QoZ, cuSZ-Hi, and CliZ~\cite{jian2024cliz} tune how prediction is applied across spatial axes. QoZ and CliZ can also avoid prediction along less smooth axes throughout the compression procedure.
+
+\item \emph{Prediction Coefficients.} Prediction coefficients are the weights assigned to the neighboring values in a stencil. SZ3 uses one fixed coefficient set for linear interpolation and one for cubic interpolation, while QoZ and cuSZ-Hi each provide an additional coefficient set for cubic interpolation. These compressors select among predefined sets rather than directly tuning individual coefficients. For multidimensional prediction, QoZ gives larger weights to axes with smaller prediction errors.
+
+\item \emph{Quantization.} Quantization converts each prediction error into an integer code. SZauto tunes the number of codes. QoZ and cuSZ-Hi use different error bounds for different prediction rounds, while Jin et al.~\cite{jin2022improving} use different error bounds for different data partitions.
+
+\item \emph{Lossless Encoding.} After quantization, lossless encoders compress the bin sequence without further changing its values. CliZ attempts to classify bins for multiple Huffman trees according to domain-specific patterns. Liu et al.~\cite{liu2021improving} compare lossless backends for SZ2.1 and recommend Zstd~\cite{ycollet2021zstd} for its balance of compression ratio and compression/decompression speed on the evaluated datasets. ASZ fixes this backend to Huffman coding followed by Zstd rather than including backend selection in its tuning space.
+
+\item \emph{Pipeline Composition.} A compressor may choose which prediction or transform methods to use and how its components are combined. SZ2~\cite{liang2018error} and SZauto select between Lorenzo and regression predictors at the block level. Liang et al.~\cite{liang2019significantly} and FAZ~\cite{liu2023faz} extend this selection to transform methods.
+\end{enumerate}
 
 \subsection{Candidate Evaluation}
 \label{sec:related-work:evaluation}
@@ -28,12 +40,17 @@ At the entropy-coding stage, CliZ tunes whether to group quantization bins based
 To compare the configuration choices reviewed above, existing tuning methods use three types of evaluation criteria.
 
 \begin{enumerate}
-\item \emph{Compression-Based Evaluation.} Methods such as SZ3, SZauto, QoZ, CliZ, and FAZ run the compressor, often on sampled data, and directly measure the resulting compression ratio, with decompression and quality measurement when required. FRaZ~\cite{underwood2020fraz} and OptZConfig~\cite{underwood2022optzconfig} also use compression-based evaluation, but focus on meeting user-specified compression-ratio or quality requirements.
+\item \emph{Compression-Based Evaluation.} Methods such as SZ3, SZauto, QoZ, CliZ, and FAZ run the compressor, often on sampled data, and directly measure the resulting compression ratio and reconstruction quality. FRaZ~\cite{underwood2020fraz} and OptZConfig~\cite{underwood2022optzconfig} also use compression-based evaluation, but focus on meeting user-specified compression-ratio or quality requirements.
 
-\item \emph{Compression-Result Estimation.} These methods estimate compression ratio or reconstruction quality instead of directly measuring the complete compression result. For example, Liang et al. estimate coefficient-encoding sizes for their transform-based predictor, using discrete entropy for SZ-based encoding and bit counts for bit-plane encoding. Similarly, Jin et al. use the discrete entropy of quantized prediction errors to approximate Huffman coding size. To account for subsequent lossless compression, they further adjust this approximation based on the fraction quantized to zero. They also derive quality metrics such as PSNR from the estimated reconstruction-error distribution and use the results to guide predictor and error-bound selection.
+\item \emph{Compression-Result Estimation.} These methods estimate compression ratio or reconstruction quality without executing the complete compression process. For example, Liang et al. encode the coefficients produced by their transform-based predictor using either SZ encoding or embedded bit-plane encoding. They estimate the resulting bit rates using discrete entropy for SZ encoding and coefficient bit patterns for embedded encoding. Similarly, Jin et al. use the discrete entropy of quantized prediction errors to approximate Huffman coding size. To account for subsequent lossless compression, they further adjust this approximation based on the fraction quantized to zero. They also derive quality metrics such as PSNR from the estimated reconstruction-error distribution and use the results to guide predictor and error-bound selection.
 
 \item \emph{Alternative Evaluation Criteria.} These methods select configurations using other criteria without explicitly estimating the final compression ratio or reconstruction quality. Common criteria include mean squared prediction error (MSE) and mean absolute prediction error (MAE). SZ2, SZauto, cuSZ-Hi, and QoZ use prediction-error criteria to select predictors or interpolation configurations. QoZ also uses MSE to determine multidimensional interpolation weights and identify a candidate dimension for freezing.
 \end{enumerate}
+
+\subsection{Search Space Decomposition}
+\label{sec:related-work:search}
+
+Searching all combinations of multiple tuning dimensions is expensive. Compressors therefore divide the joint search space into smaller subspaces and search them separately. For example, SZ3 first searches combinations of linear or cubic interpolation stencils and axis orders, then compares the best interpolation configuration with Lorenzo prediction. For 3D data, QoZ and cuSZ-Hi group three axis-wise prediction rounds into each interpolation level and tune each level independently. They handle level-wise error-bound parameters separately from interpolation configurations.
 
 \subsection{Cross-File Configuration Reuse}
 \label{sec:related-work:reuse}

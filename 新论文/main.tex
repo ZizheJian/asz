@@ -3,12 +3,13 @@
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
-\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{subcaption}
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{hyperref}
 
+\captionsetup{font=footnotesize,labelsep=colon}
 \hypersetup{hidelinks}
 
 \begin{document}
@@ -54,6 +55,7 @@ error-bounded lossy compression, scientific data, configuration tuning, predicti
 \input{1.introduction}
 \input{2.related_work}
 \input{2.background}
+\input{3.design_overview}
 \input{3.configuration_space}
 \input{4.asz}
 \input{5.evaluation}

@@ -1,26 +1,20 @@
-\section{Efficient Joint Search and ASZ}
+\section{System Workflow}
 \label{sec:asz}
 
-\subsection{Layer-Wise Joint Configuration}
+Once preprocessing has generated $C$, compression executes the recorded rounds without repeating the joint search. The remaining online decisions are confined to the granularity at which they are inexpensive and useful.
 
-% TODO: 定义每层配置c_l=(S_l,w_l,O_l)以及完整plan C=(c_1,...,c_L)。
-% TODO: 分析直接联合搜索所有层时的组合复杂度。
+\subsection{Configuration Granularity}
 
-\subsection{Reverse-Greedy Plan Generation}
+The plan stores round-level stencil families, prediction directions, and QB serialization orders. These decisions are selected offline because they affect the dependencies and encoded layout of an entire round. For a round using 1D4R, coefficient selection remains block-local: every block chooses one $t_{r,b}$ and applies it to all targets predicted in that block and round. This separation keeps the expensive structural search out of the compression path while preserving inexpensive local adaptation.
 
-% TODO: 说明如何逐层固定高影响决策、为什么不回溯以及如何评价direction/order candidates。
-% TODO: 将reverse greedy描述为降低联合搜索维数，而不是删除最终配置维度。
-% TODO: 在本节直接比较固定SZ3 cycle、QoZ grouped sequence、forward greedy和reverse greedy。
-
-\subsection{Hierarchical Tuning Granularity}
-
-% TODO: 区分可写入dataset-level plan的layer decisions和仍需online选择的block-level coefficients。
 % TODO: 只使用抽象candidate sets和layer limit；具体经验参数放入实验设置表。
 
 \subsection{Compression and Decompression}
 
-% TODO: 给出完整压缩/解压流程、plan使用方式以及computation/serialization order的解耦。
+Compression first quantizes the pivot points required by the coarsest round. It then visits the blocks and executes the rounds in plan order. In each round, ASZ selects a block coefficient when required, predicts and quantizes the round's targets, and appends their QBs in the recorded serialization order. The coefficient metadata and per-round QB streams are Huffman encoded and then jointly compressed by Zstd. Decompression reads the same plan and coefficient metadata from the bitstream and replays the rounds to reconstruct the data.
 
-\subsection{Algorithm and Complexity}
+The computation order used to visit targets is conceptually separate from QB serialization order. The former must respect prediction dependencies, whereas the latter controls the order presented to the lossless encoder. ASZ therefore changes QB serialization without changing predictions, quantization results, or reconstruction errors.
+
+\subsection{Metadata and Complexity}
 
 % TODO: 给出伪代码、搜索复杂度、运行复杂度和plan storage overhead。
