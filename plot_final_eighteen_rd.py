@@ -10,7 +10,7 @@ project_root=Path(__file__).resolve().parent
 datasets=(
     ("QMCPACK orbital 0","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/asz_qmcpack_orbital0.f32","final_eighteen_qmcpack_orbital0.csv","final_eighteen_qmcpack_orbital0.csv"),
     ("QMCPACK orbital 287","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/asz_qmcpack_orbital287.f32","final_eighteen_qmcpack_orbital287.csv","final_eighteen_qmcpack_orbital287.csv"),
-    ("APS Kaz","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_Kaz/xpcs-998x128x128.bin.f32","final_eighteen_refresh_aps_kaz.csv","final_eight_aps_kaz.csv"),
+    ("RTM big 0750","/anvil/projects/x-cis240669/RTM/RtmLab-bigdata-849x849x235/data-every10/aramco-snapshot-0750.f32","rtm_big_0750.csv","rtm_big_0750.csv"),
     ("Isabel Pf24","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf24.bin","final_eighteen_refresh_isabel_pf24.csv","final_eight_middle_isabel_pf24.csv"),
     ("Isabel TC","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/TC/TCf01.bin","final_eighteen_isabel_tc.csv","final_eighteen_isabel_tc.csv"),
     ("Isabel QVAPOR","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/QVAPOR/QVAPORf01.bin","final_eighteen_isabel_qvapor.csv","final_eighteen_isabel_qvapor.csv"),

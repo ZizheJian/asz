@@ -11,7 +11,6 @@ from plot_final_eighteen_rd import datasets,format_size,methods,styles
 
 project_root=Path(__file__).resolve().parent
 timing_baseline_overrides={
-    "APS Kaz":{"sz3":"final_eighteen_sz3_timing_aps_kaz.csv","qoz":"final_eighteen_qoz_timing_aps_kaz.csv"},
     "E017":{"sz3":"final_eighteen_sz3_timing_e017.csv","qoz":"final_eighteen_qoz_timing_e017.csv"},
     "APSU004":{"sz3":"final_eighteen_sz3_timing_apsu004.csv","qoz":"final_eighteen_qoz_timing_apsu004.csv"},
     "Aramco 1800":{"sz3":"final_eight_frozen_aramco.csv","qoz":"final_eight_frozen_aramco.csv"},
@@ -99,13 +98,7 @@ def load_bar_timings(result_directory,ordered,rel_eb):
     result={}
     for dataset in ordered:
         title=dataset[0]
-        if title=="APS Kaz" and math.isclose(rel_eb,1e-3,rel_tol=0,abs_tol=1e-15):
-            special=result_directory/"final_eighteen_timing_1e3_aps_kaz.csv"
-            with open(special,newline="",encoding="utf-8") as input_file:
-                all_rows=list(csv.DictReader(input_file))
-            rows={method:[row for row in all_rows if row["METHOD"]==method] for method in methods}
-        else:
-            rows=load_timings(result_directory,dataset)
+        rows=load_timings(result_directory,dataset)
         result[title]={method:row_at_rel_eb(rows[method],rel_eb) for method in methods}
     return result
 

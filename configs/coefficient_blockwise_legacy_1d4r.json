@@ -1,0 +1,5 @@
+[
+  {"name":"APS_Kaz","slug":"aps_kaz","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_Kaz/xpcs-998x128x128.bin.f32","data_shape":[998,128,128]},
+  {"name":"Isabel_Pf01","slug":"isabel_pf01","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf01.bin","data_shape":[100,500,500]},
+  {"name":"VideoLLaVA","slug":"videollava","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/embeddings/videollava/embeds_0[(8, 257, 4096)].bin","data_shape":[8,257,4096]}
+]

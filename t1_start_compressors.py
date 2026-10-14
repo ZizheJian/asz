@@ -379,7 +379,7 @@ def build_compressors(compressors,silent,dry_run):
             build_sperr(silent,dry_run)
 
 def parse_asz_result(output):
-    patterns={"cr":r"^CR= ([0-9.eE+-]+)\r?$","compression_time":r"^Compression time: ([0-9.eE+-]+)","decompression_time":r"^Decompression time: ([0-9.eE+-]+)"}
+    patterns={"cr":r"^CR= ([0-9.eE+-]+)\r?$","data_range_time":r"^Data range time: ([0-9.eE+-]+)","compression_time":r"^Compression time: ([0-9.eE+-]+)","decompression_time":r"^Decompression time: ([0-9.eE+-]+)"}
     result={}
     for key,pattern in patterns.items():
         matches=re.findall(pattern,output,re.MULTILINE)
@@ -509,7 +509,7 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
         raise RuntimeError(f"asz违反误差界：max_error={metrics['max_error']},absolute_eb={absolute_eb}")
     if not math.isclose(reported["cr"],cr,rel_tol=1e-5,abs_tol=1e-6):
         raise RuntimeError(f"asz报告的CR与压缩文件不一致：reported={reported['cr']},actual={cr}")
-    result={"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size,"compression_time":reported["compression_time"],"decompression_time":reported["decompression_time"]}
+    result={"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size,"data_range_time":reported["data_range_time"],"compression_time":reported["compression_time"],"decompression_time":reported["decompression_time"]}
     if "generate_config_time" in reported:
         result["generate_config_time"]=reported["generate_config_time"]
     if "get_default_slope_time" in reported:
@@ -621,6 +621,8 @@ def report_result(method_name,data_path,rel_eb,result,write_csv):
     time_text=""
     if "compression_time" in result:
         time_text=f",compression_time={result['compression_time']},decompression_time={result['decompression_time']}"
+    if "data_range_time" in result:
+        time_text+=f",data_range_time={result['data_range_time']}"
     if "generate_config_time" in result:
         time_text+=f",generate_config_time={result['generate_config_time']}"
     if "get_default_slope_time" in result:
@@ -699,12 +701,12 @@ def write_comparison_summary(path,records,baseline_method):
     path.parent.mkdir(parents=True,exist_ok=True)
     temporary_path=path.with_name(path.name+".tmp")
     with open(temporary_path,"w",newline="",encoding="utf-8") as summary_file:
-        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT","PREPROCESSING_TIME","GET_DEFAULT_SLOPE_TIME","GENERATE_CONFIG_TIME","PREDICTOR_FAMILY_SELECTION_TIME","COMPRESSION_TIME","DECOMPRESSION_TIME","DEFAULT_SLOPE","DEFAULT_SLOPE_MAX_INVALID_RATIO","DEFAULT_SLOPE_FALLBACK_USED","DEFAULT_SLOPE_FALLBACK_REASON","PREDICTOR_FAMILY","PREDICTOR_FAMILY_DIRECTION","PREDICTOR_FAMILY_SAMPLES","PREDICTOR_FAMILY_FALLBACK","CUBIC_MSE","QUINTIC_MSE","T_HISTOGRAM","T_FALLBACK_COUNT"]
+        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT","PREPROCESSING_TIME","GET_DEFAULT_SLOPE_TIME","GENERATE_CONFIG_TIME","PREDICTOR_FAMILY_SELECTION_TIME","DATA_RANGE_TIME","COMPRESSION_TIME","DECOMPRESSION_TIME","DEFAULT_SLOPE","DEFAULT_SLOPE_MAX_INVALID_RATIO","DEFAULT_SLOPE_FALLBACK_USED","DEFAULT_SLOPE_FALLBACK_REASON","PREDICTOR_FAMILY","PREDICTOR_FAMILY_DIRECTION","PREDICTOR_FAMILY_SAMPLES","PREDICTOR_FAMILY_FALLBACK","CUBIC_MSE","QUINTIC_MSE","T_HISTOGRAM","T_FALLBACK_COUNT"]
         writer=csv.DictWriter(summary_file,fieldnames=fieldnames,lineterminator="\n")
         writer.writeheader()
         for record in records:
             baseline_cr=baselines[(record["data_path"],record["rel_eb"])]["cr"]
-            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr,"PREPROCESSING_TIME":record.get("preprocessing_time",""),"GET_DEFAULT_SLOPE_TIME":record.get("get_default_slope_time",""),"GENERATE_CONFIG_TIME":record.get("generate_config_time",""),"PREDICTOR_FAMILY_SELECTION_TIME":record.get("predictor_family_selection_time",""),"COMPRESSION_TIME":record.get("compression_time",""),"DECOMPRESSION_TIME":record.get("decompression_time",""),"DEFAULT_SLOPE":record.get("default_slope",""),"DEFAULT_SLOPE_MAX_INVALID_RATIO":record.get("default_slope_max_invalid_ratio",""),"DEFAULT_SLOPE_FALLBACK_USED":record.get("default_slope_fallback_used",""),"DEFAULT_SLOPE_FALLBACK_REASON":record.get("default_slope_fallback_reason",""),"PREDICTOR_FAMILY":record.get("predictor_family",""),"PREDICTOR_FAMILY_DIRECTION":record.get("predictor_family_direction",""),"PREDICTOR_FAMILY_SAMPLES":record.get("predictor_family_samples",""),"PREDICTOR_FAMILY_FALLBACK":record.get("predictor_family_fallback",""),"CUBIC_MSE":record.get("cubic_mse",""),"QUINTIC_MSE":record.get("quintic_mse",""),"T_HISTOGRAM":record.get("t_histogram",""),"T_FALLBACK_COUNT":record.get("t_fallback_count","")})
+            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr,"PREPROCESSING_TIME":record.get("preprocessing_time",""),"GET_DEFAULT_SLOPE_TIME":record.get("get_default_slope_time",""),"GENERATE_CONFIG_TIME":record.get("generate_config_time",""),"PREDICTOR_FAMILY_SELECTION_TIME":record.get("predictor_family_selection_time",""),"DATA_RANGE_TIME":record.get("data_range_time",""),"COMPRESSION_TIME":record.get("compression_time",""),"DECOMPRESSION_TIME":record.get("decompression_time",""),"DEFAULT_SLOPE":record.get("default_slope",""),"DEFAULT_SLOPE_MAX_INVALID_RATIO":record.get("default_slope_max_invalid_ratio",""),"DEFAULT_SLOPE_FALLBACK_USED":record.get("default_slope_fallback_used",""),"DEFAULT_SLOPE_FALLBACK_REASON":record.get("default_slope_fallback_reason",""),"PREDICTOR_FAMILY":record.get("predictor_family",""),"PREDICTOR_FAMILY_DIRECTION":record.get("predictor_family_direction",""),"PREDICTOR_FAMILY_SAMPLES":record.get("predictor_family_samples",""),"PREDICTOR_FAMILY_FALLBACK":record.get("predictor_family_fallback",""),"CUBIC_MSE":record.get("cubic_mse",""),"QUINTIC_MSE":record.get("quintic_mse",""),"T_HISTOGRAM":record.get("t_histogram",""),"T_FALLBACK_COUNT":record.get("t_fallback_count","")})
     os.replace(temporary_path,path)
     print(f"写入比较汇总：{path}",flush=True)
 

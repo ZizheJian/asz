@@ -1,0 +1,8 @@
+[
+  {"name":"Isabel_Pf24","slug":"isabel","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf24.bin","data_shape":[100,500,500]},
+  {"name":"CESM_T_t31","slug":"cesmt","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/T_26x1800x3600.dat","data_shape":[26,1800,3600]},
+  {"name":"LETKF_QV_log10","slug":"letkf_qv","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/log10/QV-98x1200x1200.log10.f32","data_shape":[98,1200,1200]},
+  {"name":"Aramco_1800","slug":"aramco","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/aramco/aramco-snapshot-1800.f32","data_shape":[449,449,235]},
+  {"name":"LETKF_PRES","slug":"letkf_pres","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/PRES-98x1200x1200.dat","data_shape":[98,1200,1200]},
+  {"name":"QMCPACK_orbital0","slug":"qmcpack","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/asz_qmcpack_orbital0.f32","data_shape":[69,69,115]}
+]

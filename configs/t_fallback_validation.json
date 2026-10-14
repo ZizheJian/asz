@@ -1,0 +1,10 @@
+{
+  "base_manifest":"family_mse_validation_eighteen.json",
+  "skip_datasets":["APSU004","APSU006"],
+  "variants":[
+    {"name":"sample4_block","insufficient_sample_t":0.25,"quintic_fallback_t_policy":"block","quintic_fallback_t":0.25},
+    {"name":"sample5_block","insufficient_sample_t":0.3125,"quintic_fallback_t_policy":"block","quintic_fallback_t":0.3125},
+    {"name":"fixed4","insufficient_sample_t":0.25,"quintic_fallback_t_policy":"fixed","quintic_fallback_t":0.25,"quintic_only":true},
+    {"name":"fixed5","insufficient_sample_t":0.3125,"quintic_fallback_t_policy":"fixed","quintic_fallback_t":0.3125,"quintic_only":true}
+  ]
+}

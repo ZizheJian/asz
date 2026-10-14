@@ -28,7 +28,7 @@ vector<string> parse_predictor_plan(const string &text)
 }
 
 template<typename T>
-void prepare_config(asz::param_c<T> &param,const vector<string> &predictor_plan)
+void prepare_compression_plan(asz::param_c<T> &param,const vector<string> &predictor_plan)
 {
     param.get_default_slope();
     printf("default_slope=%f\n",param.default_slope);
@@ -44,6 +44,92 @@ void prepare_config(asz::param_c<T> &param,const vector<string> &predictor_plan)
     if (param.auto_select_predictor_family)
         param.select_predictor_family();
     param.print_config();
+}
+
+template<typename T>
+void validate_parameters(asz::param_c<T> &param,bool t_min_set,bool t_max_set)
+{
+    if(!(param.pivot_eb_ratio>0&&param.pivot_eb_ratio<=1))
+        throw invalid_argument("pivot_eb_ratio must be in (0,1]");
+    if(!(param.eb_ratio>0&&param.eb_ratio<=1))
+        throw invalid_argument("eb_ratio must be in (0,1]");
+    if(!(param.slope_ratio>0&&param.slope_ratio<=1))
+        throw invalid_argument("slope_ratio must be in (0,1]");
+    if(param.block_pivot_ratio==0)
+        throw invalid_argument("block_pivot_ratio must be positive");
+    if(param.max_layer_num==0||param.max_layer_num>63)
+        throw invalid_argument("max_layer_num must be in [1,63]");
+    if(param.full_predictor_search_layer_num==0||param.full_predictor_search_layer_num>63)
+        throw invalid_argument("full_predictor_search_layer_num must be in [1,63]");
+    if(param.generate_config_sample_stride==0)
+        throw invalid_argument("generate_config_sample_stride must be positive");
+    if(param.h1_block_sampling_num==0)
+        throw invalid_argument("h1_block_sampling_num must be positive");
+    if(!(param.stat_eb_ratio>0&&param.stat_eb_ratio<=1))
+        throw invalid_argument("stat_eb_ratio must be in (0,1]");
+    if(param.predictor_family_sample_limit==0)
+        throw invalid_argument("predictor_family_sample_limit must be positive");
+    if(!(param.predictor_family_mse_ratio_threshold>=0&&isfinite(param.predictor_family_mse_ratio_threshold)))
+        throw invalid_argument("predictor_family_mse_ratio_threshold must be nonnegative and finite");
+    if(!(param.default_slope_invalid_ratio_threshold>0&&param.default_slope_invalid_ratio_threshold<=1))
+        throw invalid_argument("default_slope_invalid_ratio_threshold must be in (0,1]");
+    if(!(param.default_slope_fallback>0&&isfinite(param.default_slope_fallback)))
+        throw invalid_argument("default_slope_fallback must be positive and finite");
+    if(!(param.default_slope_eb_span>1&&isfinite(param.default_slope_eb_span)))
+        throw invalid_argument("default_slope_eb_span must be greater than 1 and finite");
+    if(param.t_precision<16||param.t_precision%16!=0)
+        throw invalid_argument("t_precision must be a positive multiple of 16");
+    if(t_min_set!=t_max_set)
+        throw invalid_argument("t_min and t_max must be supplied together");
+    if(!(param.t_min>=0&&param.t_min<=param.t_max&&param.t_max<=0.5))
+        throw invalid_argument("t range must satisfy 0 <= t_min <= t_max <= 0.5");
+    if(abs(param.t_min*param.t_precision-round(param.t_min*param.t_precision))>1e-6||abs(param.t_max*param.t_precision-round(param.t_max*param.t_precision))>1e-6)
+        throw invalid_argument("t_min and t_max must be representable at t_precision");
+    if(param.t_min>(T)4/16||param.t_max<(T)5/16)
+        throw invalid_argument("t range must include 4/16 and 5/16");
+    if(!(param.insufficient_sample_t>=param.t_min&&param.insufficient_sample_t<=param.t_max))
+        throw invalid_argument("insufficient_sample_t must be inside the t range");
+    if(abs(param.insufficient_sample_t*param.t_precision-round(param.insufficient_sample_t*param.t_precision))>1e-6)
+        throw invalid_argument("insufficient_sample_t must be representable at t_precision");
+    if(param.quintic_fallback_t_policy!="block"&&param.quintic_fallback_t_policy!="fixed")
+        throw invalid_argument("quintic_fallback_t_policy must be block or fixed");
+    if(!(param.quintic_fallback_t>=param.t_min&&param.quintic_fallback_t<=param.t_max))
+        throw invalid_argument("quintic_fallback_t must be inside the t range");
+    if(abs(param.quintic_fallback_t*param.t_precision-round(param.quintic_fallback_t*param.t_precision))>1e-6)
+        throw invalid_argument("quintic_fallback_t must be representable at t_precision");
+    param.set_t_policy(param.t_policy);
+}
+
+template<typename T>
+void load_input(asz::param_c<T> &param)
+{
+    param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
+    ifstream input(param.original_data_path,ios::binary);
+    if(!input)
+        throw runtime_error("cannot open input: "+param.original_data_path);
+    input.read(reinterpret_cast<char*>(param.data.data()),param.data.size()*sizeof(T));
+    if(!input)
+        throw runtime_error("cannot read complete input: "+param.original_data_path);
+    auto range_start_time=chrono::high_resolution_clock::now();
+    auto [minimum,maximum]=minmax_element(param.data.begin(),param.data.end());
+    param.min_val=*minimum;
+    param.max_val=*maximum;
+    param.data_range_time=chrono::duration<double>(chrono::high_resolution_clock::now()-range_start_time).count();
+    if(param.min_val==param.max_val)
+        throw runtime_error("max_val==min_val");
+    param.abs_eb=param.rel_eb*(param.max_val-param.min_val);
+    printf("Data range time: %f s\n",param.data_range_time);
+}
+
+template<typename T>
+void write_compressed_stream(const asz::param_c<T> &param)
+{
+    ofstream output(param.compressed_data_path,ios::binary);
+    if(!output)
+        throw runtime_error("cannot open compressed output: "+param.compressed_data_path);
+    output.write(reinterpret_cast<const char*>(param.zstd_bs_vec.data()),param.zstd_bs_vec.size());
+    if(!output)
+        throw runtime_error("cannot write compressed output: "+param.compressed_data_path);
 }
 
 int main(int argc,char* argv[])
@@ -199,71 +285,37 @@ int main(int argc,char* argv[])
             param.block_t_policy=argv[++i];
             continue;
         }
+        else if(arg=="--insufficient-sample-t")
+        {
+            param.insufficient_sample_t=stof(argv[++i]);
+            continue;
+        }
+        else if(arg=="--quintic-fallback-t-policy")
+        {
+            param.quintic_fallback_t_policy=argv[++i];
+            continue;
+        }
+        else if(arg=="--quintic-fallback-t")
+        {
+            param.quintic_fallback_t=stof(argv[++i]);
+            continue;
+        }
         else if (arg=="--report-t-histogram")
         {
             param.report_t_histogram=true;
             continue;
         }
+        else if (arg=="--report-layer-diagnostics")
+        {
+            param.layer_diagnostics.enabled=true;
+            continue;
+        }
     }
 
-    if (!(param.pivot_eb_ratio>0&&param.pivot_eb_ratio<=1))
-        throw invalid_argument("pivot_eb_ratio must be in (0,1]");
-    if (!(param.eb_ratio>0&&param.eb_ratio<=1))
-        throw invalid_argument("eb_ratio must be in (0,1]");
-    if (!(param.slope_ratio>0&&param.slope_ratio<=1))
-        throw invalid_argument("slope_ratio must be in (0,1]");
-    if (param.block_pivot_ratio==0)
-        throw invalid_argument("block_pivot_ratio must be positive");
-    if (param.max_layer_num==0||param.max_layer_num>63)
-        throw invalid_argument("max_layer_num must be in [1,63]");
-    if (param.full_predictor_search_layer_num==0||param.full_predictor_search_layer_num>63)
-        throw invalid_argument("full_predictor_search_layer_num must be in [1,63]");
-    if (param.generate_config_sample_stride==0)
-        throw invalid_argument("generate_config_sample_stride must be positive");
-    if (param.h1_block_sampling_num==0)
-        throw invalid_argument("h1_block_sampling_num must be positive");
-    if (!(param.stat_eb_ratio>0&&param.stat_eb_ratio<=1))
-        throw invalid_argument("stat_eb_ratio must be in (0,1]");
-    if (param.predictor_family_sample_limit==0)
-        throw invalid_argument("predictor_family_sample_limit must be positive");
-    if (!(param.predictor_family_mse_ratio_threshold>=0&&isfinite(param.predictor_family_mse_ratio_threshold)))
-        throw invalid_argument("predictor_family_mse_ratio_threshold must be nonnegative and finite");
-    if (!(param.default_slope_invalid_ratio_threshold>0&&param.default_slope_invalid_ratio_threshold<=1))
-        throw invalid_argument("default_slope_invalid_ratio_threshold must be in (0,1]");
-    if (!(param.default_slope_fallback>0&&isfinite(param.default_slope_fallback)))
-        throw invalid_argument("default_slope_fallback must be positive and finite");
-    if (!(param.default_slope_eb_span>1&&isfinite(param.default_slope_eb_span)))
-        throw invalid_argument("default_slope_eb_span must be greater than 1 and finite");
-    if (param.t_precision<16||param.t_precision%16!=0)
-        throw invalid_argument("t_precision must be a positive multiple of 16");
-    if (t_min_set!=t_max_set)
-        throw invalid_argument("t_min and t_max must be supplied together");
-    if (!(param.t_min>=0&&param.t_min<=param.t_max&&param.t_max<=0.5))
-        throw invalid_argument("t range must satisfy 0 <= t_min <= t_max <= 0.5");
-    if (abs(param.t_min*param.t_precision-round(param.t_min*param.t_precision))>1e-6||abs(param.t_max*param.t_precision-round(param.t_max*param.t_precision))>1e-6)
-        throw invalid_argument("t_min and t_max must be representable at t_precision");
-    if (param.t_min>(float)4/16||param.t_max<(float)5/16)
-        throw invalid_argument("t range must include 4/16 and 5/16");
-    param.set_t_policy(param.t_policy);
-
-    param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
-    ifstream data_file(param.original_data_path,ios::binary);
-    data_file.read(reinterpret_cast<char*>(param.data.data()),param.data.size()*sizeof(float));
-    data_file.close();
-    param.min_val=*min_element(param.data.begin(),param.data.end());
-    param.max_val=*max_element(param.data.begin(),param.data.end());
-    if (param.min_val==param.max_val)
-        throw runtime_error("max_val==min_val");
-    
-    param.abs_eb=param.rel_eb*(param.max_val-param.min_val);
-    prepare_config(param,predictor_plan);
+    validate_parameters(param,t_min_set,t_max_set);
+    load_input(param);
+    prepare_compression_plan(param,predictor_plan);
     param.compress();
-    ofstream compressed_data_file(param.compressed_data_path,ios::binary);
-    if (!compressed_data_file)
-        throw runtime_error("cannot open compressed output: "+param.compressed_data_path);
-    compressed_data_file.write(reinterpret_cast<const char*>(param.zstd_bs_vec.data()),param.zstd_bs_vec.size());
-    if (!compressed_data_file)
-        throw runtime_error("cannot write compressed output: "+param.compressed_data_path);
-    compressed_data_file.close();
+    write_compressed_stream(param);
     return 0;
 }

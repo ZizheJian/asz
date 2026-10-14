@@ -38,6 +38,9 @@ namespace asz
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
         printf("t_policy=%s;\n",t_policy.c_str());
         printf("block_t_policy=%s;\n",block_t_policy.c_str());
+        printf("insufficient_sample_t=%.6f;\n",insufficient_sample_t);
+        printf("quintic_fallback_t_policy=%s;\n",quintic_fallback_t_policy.c_str());
+        printf("quintic_fallback_t=%.6f;\n",quintic_fallback_t);
         printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");
         printf("pivot_stride={%lu,%lu,%lu};\n",pivot_stride[0],pivot_stride[1],pivot_stride[2]);
         printf("block_shape={%lu,%lu,%lu};\n",block_shape[0],block_shape[1],block_shape[2]);

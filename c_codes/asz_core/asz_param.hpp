@@ -70,6 +70,39 @@ namespace asz
 {
     using qb_t=int32_t;
 
+    struct layer_diagnostics_c
+    {
+        bool enabled=false;
+        uint64_t current_layer=0;
+        vector<long double> prediction_squared_error,prediction_absolute_error,reconstruction_squared_error,reconstruction_absolute_error;
+        vector<uint64_t> count;
+
+        void reset(uint64_t layer_num)
+        {
+            if(!enabled)
+                return;
+            prediction_squared_error.assign(layer_num,0);
+            prediction_absolute_error.assign(layer_num,0);
+            reconstruction_squared_error.assign(layer_num,0);
+            reconstruction_absolute_error.assign(layer_num,0);
+            count.assign(layer_num,0);
+        }
+
+        template<typename T>
+        void record(T prediction,T reconstruction,T original)
+        {
+            if(!enabled)
+                return;
+            long double prediction_error=(long double)prediction-(long double)original;
+            long double reconstruction_error=(long double)reconstruction-(long double)original;
+            prediction_squared_error[current_layer]+=prediction_error*prediction_error;
+            prediction_absolute_error[current_layer]+=abs(prediction_error);
+            reconstruction_squared_error[current_layer]+=reconstruction_error*reconstruction_error;
+            reconstruction_absolute_error[current_layer]+=abs(reconstruction_error);
+            count[current_layer]++;
+        }
+    };
+
     template<typename BlockLoc,typename Stride>
     inline array<uint64_t,3> get_layer_qb_shape(const BlockLoc &block_loc,const Stride &stride,unsigned char direction)
     {
@@ -105,6 +138,7 @@ namespace asz
             T min_val,max_val;
             T rel_eb;
             T abs_eb;
+            double data_range_time=0;
             vector<T> data;
             vector<unsigned char> zstd_bs_vec;
             vector<T> compressed_data;
@@ -128,6 +162,9 @@ namespace asz
             vector<T> block_candidate_t;
             string t_policy="adaptive";
             string block_t_policy="peaks";
+            T insufficient_sample_t=(T)4/16;
+            string quintic_fallback_t_policy="block";
+            T quintic_fallback_t=(T)4/16;
             T default_slope;
 
             bool config_generated=false;
@@ -142,6 +179,7 @@ namespace asz
             bool force_quintic=false;//整个dataset统一使用quintic内部预测
             bool auto_select_predictor_family=true;
             bool report_t_histogram=false;
+            layer_diagnostics_c layer_diagnostics;
             
 
             vector<uint64_t> block_shape;//block的形状
@@ -214,28 +252,14 @@ namespace asz
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
             void dot_sample_compress(vector<qb_t> &qb_vec,T &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,
                 T neg_2_eb);
+            T select_block_coefficient(const string &predictor,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T layer_eb,T layer_default_slope,bool &used_fallback);
+            void print_layer_diagnostics(const vector<uint64_t> &layer_huffman_bytes);
             T compress();
-            void block_compress_cubic0_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic0_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic0_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order=2);
-            void block_compress_cubic1_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic1_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic1_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order=2);
-            void block_compress_cubic2_120(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic2_021(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb);
-            void block_compress_cubic2_012(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,T neg_2_eb,unsigned char qb_order=2);
-            void dot_compress(vector<qb_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,T neg_2_eb,uint64_t qb_pos=numeric_limits<uint64_t>::max());
+            void block_compress(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,unsigned char direction,unsigned char qb_order);
+            void dot_compress(vector<qb_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,uint64_t qb_pos);
             void decompress();
-            void block_decompress_cubic0_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic0_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic0_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order=2);
-            void block_decompress_cubic1_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic1_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic1_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order=2);
-            void block_decompress_cubic2_120(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic2_021(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb);
-            void block_decompress_cubic2_012(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char qb_order=2);
-            void dot_decompress(vector<qb_t> &qb_vec,uint64_t &qb_pos,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,uint64_t qb_index=numeric_limits<uint64_t>::max());
+            void block_decompress(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char direction,unsigned char qb_order);
+            void dot_decompress(vector<qb_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,uint64_t qb_index);
     };
 }
 

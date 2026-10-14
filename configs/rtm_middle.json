@@ -1,0 +1,20 @@
+[
+  {
+    "data_path_list":["/anvil/scratch/x-zjian1/asz-rtm-middle-data/rtm-small-0360.f32"],
+    "data_shape":[449,449,235],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":["asz","sz3","qoz"],
+    "cleanup_after_each_test":true,
+    "comparison_baseline":"asz",
+    "summary_csv":"results/rtm_small_0360.csv"
+  },
+  {
+    "data_path_list":["/anvil/scratch/x-zjian1/asz-rtm-middle-data/rtm-big-0750.f32"],
+    "data_shape":[849,849,235],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":["asz","sz3","qoz"],
+    "cleanup_after_each_test":true,
+    "comparison_baseline":"asz",
+    "summary_csv":"results/rtm_big_0750.csv"
+  }
+]

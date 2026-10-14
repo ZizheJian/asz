@@ -218,7 +218,8 @@ def plot(output,selected_families=families,selected_datasets=None,figure_directo
         raise ValueError("at least one dataset is required")
     columns=min(3,len(selected_datasets))
     rows_count=(len(selected_datasets)+columns-1)//columns
-    figure,axes=plt.subplots(rows_count,columns,figsize=(3.5,1.65*rows_count),sharey=True,squeeze=False)
+    # 每行共享纵轴，避免第一行的极端PSNR范围压缩第二行，同时保持同一行的数据可直接比较。
+    figure,axes=plt.subplots(rows_count,columns,figsize=(3.5,1.65*rows_count),sharey="row",squeeze=False)
     figure.subplots_adjust(left=0.12,right=0.98,bottom=0.31/rows_count,top=0.81,wspace=0.16,hspace=0.5)
     panel_axes=list(axes.flat)[:len(selected_datasets)]
     for axis in list(axes.flat)[len(selected_datasets):]:
