@@ -41,7 +41,7 @@ For a prediction target $x_i$, a weighted-sum predictor computes
 \label{eq:background:prediction}
 p_i=\sum_{j=1}^{m}w_j\hat x_{i,j},
 \end{equation}
-where $m$ is the number of reference points, $\hat x_{i,j}$ is the reconstructed value of the $j$th reference for target $x_i$, and $w_j$ is its coefficient. The \emph{prediction stencil} specifies the relative locations of these references, while the coefficients specify their contributions to the predicted value.
+where $m$ is the number of reference points, $\hat x_{i,j}$ is the reconstructed value of the $j$th reference for target $x_i$, and $w_j$ is its coefficient. The \emph{prediction stencil} and prediction axes jointly specify the positions of these references relative to the target, while the coefficients specify their contributions to the predicted value.
 
 The compressor then quantizes the prediction residual $e_i=x_i-p_i$. In a uniform quantizer with interval $\Delta$, the signed quantization-bin index and reconstructed value are
 \begin{equation}
@@ -50,7 +50,9 @@ q_i=\operatorname{round}\!\left(\frac{e_i}{\Delta}\right),\qquad \hat x_i=p_i+\D
 \end{equation}
 Choosing $\Delta\leq2\epsilon_{\mathrm{abs}}$ ensures $|x_i-\hat x_i|\leq\epsilon_{\mathrm{abs}}$ in exact arithmetic.
 
-The prediction and quantization steps above are repeated across the grid in a coarse-to-fine order. Starting from a small set of known values, the compressor progressively predicts and reconstructs additional grid points, making them available as references for subsequent predictions and thereby reducing the spacing between reference points. A \emph{prediction round} applies one prediction stencil with a fixed reference spacing and orientation to a target set using only values reconstructed in earlier rounds, then quantizes the prediction errors and reconstructs the targets.
+The prediction and quantization steps above are repeated across the grid in a coarse-to-fine order. Starting from a small set of known values, the compressor progressively predicts and reconstructs additional grid points, making them available as references for subsequent predictions and thereby reducing the spacing between reference points. A \emph{prediction round} applies one prediction stencil with a fixed reference spacing and prediction axis to a target set using only values reconstructed in earlier rounds, then quantizes the prediction errors and reconstructs the targets.
+
+This construction gives later rounds more reference points and prediction targets. Each round halves the reference spacing along its selected axis, adding approximately as many grid points as have already been reconstructed and thereby approximately doubling the number of available points. Ignoring boundary effects, the final round predicts about one half of the field, and the final three rounds together predict about seven eighths.
 
 Finally, the quantization-bin (QB) indices are losslessly encoded using Huffman coding followed by Zstd. The QB indices are usually passed to the encoder in target traversal order.
 
@@ -62,7 +64,7 @@ The prediction designs of SZ3 and QoZ combine predefined stencil layouts with fi
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\linewidth,trim=0 20bp 0 0,clip]{revised-fig/1-prediction-stencils.pdf}
-\caption{Prediction layouts in SZ3 and QoZ: (a) one-dimensional linear interpolation, (b) one-dimensional cubic interpolation, (c) the second round of QoZ's two-round cubic scheme, and (d) two-dimensional linear interpolation. In each panel, $T$ is the value being predicted, and each $R_i$ is an already reconstructed value available as its reference. The nearest-reference spacing is $h$ in the one-dimensional stencils and $h_0$ or $h_1$ along each axis in (d).}
+\caption{Prediction layouts in SZ3 and QoZ. $T$ is the value being predicted, and each $R_i$ is an already reconstructed value available as its reference. The nearest-reference spacing is $h$ in the one-dimensional stencils and $h_0$ or $h_1$ along each axis in (d).}
 \label{fig:background:stencils}
 \end{figure}
 
@@ -75,24 +77,24 @@ p_0^{\mathrm{cub},1}&=\frac{9}{16}(\hat x_{-h}+\hat x_h)-\frac{1}{16}(\hat x_{-3
 \end{aligned}
 \end{equation}
 
-QoZ extends these stencils with an alternative cubic formula, two-round cubic prediction, and multidimensional prediction. The alternative formula in Figure~\ref{fig:background:stencils}(b) is
+QoZ extends these stencils with an alternative cubic formula, two-pass cubic prediction, and multidimensional prediction. The alternative formula in Figure~\ref{fig:background:stencils}(b) is
 \begin{equation}
 \label{eq:background:qoz-cubic2}
 p_0^{\mathrm{cub},2}=\frac{23}{40}(\hat x_{-h}+\hat x_h)-\frac{3}{40}(\hat x_{-3h}+\hat x_{3h}).
 \end{equation}
 
-The two formulas used to predict $T$ in Figure~\ref{fig:background:stencils}(c) are
+The two formulas used in the two passes of Figure~\ref{fig:background:stencils}(c) are
 \begin{equation}
-\label{eq:background:qoz-two-round}
+\label{eq:background:qoz-two-pass}
 \begin{aligned}
-p_0^{\mathrm{2r},1}&=\frac{2}{3}(\hat x_{-h}+\hat x_h)-\frac{1}{6}(\hat x_{-2h}+\hat x_{2h})\\
+p_0^{\mathrm{2p},1}&=\frac{2}{3}(\hat x_{-h}+\hat x_h)-\frac{1}{6}(\hat x_{-2h}+\hat x_{2h})\\
 &\qquad+0\!\cdot\!(\hat x_{-3h}+\hat x_{3h}),\\
-p_0^{\mathrm{2r},2}&=\frac{23}{31}(\hat x_{-h}+\hat x_h)-\frac{9}{31}(\hat x_{-2h}+\hat x_{2h})\\
+p_0^{\mathrm{2p},2}&=\frac{23}{31}(\hat x_{-h}+\hat x_h)-\frac{9}{31}(\hat x_{-2h}+\hat x_{2h})\\
 &\qquad+\frac{3}{62}(\hat x_{-3h}+\hat x_{3h}).
 \end{aligned}
 \end{equation}
 
-QoZ's two-round cubic scheme divides a prediction round that would otherwise require one pass into two dependent subrounds. In Figure~\ref{fig:background:stencils}(c), $R_1$, $R_4$, and $T$ would ordinarily be targets in the same round, with no prediction dependencies among them. QoZ instead first predicts and quantizes $R_1$ and $R_4$, typically with a four-reference cubic formula, and then uses their reconstructed values to predict $T$.
+QoZ's two-pass cubic scheme divides a prediction round that would otherwise require one pass into two dependent passes. In Figure~\ref{fig:background:stencils}(c), $R_1$, $R_4$, and $T$ would ordinarily be targets in the same round, with no prediction dependencies among them. QoZ instead predicts and quantizes $R_1$ and $R_4$ in the first pass, typically with a four-reference cubic formula, and then uses their reconstructed values to predict $T$ in the second pass.
 
 ASZ also uses a six-reference predictor, but all of its references are reconstructed in earlier rounds. Its targets therefore remain independent within a round and require only one pass, reducing prediction overhead. Section~\ref{sec:configuration-space:predictors} describes this predictor.
 
@@ -100,7 +102,12 @@ QoZ also supports multidimensional interpolation, which combines one-dimensional
 
 In all of the prediction formulas above, the coefficients sum to one, with equal coefficients assigned to references at symmetric positions along each interpolation axis.
 
+\subsection{Prediction Axes}
+\label{sec:background:prediction-axes}
+
+Different choices of prediction axes orient the same stencil along different coordinate directions and thereby determine the coordinate dimensions along which the predictor exploits spatial correlation. Correlation strength can differ substantially among coordinate axes. Therefore, axis selection affects prediction errors and ultimately compression performance. This motivates axis-order tuning in SZ3 and QoZ.
+
 \subsection{Configuration Tuning in SZ3 and QoZ}
 \label{sec:background:tuning}
 
-SZ3 and QoZ tune interpolation configurations at different granularities using sampled prediction errors. SZ3 selects one interpolation formula and one axis order for the entire field. QoZ selects the stencil and direction order per level or block and generates multidimensional coefficients per block. Both compressors serialize QBs in traversal order. ASZ instead exposes independent choices for each prediction round and expands the coefficient and serialization-order spaces.
+SZ3 and QoZ tune interpolation configurations at different granularities using sampled prediction errors. SZ3 selects one interpolation formula and chooses between the forward and reverse axis orders for the entire field. QoZ selects the stencil and chooses between the forward and reverse orders of the active axes for each group of axis-wise prediction rounds at a common reference spacing, optionally repeating the selection within individual blocks, and generates multidimensional coefficients per block. Both compressors serialize QBs in traversal order. These grouped schedules and fixed serialization orders motivate ASZ's round-wise plan.

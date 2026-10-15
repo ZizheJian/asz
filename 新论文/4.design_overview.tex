@@ -1,31 +1,28 @@
 \section{ASZ Design Overview}
 \label{sec:overview}
 
-This section describes how ASZ organizes compression and tuning. We first introduce its round-wise plan, then explain which decisions are made offline and which online, then describe plan execution, and finally outline how the optimization strategies fit into this design.
+This section presents an overview of ASZ, including its reusable round-wise plan and the division between plan generation, cross-file reuse, and online adaptation. Figure~\ref{fig:overview:round-schedules} highlights how independently configured rounds distinguish ASZ from the grouped axis schedules of SZ3 and QoZ.
 
-\subsection{Independent Round-Wise Configuration}
+\begin{figure}[htb]
+\centering
+\fbox{\rule{0pt}{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}\rule{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{0pt}}
+\caption{Prediction-round schedules in SZ3, QoZ, and ASZ. For one-dimensional prediction on three-dimensional data, SZ3 repeats either the forward or reverse axis order. QoZ reselects one of these two orders for each three-round group, or the two orders of the active axes for each two-round group when one axis is frozen. ASZ selects every round independently and may repeat an axis. ASZ generates this plan before compression and can reuse it across related files.}
+\label{fig:overview:round-schedules}
+\end{figure}
+
+\subsection{Round-Wise Plan}
 \label{sec:configuration-space:round-wise}
 
-ASZ organizes multilevel interpolation as a sequence of prediction rounds. Each round predicts and quantizes a target set along one direction using values reconstructed in earlier rounds. Existing interpolation compressors constrain these rounds through a fixed or repeatedly applied prediction schedule that couples the configurations of multiple rounds.
+Compared with prior prediction-based compressors, ASZ independently tunes the prediction axis and QB serialization order of every prediction round. Here, independent tuning means that the choices for one round place no restrictions on those for adjacent rounds. We use the prediction-axis schedules discussed in Section~\ref{sec:background:prediction-axes} to illustrate this distinction because axis order is configurable in all three compressors, whereas SZ3 and QoZ keep the QB serialization order fixed.
 
-ASZ preserves the data dependencies of multilevel prediction but removes this configuration coupling. The execution order remains constrained because a round can use only values reconstructed by earlier rounds. Within that valid order, every round selects its stencil family, prediction direction, and QB serialization order independently of the other rounds. Let $c_r=(f_r,d_r,o_r)$ denote these three choices for round $r$, and let $C=(c_1,\ldots,c_R)$ denote the complete round-wise plan.
+For one-dimensional prediction on three-dimensional data, SZ3 makes one global choice between the forward order $x,y,z$ and the reverse order $z,y,x$, then repeats the selected three-round cycle at every reference spacing.
 
-Two rounds at different spacings can therefore use different stencil families, directions, and serialization orders without following a fixed stencil or a repeated direction cycle. The plan $C$ can represent any feasible sequence drawn from the per-round candidate sets. This freedom creates a much larger joint space, which the strategies in Section~\ref{sec:optimization-strategies} make practical to explore.
+QoZ can reselect the order between groups. Without axis freezing, every group contains three rounds and uses either $x,y,z$ or $z,y,x$. With one frozen axis, every group contains two rounds and uses either order of the remaining axes. For example, freezing $z$ leaves $x,y$ and $y,x$ as the two choices.
 
-\subsection{Offline and Online Decisions}
+ASZ removes this grouping constraint. It can select any axis in every round based on estimated compression performance, allowing it to repeat an axis in consecutive rounds and use different axes for different numbers of rounds.
 
-ASZ separates configuration decisions by their appropriate granularity. Offline preprocessing constructs $C$, which can be reused across related files. The plan stores round-level stencil families, prediction directions, and QB serialization orders. These decisions are selected offline because they affect the dependencies and encoded layout of an entire round.
+\subsection{Plan Generation, Reuse, and Online Adaptation}
 
-During compression, only the coefficient of a tunable stencil remains an online decision. For a round using 1D4R, every block $b$ selects one coefficient $t_{r,b}$ through a low-cost proxy and applies it to all targets predicted in that block and round. Fixed-coefficient 1D6R requires no such selection. This separation keeps the expensive structural search out of the compression path while preserving inexpensive local adaptation.
+During preprocessing, ASZ selects the global prediction stencil together with each round's prediction axis and QB serialization order. These decisions form $C_{\mathrm{reuse}}$. Generating $C_{\mathrm{reuse}}$ incurs modest cost, as shown in Section~\ref{sec:evaluation}. The resulting configuration transfers well across related files, such as nearby time steps of the same simulation, as also shown in Section~\ref{sec:evaluation}. We therefore recommend treating preprocessing as an offline step and reusing its configuration to amortize its cost. When per-file adaptation is preferred, the same preprocessing can instead be performed for every input file as an online configuration-generation step.
 
-% TODO: 只使用抽象candidate sets和layer limit；具体经验参数放入实验设置表。
-
-\subsection{Compression and Decompression}
-
-Once preprocessing has generated $C$, compression executes the recorded rounds without repeating the joint search. It first quantizes the pivot points required by the coarsest round. It then visits the blocks and executes the rounds in plan order. In each round, ASZ selects a block coefficient when required, predicts and quantizes the round's targets, and appends their QBs in the recorded serialization order. The coefficient metadata and per-round QB streams are Huffman encoded and then jointly compressed by Zstd. Decompression reads the same plan and coefficient metadata from the bitstream and replays the rounds to reconstruct the data.
-
-The computation order used to visit targets is conceptually separate from QB serialization order. The former must respect prediction dependencies, whereas the latter controls the order presented to the lossless encoder. ASZ therefore changes QB serialization without changing predictions, quantization results, or reconstruction errors.
-
-\subsection{Optimization Strategies}
-
-Four strategies build on the round-wise representation. ASZ constructs a compact predictor set containing tunable-coefficient 1D4R and fixed-coefficient 1D6R. It makes block-wise coefficient selection inexpensive through an $H_1$--PSNR proxy and reusable statistics. QB serialization order adds an encoding choice that changes lossless compressibility without changing reconstruction. Finally, reverse-greedy search assembles the independently configurable rounds into $C$ without exhaustively enumerating their Cartesian product. Section~\ref{sec:optimization-strategies} presents these strategies in this order, together with the complexity and storage overhead of the resulting plan.
+During the main compression pass, ASZ follows $C_{\mathrm{reuse}}$ and additionally tunes the predictor coefficients for each block using a low-cost proxy. Section~\ref{sec:optimization-strategies} presents the methods used to generate $C_{\mathrm{reuse}}$ and adapt these coefficients.
