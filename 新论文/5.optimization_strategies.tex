@@ -1,49 +1,49 @@
 \section{Optimization Strategies}
 \label{sec:optimization-strategies}
 
-Section~\ref{sec:overview} introduced the reusable round-wise plan $C_{\mathrm{reuse}}$. This section develops the candidate predictors and evaluation and search methods used to generate the plan and adapt its tunable coefficients efficiently.
+ASZ uses four optimization strategies to efficiently explore its expanded configuration space:
+\begin{itemize}
+\item Sections~\ref{sec:configuration-space:predictors}--\ref{sec:configuration-space:reference-count} define and prune the \emph{tunable-coefficient predictors}.
+\item Sections~\ref{sec:configuration-space:coefficient-selection} and~\ref{sec:configuration-space:coefficient-evaluation} develop \emph{fast coefficient evaluation} through a rate--distortion proxy and reusable statistics.
+\item Section~\ref{sec:configuration-space:serialization} performs \emph{QB-order tuning}.
+\item Section~\ref{sec:configuration-space:reverse-greedy} uses \emph{reverse-greedy search} to generate the round-wise plan without exhaustive enumeration.
+\end{itemize}
+Unless a specialized criterion is stated below, ASZ evaluates tunable choices by applying prediction, quantization, and Huffman--Zstd trial encoding to sampled targets. We omit routine fixed parameters and fallback rules that do not introduce additional optimization strategies.
 
-\subsection{Tunable-Coefficient Predictors}
+\subsection{Candidate Predictor Families}
 \label{sec:configuration-space:predictors}
 
-SZ3's cubic interpolation is derived to reproduce a local cubic polynomial from four reference values. In practice, however, scientific fields can depart from this model through measurement noise or nonpolynomial variation. The predictor also uses reconstructed reference values, which may differ from the originals because of quantization. For example, when outer references are less informative, two-point linear interpolation avoids relying on them. Four-point equal-weight averaging is also a candidate when detailed local fitting is unreliable. Consequently, coefficients derived for polynomial interpolation may not be the most suitable for compression.
+Existing compressors provide several fixed interpolation formulas that assign different weights to nearby and distant references. ASZ expands these discrete formula choices into coefficient-tunable predictor families and selects the coefficients according to rate--distortion performance.
 
-We therefore consider using variable-coefficient predictors. For example, we generalize SZ3's cubic interpolation to the following one-dimensional four-reference (1D4R) form, using local coordinates centered on the target:
+We first generalize SZ3's cubic interpolation to the following one-dimensional four-reference (1D4R) form, using the local coordinates illustrated in Fig.~\ref{fig:background:stencils}(b):
 \begin{equation}
 \label{eq:configuration-space:1d4r-prediction}
-p(t)=(\tfrac14-t)(\hat x_{-3h}+\hat x_{3h})+(\tfrac14+t)(\hat x_{-h}+\hat x_h),
+p(t)=(\tfrac14+t)(\hat x_{-h}+\hat x_h)+(\tfrac14-t)(\hat x_{-3h}+\hat x_{3h}).
 \end{equation}
-where $h$ is the spacing from the target to its nearest references. We assign equal coefficients to references symmetric about the target and require the four coefficients to sum to one so that constant-valued data are predicted exactly. The predictor recovers SZ3's cubic interpolation at $t=5/16$, reduces to SZ3's linear interpolation at $t=1/4$, and becomes four-point equal-weight averaging at $t=0$. We select $t$ according to rate--distortion performance.
+Like the fixed formulas used by SZ3 and QoZ, this family assigns equal coefficients to references symmetric about the target and constrains the four coefficients to sum to one, thereby preserving exact prediction of constant-valued data. The predictor recovers SZ3's cubic interpolation at $t=5/16$, reduces to SZ3's linear interpolation at $t=1/4$, and becomes four-point equal-weight averaging at $t=0$.
 
-In addition, we consider variable-coefficient two-dimensional four-reference (2D4R) and one-dimensional six-reference (1D6R) predictors. The 2D4R predictor follows QoZ's two-dimensional linear prediction, which combines linear predictions along two axes~\cite{liu2024high}. Using local coordinates with the target at $(0,0)$, we write
+In addition, we consider variable-coefficient two-dimensional four-reference (2D4R) and one-dimensional six-reference (1D6R) predictors. The 2D4R predictor follows QoZ's two-dimensional linear prediction, which combines linear predictions along two axes~\cite{liu2024high}. Using the local coordinates illustrated in Fig.~\ref{fig:background:stencils}(d), we write
 \begin{equation}
 \label{eq:configuration-space:2d4r-prediction}
-p(t)=(\tfrac14+t)(\hat x_{-h_1,0}+\hat x_{h_1,0})+(\tfrac14-t)(\hat x_{0,-h_2}+\hat x_{0,h_2}),
+p(t)=(\tfrac14+t)(\hat x_{-h_0,0}+\hat x_{h_0,0})+(\tfrac14-t)(\hat x_{0,-h_1}+\hat x_{0,h_1}).
 \end{equation}
-where $h_1$ and $h_2$ are the distances from the target to its references along the first and second coordinate axes, respectively. The coefficients control the relative contributions of the two directional predictions.
-
-The 1D6R predictor generalizes six-point quintic interpolation by allowing its coefficients to vary. With the target again at the local origin, we write
+Unlike QoZ's two-pass cubic predictor, ASZ's 1D6R family uses three symmetric reference pairs at offsets $h$, $3h$, and $5h$, all reconstructed before the current round. We parameterize their per-reference weights as
 \begin{equation}
 \label{eq:configuration-space:1d6r-prediction}
 \begin{aligned}
-p(t_1,t_2)&=(\tfrac16-t_1)(\hat x_{-5h}+\hat x_{5h})\\
-&\quad+(\tfrac16-t_2)(\hat x_{-3h}+\hat x_{3h})\\
-&\quad+(\tfrac16+t_1+t_2)(\hat x_{-h}+\hat x_h),
+p(a,b)&=(\tfrac12-a-b)(\hat x_{-h}+\hat x_h)\\
+&\quad+b(\hat x_{-3h}+\hat x_{3h})\\
+&\quad+a(\hat x_{-5h}+\hat x_{5h}).
 \end{aligned}
 \end{equation}
-where $t_1$ and $t_2$ independently control the corrections contributed by the two outer reference pairs while preserving a unit coefficient sum.
+This family recovers fixed six-point quintic interpolation at $a=3/256$ and $b=-25/256$.
 
-% TODO: 核实六点五次插值对应的既有压缩器及版本。旧稿归属于QoZ，但当前QoZ实现中的六点公式和reference位置均不同，不能直接沿用该归属。
 % TODO: 补充三种predictor families的reference layouts及orientations示意图。
 
-\subsubsection{Predictor Selection and Pruning}
-\label{sec:configuration-space:families}
+\subsection{One- versus Two-Dimensional Prediction}
+\label{sec:configuration-space:dimensionality}
 
-In this section, we compare 1D4R with 2D4R and 1D6R to reduce the predictor search space while retaining competitive rate--distortion performance. The comparisons suggest excluding 2D4R, retaining coefficient-tunable 1D4R and using fixed-quintic 1D6R.
-
-\paragraph{1D4R versus 2D4R.}
-
-We first compare the variable-coefficient predictors 1D4R and 2D4R. Each predictor contributes three curves: one per coordinate axis for 1D4R and one per coordinate plane for 2D4R. As shown in Fig.~\ref{fig:configuration-space:1d4r-vs-2d4r}, the best 1D4R orientations provide a better overall rate--distortion trade-off on all three datasets, motivating the exclusion of 2D4R.
+We compare the variable-coefficient predictors 1D4R and 2D4R to determine whether extending prediction across two dimensions improves rate--distortion performance. Each predictor contributes three curves: one per coordinate axis for 1D4R and one per coordinate plane for 2D4R. As shown in Fig.~\ref{fig:configuration-space:1d4r-vs-2d4r}, the best 1D4R orientations provide a better overall rate--distortion trade-off on all three datasets, motivating the exclusion of 2D4R.
 
 \begin{figure}[htb]
 \centering
@@ -56,9 +56,10 @@ One possible explanation lies in how the two predictors correct their underlying
 
 The observed advantage concerns coefficient-tunable predictors. It does not contradict QoZ's use of multidimensional interpolation, which combines predefined per-axis linear or cubic interpolation formulas. QoZ can adapt the directional blending weights, but it does not perform the rate--distortion-guided search over per-axis reference coefficients considered here.
 
-\paragraph{1D4R versus 1D6R.}
+\subsection{Four- versus Six-Reference Prediction}
+\label{sec:configuration-space:reference-count}
 
-We next compare 1D4R and 1D6R to assess the benefit of two additional references and examine 1D6R's coefficient choices.
+We compare 1D4R and 1D6R to assess the benefit of two additional references and examine 1D6R's coefficient choices.
 
 Figure~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the two predictors. Each predictor has three prediction axes, one for each coordinate axis, and therefore contributes three curves to each plot. Their rate--distortion performance is nearly identical in most cases, while 1D6R offers advantages on some data files.
 
@@ -78,7 +79,7 @@ To further investigate the datasets on which 1D6R offers an advantage over 1D4R,
 \label{fig:configuration-space:1d6r-coefficients}
 \end{figure}
 
-We next explain why coefficient tuning offers less benefit for 1D6R than for 1D4R. In both predictors, tuning controls a higher-order correction to a lower-order interpolation formula. For 1D4R, its single parameter can continuously weaken the cubic correction and disable it entirely, recovering two-point linear interpolation when the outer references are unreliable. In fixed-quintic 1D6R, however, each of the two additional outermost references has a weight of only about $1.2\%$ and therefore provides only a small correction to cubic interpolation. Small coefficient changes have little effect, whereas large changes eliminate its ability to cancel the higher-order error left by cubic interpolation. Consistent with this narrow useful tuning range, Fig.~\ref{fig:configuration-space:1d6r-coefficients} shows little gain from tuning 1D6R's two coefficients. We therefore tune 1D4R but retain fixed-quintic coefficients for 1D6R.
+We next explain why coefficient tuning offers less benefit for 1D6R than for 1D4R. In both predictors, tuning controls a higher-order correction to a lower-order interpolation formula. For 1D4R, its single parameter can continuously weaken the cubic correction and disable it entirely, recovering two-point linear interpolation when the outer references are unreliable. In fixed-quintic 1D6R, however, each of the two additional outermost references has a weight of only about $1.2\%$ and therefore provides only a small correction to cubic interpolation. Small coefficient changes have little effect, whereas large changes eliminate its ability to cancel the higher-order error left by cubic interpolation. Consistent with this narrow useful tuning range, Fig.~\ref{fig:configuration-space:1d6r-coefficients} shows little gain from tuning 1D6R's two coefficients. We therefore tune 1D4R, retain fixed-quintic coefficients for 1D6R, and choose between the two families using sampled prediction MSE.
 
 % TODO: 最佳系数来自指定的有限网格，而非所有实数系数的全局最优。正式报告各family的网格范围和步长。
 % 第一组实测结果：results/predictor-family-legacy-middle-21244405。单轮、固定原始参考值、stencil-specific目标集合；机制段落是可能的解释，不是1D4R必然胜出的理论证明。
@@ -88,12 +89,10 @@ We next explain why coefficient tuning offers less benefit for 1D6R than for 1D4
 % TODO: results/predictor-family-paper-refined与revised-fig/predictor-family-refined为共享目标、原始参考值固定的采样单轮诊断，不能当作完整ASZ压缩器结果。历史完整压缩器选择器验证的来源为results/predictor_family_rd_extremes_*.csv，仍需扩展数据和误差界检验泛化。
 % 第二组候选使用transition模式的42组有理数参数，覆盖全部13组1D4R；shared1d模式统一四点和六点预测的目标位置。结论依据实际RD结果，不能由ASZ选择记录代替。
 
-\subsection{Efficient Coefficient Evaluation}
-\label{sec:configuration-space:coefficient-evaluation}
+\subsection{Proxy-Based Coefficient Selection}
+\label{sec:configuration-space:coefficient-selection}
 
-After predictor pruning, only 1D4R requires online coefficient selection, and it has a single tunable coefficient $t$. ASZ first replaces encoded bit rate with the first-order entropy $H_1$ of the quantization bins (QBs), forming an $H_1$--PSNR proxy that avoids lossless encoding. It then reuses a coefficient-independent joint histogram to efficiently estimate $H_1$ and PSNR for many coefficients on the same target data and error bound, avoiding repeated prediction.
-
-\subsubsection{BR--PSNR Score}
+After predictor pruning, only 1D4R requires coefficient selection, and it has a single tunable coefficient $t$. ASZ replaces encoded bit rate with the first-order entropy $H_1$ of the quantization bins (QBs), forming an $H_1$--PSNR proxy that avoids lossless encoding. We use BR--PSNR as the reference ranking and validate its $H_1$--PSNR approximation.
 
 We first define the reference objective used to compare coefficient candidates. At the same error bound, each candidate is a point in the BR--PSNR plane, where better performance lies toward the upper left. Neither metric alone can rank the candidates because bit rate and PSNR may increase or decrease together across candidates. As illustrated in Fig.~\ref{fig:configuration-space:rd-score}, we project every candidate point onto the normal of the local reference tangent that points toward the upper left. A point projected farther along this normal receives a larger score and is preferred.
 
@@ -110,8 +109,6 @@ For a fixed dataset, error bound, stencil, and direction, the BR--PSNR score of 
 S_{\mathrm{BR}}(t)=\frac{\mathrm{PSNR}(t)-m_{\mathrm{BR}}\mathrm{BR}(t)}{\sqrt{1+m_{\mathrm{BR}}^2}},
 \end{equation}
 where $m_{\mathrm{BR}}$ ideally denotes the local slope of the BR--PSNR curve at the operating point. Because this derivative is not directly available, ASZ approximates it by the finite difference between two neighboring error bounds. A larger score indicates greater displacement toward higher PSNR and lower BR and is therefore preferred.
-
-\subsubsection{\texorpdfstring{$H_1$--PSNR}{H1--PSNR} Proxy Score}
 
 Evaluating $S_{\mathrm{BR}}(t)$ exactly would require Huffman--Zstd encoding of the QB stream produced by every candidate $t$. To avoid this expensive step, we explore replacing BR--PSNR with $H_1$--PSNR. Specifically, let $p_q(t)$ be the fraction of targets assigned to QB $q$ under coefficient $t$. Its first-order entropy is
 \begin{equation}
@@ -138,60 +135,90 @@ Figure~\ref{fig:configuration-space:global-coefficient-selection} reports how of
 
 Panels (b) and (c) provide a representative visual comparison of the two curve families. Although $H_1$ is not a numerical estimate of BR, replacing BR with $H_1$ largely preserves the relative arrangement of the coefficient curves. $H_1$--PSNR agrees with BR--PSNR in 95.93\% of the tests. The other criteria are less accurate because each omits either coding cost or reconstruction quality.
 
-Figure~\ref{fig:configuration-space:coefficient-selection-heatmap} breaks this result down by data file and error bound. Each cell summarizes nine test cases. The proxy selects the reference coefficient in all nine cases for 23 of the 30 cells, and even its least accurate cell agrees in six of nine cases.
+\subsection{Reusable Coefficient Evaluation}
+\label{sec:configuration-space:coefficient-evaluation}
 
-\begin{figure}[htb]
-\centering
-\includegraphics[width=\columnwidth]{revised-fig/global-coefficient-selection-heatmap.pdf}
-\caption{Accuracy of file-wide coefficient selection. Each cell reports agreements among nine test cases, and its color gives the corresponding agreement rate.}
-\label{fig:configuration-space:coefficient-selection-heatmap}
-\end{figure}
+Building on the proxy validated above, ASZ needs to evaluate $H_1(t)$ and PSNR$(t)$ for many coefficient candidates. Both quantities can be derived from the distribution $f_t(e)$ of the prediction error. Let $\Delta$ be the QB interval, $R$ the data range, and $\mathcal{Q}_q=[(q-\tfrac12)\Delta,(q+\tfrac12)\Delta)$ the errors mapped to QB $q$. The QB probability and the post-quantization mean squared error are
+\begin{equation}
+\label{eq:configuration-space:distribution-metrics}
+\begin{aligned}
+p_q(t)&=\int_{\mathcal{Q}_q}f_t(e)\,de,\\
+D(t)&=\sum_q\int_{\mathcal{Q}_q}(e-q\Delta)^2f_t(e)\,de.
+\end{aligned}
+\end{equation}
+The probabilities $p_q(t)$ yield $H_1(t)$ through Eq.~\eqref{eq:configuration-space:h1}, while $D(t)$ yields $\operatorname{PSNR}(t)=10\log_{10}(R^2/D(t))$. Coefficient evaluation therefore requires the error distribution rather than the locations or order of individual targets.
 
-ASZ applies the validated proxy independently to each compression block, allowing every block to select its own coefficient. Compared with sharing one coefficient across the input, this local adaptation provides only a modest rate--distortion gain, around 5\% in the cases where it helps. We nevertheless enable block-wise selection because the proxy avoids lossless trial encoding and the reusable evaluation below makes its marginal cost small.
-
-\subsubsection{Reusable Coefficient-Independent Statistics}
-
-After validating the proxy, we further avoid repeating prediction for every candidate. For target $x_i$, define the outer and inner reference sums as $O_i=\hat x_{-3h}+\hat x_{3h}$ and $I_i=\hat x_{-h}+\hat x_h$, respectively. From Eq.~\eqref{eq:configuration-space:1d4r-prediction}, its prediction error is
+For 1D4R, the error distributions for all candidates can be obtained from one coefficient-independent joint distribution. For target $x_i$, define the outer and inner reference sums as $O_i=\hat x_{-3h}+\hat x_{3h}$ and $I_i=\hat x_{-h}+\hat x_h$, respectively. From Eq.~\eqref{eq:configuration-space:1d4r-prediction}, its prediction error is
 \begin{equation}
 \label{eq:configuration-space:affine-error}
 e_i(t)=x_i-p_i(t)=A_i t+B_i,
 \end{equation}
-where $A_i=O_i-I_i$ and $B_i=x_i-(O_i+I_i)/4$. Both terms are independent of $t$. Given quantization interval $\Delta$, candidate $t$ produces
-\begin{equation}
-q_i(t)=\operatorname{round}\!\left(\frac{A_i t+B_i}{\Delta}\right),\quad d_i(t)=A_i t+B_i-\Delta q_i(t).
-\end{equation}
-The QB frequencies yield $H_1(t)$, while the mean of $d_i(t)^2$ yields PSNR.
+where $A_i=O_i-I_i$ and $B_i=x_i-(O_i+I_i)/4$. Both terms are independent of $t$. Thus, the joint distribution of $(A,B)$ determines $f_t(e)$ for every $t$.
 
-ASZ computes $(A_i,B_i)$ once and stores their frequencies in a quantized joint histogram. For each candidate, it maps every occupied bin center $(a_j,b_j)$ to $a_jt+b_j$ and accumulates the corresponding QB frequencies and squared reconstruction errors. Let $N$ be the number of targets, $K$ the number of candidates, and $M$ the number of occupied joint bins. Direct evaluation takes $O(KN)$ time, whereas histogram reuse takes $O(N+KM)$ time and $O(M)$ space. Because $H_1$--PSNR depends on the error distribution rather than symbol order, the histogram need not retain target locations. Its only approximation is the discretization of $(A_i,B_i)$. With sufficient target samples and fine histogram bins, it closely approximates direct evaluation. We choose the resolution so that the induced error in $At+B$ is at most a small fraction of $\Delta$.
+ASZ samples $n$ targets, computes their $(A_i,B_i)$ pairs once, and quantizes the two values onto a fine two-dimensional grid. Let $(a_j,b_j)$ and $c_j$ denote the center and count of occupied grid cell $j$. For candidate $t$, each cell contributes the approximate error $\tilde e_j(t)=a_jt+b_j$. We quantize this error as
+\begin{equation}
+\label{eq:configuration-space:histogram-estimates}
+\begin{aligned}
+\tilde q_j(t)&=\operatorname{round}\!\left(\frac{\tilde e_j(t)}{\Delta}\right),&
+\tilde d_j(t)&=\tilde e_j(t)-\Delta\tilde q_j(t),\\
+\hat p_q(t)&=\frac1n\sum_{j:\tilde q_j(t)=q}c_j,&
+\hat D(t)&=\frac1n\sum_jc_j\tilde d_j(t)^2.
+\end{aligned}
+\end{equation}
+Substituting $\hat p_q(t)$ and $\hat D(t)$ into Eq.~\eqref{eq:configuration-space:h1} and the PSNR definition estimates the two proxy coordinates. The grid steps $\eta_A$ and $\eta_B$ are chosen relative to $\Delta$ so that $(|t|\eta_A+\eta_B)/2$ remains a small fraction of $\Delta$ for every candidate.
+
+Let $K$ be the number of candidates and $M$ the number of occupied joint-grid cells. Direct evaluation takes $O(Kn)$ time. Constructing and reusing the joint histogram takes $O(n+KM)$ time and $O(M)$ space, with $M$ typically much smaller than $n$. The approximation has two controllable error sources: finite sampling and discretization of $(A,B)$. It is best characterized as consistent rather than strictly unbiased. Random sampling gives unbiased cell-frequency estimates, while plug-in entropy, the logarithm in PSNR, and grid discretization can introduce finite-sample or discretization bias. As the sample count increases and the grid steps decrease, the estimated $H_1$ and PSNR converge to their full-target, full-precision values.
+
+Together, Sections~\ref{sec:configuration-space:coefficient-selection} and~\ref{sec:configuration-space:coefficient-evaluation} give:
+\begin{center}
+\small
+\begin{tabular}{@{\hspace{0.5em}}l@{\hspace{0.5em}}}
+\toprule
+\multicolumn{1}{c}{\textbf{Coefficient selection}}\\
+\midrule
+Estimate the local $H_1$--PSNR slope.\\
+Construct the sampled joint distribution of $(A,B)$.\\
+\emph{For every candidate coefficient $t$:}\\
+\hspace*{1em}Map occupied cells to errors $At+B$.\\
+\hspace*{1em}Accumulate QB probabilities and quantization MSE.\\
+\hspace*{1em}Compute $H_1(t)$, PSNR$(t)$, and $S_{H_1}(t)$.\\
+Select the coefficient with the largest $S_{H_1}$.\\
+\bottomrule
+\end{tabular}
+\end{center}
+The joint distribution is constructed once and reused across all candidates, eliminating lossless trial encoding.
 
 \subsection{Quantization-Bin Serialization Order}
+\label{sec:configuration-space:serialization}
 
-Prediction dependencies constrain when targets can be computed, but they do not require the resulting QBs to be presented to the lossless encoder in the same order. For a fixed stencil, direction, and coefficient, changing only QB serialization preserves every prediction, QB value, and reconstructed value. It therefore leaves PSNR and $H_1$ unchanged while changing the symbol sequence processed by Huffman--Zstd. ASZ treats this serialization order as an independent per-round choice and selects the order that makes the QB stream more compressible.
+QB serialization order specifies the order in which quantized residual symbols are passed to lossless encoding. For a fixed QB multiset, the Huffman code lengths and total Huffman size depend on symbol frequencies rather than symbol order. Reordering instead changes the sequence of Huffman codewords and hence the byte-level patterns presented to the subsequent Zstd stage. QB-order tuning therefore primarily targets Zstd compression.
 
-% TODO: 在本节直接比较固定与tuned QB serialization orders。
+SZ3 and QoZ serialize QBs in generation order, which naturally keeps the QBs produced in the same prediction round together. These QBs share a stencil and reference spacing, and therefore tend to have similar prediction accuracy and symbol distributions. This round-wise grouping gives the lossless stage a stream with locally consistent statistics. ASZ retains this organization and never interleaves QBs from different rounds.
+
+ASZ optimizes the serialization order only within each round. Weighted-sum prediction can leave residual spatial correlation along any coordinate axis, and the prediction axis need not be the axis with the strongest residual correlation. A common pattern is a run of equal QBs along one axis. Making that axis the fastest-varying dimension places the equal symbols consecutively in the stream and exposes the run to Zstd. ASZ stores the QBs of a round as a three-dimensional tensor and chooses its fastest-varying dimension when linearizing it. Although a three-dimensional tensor has six complete axis permutations, ASZ evaluates three choices, one for each possible fastest-varying dimension, because the relative order of the two slower dimensions has little effect on Zstd.
+
+All three choices preserve the QBs, their histogram, and reconstruction, so they have identical $H_1$ and PSNR. ASZ therefore compares them through sample-based trial encoding.
+
+Figure~\ref{fig:configuration-space:qb-order} summarizes exhaustive trials for the finest prediction round on three data files. For each error bound and QB order, the plotted point is the best measured BR--PSNR candidate among three prediction axes and eleven coefficients $t\in\{2/32,\ldots,12/32\}$.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\columnwidth]{revised-fig/qb-order-rd.pdf}
+\caption{Rate--distortion comparison of QB serialization orders after independently selecting the best prediction axis and coefficient for each order. QB axes 0, 1, and 2 denote the fastest-varying dimension of the serialized QB tensor.}
+\label{fig:configuration-space:qb-order}
+\end{figure}
+
+Among the 15 data-file--error-bound cases, QB axis 1 is uniquely best in ten cases and QB axis 2 in two, while all three orders tie in the remaining three. The preferred order therefore varies across data and operating points, which motivates retaining QB serialization as a round-wise configuration choice.
 
 \subsection{Reverse-Greedy Round-Wise Search}
 \label{sec:configuration-space:reverse-greedy}
 
 The independent per-round axis and serialization-order choices in $C_{\mathrm{reuse}}$ produce a combinatorial joint space. ASZ avoids exhaustive enumeration by selecting the rounds in reverse execution order and fixing each pair of choices before proceeding to the preceding round. Later rounds cover progressively more targets, as discussed in Section~\ref{sec:background:pipeline}, so their configuration choices affect a larger share of the data. The reverse order therefore fixes the higher-impact rounds first. It converts one high-dimensional joint search into a sequence of small candidate comparisons while retaining independent choices for every round.
 
-\subsubsection{Sample-Based Candidate Evaluation}
-\label{sec:configuration-space:sample-evaluation}
-
-For choices without a dedicated fast criterion, such as prediction axis and QB serialization order, ASZ uses sample-based trial encoding during plan generation. For each candidate pair of prediction axis and QB serialization order, we first select its interpolation coefficient using the coefficient-evaluation proxy. At the current round's spacing and error bound, we predict and quantize sampled targets using original reference values, serialize the resulting QBs in the candidate order, and encode them with Huffman followed by Zstd. We rank candidates using the measured encoded size per sampled target and the sampled reconstruction PSNR under the round-specific rate--distortion slope.
-
-MSE and MAE alone do not account for encoded size, while $H_1$--PSNR omits sequence structure exploited by Zstd. In particular, for a fixed target set and coefficients, changing only QB serialization leaves the predictions, reconstructed values, and QB histogram unchanged. Consequently, these criteria cannot distinguish such candidates, even though their Zstd-compressed sizes can differ. Sample-based trial encoding captures this order dependence without repeating a full multilevel compression for every candidate.
-
 % TODO: 若篇幅允许，增加紧凑的ranking表或图，在各数据集和error bound下比较H1--PSNR、预测MSE、预测MAE和sample-based trial encoding选择方向的准确性及RD损失，并报告各判据的评估时间。方向选择是否失效须由实测支持，不能由QB顺序的不变性直接推出。
 % TODO: QB-order对照需固定目标集合、方向和系数，只改变排列；同时报告相同的H1/PSNR/MSE/MAE和实测编码大小。并列排名单独报告，不将无法区分记成正确。验证sample-based判据时，另用共享其他设置的完整压缩结果作为每个数据集--error-bound案例的参考，区分单轮采样试编码和完整多轮码流。
 
-\subsubsection{Plan Generation}
-
-After selecting the global prediction stencil, plan generation starts from the finest unresolved prediction round and proceeds in reverse execution order. At each step, ASZ evaluates the available axis and QB serialization-order pairs for the current round with the sampled criterion above, fixes the pair with the largest score, updates the current spatial strides, and prepends the selected round to $C_{\mathrm{reuse}}$. The search stops when no additional targets remain or the round limit is reached. Once selected, a round is not revisited.
+Plan generation starts from the finest unresolved prediction round and proceeds in reverse execution order. At each step, ASZ fixes the best configuration for the current round, updates the current spatial strides, and prepends the selected round to $C_{\mathrm{reuse}}$. The search stops when no additional targets remain or the round limit is reached. Once selected, a round is not revisited.
 
 % TODO: 将reverse greedy描述为降低联合搜索维数，而不是删除最终配置维度。
 % TODO: 在本节直接比较固定SZ3 cycle、QoZ grouped sequence、forward greedy和reverse greedy。
-
-\subsection{Complexity and Plan Overhead}
-
-% TODO: 给出搜索复杂度、运行复杂度和plan storage overhead。

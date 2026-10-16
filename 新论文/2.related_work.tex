@@ -21,7 +21,7 @@ Transform-based compressors such as ZFP~\cite{lindstrom2014fixed}, SPERR~\cite{l
 We first summarize the configurations commonly tuned by existing prediction-based compressors.
 
 \begin{enumerate}
-\item \emph{Prediction Stencils.} A prediction stencil specifies which reconstructed neighboring values are used to predict a target. SZauto~\cite{zhao2020significantly} tunes the order and dimensionality of Lorenzo stencils. SZ3 considers Lorenzo prediction as well as linear and cubic interpolation stencils. QoZ and GPU-based cuSZ-Hi~\cite{wu2025boosting} select a linear, cubic, or multidimensional interpolation stencil separately for every three consecutive rounds.
+\item \emph{Prediction Stencils.} A prediction stencil specifies which reconstructed neighboring values are used to predict a target. SZauto~\cite{zhao2020significantly} tunes the order and dimensionality of Lorenzo stencils. SZ3 considers Lorenzo prediction as well as linear and cubic interpolation stencils. QoZ and GPU-based cuSZ-Hi~\cite{wu2025boosting} select a linear, cubic, or multidimensional interpolation stencil separately for every three consecutive prediction rounds (defined in Section~\ref{sec:background:pipeline}).
 
 \item \emph{Prediction Axes.} Compressors such as SZ3, QoZ, cuSZ-Hi, and CliZ~\cite{jian2024cliz} tune how prediction is applied across spatial axes. QoZ and CliZ can also avoid prediction along less smooth axes throughout the compression procedure.
 
