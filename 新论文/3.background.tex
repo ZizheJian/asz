@@ -6,12 +6,12 @@
 
 To reduce storage requirements and data movement in scientific data management, we aim to achieve higher compression ratios at comparable reconstruction quality while keeping the combined cost of tuning, compression, and decompression practical.
 
-Let $X=(x_i)_{i=1}^{N}$ denote a scientific field containing $N$ values, and let $\epsilon_{\mathrm{abs}}>0$ be a user-specified absolute error bound. The encoder produces a bitstream $Z$ from $X$, and the decoder reconstructs $\hat X$ from $Z$. Error-bounded compression requires
+Let $X=(x_i)_{i=1}^{N}$ denote a scientific field containing $N$ values, and let $\epsilon_{\mathrm{abs}}>0$ be a user-specified absolute error bound. The encoder compresses $X$ into a bitstream, from which the decoder reconstructs $\hat X$. Error-bounded compression requires
 \begin{equation}
 \label{eq:background:error-bound}
 |x_i-\hat x_i|\leq\epsilon_{\mathrm{abs}},\qquad i=1,\ldots,N.
 \end{equation}
-Compression effectiveness is measured by the compression ratio or the bit rate. Let $B$ be the complete compressed size in bits, including metadata, and let $b_{\mathrm{ori}}$ be the original number of bits per value. The compression ratio and bit rate are
+Compression effectiveness is measured by the compression ratio or the bit rate. Let $B$ be the complete compressed size in bits, and let $b_{\mathrm{ori}}$ be the original number of bits per value. The compression ratio and bit rate are
 \begin{equation}
 \label{eq:background:rate}
 \mathrm{CR}=\frac{Nb_{\mathrm{ori}}}{B},\qquad \mathrm{BR}=\frac{B}{N}.
@@ -25,46 +25,38 @@ Reconstruction quality is measured using mean squared reconstruction error (MSE)
 \end{equation}
 where $R_X=\max_i x_i-\min_i x_i$ is the original value range of a nonconstant field.
 
-Different compressors or configurations can achieve different PSNR values under the same error bound. We therefore assess compression effectiveness by considering bit rate and PSNR together. A better rate--distortion result has a lower bit rate at the same PSNR, or a higher PSNR at the same bit rate. Varying the error bound produces a rate--distortion curve that shows this trade-off across quality levels.
-
-Configuration tuning balances the rate--distortion performance of the selected configuration against the cost of exploring the candidate space. We evaluate the resulting compressor by its overall rate--distortion performance and total runtime. For selectors explicitly designed to approximate an exhaustive objective, we additionally report agreement with the corresponding reference choice.
-
-Finally, a configuration generated for one file can be reused for related files, such as the time steps of one simulation. We can measure the reuse range, which indicates how many related files can use the same configuration while maintaining acceptable compression effectiveness compared with per-file tuning. This range determines how many files can share the preprocessing cost.
+Different compressors or configurations can achieve different PSNR values under the same error bound because they produce different distributions of reconstruction errors. We therefore assess compression effectiveness by considering bit rate and PSNR together. A better rate--distortion result has a lower bit rate at the same PSNR, or a higher PSNR at the same bit rate. Varying the error bound produces a rate--distortion curve that shows this trade-off.
 
 \subsection{The SZ Compression Pipeline}
 \label{sec:background:pipeline}
 
-SZ3~\cite{zhao2021optimizing,liang2022sz3}, QoZ~\cite{liu2022dynamic,liu2024high}, and ASZ share the SZ compression pipeline, which consists of prediction, residual quantization, and lossless encoding. Prediction and quantization are interleaved, and later predictions use reconstructed reference values from earlier steps. The decoder follows the same dependencies to reproduce the predictions and recover the data.
-
-For a prediction target $x_i$, a weighted-sum predictor computes
+SZ3~\cite{zhao2021optimizing,liang2022sz3}, QoZ~\cite{liu2022dynamic,liu2024high}, and ASZ share the SZ compression pipeline, including weighted-sum prediction, residual quantization, and lossless encoding. Prediction and quantization are interleaved, and each prediction uses only reference values reconstructed earlier in the execution order. The decoder follows the same dependencies to reproduce the predictions and recover the data. For a target $x_i$, the predictor computes
 \begin{equation}
 \label{eq:background:prediction}
 p_i=\sum_{j=1}^{m}w_j\hat x_{i,j},
 \end{equation}
-where $m$ is the number of reference points, $\hat x_{i,j}$ is the reconstructed value of the $j$th reference for target $x_i$, and $w_j$ is its coefficient. The \emph{prediction stencil} and prediction axes jointly specify the positions of these references relative to the target, while the coefficients specify their contributions to the predicted value.
+where $m$ is the number of references, $\hat x_{i,j}$ is the reconstructed value of the $j$th reference, and $w_j$ is its coefficient. The prediction stencil, axes, and reference spacing determine the relative locations of these references, while the coefficients specify their contributions.
 
-The compressor then quantizes the prediction residual $e_i=x_i-p_i$. In a uniform quantizer with interval $\Delta$, the signed quantization-bin index and reconstructed value are
+The prediction residual $e_i=x_i-p_i$ is uniformly quantized with interval $\Delta$ as
 \begin{equation}
 \label{eq:background:quantization}
-q_i=\operatorname{round}\!\left(\frac{e_i}{\Delta}\right),\qquad \hat x_i=p_i+\Delta q_i.
+q_i=\operatorname{round}\!\left(\frac{e_i}{\Delta}\right),\qquad \hat x_i=p_i+\Delta\cdot q_i.
 \end{equation}
 Choosing $\Delta\leq2\epsilon_{\mathrm{abs}}$ ensures $|x_i-\hat x_i|\leq\epsilon_{\mathrm{abs}}$ in exact arithmetic.
 
-The prediction and quantization steps above are repeated across the grid in a coarse-to-fine order. Starting from a small set of known values, the compressor progressively predicts and reconstructs additional grid points, making them available as references for subsequent predictions and thereby reducing the spacing between reference points. A \emph{prediction round} applies one prediction stencil with a fixed reference spacing and prediction axis to a target set using only values reconstructed in earlier rounds, then quantizes the prediction errors and reconstructs the targets.
+Starting from a small set of known values, the compressor traverses the grid through a coarse-to-fine sequence of prediction rounds. Each round halves the reference spacing along one selected axis, reconstructs the newly introduced target set, and approximately doubles the number of available points before the subsequent round begins. Ignoring boundary effects, the final round predicts one half of the field, and the final three rounds together predict seven eighths.
 
-This construction gives later rounds more reference points and prediction targets. Each round halves the reference spacing along its selected axis, adding approximately as many grid points as have already been reconstructed and thereby approximately doubling the number of available points. Ignoring boundary effects, the final round predicts about one half of the field, and the final three rounds together predict about seven eighths.
-
-Finally, the quantization-bin (QB) indices are losslessly encoded using Huffman coding followed by Zstd. The QB indices are usually passed to the encoder in target traversal order.
+Finally, the quantization-bin (QB) indices are serialized in target traversal order and losslessly encoded using Huffman coding followed by Zstd.
 
 \subsection{Prediction Stencils and Coefficients in SZ3 and QoZ}
 \label{sec:background:stencils}
 
-The prediction designs of SZ3 and QoZ combine predefined stencil layouts with fixed interpolation formulas. Figure~\ref{fig:background:stencils} summarizes the layouts.
+SZ3 and QoZ use several predefined interpolation stencils and coefficient sets. Figure~\ref{fig:background:stencils} shows their reference layouts, and the equations below give their coefficients.
 
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\linewidth,trim=0 20bp 0 0,clip]{revised-fig/1-prediction-stencils.pdf}
-\caption{Prediction layouts in SZ3 and QoZ. $T$ is the value being predicted, and each $R_i$ is an already reconstructed value available as its reference. The nearest-reference spacing is $h$ in the one-dimensional stencils and $h_0$ or $h_1$ along each axis in (d).}
+\caption{Prediction layouts in SZ3 and QoZ. $T$ is the value being predicted, and each $R_i$ is reconstructed before $T$ and available as its reference. ``Two-pass'' in layouts (c) and (d) means that some references are reconstructed in the first pass of the current round. The nearest-reference spacing is $h$ in the one-dimensional stencils and $h_0$ or $h_1$ along each axis in (d).}
 \label{fig:background:stencils}
 \end{figure}
 
@@ -77,37 +69,37 @@ p_0^{\mathrm{cub},1}&=\frac{9}{16}(\hat x_{-h}+\hat x_h)-\frac{1}{16}(\hat x_{-3
 \end{aligned}
 \end{equation}
 
-QoZ extends these stencils with an alternative cubic formula, two-pass cubic prediction, and multidimensional prediction. The alternative formula in Figure~\ref{fig:background:stencils}(b) is
+QoZ extends these stencils with an alternative four-reference cubic formula and two-pass prediction. The alternative formula in Figure~\ref{fig:background:stencils}(b) is
 \begin{equation}
 \label{eq:background:qoz-cubic2}
 p_0^{\mathrm{cub},2}=\frac{23}{40}(\hat x_{-h}+\hat x_h)-\frac{3}{40}(\hat x_{-3h}+\hat x_{3h}).
 \end{equation}
 
-The two formulas used in the two passes of Figure~\ref{fig:background:stencils}(c) are
+QoZ's two-pass cubic scheme divides a prediction round into two dependent passes. In Figure~\ref{fig:background:stencils}(c), $R_1$, $R_4$, and $T$ would ordinarily be targets in the same round. The first pass predicts and quantizes $R_1$ and $R_4$ with a four-reference cubic formula. The second pass predicts $T$ using their reconstructed values together with references reconstructed before the current round. QoZ provides two formulas for this second-pass layout:
 \begin{equation}
-\label{eq:background:qoz-two-pass}
+\label{eq:background:qoz-six-reference}
 \begin{aligned}
-p_0^{\mathrm{2p},1}&=\frac{2}{3}(\hat x_{-h}+\hat x_h)-\frac{1}{6}(\hat x_{-2h}+\hat x_{2h})\\
+p_0^{\mathrm{6R},1}&=\frac{2}{3}(\hat x_{-h}+\hat x_h)-\frac{1}{6}(\hat x_{-2h}+\hat x_{2h})\\
 &\qquad+0\!\cdot\!(\hat x_{-3h}+\hat x_{3h}),\\
-p_0^{\mathrm{2p},2}&=\frac{23}{31}(\hat x_{-h}+\hat x_h)-\frac{9}{31}(\hat x_{-2h}+\hat x_{2h})\\
+p_0^{\mathrm{6R},2}&=\frac{23}{31}(\hat x_{-h}+\hat x_h)-\frac{9}{31}(\hat x_{-2h}+\hat x_{2h})\\
 &\qquad+\frac{3}{62}(\hat x_{-3h}+\hat x_{3h}).
 \end{aligned}
 \end{equation}
 
-QoZ's two-pass cubic scheme divides a prediction round that would otherwise require one pass into two dependent passes. In Figure~\ref{fig:background:stencils}(c), $R_1$, $R_4$, and $T$ would ordinarily be targets in the same round, with no prediction dependencies among them. QoZ instead predicts and quantizes $R_1$ and $R_4$ in the first pass, typically with a four-reference cubic formula, and then uses their reconstructed values to predict $T$ in the second pass.
-
 ASZ also uses a six-reference predictor, but all of its references are reconstructed in earlier rounds. Its targets therefore remain independent within a round and require only one pass, reducing prediction overhead. Section~\ref{sec:configuration-space:predictors} describes this predictor.
 
-QoZ also supports multidimensional interpolation, which combines one-dimensional predictions along multiple axes and assigns larger coefficients to axes with smaller sampled prediction errors. The coefficients are generated per block and stored as configuration metadata for decompression. Figure~\ref{fig:background:stencils}(d) illustrates the two-dimensional linear case.
+QoZ applies a similar two-pass organization to multidimensional interpolation. For the two-dimensional linear stencil in Figure~\ref{fig:background:stencils}(d), two references are available before the round, and QoZ reconstructs the other two in the first pass. It then predicts $T$ in the second pass by combining linear predictions along the two axes. It assigns larger coefficients to axes with smaller sampled prediction errors. These coefficients are generated per block and stored as configuration metadata for decompression.
 
 In all of the prediction formulas above, the coefficients sum to one, with equal coefficients assigned to references at symmetric positions along each interpolation axis.
 
 \subsection{Prediction Axes}
 \label{sec:background:prediction-axes}
 
-Different choices of prediction axes orient the same stencil along different coordinate directions and thereby determine the coordinate dimensions along which the predictor exploits spatial correlation. Correlation strength can differ substantially among coordinate axes. Therefore, axis selection affects prediction errors and ultimately compression performance. This motivates axis-order tuning in SZ3 and QoZ.
+Prediction-axis selection determines which directional correlations a predictor can exploit. The predictor uses only references along the selected axes and cannot exploit correlations along unselected axes. Stronger correlations along the selected axes make these references more informative about the target and generally yield smaller prediction errors. As directional correlation patterns vary across datasets, the best prediction-axis configuration is data dependent. SZ3 and QoZ therefore tune their prediction axes.
 
-\subsection{Configuration Tuning in SZ3 and QoZ}
-\label{sec:background:tuning}
+\subsection{Configuration Granularity in SZ3 and QoZ}
+\label{sec:background:configuration-granularity}
 
-SZ3 and QoZ tune interpolation configurations at different granularities and with different evaluation criteria. SZ3 test-compresses sampled blocks and compares their compression ratios to select one interpolation formula and choose between the forward and reverse axis orders for the entire field. QoZ uses sampled prediction errors to select the stencil and choose between the forward and reverse orders of the active axes for each group of axis-wise prediction rounds at a common reference spacing, optionally repeating the selection within individual blocks, and generates multidimensional coefficients per block. Both compressors serialize QBs in traversal order. These grouped schedules and fixed serialization orders motivate ASZ's round-wise plan.
+SZ3 and QoZ jointly select prediction stencils and axis orders, but apply the resulting configurations at different granularities. When compressing a three-dimensional field with one-dimensional interpolation, SZ3 selects one interpolation formula and one axis order for the whole field. The order is either $x,y,z$ or $z,y,x$. SZ3 repeats this three-round cycle throughout the coarse-to-fine prediction process.
+
+QoZ typically selects a separate interpolation configuration, including the stencil and axis order, for each group of three rounds. For each group, QoZ can choose between $x,y,z$ and $z,y,x$. With one frozen axis, QoZ instead selects a configuration for each two-round group and uses either order of the remaining axes. For example, freezing $z$ leaves $x,y$ and $y,x$ as the two choices.

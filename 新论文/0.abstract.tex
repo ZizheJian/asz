@@ -3,5 +3,5 @@ Scientific simulations and instruments generate massive volumes of data. Error-b
 
 In this paper, we develop ASZ by systematically redesigning the compression workflow used by existing prediction-based error-bounded lossy compressors. ASZ introduces multiple new tuning dimensions and enables fine-grained, round-wise choices across the resulting broader configuration space. Low-cost candidate evaluation and efficient plan generation make this expanded space practical to explore. The resulting configurations can be reused across related files to further amortize tuning cost.
 
-Experiments on 18 scientific fields show that, at equal PSNR, ASZ improves the geometric-mean compression ratio by $2.56\times$ over SZ3 and $2.03\times$ over QoZ. At a relative error bound of $10^{-3}$, ASZ reduces total codec runtime by $10.1\%$ on average relative to QoZ, even when its preprocessing cost is included in every compression run.
+Experiments on 18 scientific fields show that, at equal PSNR, ASZ improves the geometric-mean compression ratio by $2.56\times$ over SZ3 and $2.03\times$ over QoZ. At a relative error bound of $10^{-3}$, ASZ reduces total codec time (including per-file preprocessing) by $10.1\%$ on average relative to QoZ.
 \end{abstract}

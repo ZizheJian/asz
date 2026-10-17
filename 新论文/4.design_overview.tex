@@ -13,13 +13,7 @@ This section presents an overview of ASZ, including its reusable round-wise plan
 \subsection{Round-Wise Plan}
 \label{sec:configuration-space:round-wise}
 
-Compared with prior prediction-based compressors, ASZ independently tunes the prediction axis and QB serialization order of every prediction round. Here, independent tuning means that the choices for one round place no restrictions on those for adjacent rounds. We use the prediction-axis schedules discussed in Section~\ref{sec:background:prediction-axes} to illustrate this distinction because axis order is configurable in all three compressors, whereas SZ3 and QoZ keep the QB serialization order fixed.
-
-For one-dimensional prediction on three-dimensional data, SZ3 makes one global choice between the forward order $x,y,z$ and the reverse order $z,y,x$, then repeats the selected three-round cycle at every reference spacing.
-
-QoZ can reselect the order between groups. Without axis freezing, every group contains three rounds and uses either $x,y,z$ or $z,y,x$. With one frozen axis, every group contains two rounds and uses either order of the remaining axes. For example, freezing $z$ leaves $x,y$ and $y,x$ as the two choices.
-
-ASZ removes this grouping constraint. It can select any axis in every round based on estimated compression performance, allowing it to repeat an axis in consecutive rounds and use different axes for different numbers of rounds.
+ASZ retains a global prediction stencil but configures the prediction axis and QB serialization order independently for every round. Thus, the choices for one round place no restrictions on those for adjacent rounds. The plan may repeat an axis in consecutive rounds and assign different numbers of rounds to different axes. Each round is configured based on estimated compression performance.
 
 \subsection{Plan Generation, Reuse, and Online Adaptation}
 \label{sec:overview:plan-reuse}

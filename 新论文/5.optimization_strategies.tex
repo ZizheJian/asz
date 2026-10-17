@@ -61,7 +61,7 @@ The observed advantage concerns coefficient-tunable predictors. It does not cont
 
 We compare 1D4R and 1D6R to assess the benefit of two additional references and examine 1D6R's coefficient choices.
 
-Figure~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the two predictors. Each predictor has three prediction axes, one for each coordinate axis, and therefore contributes three curves to each plot. Their rate--distortion performance is nearly identical in most cases, while 1D6R offers advantages on some data files.
+Figure~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the two predictors. Each predictor is evaluated in three orientations, one along each coordinate axis, and therefore contributes three curves to each plot. Their rate--distortion performance is nearly identical in most cases, while 1D6R offers advantages on some data files.
 
 \begin{figure}[htb]
 \centering
@@ -79,7 +79,7 @@ To further investigate the datasets on which 1D6R offers an advantage over 1D4R,
 \label{fig:configuration-space:1d6r-coefficients}
 \end{figure}
 
-We next explain why coefficient tuning offers less benefit for 1D6R than for 1D4R. In both predictors, tuning controls a higher-order correction to a lower-order interpolation formula. For 1D4R, its single parameter can continuously weaken the cubic correction and disable it entirely, recovering two-point linear interpolation when the outer references are unreliable. In fixed-quintic 1D6R, however, each of the two additional outermost references has a weight of only about $1.2\%$ and therefore provides only a small correction to cubic interpolation. Small coefficient changes have little effect, whereas large changes eliminate its ability to cancel the higher-order error left by cubic interpolation. Consistent with this narrow useful tuning range, Fig.~\ref{fig:configuration-space:1d6r-coefficients} shows little gain from tuning 1D6R's two coefficients. We therefore tune 1D4R, retain fixed-quintic coefficients for 1D6R, and choose between the two families using sampled prediction MSE.
+We next explain why coefficient tuning offers less benefit for 1D6R than for 1D4R. In both predictors, tuning controls a higher-order correction to a lower-order interpolation formula. For 1D4R, its single parameter can continuously weaken the cubic correction and disable it entirely, recovering two-point linear interpolation when the outer references are unreliable. In fixed-quintic 1D6R, however, each of the two additional outermost references has a weight of only about $1.2\%$ and therefore provides only a small correction to cubic interpolation. Small coefficient changes have little effect, whereas large changes eliminate its ability to cancel the higher-order error left by cubic interpolation. Consistent with this narrow useful tuning range, Fig.~\ref{fig:configuration-space:1d6r-coefficients} shows little gain from tuning 1D6R's two coefficients. We therefore tune 1D4R, retain fixed-quintic coefficients for 1D6R, and choose between the two families using sampled mean squared prediction error.
 
 % TODO: 最佳系数来自指定的有限网格，而非所有实数系数的全局最优。正式报告各family的网格范围和步长。
 % 第一组实测结果：results/predictor-family-legacy-middle-21244405。单轮、固定原始参考值、stencil-specific目标集合；机制段落是可能的解释，不是1D4R必然胜出的理论证明。
@@ -122,7 +122,9 @@ S_{H_1}(t)=\frac{\mathrm{PSNR}(t)-m_{H_1}H_1(t)}{\sqrt{1+m_{H_1}^2}},
 \end{equation}
 where $m_{H_1}$ is the corresponding local slope, estimated in the same way as $m_{\mathrm{BR}}$.
 
-This approximation has a clear trade-off. Its cost is that $H_1$ ignores QB order and the sequence patterns exploited by Zstd. It can therefore differ substantially from BR and may either overestimate or underestimate it. Its benefit is that computing $H_1$ requires neither lossless encoding nor an ordered QB stream, but only the QB frequencies. Most importantly, as quantified below, $H_1$--PSNR usually selects the same best coefficient as BR--PSNR. ASZ therefore selects the coefficient with the largest $S_{H_1}$.
+This approximation has a clear trade-off. Its cost is that $H_1$ ignores QB order and the sequence patterns exploited by Zstd. It can therefore deviate from BR and may either overestimate or underestimate it. Its benefit is that computing $H_1$ requires neither lossless encoding nor an ordered QB stream, but only the QB frequencies. Most importantly, as quantified below, $H_1$--PSNR usually selects the same best coefficient as BR--PSNR. ASZ therefore selects the coefficient with the largest $S_{H_1}$.
+
+Jin et al.~\cite{jin2022improving} also derive QB entropy and PSNR, but for a different purpose and through a different model. They estimate absolute compression results by adjusting an entropy-based Huffman-rate estimate using the zero-QB fraction and deriving PSNR from a uniform/central-bin reconstruction-error model, then use the estimated rate--quality curves to select predictors or error bounds. ASZ instead treats $H_1$ only as a relative proxy for encoded rate, derives coefficient-specific PSNR from post-quantization residual distributions, and combines the two through $S_{H_1}$ to rank coefficients at a fixed error bound, stencil, and direction. Section~\ref{sec:configuration-space:coefficient-evaluation} further shows how ASZ reuses one coefficient-independent joint distribution to evaluate all coefficient candidates.
 
 \begin{figure}[htb]
 \centering
@@ -180,7 +182,7 @@ Estimate the local $H_1$--PSNR slope.\\
 Construct the sampled joint distribution of $(A,B)$.\\
 \emph{For every candidate coefficient $t$:}\\
 \hspace*{1em}Map occupied cells to errors $At+B$.\\
-\hspace*{1em}Accumulate QB probabilities and quantization MSE.\\
+\hspace*{1em}Accumulate QB probabilities and post-quantization squared error.\\
 \hspace*{1em}Compute $H_1(t)$, PSNR$(t)$, and $S_{H_1}(t)$.\\
 Select the coefficient with the largest $S_{H_1}$.\\
 \bottomrule
