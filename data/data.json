@@ -1,0 +1,48 @@
+{
+  "datasets":[
+    {
+      "name":"RTM_Aramco_small",
+      "domain":"reverse time migration",
+      "directory":"/anvil/projects/x-cis240669/RTM/RtmLab-smalldata-449x449x235/data-3600-intervals5",
+      "dtype":"float32",
+      "shape":[449,449,235],
+      "fields":[
+        {
+          "name":"aramco_snapshot",
+          "pattern":"aramco-snapshot-%04d.f32",
+          "snapshot_count":721,
+          "file_index_start":0,
+          "file_index_end":720,
+          "file_index_step":1,
+          "source_step_interval_from_directory_name":5,
+          "middle_snapshot":"aramco-snapshot-0360.f32"
+        }
+      ],
+      "auxiliary_fields":[
+        {
+          "name":"overthrust_image",
+          "path":"overthrust_img.bin",
+          "snapshot_count":1
+        }
+      ]
+    },
+    {
+      "name":"RTM_Aramco_big",
+      "domain":"reverse time migration",
+      "directory":"/anvil/projects/x-cis240669/RTM/RtmLab-bigdata-849x849x235/data-every10",
+      "dtype":"float32",
+      "shape":[849,849,235],
+      "fields":[
+        {
+          "name":"aramco_snapshot",
+          "pattern":"aramco-snapshot-%04d.f32",
+          "snapshot_count":151,
+          "file_index_start":0,
+          "file_index_end":1500,
+          "file_index_step":10,
+          "middle_snapshot":"aramco-snapshot-0750.f32"
+        }
+      ]
+    }
+  ]
+}

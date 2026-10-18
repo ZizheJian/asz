@@ -1,0 +1,14 @@
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{graphicx}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\begin{document}
+\begin{tikzpicture}
+\node[anchor=south west,inner sep=0pt](image)at(0,0){\includegraphics{1-prediction-stencils-original.pdf}};
+\fill[white](280bp,10bp)rectangle(880bp,100bp);
+\node[font=\fontsize{42}{48}\selectfont]at(575bp,52bp){(c) 1D Two-Pass Cubic};
+\fill[white](1320bp,10bp)rectangle(1877bp,100bp);
+\node[font=\fontsize{42}{48}\selectfont]at(1600bp,52bp){(d) 2D Two-Pass Linear};
+\end{tikzpicture}
+\end{document}

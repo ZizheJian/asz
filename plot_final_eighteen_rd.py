@@ -8,18 +8,12 @@ from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
 project_root=Path(__file__).resolve().parent
 datasets=(
-    ("QMCPACK orbital 0","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/asz_qmcpack_orbital0.f32","final_eighteen_qmcpack_orbital0.csv","final_eighteen_qmcpack_orbital0.csv"),
-    ("QMCPACK orbital 287","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/asz_qmcpack_orbital287.f32","final_eighteen_qmcpack_orbital287.csv","final_eighteen_qmcpack_orbital287.csv"),
+    ("QMCPACK orbital 144","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/288/einspline_288_115_69_69.pre.f32","final_twelve_qmcpack_orbital144.csv","final_twelve_qmcpack_orbital144.csv"),
     ("RTM big 0750","/anvil/projects/x-cis240669/RTM/RtmLab-bigdata-849x849x235/data-every10/aramco-snapshot-0750.f32","rtm_big_0750.csv","rtm_big_0750.csv"),
-    ("Isabel Pf24","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/P/Pf24.bin","final_eighteen_refresh_isabel_pf24.csv","final_eight_middle_isabel_pf24.csv"),
-    ("Isabel TC","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/TC/TCf01.bin","final_eighteen_isabel_tc.csv","final_eighteen_isabel_tc.csv"),
-    ("Isabel QVAPOR","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/QVAPOR/QVAPORf01.bin","final_eighteen_isabel_qvapor.csv","final_eighteen_isabel_qvapor.csv"),
-    ("Miranda pressure","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/pressure.f32.dat","final_eighteen_refresh_miranda_pressure.csv","candidate_miranda_pressure.csv"),
+    ("Isabel TC f01","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/TC/TCf01.bin","final_eighteen_isabel_tc.csv","final_eighteen_isabel_tc.csv"),
+    ("Miranda velocity-y","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityy.f32.dat","final_twelve_miranda_velocityy.csv","final_twelve_miranda_velocityy.csv"),
     ("Aramco 1800","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/aramco/aramco-snapshot-1800.f32","final_eighteen_refresh_aramco_1800.csv","final_eight_aramco.csv"),
     ("LETKF PRES","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/PRES-98x1200x1200.dat","final_eighteen_refresh_letkf_pres.csv","final_eight_letkf.csv"),
-    ("LETKF QV log10","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/log10/QV-98x1200x1200.log10.f32","final_eighteen_refresh_letkf_qv_log10.csv","candidate_letkf_qv_log10.csv"),
-    ("CESM CLDICE t31","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/CLDICE_26x1800x3600.dat","final_eighteen_refresh_cldice_t31.csv","final_eight_middle_cldice_t31.csv"),
-    ("CESM T t31","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/T_26x1800x3600.dat","final_eighteen_refresh_cesm_t31.csv","candidate_cesm_t31.csv"),
     ("CESM Q t31","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/Q_26x1800x3600.dat","final_eighteen_cesm_q_t31.csv","final_eighteen_cesm_q_t31.csv"),
     ("Nyx baryon density","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32","final_eighteen_nyx_baryon_density.csv","final_eighteen_nyx_baryon_density.csv"),
     ("APS CSSI L0471","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0471_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part1_001.h5.f32","final_eighteen_aps_cssi_l0471.csv","final_eighteen_aps_cssi_l0471.csv"),
@@ -27,6 +21,7 @@ datasets=(
     ("E017","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32","final_eighteen_refresh_e017.csv","final_eight_e017.csv"),
     ("APSU006","/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_006/APSU_TestData_006.h5.f32","apsu006.csv","apsu006.csv"),
 )
+size_overrides={"QMCPACK orbital 144":115*69*69*4}
 methods=("asz","sz3","qoz")
 styles={
     "asz":{"label":"ASZ","color":"#000000","linestyle":"-","marker":"o"},
@@ -76,6 +71,10 @@ def format_size(byte_count):
     return f"{value:.2f} {unit}"
 
 
+def dataset_size(dataset):
+    return size_overrides.get(dataset[0],Path(dataset[1]).stat().st_size)
+
+
 def draw_dataset(axis,title,file_size,curves,index):
     all_points=[]
     for method in methods:
@@ -104,33 +103,33 @@ def draw_dataset(axis,title,file_size,curves,index):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="按文件大小绘制最终18数据的3x6对数bitrate RD曲线")
+    parser=argparse.ArgumentParser(description="按文件大小绘制最终12数据的2x6对数bitrate RD曲线")
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
-    parser.add_argument("--output-pdf",type=Path,default=project_root/"新论文/figs/5/rate-distortion-eighteen-log.pdf")
-    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/5/rate-distortion-eighteen-log.png")
+    parser.add_argument("--output-pdf",type=Path,default=project_root/"新论文/figs/5/rate-distortion-twelve-log.pdf")
+    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/5/rate-distortion-twelve-log.png")
     parser.add_argument("--dpi",type=int,default=300)
     arguments=parser.parse_args()
 
     plt.rcParams.update({"font.family":"sans-serif","font.size":8.5,"axes.titlesize":9.5,"axes.labelsize":10,"xtick.labelsize":7.5,"ytick.labelsize":7.5,"legend.fontsize":10,"pdf.fonttype":42,"ps.fonttype":42})
-    ordered=sorted(datasets,key=lambda item:(Path(item[1]).stat().st_size,item[0]))
-    figure,axes=plt.subplots(3,6,figsize=(17.5,8.2))
+    ordered=sorted(datasets,key=lambda item:(dataset_size(item),item[0]))
+    figure,axes=plt.subplots(2,6,figsize=(17.5,5.6))
     for index,((title,data_path,asz_filename,baseline_filename),axis) in enumerate(zip(ordered,axes.flat)):
         curves=read_curves(arguments.result_directory,asz_filename,baseline_filename)
-        draw_dataset(axis,title,Path(data_path).stat().st_size,curves,index)
-        if index//6==2:
+        draw_dataset(axis,title,dataset_size(ordered[index]),curves,index)
+        if index//6==1:
             axis.set_xlabel("Bitrate (bits/value)")
         if index%6==0:
             axis.set_ylabel("PSNR (dB)")
     handles=[plt.Line2D([],[],color=styles[method]["color"],linestyle=styles[method]["linestyle"],marker=styles[method]["marker"],markerfacecolor="white",linewidth=1.8,markersize=5,label=styles[method]["label"]) for method in methods]
     figure.legend(handles=handles,loc="upper center",ncol=3,frameon=False,bbox_to_anchor=(0.5,0.997),handlelength=3,columnspacing=2.5)
-    figure.subplots_adjust(left=0.05,right=0.995,bottom=0.075,top=0.9,wspace=0.28,hspace=0.47)
+    figure.subplots_adjust(left=0.05,right=0.995,bottom=0.105,top=0.86,wspace=0.28,hspace=0.5)
     arguments.output_pdf.parent.mkdir(parents=True,exist_ok=True)
     figure.savefig(arguments.output_pdf,bbox_inches="tight")
     figure.savefig(arguments.output_png,dpi=arguments.dpi,bbox_inches="tight")
     plt.close(figure)
     print("排序：")
-    for index,(title,data_path,_,_) in enumerate(ordered,1):
-        print(f"{index:2d}. {title}: {format_size(Path(data_path).stat().st_size)}")
+    for index,dataset in enumerate(ordered,1):
+        print(f"{index:2d}. {dataset[0]}: {format_size(dataset_size(dataset))}")
     print(f"写入：{arguments.output_pdf}")
     print(f"写入：{arguments.output_png}")
 

@@ -1,0 +1,25 @@
+[
+  {
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityx.f32.dat"],
+    "data_shape":[256,384,384],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":[{"name":"asz_velocityx_plan_source","compressor":"asz","write_plan":"plans/transfer/miranda_velocityx.json"}],
+    "cleanup_after_each_test":true
+  },
+  {
+    "data_path_list":[
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityx.f32.dat",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityy.f32.dat",
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityz.f32.dat"
+    ],
+    "data_shape":[256,384,384],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":[
+      {"name":"asz_velocityx_plan","compressor":"asz","read_plan":"plans/transfer/miranda_velocityx.json"},
+      {"name":"asz_self_plan","compressor":"asz","write_plan":"plans/transfer/miranda_self/{stem}.json"}
+    ],
+    "comparison_baseline":"asz_self_plan",
+    "summary_csv":"results/miranda_velocityx_plan_transfer.csv",
+    "cleanup_after_each_test":true
+  }
+]

@@ -1,0 +1,87 @@
+\documentclass[tikz,border=8pt]{standalone}
+\usepackage{newtxtext,newtxmath}
+\usetikzlibrary{arrows.meta,calc,fit,positioning}
+
+\definecolor{axisx}{HTML}{DCEBFA}
+\definecolor{axisy}{HTML}{DDF3E4}
+\definecolor{axisz}{HTML}{FCE8D5}
+\definecolor{groupborder}{HTML}{7A8793}
+\definecolor{labelgray}{HTML}{4A5560}
+
+\begin{document}
+\begin{tikzpicture}[
+axis/.style={draw=groupborder,rounded corners=1.2pt,minimum width=6mm,minimum height=6mm,font=\footnotesize},
+candidate/.style={draw=groupborder,rounded corners=2pt,inner sep=2pt},
+panel/.style={draw=groupborder,rounded corners=4pt,inner sep=5pt},
+roundlabel/.style={font=\footnotesize,text=labelgray,anchor=west},
+note/.style={font=\footnotesize,text=labelgray},
+flow/.style={-{Latex[length=1.8mm]},draw=groupborder,line width=.55pt},
+stage/.style={font=\bfseries\footnotesize,text=labelgray}
+]
+\node[font=\bfseries]at(-1.15,0){QoZ};
+
+\node[roundlabel](l0)at(0,.8){Rounds 0--2};
+\node[axis,fill=axisx](a00)at(2.15,.8){$x$};
+\node[axis,fill=axisy,right=.8mm of a00](a01){$y$};
+\node[axis,fill=axisz,right=.8mm of a01](a02){$z$};
+\node[candidate,fit=(a00)(a02)](af0){};
+\node[axis,fill=axisz,right=8mm of a02](b00){$z$};
+\node[axis,fill=axisy,right=.8mm of b00](b01){$y$};
+\node[axis,fill=axisx,right=.8mm of b01](b02){$x$};
+\node[candidate,fit=(b00)(b02)](ar0){};
+\node[note]at($(af0.east)!.5!(ar0.west)$){or};
+
+\node[roundlabel](l1)at(0,0){Rounds 3--5};
+\node[axis,fill=axisx](a10)at(2.15,0){$x$};
+\node[axis,fill=axisy,right=.8mm of a10](a11){$y$};
+\node[axis,fill=axisz,right=.8mm of a11](a12){$z$};
+\node[candidate,fit=(a10)(a12)](af1){};
+\node[axis,fill=axisz,right=8mm of a12](b10){$z$};
+\node[axis,fill=axisy,right=.8mm of b10](b11){$y$};
+\node[axis,fill=axisx,right=.8mm of b11](b12){$x$};
+\node[candidate,fit=(b10)(b12)](ar1){};
+\node[note]at($(af1.east)!.5!(ar1.west)$){or};
+
+\node[roundlabel](l2)at(0,-.8){Rounds 6--8};
+\node[axis,fill=axisx](a20)at(2.15,-.8){$x$};
+\node[axis,fill=axisy,right=.8mm of a20](a21){$y$};
+\node[axis,fill=axisz,right=.8mm of a21](a22){$z$};
+\node[candidate,fit=(a20)(a22)](af2){};
+\node[axis,fill=axisz,right=8mm of a22](b20){$z$};
+\node[axis,fill=axisy,right=.8mm of b20](b21){$y$};
+\node[axis,fill=axisx,right=.8mm of b21](b22){$x$};
+\node[candidate,fit=(b20)(b22)](ar2){};
+\node[note]at($(af2.east)!.5!(ar2.west)$){or};
+
+\node[panel,dashed,fit=(l0)(ar0)(l2)(ar2)](tuning){};
+\node[stage,above=1.5mm of tuning]{Tuning: one choice per group};
+
+\node[roundlabel](r0)at(8.1,.8){Rounds 0--2};
+\node[axis,fill=black!5,font=\bfseries\footnotesize](q00)at(10.25,.8){?};
+\node[axis,fill=black!5,font=\bfseries\footnotesize,right=4mm of q00](q01){?};
+\node[axis,fill=black!5,font=\bfseries\footnotesize,right=4mm of q01](q02){?};
+\draw[flow](q00.east)--(q01.west);
+\draw[flow](q01.east)--(q02.west);
+
+\node[roundlabel](r1)at(8.1,0){Rounds 3--5};
+\node[axis,fill=black!5,font=\bfseries\footnotesize](q10)at(10.25,0){?};
+\node[axis,fill=black!5,font=\bfseries\footnotesize,right=4mm of q10](q11){?};
+\node[axis,fill=black!5,font=\bfseries\footnotesize,right=4mm of q11](q12){?};
+\draw[flow](q10.east)--(q11.west);
+\draw[flow](q11.east)--(q12.west);
+
+\node[roundlabel](r2)at(8.1,-.8){Rounds 6--8};
+\node[axis,fill=black!5,font=\bfseries\footnotesize](q20)at(10.25,-.8){?};
+\node[axis,fill=black!5,font=\bfseries\footnotesize,right=4mm of q20](q21){?};
+\node[axis,fill=black!5,font=\bfseries\footnotesize,right=4mm of q21](q22){?};
+\draw[flow](q20.east)--(q21.west);
+\draw[flow](q21.east)--(q22.west);
+
+\node[panel,fit=(r0)(q02)(r2)(q22)](compression){};
+\node[stage,above=1.5mm of compression]{Compression};
+
+\draw[flow](ar0.east)--node[above,note]{$C_0$}(r0.west);
+\draw[flow](ar1.east)--node[above,note]{$C_1$}(r1.west);
+\draw[flow](ar2.east)--node[above,note]{$C_2$}(r2.west);
+\end{tikzpicture}
+\end{document}

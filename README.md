@@ -169,9 +169,9 @@ ASZ_FAMILY_MSE_EXECUTABLES="$PWD/install/bin" python -m unittest -v test_family_
 
 For each file/error-bound case, the primary analysis compares the two paths with the same tangent of their averaged actual BR--PSNR curve. Neighboring error bounds estimate the tangent; endpoints use one-sided differences, and a vertical tangent uses the limiting score `-BR`. It computes pairwise tau only within cases, never across files. MSE/RD ties (relative tolerance `1e-12`,zero absolute tolerance) and undefined/nonmonotone references are reported separately. Accuracy and mean/max RD-score regret use only the non-tied comparable cases; score regret is not a bitrate percentage. Retained historical CSVs can be audited only with explicit `--allow-unverified-plans`; such observations remain marked unverified and cannot stand in for new controlled measurements.
 
-## Current 18-dataset evaluation
+## Current 12-field evaluation
 
-The current paper set is split because the largest inputs need separate Slurm allocations:
+The current paper selects 12 representative fields from measurement batches that are split because the largest inputs need separate Slurm allocations:
 
 - `final_eighteen_asz_refresh_small.json`: seven ASZ refresh tasks.
 - `final_eighteen_asz_refresh_aps_kaz.json`: APS Kaz with its integer-data error-bound grid.
@@ -181,7 +181,7 @@ The current paper set is split because the largest inputs need separate Slurm al
 - `final_eighteen_nyx_baryon.json`: Nyx baryon density with all three methods.
 - `apsu006.json`: APSU006 with all three methods.
 
-Together these files name 18 distinct inputs. The `asz_refresh` configurations intentionally run only ASZ and reuse previously generated baseline results; they are not a complete baseline regeneration workflow. `plot_final_eighteen_rd.py` and `plot_final_eighteen_runtime.py` expect the corresponding CSV files under `results/`.
+The retained batches also contain superseded candidate fields. The 12 inputs used by the paper are defined in `plot_final_eighteen_rd.py`. The `asz_refresh` configurations intentionally run only ASZ and reuse previously generated baseline results; they are not a complete baseline regeneration workflow. `plot_final_eighteen_rd.py` and `plot_final_eighteen_runtime.py` expect the corresponding CSV files under `results/`.
 
 Generate the current figures after those results are present:
 

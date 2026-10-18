@@ -30,10 +30,10 @@ def write_csv(path,rows):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="汇总最终18个数据的等PSNR压缩率和1e-3运行时间")
+    parser=argparse.ArgumentParser(description="汇总最终12个数据的等PSNR压缩率和1e-3运行时间")
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
     parser.add_argument("--rel-eb",type=float,default=1e-3)
-    parser.add_argument("--output",type=Path,default=project_root/"results/final_eighteen_analysis.csv")
+    parser.add_argument("--output",type=Path,default=project_root/"results/final_twelve_analysis.csv")
     arguments=parser.parse_args()
 
     rows=[]

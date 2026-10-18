@@ -61,8 +61,8 @@ python3 t1_start_compressors.py configs/example.json --dry-run
 ## Maintained experiment groups
 
 - `family_mse_validation.json`: paired adaptive-4R/fixed-6R selector validation on all six Figure 3 datasets at five relative error bounds (`1e-1` through `1e-5`),60 full-compression runs. This specialized manifest is consumed by `run_family_mse_validation.py`,not `t1_start_compressors.py`; see the root README for the protocol and Slurm launcher.
-- `family_mse_validation_eighteen.json` and the dataset list in `plot_final_eighteen_rd.py`: current 18-field paper selection,with RTM big snapshot 0750 replacing APS Kaz.
-- `final_eighteen_*.json`,`apsu006.json`,and `rtm_middle.json`: measurement batches supplying the current paper evaluation; APS-Kaz-specific batches are retained only as historical inputs.
+- The dataset list in `plot_final_eighteen_rd.py`: current 12-field paper selection. The broader `family_mse_validation_eighteen.json` remains a selector-validation manifest rather than the paper's final field list.
+- `final_eighteen_*.json`,`final_twelve_qmcpack_orbital144.json`,`apsu006.json`,and `rtm_middle.json`: measurement batches supplying the current paper evaluation; some retain superseded candidate fields, and APS-Kaz-specific batches are historical inputs.
 - `isabel_plan_transfer.json`: Pf24 plan applied to the remaining Isabel pressure time steps and compared with self-generated plans, SZ3, and QoZ.
 - `aramco_plan_transfer.json`: Aramco time-step transfer check.
 - `final_eighteen_nyx_baryon.json`: the selected Nyx baryon-density evaluation.

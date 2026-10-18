@@ -180,7 +180,7 @@ def render(selected,labels,output):
                 spine.set_linewidth(0.5)
         axes[0,0].set_ylabel("PSNR (dB)",labelpad=1)
         figure.supxlabel("Bit rate (bits/QB)",x=0.555,y=0.04,fontsize=7)
-        handles=[Line2D([],[],label=f"QB axis {index} fastest",linewidth=0.8,markersize=2.3,markeredgewidth=0.45,markerfacecolor="white",**styles[order]) for index,order in enumerate(orders)]
+        handles=[Line2D([],[],label=f"Dimension {index} fastest",linewidth=0.8,markersize=2.3,markeredgewidth=0.45,markerfacecolor="white",**styles[order]) for index,order in enumerate(orders)]
         figure.legend(handles=handles,loc="upper center",bbox_to_anchor=(0.555,0.99),ncol=3,frameon=False,handlelength=1.25,handletextpad=0.3,columnspacing=0.65,borderaxespad=0)
         figure.savefig(output,bbox_inches="tight",pad_inches=0.01)
         plt.close(figure)

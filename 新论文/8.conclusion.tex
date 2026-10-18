@@ -1,4 +1,6 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-% TODO: 总结configuration-space reshaping、efficient joint search和实验结果。
+ASZ first expands what an interpolation-based error-bounded compressor can configure. It introduces variable-coefficient predictors, exposes independent choices of prediction axis and QB serialization order for each round, and organizes the selected structural decisions in a configuration plan. It then makes this expanded space practical to tune. Prediction-stencil pruning limits the candidate set, an $H_1$--PSNR proxy and reusable joint distribution accelerate coefficient selection, and reverse-greedy search generates the configuration plan. The plan can be shared across related files while coefficients remain adaptive within each block.
+
+Across 12 scientific fields, ASZ achieves geometric-mean compression ratios of $2.68\times$ and $2.20\times$ those of SZ3 and QoZ, respectively, at equal PSNR. At a relative error bound of $10^{-3}$, its total codec runtime is $13.7\%$ lower than QoZ on average and $1.95\times$ that of SZ3. Reusing one plan across 48 Isabel pressure time steps incurs a mean compression-ratio loss of $2.48\%$ relative to per-file plan generation. These results show that fine-grained configuration choices can improve rate--distortion performance while configuration reuse and block-specific coefficient selection control their tuning cost.

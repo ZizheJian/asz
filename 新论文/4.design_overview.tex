@@ -1,23 +1,32 @@
-\section{ASZ Design Overview}
+\section{ASZ Architecture and Tuning Granularity}
 \label{sec:overview}
 
-This section presents an overview of ASZ, including its reusable round-wise plan and the division between plan generation, cross-file reuse, and online adaptation. Figure~\ref{fig:overview:round-schedules} highlights how independently configured rounds distinguish ASZ from the grouped axis schedules of SZ3 and QoZ.
+ASZ follows the preprocessing--compression organization of the SZ pipeline while changing how configurations are generated and applied. During preprocessing, ASZ constructs a configuration plan that specifies the prediction axis and QB serialization order for each round. During compression, this plan guides prediction, while coefficient adaptation is performed separately for each data block. Figure~\ref{fig:overview:asz-workflow} summarizes this workflow.
 
 \begin{figure}[htb]
 \centering
-\fbox{\rule{0pt}{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}\rule{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{0pt}}
-\caption{Prediction-round schedules in SZ3, QoZ, and ASZ. For one-dimensional prediction on three-dimensional data, SZ3 repeats either the forward or reverse axis order. QoZ reselects one of these two orders for each three-round group, or the two orders of the active axes for each two-round group when one axis is frozen. ASZ selects every round independently and may repeat an axis. ASZ generates this plan before compression and can reuse it across related files.}
-\label{fig:overview:round-schedules}
+\includegraphics[width=\columnwidth]{revised-fig/asz-workflow.pdf}
+\caption{ASZ workflow. Preprocessing constructs a configuration plan that specifies the prediction axis and QB serialization order for each round. The plan guides compression, including block-specific coefficient selection for 1D4R. 1D4R and 1D6R denote one-dimensional predictors using four and six references, respectively. Sections~\ref{sec:configuration-space:predictors}--\ref{sec:configuration-space:reference-count} detail their construction and selection.}
+\label{fig:overview:asz-workflow}
 \end{figure}
 
-\subsection{Round-Wise Plan}
-\label{sec:configuration-space:round-wise}
-
-ASZ retains a global prediction stencil but configures the prediction axis and QB serialization order independently for every round. Thus, the choices for one round place no restrictions on those for adjacent rounds. The plan may repeat an axis in consecutive rounds and assign different numbers of rounds to different axes. Each round is configured based on estimated compression performance.
-
-\subsection{Plan Generation, Reuse, and Online Adaptation}
+\subsection{Overall Workflow and Configuration Reuse}
 \label{sec:overview:plan-reuse}
 
-During preprocessing, ASZ selects the global prediction stencil together with each round's prediction axis and QB serialization order. The selected stencil has tunable coefficients, as described in Section~\ref{sec:configuration-space:predictors}. These decisions form $C_{\mathrm{reuse}}$. Generating $C_{\mathrm{reuse}}$ incurs modest cost, as shown in Section~\ref{sec:evaluation}. The resulting configuration transfers well across related files, such as nearby time steps of the same simulation, as also shown in Section~\ref{sec:evaluation}. We therefore recommend treating preprocessing as an offline step and reusing its configuration to amortize its cost. When per-file adaptation is preferred, the same preprocessing can instead be performed for every input file as an online configuration-generation step.
+ASZ generates the configuration plan $C_{\mathrm{reuse}}$ during preprocessing using the search and evaluation methods in Section~\ref{sec:optimization-strategies}. The plan can be generated for an individual input file or reused across related files to amortize preprocessing.
 
-During the main compression pass, ASZ follows $C_{\mathrm{reuse}}$ and additionally tunes the predictor coefficients for each block using a low-cost proxy. Section~\ref{sec:optimization-strategies} presents the methods used to generate $C_{\mathrm{reuse}}$ and adapt these coefficients.
+During the main compression pass, ASZ follows $C_{\mathrm{reuse}}$ and selects predictor coefficients separately for each block using a low-cost proxy.
+
+\subsection{Round-Wise Configuration}
+\label{sec:configuration-space:round-wise}
+
+ASZ replaces the fixed or grouped axis cycles of SZ3 and QoZ with independent configuration of each prediction round. For every round, ASZ selects one prediction axis and one QB serialization order. These choices are independent across rounds, so consecutive rounds may use the same axis and the three axes may be selected different numbers of times. The 1D4R coefficients are selected separately for each block during compression.
+
+Figure~\ref{fig:overview:round-schedules} illustrates this change in prediction-axis configuration. SZ3 applies one axis-order configuration to the entire field, and QoZ selects one for each group of rounds. ASZ instead selects the prediction axis independently for every round.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=.64\linewidth]{revised-fig/3-round-wise-plan.pdf}
+\caption{Prediction-axis configuration granularity for one-dimensional prediction on three-dimensional data. SZ3 selects a three-round cycle for the entire field, QoZ selects a cycle for each three-round group, and ASZ exposes the axis of every round as an independent configuration choice. Boxes labeled X, Y, and Z denote prediction along the corresponding coordinate axes. The QB serialization order, which is fixed in SZ3 and QoZ but exposed and tuned independently for every ASZ round, is omitted.}
+\label{fig:overview:round-schedules}
+\end{figure}

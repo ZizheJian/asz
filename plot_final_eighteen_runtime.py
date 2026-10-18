@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
-from plot_final_eighteen_rd import datasets,format_size,methods,styles
+from plot_final_eighteen_rd import dataset_size,datasets,format_size,methods,styles
 
 project_root=Path(__file__).resolve().parent
 timing_baseline_overrides={
@@ -65,16 +65,16 @@ def draw_throughput_panel(axis,title,file_size,timings,index,time_field):
 
 
 def save_throughput(ordered,timings_by_title,output_path,dpi,time_field,y_label):
-    figure,axes=plt.subplots(3,6,figsize=(17.5,8.2))
+    figure,axes=plt.subplots(2,6,figsize=(17.5,5.6))
     for index,((title,data_path,_,_),axis) in enumerate(zip(ordered,axes.flat)):
-        draw_throughput_panel(axis,title,Path(data_path).stat().st_size,timings_by_title[title],index,time_field)
-        if index//6==2:
+        draw_throughput_panel(axis,title,dataset_size(ordered[index]),timings_by_title[title],index,time_field)
+        if index//6==1:
             axis.set_xlabel("Relative error bound")
         if index%6==0:
             axis.set_ylabel(y_label)
     handles=[plt.Line2D([],[],color=styles[method]["color"],linestyle=styles[method]["linestyle"],marker=styles[method]["marker"],markerfacecolor="white",linewidth=1.8,markersize=5,label=styles[method]["label"]) for method in methods]
     figure.legend(handles=handles,loc="upper center",ncol=3,frameon=False,bbox_to_anchor=(0.5,0.997),handlelength=3,columnspacing=2.5)
-    figure.subplots_adjust(left=0.05,right=0.995,bottom=0.075,top=0.9,wspace=0.3,hspace=0.47)
+    figure.subplots_adjust(left=0.05,right=0.995,bottom=0.105,top=0.86,wspace=0.3,hspace=0.5)
     output_path.parent.mkdir(parents=True,exist_ok=True)
     figure.savefig(output_path.with_suffix(".pdf"),bbox_inches="tight")
     figure.savefig(output_path.with_suffix(".png"),dpi=dpi,bbox_inches="tight")
@@ -107,7 +107,7 @@ def save_runtime_bars(ordered,bar_timings,output_path,dpi,rel_eb):
     method_colors={method:styles[method]["color"] for method in methods}
     size_groups=[("<10 MiB",[]),("10–256 MiB",[]),("256 MiB–2 GiB",[]),("≥2 GiB",[])]
     for dataset in ordered:
-        file_size=Path(dataset[1]).stat().st_size
+        file_size=dataset_size(dataset)
         group_index=0 if file_size<10*2**20 else 1 if file_size<256*2**20 else 2 if file_size<2*2**30 else 3
         size_groups[group_index][1].append(dataset)
     figure,axes=plt.subplots(2,2,figsize=(17.5,9.2))
@@ -160,7 +160,7 @@ def save_runtime_bars(ordered,bar_timings,output_path,dpi,rel_eb):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="绘制最终18数据的吞吐曲线和固定误差界运行时间分解")
+    parser=argparse.ArgumentParser(description="绘制最终12数据的吞吐曲线和固定误差界运行时间分解")
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
     parser.add_argument("--output-directory",type=Path,default=project_root/"新论文/figs/5")
     parser.add_argument("--rel-eb",type=float,default=1e-3)
@@ -168,12 +168,12 @@ def main():
     arguments=parser.parse_args()
 
     plt.rcParams.update({"font.family":"sans-serif","font.size":8.5,"axes.titlesize":9.5,"axes.labelsize":10,"xtick.labelsize":7.5,"ytick.labelsize":7.5,"legend.fontsize":10,"pdf.fonttype":42,"ps.fonttype":42})
-    ordered=sorted(datasets,key=lambda item:(Path(item[1]).stat().st_size,item[0]))
+    ordered=sorted(datasets,key=lambda item:(dataset_size(item),item[0]))
     timings_by_title={dataset[0]:load_timings(arguments.result_directory,dataset) for dataset in ordered}
     save_throughput(ordered,timings_by_title,arguments.output_directory/"throughput-compression-vs-rel-eb",arguments.dpi,"COMPRESSION_TIME","Compression throughput (GB/s)")
     save_throughput(ordered,timings_by_title,arguments.output_directory/"throughput-decompression-vs-rel-eb",arguments.dpi,"DECOMPRESSION_TIME","Decompression throughput (GB/s)")
     bar_timings=load_bar_timings(arguments.result_directory,ordered,arguments.rel_eb)
-    save_runtime_bars(ordered,bar_timings,arguments.output_directory/"runtime-breakdown-eighteen-1e-3",arguments.dpi,arguments.rel_eb)
+    save_runtime_bars(ordered,bar_timings,arguments.output_directory/"runtime-breakdown-twelve-1e-3",arguments.dpi,arguments.rel_eb)
     print(f"写入吞吐与运行时间图：{arguments.output_directory}")
 
 

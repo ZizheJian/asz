@@ -1,0 +1,20 @@
+[
+  {
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/T-98x1200x1200.dat"],
+    "data_shape":[98,1200,1200],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":["asz","sz3","qoz"],
+    "cleanup_after_each_test":true,
+    "comparison_baseline":"asz",
+    "summary_csv":"results/final_seventeen_letkf_t.csv"
+  },
+  {
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/density.f32.dat"],
+    "data_shape":[256,256,256],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001],
+    "method_list":["asz","sz3","qoz"],
+    "cleanup_after_each_test":true,
+    "comparison_baseline":"asz",
+    "summary_csv":"results/final_seventeen_miranda_density.csv"
+  }
+]
