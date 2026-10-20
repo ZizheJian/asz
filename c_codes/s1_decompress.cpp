@@ -4,6 +4,11 @@ using namespace std;
 
 int main(int argc,char* argv[])
 {
+    if(argc==2&&string(argv[1])=="--help")
+    {
+        printf("usage: s1_decompress -i INPUT -z COMPRESSED -o RECONSTRUCTED -3 DIM0 DIM1 DIM2 -M REL REL_EB [options]\n");
+        return 0;
+    }
     auto param=asz::param_c<float>();
     for (int i=1;i<argc;i++)
     {

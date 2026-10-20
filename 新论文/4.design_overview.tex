@@ -20,13 +20,13 @@ During the main compression pass, ASZ follows $C_{\mathrm{reuse}}$ and selects p
 \subsection{Round-Wise Configuration}
 \label{sec:configuration-space:round-wise}
 
-ASZ replaces the fixed or grouped axis cycles of SZ3 and QoZ with independent configuration of each prediction round. For every round, ASZ selects one prediction axis and one QB serialization order. These choices are independent across rounds, so consecutive rounds may use the same axis and the three axes may be selected different numbers of times. The 1D4R coefficients are selected separately for each block during compression.
+QoZ configures a three-round group by selecting an axis order in which every active axis appears once. This permutation constraint fixes the number of uses of each axis within the group, even though directional predictability can differ across axes and reference spacings. A better unrestricted schedule may therefore repeat a more predictable axis rather than use every axis once. ASZ enlarges the configuration space by exposing the prediction axis and QB serialization order of every round as separate choices. Consecutive rounds may use the same axis, and the three axes may be selected different numbers of times. The 1D4R coefficients are selected separately for each block during compression.
 
-Figure~\ref{fig:overview:round-schedules} illustrates this change in prediction-axis configuration. SZ3 applies one axis-order configuration to the entire field, and QoZ selects one for each group of rounds. ASZ instead selects the prediction axis independently for every round.
+Figure~\ref{fig:overview:round-schedules} illustrates this change in prediction-axis configuration. SZ3 applies one axis-order configuration to the entire field, and QoZ selects one for each group of rounds. ASZ instead permits an unrestricted sequence of per-round prediction axes.
 
 \begin{figure}[htb]
 \centering
 \includegraphics[width=.64\linewidth]{revised-fig/3-round-wise-plan.pdf}
-\caption{Prediction-axis configuration granularity for one-dimensional prediction on three-dimensional data. SZ3 selects a three-round cycle for the entire field, QoZ selects a cycle for each three-round group, and ASZ exposes the axis of every round as an independent configuration choice. Boxes labeled X, Y, and Z denote prediction along the corresponding coordinate axes. The QB serialization order, which is fixed in SZ3 and QoZ but exposed and tuned independently for every ASZ round, is omitted.}
+\caption{Prediction-axis configuration granularity for one-dimensional prediction on three-dimensional data. SZ3 selects a three-round cycle for the entire field, QoZ selects a cycle for each three-round group, and ASZ permits an unrestricted sequence of per-round axis choices. Boxes labeled X, Y, and Z denote prediction along the corresponding coordinate axes. The QB serialization order, which is fixed in SZ3 and QoZ but tuned separately for every ASZ round, is omitted.}
 \label{fig:overview:round-schedules}
 \end{figure}

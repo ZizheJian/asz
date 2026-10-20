@@ -8,6 +8,9 @@ import subprocess
 from collections import defaultdict
 from pathlib import Path
 
+from paper_plot_layout import add_panel_captions,style_plot_axis
+
+
 project_root=Path(__file__).resolve().parent
 candidate_t=[i/32 for i in range(2,13)]
 selection_order=[1/4,*[value for value in candidate_t if value!=1/4]]
@@ -188,42 +191,43 @@ def plot_validation_triptych(measurements,rows,output):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.colors import Normalize
+    from matplotlib.ticker import MaxNLocator,NullLocator
     summary={row["criterion"]:row for row in summarize(rows)}
-    plt.rcParams.update({"font.family":"serif","font.serif":["STIXGeneral"],"mathtext.fontset":"stix","font.size":6,"axes.labelsize":6,"axes.titlesize":6.5,"xtick.labelsize":5.5,"ytick.labelsize":5.5,"pdf.fonttype":42})
-    figure,axes=plt.subplots(1,3,figsize=(3.5,1.35),gridspec_kw={"width_ratios":[0.9,1,1]})
+    plt.rcParams.update({"font.family":"Nimbus Roman","mathtext.fontset":"stix","font.size":8,"axes.labelsize":8,"axes.titlesize":8,"xtick.labelsize":8,"ytick.labelsize":8,"pdf.fonttype":42})
+    figure,axes=plt.subplots(1,3,figsize=(3.5,104/72))
     values=[summary[criterion]["agreement_percent"] for criterion in criteria]
-    labels=[r"$H_1$--P",r"$H_1$","PSNR","MSE","MAE"]
+    labels=[r"$H_1$--PSNR",r"$H_1$","PSNR","MSE","MAE"]
     axes[0].bar(range(len(criteria)),values,color=["#3b4cc0",*["#b8b8b8"]*4],width=0.72)
-    axes[0].set_ylim(0,105)
+    axes[0].set_ylim(0,118)
     axes[0].set_yticks([0,50,100])
     axes[0].set_ylabel("Agreement (%)",labelpad=1)
     axes[0].set_xticks(range(len(criteria)),labels,rotation=45,ha="right",rotation_mode="anchor")
-    axes[0].text(0,values[0]+2,"95.93",ha="center",fontsize=5,color="#243391")
-    axes[0].set_title("(a) Overall selection",pad=2)
+    axes[0].text(.15,values[0]+6,"95.93",ha="center",va="bottom",fontsize=6,color="#243391")
     grouped=measurements[("Isabel_Pf24",0,0)]
     normalizer=Normalize(min(candidate_t),max(candidate_t))
     color_map=plt.get_cmap("viridis")
     for t in candidate_t:
         psnr=[grouped[rel_eb][t]["PSNR"] for rel_eb in rel_ebs]
         color=color_map(normalizer(t))
-        axes[1].plot([grouped[rel_eb][t]["BR"] for rel_eb in rel_ebs],psnr,"-o",color=color,linewidth=0.65,markersize=1.4)
-        axes[2].plot([grouped[rel_eb][t]["H1"] for rel_eb in rel_ebs],psnr,"-o",color=color,linewidth=0.65,markersize=1.4)
-    for axis,xlabel,title in zip(axes[1:],["BR (bits/QB)",r"$H_1$ (bits/QB)"],["(b) BR–PSNR",r"(c) $H_1$–PSNR"]):
+        axes[1].plot([grouped[rel_eb][t]["BR"] for rel_eb in rel_ebs],psnr,"-o",color=color,linewidth=.8,markersize=1.4)
+        axes[2].plot([grouped[rel_eb][t]["H1"] for rel_eb in rel_ebs],psnr,"-o",color=color,linewidth=.8,markersize=1.4)
+    for axis,xlabel in zip(axes[1:],["BR (bits/value)",r"$H_1$ (bits/value)"]):
         axis.set_xscale("log")
+        axis.xaxis.set_minor_locator(NullLocator())
         axis.set_xlabel(xlabel,labelpad=1)
-        axis.set_title(title,pad=2)
-        axis.set_ylim(52,116)
-        axis.set_yticks([60,80,100])
-    axes[1].set_ylabel("PSNR (dB)",labelpad=1)
-    axes[2].set_yticklabels([])
-    axes[2].text(0.98,0.04,r"$t:2/32\rightarrow12/32$",transform=axes[2].transAxes,ha="right",va="bottom",fontsize=5)
-    for axis in axes:
-        axis.grid(axis="y",color="#dddddd",linewidth=0.35)
-        axis.set_axisbelow(True)
-        axis.spines["top"].set_visible(False)
-        axis.spines["right"].set_visible(False)
-        axis.tick_params(length=1.5,pad=1)
-    figure.tight_layout(pad=0.35,w_pad=0.7)
+        axis.margins(y=.08)
+        axis.yaxis.set_major_locator(MaxNLocator(nbins=4,min_n_ticks=3))
+    axes[1].set_ylabel("PSNR (dB)",labelpad=0)
+    axes[2].set_ylabel("PSNR (dB)",labelpad=0)
+    titles=["(a) Overall selection","(b) BR–PSNR",r"(c) $H_1$–PSNR"]
+    for index,axis in enumerate(axes):
+        axis.set_box_aspect(1)
+        style_plot_axis(axis,grid_axis="y" if index==0 else "both")
+    figure.subplots_adjust(left=.105,right=.995,bottom=.38,top=.95,wspace=.4)
+    captions=add_panel_captions(figure,axes,titles,8,gap_pt=-4)
+    caption_y=min(caption.get_position()[1] for caption in captions)
+    for caption in captions:
+        caption.set_y(caption_y)
     figure.savefig(output/"coefficient-proxy-validation.pdf")
     plt.close(figure)
 

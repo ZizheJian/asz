@@ -134,6 +134,11 @@ void write_compressed_stream(const asz::param_c<T> &param)
 
 int main(int argc,char* argv[])
 {
+    if(argc==2&&string(argv[1])=="--help")
+    {
+        printf("usage: s1_compress -i INPUT -z COMPRESSED -o RECONSTRUCTED -3 DIM0 DIM1 DIM2 -M REL REL_EB [options]\n");
+        return 0;
+    }
     auto param=asz::param_c<float>();
     vector<string> predictor_plan;
     bool t_min_set=false,t_max_set=false;

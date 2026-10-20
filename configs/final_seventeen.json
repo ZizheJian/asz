@@ -1,0 +1,94 @@
+[
+  {
+    "title":"QMCPACK Orbital 144",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/288/einspline_288_115_69_69.pre.f32",
+    "size_bytes":2190060,
+    "results":{"asz":"final_twelve_qmcpack_orbital144.csv","sz3":"final_twelve_qmcpack_orbital144.csv","qoz":"final_twelve_qmcpack_orbital144.csv"}
+  },
+  {
+    "title":"RTM 0750",
+    "data_path":"/anvil/projects/x-cis240669/RTM/RtmLab-bigdata-849x849x235/data-every10/aramco-snapshot-0750.f32",
+    "results":{"asz":"rtm_big_0750.csv","sz3":"rtm_big_0750.csv","qoz":"rtm_big_0750.csv"}
+  },
+  {
+    "title":"Isabel PRECIP 24",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/PRECIP/PRECIPf24.bin",
+    "results":{"asz":"final_seventeen_isabel_precip_f24.csv","sz3":"final_seventeen_isabel_precip_f24.csv","qoz":"final_seventeen_isabel_precip_f24.csv"}
+  },
+  {
+    "title":"Isabel QRAIN 24",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/QRAIN/QRAINf24.bin",
+    "results":{"asz":"final_seventeen_isabel_qrain_f24.csv","sz3":"final_seventeen_isabel_qrain_f24.csv","qoz":"final_seventeen_isabel_qrain_f24.csv"}
+  },
+  {
+    "title":"Miranda Velocity-x",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityx.f32.dat",
+    "result_data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityx.f32.dat",
+    "results":{"asz":"all_fields_miranda_finalists.csv","sz3":"all_fields_miranda_finalists.csv","qoz":"all_fields_miranda_finalists.csv"}
+  },
+  {
+    "title":"Miranda Density",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/density.f32.dat",
+    "results":{"asz":"final_seventeen_miranda_density.csv","sz3":"final_seventeen_miranda_density.csv","qoz":"final_seventeen_miranda_density.csv"}
+  },
+  {
+    "title":"Aramco 1800",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/aramco/aramco-snapshot-1800.f32",
+    "results":{"asz":"final_eighteen_refresh_aramco_1800.csv","sz3":"final_eight_aramco.csv","qoz":"final_eight_aramco.csv"},
+    "timing_results":{"sz3":"final_eight_frozen_aramco.csv","qoz":"final_eight_frozen_aramco.csv"}
+  },
+  {
+    "title":"SCALE-LETKF PRES",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/PRES-98x1200x1200.dat",
+    "results":{"asz":"final_eighteen_refresh_letkf_pres.csv","sz3":"final_eight_letkf.csv","qoz":"final_eight_letkf.csv"},
+    "timing_results":{"sz3":"final_eight_frozen_letkf.csv","qoz":"final_eight_frozen_letkf.csv"}
+  },
+  {
+    "title":"SCALE-LETKF T",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/T-98x1200x1200.dat",
+    "results":{"asz":"final_seventeen_letkf_t.csv","sz3":"final_seventeen_letkf_t.csv","qoz":"final_seventeen_letkf_t.csv"}
+  },
+  {
+    "title":"CESM Q 31",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/Q_26x1800x3600.dat",
+    "results":{"asz":"final_eighteen_cesm_q_t31.csv","sz3":"final_eighteen_cesm_q_t31.csv","qoz":"final_eighteen_cesm_q_t31.csv"}
+  },
+  {
+    "title":"CESM UU 31",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/UU_26x1800x3600.dat",
+    "results":{"asz":"final_eighteen_cesm_uu_t31.csv","sz3":"final_eighteen_cesm_uu_t31.csv","qoz":"final_eighteen_cesm_uu_t31.csv"}
+  },
+  {
+    "title":"Nyx Baryon density 632",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32",
+    "results":{"asz":"final_eighteen_nyx_baryon_density.csv","sz3":"final_eighteen_nyx_baryon_density.csv","qoz":"final_eighteen_nyx_baryon_density.csv"}
+  },
+  {
+    "title":"Nyx Dark-matter density 632",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/dark_matter_density.f32",
+    "result_data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/dark_matter_density.f32",
+    "results":{"asz":"nyx_current_raw_remaining.csv","sz3":"nyx_current_raw_remaining.csv","qoz":"nyx_current_raw_remaining.csv"}
+  },
+  {
+    "title":"APS CSSI L0471",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0471_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part1_001.h5.f32",
+    "results":{"asz":"final_eighteen_aps_cssi_l0471.csv","sz3":"final_eighteen_aps_cssi_l0471.csv","qoz":"final_eighteen_aps_cssi_l0471.csv"}
+  },
+  {
+    "title":"APSU 004",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_004/APSU_TestData_004.h5.f32",
+    "results":{"asz":"final_eighteen_refresh_apsu004.csv","sz3":"final_eight_apsu.csv","qoz":"final_eight_apsu.csv"},
+    "timing_results":{"sz3":"final_eighteen_sz3_timing_apsu004.csv","qoz":"final_eighteen_qoz_timing_apsu004.csv"}
+  },
+  {
+    "title":"E 017",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/E017_CeramicGlass_L2Mq0_060C_att00_001/E017_CeramicGlass_L2Mq0_060C_att00_001_001.h5.f32",
+    "results":{"asz":"final_eighteen_refresh_e017.csv","sz3":"final_eight_e017.csv","qoz":"final_eight_e017.csv"},
+    "timing_results":{"sz3":"final_eighteen_sz3_timing_e017.csv","qoz":"final_eighteen_qoz_timing_e017.csv"}
+  },
+  {
+    "title":"APSU 006",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_006/APSU_TestData_006.h5.f32",
+    "results":{"asz":"apsu006.csv","sz3":"apsu006.csv","qoz":"apsu006.csv"}
+  }
+]

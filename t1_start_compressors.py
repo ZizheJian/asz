@@ -3,8 +3,6 @@ from pathlib import Path
 
 import numpy as np
 
-from add_csv import add_csv
-
 project_root=Path(__file__).resolve().parent
 config_directory=project_root/"configs"
 asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_root/"install/bin")).resolve()
@@ -13,6 +11,46 @@ traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
 asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","t_precision")
 asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","predictor_family_sample_limit","predictor_family_mse_ratio_threshold","default_slope_invalid_ratio_threshold","default_slope_fallback","default_slope_eb_span","t_min","t_max")
 asz_block_policy_keys=("coarse_block_pivot_ratio","fine_block_pivot_ratio")
+
+
+def add_csv(method,csv_path,rel_eb,br,psnr):
+    if os.path.exists(csv_path):
+        with open(csv_path,"r",encoding="utf-8") as input_file:
+            records=[line.strip().split(",") for line in input_file]
+        width=len(records[0])
+        if any(len(record)>width for record in records):
+            raise ValueError(f"{csv_path} has a row wider than its header")
+        for record in records:
+            record.extend([""]*(width-len(record)))
+        records[0][0]="REL_EB"
+        row_index=0
+        for index in range(1,len(records)+1):
+            if index==len(records) or rel_eb>float(records[index][0])*1.001:
+                records.insert(index,[""]*len(records[0]))
+                records[index][0]=str(rel_eb)
+                row_index=index
+                break
+            if .999*float(records[index][0])<=rel_eb<=1.001*float(records[index][0]):
+                row_index=index
+                break
+        column_index=0
+        for index in range(1,len(records[0])+2,2):
+            if index==len(records[0]) or method.upper()+"_BR">records[0][index]:
+                records[0][index:index]=[method.upper()+"_BR",method.upper()+"_PSNR"]
+                for record in records[1:]:
+                    record[index:index]=["",""]
+                column_index=index
+                break
+            if method.upper()+"_BR"==records[0][index]:
+                column_index=index
+                break
+        records[row_index][column_index]=str(br)
+        records[row_index][column_index+1]=str(psnr)
+    else:
+        records=[["REL_EB",method.upper()+"_BR",method.upper()+"_PSNR"],[str(rel_eb),str(br),str(psnr)]]
+    with open(csv_path,"w",encoding="utf-8") as output_file:
+        for record in records:
+            output_file.write(",".join(record)+"\n")
 
 def run_command(command,silent=False,dry_run=False):
     command=[str(item) for item in command]

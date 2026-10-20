@@ -52,7 +52,7 @@ This subsection defines the terminology used throughout the paper.
 
 \item \emph{Prediction Coefficients.} Prediction coefficients are the weights $w_j$ assigned to the references in Eq.~\eqref{eq:background:prediction}. Together with the stencil, they determine the prediction formula.
 
-\item \emph{QB Serialization Order.} Before lossless compression, the QBs produced for multidimensional data must be written as a one-dimensional sequence. The serialization order determines whether QBs adjacent along the $x$-, $y$-, or $z$-axis appear consecutively in this sequence. Reordering preserves the QB values and reconstructed data.
+\item \emph{QB Serialization Order.} Before lossless compression, the QBs produced for multidimensional data must be written as a one-dimensional sequence. The serialization order determines whether QBs adjacent along the $x$-, $y$-, or $z$-axis appear consecutively in this sequence. Reordering preserves the QB values, their frequencies, and the reconstructed data, but changes the Huffman-codeword sequence presented to Zstd and can therefore affect lossless compression.
 
 \item \emph{Configuration Granularity.} Configuration granularity specifies the scope over which a selected choice is shared, such as a field, a group of rounds, one round, or one data block.
 \end{enumerate}

@@ -4,7 +4,7 @@
     "/home/x-zjian1/asz/results/1d6r-coefficients-three-20261011/selected.csv": "b4f3027035e784b9b8496916ad9497a0c946b64ace1270747d8564fd313d341e",
     "/home/x-zjian1/asz/results/1d6r-coefficients-three-20261011/report.json": "5b985246324bccf0dc68ccb0c0ed81e17c7970d5b601f3fab24c2c7eeef75bf7"
   },
-  "plot_source_sha256": "3f24d9bf0ec195f8244ebda6760710c461b9412ca50572599d1cfe37cfcb389f",
+  "plot_source_sha256": "321cd8f1c382dafc12a6de932b346b88d8d48dfa4944341e34ddd257dfd0e3f3",
   "layout_source_sha256": "c4f4466efc2c491b7e053b17286417f47c7b560378c0ff43f2955491200dc4e3",
   "datasets": {
     "aramco": {
@@ -32,16 +32,16 @@
   ],
   "dimensions_inches": [
     3.5,
-    1.1339904245639336
+    1.1271154245639337
   ],
   "variant_dimensions_inches": {
     "main": [
       3.5,
-      1.1339904245639336
+      1.1271154245639337
     ],
     "-detail": [
       3.5,
-      1.1339904245639336
+      1.1271154245639337
     ]
   },
   "panel_width_height_ratio": 1.618,

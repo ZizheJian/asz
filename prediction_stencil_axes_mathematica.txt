@@ -9,7 +9,7 @@ tensorPoints=Tuples[{depthCoordinates,horizontalCoordinates,verticalCoordinates}
 (*中心点是prediction target。(a)中的reference位于第0维两端，到target的间距为2个网格单位。*)
 targetPoint={0,0,0};
 referenceSets={{{-2,0,0},{2,0,0}},{{0,-1,0},{0,1,0}},{{0,0,-1},{0,0,1}}};
-panelLabels={"(a) Axis 0","(b) Axis 1","(c) Axis 2"};
+panelLabels={Row[{"(a) ",Style["x",Italic]}],Row[{"(b) ",Style["y",Italic]}],Row[{"(c) ",Style["z",Italic]}]};
 
 (*将tensor网格拆成相邻点之间的独立线段，以便每段都在球面停止。*)
 depthEdges=Join@@Flatten[Table[Partition[Table[{x,y,z},{x,depthCoordinates}],2,1],{y,horizontalCoordinates},{z,verticalCoordinates}],1];
@@ -55,7 +55,7 @@ panels=MapThread[makePanel,{referenceSets,panelLabels}];
 
 (*三个subfigure共用右侧单列legend。subcaption略大于legend文字。*)
 legendFontSize=8;
-pointLegend=PointLegend[{tensorPointColor,referenceColor,targetColor},{"Tensor Point","Reference","Prediction Target"},LegendLayout->"Column",LegendMarkerSize->8,LabelStyle->Directive[Black,FontFamily->"Times",FontSize->legendFontSize],LegendFunction->(Framed[#,FrameStyle->None,Background->None,FrameMargins->0]&)];
+pointLegend=PointLegend[{tensorPointColor,referenceColor,targetColor},{"Grid Point","Reference","Prediction Target"},LegendLayout->"Column",LegendMarkerSize->8,LabelStyle->Directive[Black,FontFamily->"Times",FontSize->legendFontSize],LegendFunction->(Framed[#,FrameStyle->None,Background->None,FrameMargins->0]&)];
 
 (*先组合三幅子图和右侧legend，总宽高比由内容自然决定。*)
 panelRow=GraphicsRow[panels,Spacings->0,ImageSize->228,Frame->None,Dividers->None,Background->None];

@@ -1,5 +1,6 @@
 astz_env/
 build/
+build-*/
 install/
 __pycache__/
 *.pyc
@@ -18,4 +19,9 @@ csv/factor_screen_*.csv
 新论文/main.log
 新论文/main.out
 新论文/main.pdf
+新论文/main-*.png
+新论文/revised-fig/*.aux
+新论文/revised-fig/*.fdb_latexmk
+新论文/revised-fig/*.fls
+新论文/revised-fig/*.log
 旧论文/*.zip
