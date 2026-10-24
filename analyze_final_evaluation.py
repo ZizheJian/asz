@@ -4,7 +4,7 @@ import math
 import statistics
 from pathlib import Path
 
-from evaluation_datasets import default_manifest,load_datasets,load_timings,preprocessing_time,read_curves,row_at_rel_eb,runtime_methods
+from evaluation_datasets import compression_time,default_manifest,load_datasets,load_timings,preprocessing_time,read_curves,row_at_rel_eb,runtime_methods
 
 project_root=Path(__file__).resolve().parent
 fieldnames=["DATASET","RUNTIME_REL_EB","ASZ_CR_X_SZ3","ASZ_CR_X_QOZ","ASZ_CR_X_ZFP","ASZ_CR_X_SPERR","ASZ_CR_X_HIGH_PERFORMANCE_ENVELOPE","ASZ_CR_X_BEST_BASELINE","ASZ_TOTAL_TIME","SZ3_TOTAL_TIME","QOZ_TOTAL_TIME","ASZ_PREPROCESSING_SHARE_PERCENT","ASZ_VS_SZ3_TIME_REDUCTION_PERCENT","ASZ_VS_QOZ_TIME_REDUCTION_PERCENT"]
@@ -96,7 +96,7 @@ def psnr_bitrate_curve(points):
 
 
 def total_time(row,include_preprocessing=False):
-    total=float(row["COMPRESSION_TIME"])+float(row["DECOMPRESSION_TIME"])
+    total=compression_time(row)+float(row["DECOMPRESSION_TIME"])
     return total+preprocessing_time(row) if include_preprocessing else total
 
 

@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from summarize_prediction_sweep import filter_rows,read_rows,summarize,validate_grid
+from summarize_prediction_sweep import filter_rows,read_rows,shared_rd_scores,six_reference_grids,summarize,summarize_two_stage,validate_exhaustive_grid,validate_grid,validate_uniform_samples
 
 
 class PredictionSweepSummaryTest(unittest.TestCase):
@@ -19,8 +19,8 @@ class PredictionSweepSummaryTest(unittest.TestCase):
                     writer=csv.DictWriter(output_file,fieldnames=header,lineterminator="\n")
                     writer.writeheader()
                     for bound,base_rate,base_psnr in ((.1,1,40),(.01,2,50),(.001,3,60)):
-                        for coefficient in (.2,.3):
-                            penalty=abs(axis-1)+order+abs(coefficient-.3)*10
+                        for coefficient in (index/32 for index in range(13)):
+                            penalty=abs(axis-1)+order+abs(coefficient-.3125)*10
                             writer.writerow({"rel_eb":bound,"t1":coefficient,"BR":base_rate+penalty*.01,"H1":base_rate+penalty*.02,"PSNR":base_psnr-penalty,"RMSE":penalty+1,"MAE":penalty+2,"SAMPLES":100})
 
     def tearDown(self):
@@ -32,16 +32,31 @@ class PredictionSweepSummaryTest(unittest.TestCase):
         selected=summarize(rows,bounds,("axis",),"br-psnr")
         self.assertEqual(len(selected),9)
         self.assertTrue(all(row["qb_order"]==0 for row in selected))
-        self.assertTrue(all(row["coefficient"]=="0.29999999999999999" for row in selected))
+        self.assertTrue(all(row["coefficient"]=="0.3125" for row in selected))
 
     def test_retain_coefficient_with_filters(self):
         rows,_=read_rows(self.prefix,{"1d4r"})
         rows=filter_rows(rows,{"0"},{0},())
         bounds=validate_grid(rows)
         selected=summarize(rows,bounds,("coefficient",),"h1-psnr")
-        self.assertEqual(len(selected),6)
+        self.assertEqual(len(selected),39)
         self.assertEqual({row["axis"] for row in selected},{"0"})
         self.assertEqual({row["qb_order"] for row in selected},{0})
+
+    def test_exhaustive_grid_detects_missing_order(self):
+        rows,_=read_rows(self.prefix,{"1d4r"})
+        bounds=validate_grid(rows)
+        validate_exhaustive_grid(rows,{"1d4r"},bounds)
+        incomplete=[row for row in rows if not (row["axis"]=="2" and row["qb_order"]==2)]
+        with self.assertRaisesRegex(ValueError,"QB orders mismatch"):
+            validate_exhaustive_grid(incomplete,{"1d4r"},bounds)
+
+    def test_uniform_samples(self):
+        rows,_=read_rows(self.prefix,{"1d4r"})
+        self.assertEqual(validate_uniform_samples(rows),100)
+        rows[0]["SAMPLES"]=99
+        with self.assertRaisesRegex(ValueError,"sample counts differ"):
+            validate_uniform_samples(rows)
 
     def test_rmse_criterion(self):
         rows,_=read_rows(self.prefix,{"1d4r"})
@@ -49,6 +64,32 @@ class PredictionSweepSummaryTest(unittest.TestCase):
         selected=summarize(rows,bounds,(),"rmse")
         self.assertEqual(len(selected),3)
         self.assertTrue(all(row["axis"]=="1" and row["qb_order"]==0 for row in selected))
+
+    def test_two_stage_selects_coefficient_then_order(self):
+        rows,_=read_rows(self.prefix,{"1d4r"})
+        bounds=validate_grid(rows)
+        selected=summarize_two_stage(rows,bounds,"br-psnr")
+        self.assertEqual(len(selected),9)
+        self.assertTrue(all(row["qb_order"]==0 for row in selected))
+        self.assertTrue(all(row["coefficient"]=="0.3125" for row in selected))
+
+    def test_six_reference_grids_have_expected_sizes(self):
+        grids=six_reference_grids()
+        self.assertEqual({name:len(grid) for name,grid in grids.items()},{"legacy":40,"augmented":52,"transition":42})
+        self.assertTrue(all(len(set(grid))==len(grid) for grid in grids.values()))
+
+    def test_shared_slope_uses_averaged_auxiliary_bounds(self):
+        rows,_=read_rows(self.prefix,{"1d4r"})
+        bounds=validate_grid(rows)
+        scores,report=shared_rd_scores(rows,bounds,(.01,),"BR",10)
+        self.assertEqual(len(scores),3*3*13)
+        entry=report["0.01"]
+        self.assertEqual(entry["coarse_eb"],.1)
+        self.assertEqual(entry["fine_eb"],.001)
+        self.assertAlmostEqual(entry["slope"],10)
+        neighboring_scores,neighboring_report=shared_rd_scores(rows,bounds,(.01,),"BR",None)
+        self.assertEqual(len(neighboring_scores),len(scores))
+        self.assertEqual(neighboring_report["0.01"],entry)
 
 
 if __name__=="__main__":

@@ -4,12 +4,14 @@ import hashlib
 import json
 import math
 import re
+import struct
 from collections import defaultdict
 from pathlib import Path
 
 metrics=("BR","H1","PSNR","RMSE","MAE","SAMPLES")
 dimensions=("axis","coefficient","qb_order")
 file_pattern=re.compile(r"^(?P<prefix>.+)_(?P<family>1d4r|1d6r|2d4r)(?P<axis>01|02|12|0|1|2)_xx(?P<qb_order>[0-2])\.csv$")
+family_axes={"1d4r":("0","1","2"),"2d4r":("01","02","12"),"1d6r":("0","1","2")}
 
 
 def sha256(path):
@@ -120,6 +122,90 @@ def validate_grid(rows):
     return bounds
 
 
+def same_coefficients(first,second):
+    return len(first)==len(second) and all(len(left)==len(right) and all(close(a,b) for a,b in zip(left,right)) for left,right in zip(sorted(first),sorted(second)))
+
+
+def expected_coefficients(family):
+    if family=="1d4r":
+        return [(index/32,) for index in range(13)]
+    if family=="2d4r":
+        return [(index/24,) for index in range(-6,7)]
+    return None
+
+
+def float32(value):
+    return struct.unpack("f",struct.pack("f",value))[0]
+
+
+def six_reference_grids():
+    legacy=[(float32(float32(first)/186),float32(float32(second)/1488)) for first in (0,11,22,31,41) for second in (0,113,248,341,453,567,680,793)]
+    augmented=list(legacy)
+    exact=[(119/768,203/768),*((1/6,index/32-1/12) for index in range(13))]
+    for candidate in exact:
+        matching=next((index for index,point in enumerate(augmented) if all(abs(left-right)<1e-7 for left,right in zip(point,candidate))),None)
+        if matching is None:
+            augmented.append(candidate)
+        else:
+            augmented[matching]=candidate
+    equal=(0,0)
+    quintic=(119/768,203/768)
+    four=[(1/6,(3*index-8)/96) for index in range(13)]
+    transition=[equal,quintic,*four,tuple((left+right)/2 for left,right in zip(equal,quintic))]
+    for point in four:
+        transition.extend((tuple((left+right)/2 for left,right in zip(equal,point)),tuple((left+right)/2 for left,right in zip(quintic,point))))
+    return {"legacy":legacy,"augmented":augmented,"transition":transition}
+
+
+def matches_expected_coefficients(actual,expected):
+    return len(actual)==len(expected) and all(any(len(candidate)==len(reference) and all(math.isclose(value,target,rel_tol=1e-7,abs_tol=1e-8) for value,target in zip(candidate,reference)) for reference in expected) for candidate in actual)
+
+
+def validate_exhaustive_grid(rows,families,bounds):
+    detected={}
+    for family in families:
+        family_rows=[row for row in rows if row["family"]==family]
+        actual_axes={row["axis"] for row in family_rows}
+        expected_axes=set(family_axes[family])
+        if actual_axes!=expected_axes:
+            raise ValueError(f"{family} axes mismatch: expected {sorted(expected_axes)},found {sorted(actual_axes)}")
+        reference_coefficients=None
+        for axis in family_axes[family]:
+            actual_orders={row["qb_order"] for row in family_rows if row["axis"]==axis}
+            if actual_orders!={0,1,2}:
+                raise ValueError(f"{family} axis {axis} QB orders mismatch: expected [0,1,2],found {sorted(actual_orders)}")
+            for qb_order in range(3):
+                candidates=[row for row in family_rows if row["axis"]==axis and row["qb_order"]==qb_order]
+                coefficients={coefficient_key(row) for row in candidates}
+                if reference_coefficients is None:
+                    reference_coefficients=coefficients
+                elif not same_coefficients(coefficients,reference_coefficients):
+                    raise ValueError(f"{family} axis {axis} QB order {qb_order} coefficient grid mismatch")
+                expected_rows=len(bounds)*len(coefficients)
+                if len(candidates)!=expected_rows:
+                    raise ValueError(f"{family} axis {axis} QB order {qb_order} has {len(candidates)} rows,expected {expected_rows}")
+        expected=expected_coefficients(family)
+        if expected is not None:
+            if not matches_expected_coefficients(reference_coefficients,expected):
+                raise ValueError(f"{family} coefficient grid does not match the expected {len(expected)} candidates")
+            detected[family]=family
+        else:
+            matches=[name for name,grid in six_reference_grids().items() if matches_expected_coefficients(reference_coefficients,grid)]
+            if len(matches)!=1:
+                raise ValueError(f"{family} coefficient grid does not match a defined grid")
+            detected[family]=matches[0]
+    return detected
+
+
+def validate_uniform_samples(rows):
+    counts={int(row["SAMPLES"]) for row in rows}
+    if any(row["SAMPLES"]!=int(row["SAMPLES"]) or row["SAMPLES"]<=0 for row in rows):
+        raise ValueError("sample counts must be positive integers")
+    if len(counts)!=1:
+        raise ValueError(f"target sample counts differ: {sorted(counts)}")
+    return counts.pop()
+
+
 def rd_scores(rows,bounds,rate_metric):
     by_bound=defaultdict(list)
     for row in rows:
@@ -161,6 +247,58 @@ def rd_scores(rows,bounds,rate_metric):
     return result
 
 
+def matching_bound(bounds,target):
+    matches=[bound for bound in bounds if close(bound,target)]
+    if len(matches)!=1:
+        raise ValueError(f"expected one measured bound matching {target:.17g},found {matches}")
+    return matches[0]
+
+
+def shared_rd_scores(rows,bounds,target_bounds,rate_metric,slope_span):
+    by_bound=defaultdict(list)
+    for row in rows:
+        by_bound[row["rel_eb"]].append(row)
+    result={}
+    report={}
+    for target in target_bounds:
+        bound=matching_bound(bounds,target)
+        if slope_span is None:
+            index=bounds.index(bound)
+            coarse=bounds[max(0,index-1)]
+            fine=bounds[min(len(bounds)-1,index+1)]
+        else:
+            coarse=matching_bound(bounds,target*slope_span)
+            fine=matching_bound(bounds,target/slope_span)
+        coarse_rate=sum(row[rate_metric] for row in by_bound[coarse])/len(by_bound[coarse])
+        coarse_psnr=sum(row["PSNR"] for row in by_bound[coarse])/len(by_bound[coarse])
+        fine_rate=sum(row[rate_metric] for row in by_bound[fine])/len(by_bound[fine])
+        fine_psnr=sum(row["PSNR"] for row in by_bound[fine])/len(by_bound[fine])
+        delta_rate=fine_rate-coarse_rate
+        delta_psnr=fine_psnr-coarse_psnr
+        current=by_bound[bound]
+        if close(delta_rate,0):
+            rates=[row[rate_metric] for row in current]
+            if all(close(value,rates[0]) for value in rates[1:]):
+                kind="equal-rate"
+                scores={id(row):row["PSNR"] for row in current}
+                slope=None
+            else:
+                kind="vertical"
+                scores={id(row):-row[rate_metric] for row in current}
+                slope=None
+        else:
+            slope=delta_psnr/delta_rate
+            if not math.isfinite(slope) or slope<=0:
+                raise ValueError(f"nonpositive shared RD slope at rel_eb={bound:.17g}")
+            kind="shared-tangent"
+            denominator=math.sqrt(1+slope*slope)
+            scores={id(row):(row["PSNR"]-slope*row[rate_metric])/denominator for row in current}
+        for row in current:
+            result[id(row)]={"score":scores[id(row)],"slope":slope,"score_kind":kind,"slope_left_eb":coarse,"slope_right_eb":fine}
+        report[f"{bound:.17g}"]={"coarse_eb":coarse,"fine_eb":fine,"coarse_mean_rate":coarse_rate,"coarse_mean_psnr":coarse_psnr,"fine_mean_rate":fine_rate,"fine_mean_psnr":fine_psnr,"slope":slope,"score_kind":kind,"candidate_count":len(current)}
+    return result,report
+
+
 def direct_scores(rows,criterion):
     if criterion=="rmse":
         return {id(row):{"score":-row["RMSE"],"slope":None,"score_kind":"minimum-rmse","slope_left_eb":None,"slope_right_eb":None} for row in rows}
@@ -183,6 +321,10 @@ def group_value(row,name):
     return coefficient_key(row) if name=="coefficient" else row[name]
 
 
+def output_group_value(row,name):
+    return tuple(float(value) for value in row["coefficient"].split(",")) if name=="coefficient" else row[name]
+
+
 def tie_key(row):
     return row["axis"],row["qb_order"],coefficient_key(row)
 
@@ -201,11 +343,63 @@ def summarize(rows,bounds,retain,criterion):
         score=scores[id(winner)]
         output.append({"family":winner["family"],"rel_eb":winner["rel_eb"],"axis":winner["axis"],"qb_order":winner["qb_order"],"coefficient":coefficient_text(coefficient_key(winner)),"t1":winner["t1"],"t2":"" if winner["t2"] is None else winner["t2"],"BR":winner["BR"],"H1":winner["H1"],"PSNR":winner["PSNR"],"RMSE":winner["RMSE"],"MAE":winner["MAE"],"SAMPLES":int(winner["SAMPLES"]),"criterion":criterion,"score":score["score"],"score_kind":score["score_kind"],"slope":"" if score["slope"] is None else score["slope"],"slope_left_eb":"" if score["slope_left_eb"] is None else score["slope_left_eb"],"slope_right_eb":"" if score["slope_right_eb"] is None else score["slope_right_eb"],"tie_count":len(tied),"candidate_count":len(candidates),"source":winner["source"]})
     order={family:index for index,family in enumerate(("1d4r","2d4r","1d6r"))}
-    def output_group_value(row,name):
-        if name=="coefficient":
-            return tuple(float(value) for value in row["coefficient"].split(","))
-        return row[name]
     return sorted(output,key=lambda row:(order.get(row["family"],99),-row["rel_eb"],*(output_group_value(row,name) for name in retain)))
+
+
+def summarize_two_stage(rows,bounds,criterion):
+    coefficient_winners=[]
+    for family in sorted({row["family"] for row in rows}):
+        for axis in family_axes[family]:
+            for qb_order in range(3):
+                candidates=[row for row in rows if row["family"]==family and row["axis"]==axis and row["qb_order"]==qb_order]
+                scores=score_rows(candidates,bounds,criterion)
+                for bound in bounds:
+                    current=[row for row in candidates if close(row["rel_eb"],bound)]
+                    best=max(scores[id(row)]["score"] for row in current)
+                    tied=[row for row in current if scores[id(row)]["score"]==best]
+                    winner=max(tied,key=coefficient_key)
+                    coefficient_winners.append({**winner,"coefficient_selection":scores[id(winner)],"coefficient_tie_count":len(tied),"coefficient_candidate_count":len(current)})
+    order_scores={}
+    for family in sorted({row["family"] for row in coefficient_winners}):
+        for axis in family_axes[family]:
+            candidates=[row for row in coefficient_winners if row["family"]==family and row["axis"]==axis]
+            order_scores.update(score_rows(candidates,bounds,criterion))
+    output=[]
+    for family in sorted({row["family"] for row in coefficient_winners}):
+        for axis in family_axes[family]:
+            for bound in bounds:
+                candidates=[row for row in coefficient_winners if row["family"]==family and row["axis"]==axis and close(row["rel_eb"],bound)]
+                best=max(order_scores[id(row)]["score"] for row in candidates)
+                tied=[row for row in candidates if order_scores[id(row)]["score"]==best]
+                winner=min(tied,key=lambda row:row["qb_order"])
+                score=order_scores[id(winner)]
+                coefficient_score=winner["coefficient_selection"]
+                output.append({"family":family,"rel_eb":bound,"axis":axis,"qb_order":winner["qb_order"],"coefficient":coefficient_text(coefficient_key(winner)),"t1":winner["t1"],"t2":"" if winner["t2"] is None else winner["t2"],"BR":winner["BR"],"H1":winner["H1"],"PSNR":winner["PSNR"],"RMSE":winner["RMSE"],"MAE":winner["MAE"],"SAMPLES":int(winner["SAMPLES"]),"criterion":criterion,"score":score["score"],"score_kind":score["score_kind"],"slope":"" if score["slope"] is None else score["slope"],"slope_left_eb":"" if score["slope_left_eb"] is None else score["slope_left_eb"],"slope_right_eb":"" if score["slope_right_eb"] is None else score["slope_right_eb"],"tie_count":len(tied),"candidate_count":len(candidates),"coefficient_score":coefficient_score["score"],"coefficient_score_kind":coefficient_score["score_kind"],"coefficient_slope":"" if coefficient_score["slope"] is None else coefficient_score["slope"],"coefficient_tie_count":winner["coefficient_tie_count"],"coefficient_candidate_count":winner["coefficient_candidate_count"],"source":winner["source"]})
+    order={family:index for index,family in enumerate(("1d4r","2d4r","1d6r"))}
+    return sorted(output,key=lambda row:(order.get(row["family"],99),-row["rel_eb"],row["axis"]))
+
+
+def summarize_shared_slope(rows,bounds,target_bounds,criterion,slope_span,retain):
+    if criterion=="br-psnr":
+        scores,slope_report=shared_rd_scores(rows,bounds,target_bounds,"BR",slope_span)
+    elif criterion=="h1-psnr":
+        scores,slope_report=shared_rd_scores(rows,bounds,target_bounds,"H1",slope_span)
+    else:
+        raise ValueError("shared-slope selection requires br-psnr or h1-psnr")
+    target_rows=[row for row in rows if id(row) in scores]
+    groups=defaultdict(list)
+    for row in target_rows:
+        key=(row["family"],row["rel_eb"],*(group_value(row,name) for name in retain))
+        groups[key].append(row)
+    output=[]
+    for candidates in groups.values():
+        best=max(scores[id(row)]["score"] for row in candidates)
+        tied=[row for row in candidates if scores[id(row)]["score"]==best]
+        winner=min(tied,key=tie_key)
+        score=scores[id(winner)]
+        output.append({"family":winner["family"],"rel_eb":winner["rel_eb"],"axis":winner["axis"],"qb_order":winner["qb_order"],"coefficient":coefficient_text(coefficient_key(winner)),"t1":winner["t1"],"t2":"" if winner["t2"] is None else winner["t2"],"BR":winner["BR"],"H1":winner["H1"],"PSNR":winner["PSNR"],"RMSE":winner["RMSE"],"MAE":winner["MAE"],"SAMPLES":int(winner["SAMPLES"]),"criterion":criterion,"score":score["score"],"score_kind":score["score_kind"],"slope":"" if score["slope"] is None else score["slope"],"slope_left_eb":score["slope_left_eb"],"slope_right_eb":score["slope_right_eb"],"tie_count":len(tied),"candidate_count":len(candidates),"source":winner["source"]})
+    order={family:index for index,family in enumerate(("1d4r","2d4r","1d6r"))}
+    return sorted(output,key=lambda row:(order.get(row["family"],99),-row["rel_eb"],*(output_group_value(row,name) for name in retain))),slope_report
 
 
 def write_csv(path,rows):
@@ -226,19 +420,40 @@ def main():
     parser.add_argument("--family",nargs="+",choices=("1d4r","2d4r","1d6r"),required=True)
     parser.add_argument("--retain",nargs="*",choices=dimensions,default=("axis",))
     parser.add_argument("--criterion",choices=("br-psnr","h1-psnr","rmse","mae","psnr"),default="br-psnr")
+    parser.add_argument("--selection",choices=("joint","two-stage","shared-slope"),default="joint")
+    parser.add_argument("--target-bound",nargs="+",type=float)
+    parser.add_argument("--slope-span",type=float)
     parser.add_argument("--axis",nargs="+")
     parser.add_argument("--qb-order",nargs="+",type=int,choices=(0,1,2))
     parser.add_argument("--coefficient",nargs="+",type=parse_coefficient)
+    parser.add_argument("--require-uniform-samples",action="store_true")
     parser.add_argument("--output",type=Path,required=True)
     arguments=parser.parse_args()
     families=set(arguments.family)
     retain=tuple(dict.fromkeys(arguments.retain))
     rows,hashes=read_rows(arguments.input_prefix,families)
+    bounds=validate_grid(rows)
+    coefficient_grids=validate_exhaustive_grid(rows,families,bounds)
+    sample_count=validate_uniform_samples(rows) if arguments.require_uniform_samples else None
     rows=filter_rows(rows,set(arguments.axis or ()),set(arguments.qb_order or ()),arguments.coefficient or ())
     bounds=validate_grid(rows)
-    selected=summarize(rows,bounds,retain,arguments.criterion)
+    if arguments.selection=="two-stage" and retain!=("axis",):
+        raise ValueError("two-stage selection requires --retain axis")
+    slope_report=None
+    if arguments.selection=="two-stage":
+        selected=summarize_two_stage(rows,bounds,arguments.criterion)
+    elif arguments.selection=="shared-slope":
+        if not arguments.target_bound:
+            raise ValueError("shared-slope selection requires --target-bound")
+        if arguments.slope_span is not None and (not math.isfinite(arguments.slope_span) or arguments.slope_span<=1):
+            raise ValueError("slope span must be finite and greater than one")
+        selected,slope_report=summarize_shared_slope(rows,bounds,arguments.target_bound,arguments.criterion,arguments.slope_span,retain)
+    else:
+        if arguments.target_bound:
+            raise ValueError("--target-bound requires shared-slope selection")
+        selected=summarize(rows,bounds,retain,arguments.criterion)
     write_csv(arguments.output,selected)
-    report={"input_prefix":str(arguments.input_prefix.resolve()),"families":sorted(families),"retain":retain,"criterion":arguments.criterion,"filters":{"axis":arguments.axis or [],"qb_order":arguments.qb_order or [],"coefficient":[coefficient_text(value) for value in arguments.coefficient or ()]},"relative_error_bounds":bounds,"input_rows":len(rows),"output_rows":len(selected),"input_sha256":hashes,"program_sha256":sha256(Path(__file__))}
+    report={"input_prefix":str(arguments.input_prefix.resolve()),"families":sorted(families),"retain":retain,"criterion":arguments.criterion,"selection":arguments.selection,"coefficient_grids":coefficient_grids,"filters":{"axis":arguments.axis or [],"qb_order":arguments.qb_order or [],"coefficient":[coefficient_text(value) for value in arguments.coefficient or ()]},"relative_error_bounds":bounds,"target_bounds":arguments.target_bound or bounds,"slope_mode":"fixed-span" if arguments.slope_span is not None else "neighboring-measured-bounds" if arguments.selection=="shared-slope" else None,"slope_span":arguments.slope_span,"shared_slopes":slope_report,"uniform_sample_count":sample_count,"input_rows":len(rows),"output_rows":len(selected),"input_sha256":hashes,"program_sha256":sha256(Path(__file__))}
     report_path=arguments.output.with_suffix(arguments.output.suffix+".json")
     report_path.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     print(f"wrote {arguments.output}")

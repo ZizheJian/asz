@@ -13,25 +13,39 @@ from paper_plot_layout import PANEL_ASPECT,add_panel_footers,place_legend_above_
 project_root=Path(__file__).resolve().parent
 family_styles=((0,(3,2)),(0,(1.5,1)),(0,(3,1.5,.75,1)))
 family_colors=("#2166ac","#b2182b")
-names={"isabel":"Isabel P 24","cldice":"CESM CLDICE 31","cesmt":"CESM T 31","aramco":"Aramco 1800","letkf":"SCALE-LETKF PRES","letkf_qv":"SCALE-LETKF QV","qmcpack":"QMCPACK Orbital 0"}
-multiline_names={"isabel":"Isabel P\n24","cesmt":"CESM T\n31","aramco":"Aramco\n1800","letkf":"SCALE-LETKF\nPRES","letkf_qv":"SCALE-LETKF\nQV","qmcpack":"QMCPACK\nOrbital 0"}
+names={"isabel":"Isabel P 24","cldice":"CESM CLDICE 31","cesmt":"CESM T 31","aramco":"Aramco 1800","letkf":"SCALE-LETKF PRES","letkf_qv":"SCALE-LETKF QV","qmcpack":"QMCPACK Orbital 0","precip24":"Isabel PRECIP 24","qmcpack144":"QMCPACK Orbital 144","aramco1800":"Aramco 1800"}
+multiline_names={"isabel":"Isabel P\n24","cesmt":"CESM T\n31","aramco":"Aramco\n1800","letkf":"SCALE-LETKF\nPRES","letkf_qv":"SCALE-LETKF\nQV","qmcpack":"QMCPACK\nOrbital 0","precip24":"Isabel PRECIP\n24","qmcpack144":"QMCPACK\nOrbital 144","aramco1800":"Aramco\n1800"}
 
 
 def read_family(path,family):
     with path.open(newline="",encoding="utf-8") as source:
-        rows=list(csv.DictReader(source))
+        reader=csv.DictReader(source)
+        rows=list(reader)
     suffixes=("01","02","12") if family=="2d4r" else ("0","1","2")
-    required={"rel_eb",*(family+suffix+"_"+metric for suffix in suffixes for metric in ("BR","PSNR"))}
-    if not rows or not required.issubset(rows[0]):
+    wide_required={"rel_eb",*(family+suffix+"_"+metric for suffix in suffixes for metric in ("BR","PSNR"))}
+    if rows and wide_required.issubset(rows[0]):
+        return {suffix:sorted((float(row[family+suffix+"_BR"]),float(row[family+suffix+"_PSNR"])) for row in rows) for suffix in suffixes},suffixes
+    long_required={"family","rel_eb","axis","BR","PSNR"}
+    if not rows or reader.fieldnames is None or not long_required.issubset(reader.fieldnames):
         raise ValueError(f"invalid predictor summary: {path}")
-    return rows,suffixes
+    rows=[row for row in rows if row["family"]==family]
+    if {row["axis"] for row in rows}!=set(suffixes):
+        raise ValueError(f"incomplete predictor axes for {family}: {path}")
+    curves={suffix:sorted((float(row["BR"]),float(row["PSNR"])) for row in rows if row["axis"]==suffix) for suffix in suffixes}
+    bounds={suffix:{float(row["rel_eb"]) for row in rows if row["axis"]==suffix} for suffix in suffixes}
+    if len({tuple(sorted(values)) for values in bounds.values()})!=1 or any(len(values)<2 or len(curves[suffix])!=len(values) for suffix,values in bounds.items()):
+        raise ValueError(f"inconsistent predictor error bounds for {family}: {path}")
+    return curves,suffixes
 
 
 def draw_panel(axis,directory,key,families):
     for family_index,family in enumerate(families):
-        rows,suffixes=read_family(directory/f"{key}-{family}-best.csv",family)
+        path=directory/f"{key}-{family}-best.csv"
+        if not path.exists():
+            path=directory/f"{key}-best.csv"
+        curves,suffixes=read_family(path,family)
         for suffix,style in zip(suffixes,family_styles):
-            points=sorted((float(row[family+suffix+"_BR"]),float(row[family+suffix+"_PSNR"])) for row in rows)
+            points=curves[suffix]
             shifted=(sum(style[1])/2,style[1]) if family_index==0 else style
             axis.plot(*zip(*points),color=family_colors[family_index],linestyle=shifted,linewidth=.8,dash_capstyle="butt")
     axis.set_xscale("log")
@@ -63,7 +77,7 @@ def render_figure(spec,output_pdf,output_png):
         order=(0,3,1,4,2,5)
         legend=figure.legend([handles[index] for index in order],[handles[index].get_label() for index in order],loc="upper center",bbox_to_anchor=(.5,1),ncol=3,frameon=False,handlelength=1.3,handletextpad=.35,columnspacing=.8,labelspacing=.12,borderaxespad=0)
         place_legend_above_axes(figure,legend,panel_axes)
-        labels=[f"({chr(97+index)}) {multiline_names[key] if rows>1 else names[key]}" for index,(key,_) in enumerate(datasets)]
+        labels=[f"({chr(97+index)}) {multiline_names[key] if rows>1 or spec.get('multiline_labels') else names[key]}" for index,(key,_) in enumerate(datasets)]
         add_panel_footers(figure,panel_axes,labels,columns,"Bit rate (bits/value)",8,caption_gap_pt=spec["caption_gap"],xlabel_gap_pt=spec["xlabel_gap"],xlabel_x=spec["xlabel_x"])
         figure.supylabel("PSNR (dB)",x=.005,fontsize=8)
         output_pdf.parent.mkdir(parents=True,exist_ok=True)
@@ -119,6 +133,7 @@ def specifications():
     qmcpack=project_root/"results/predictor-family-4r6r-qmcpack-orbital0-20261011"
     return {
         "fig7":{"families":("1d4r","2d4r"),"datasets":[("isabel",legacy),("cldice",legacy),("aramco",legacy)],"output":project_root/"新论文/revised-fig/predictor-family-legacy-middle/iv-1d4r-vs-2d4r-legacy-middle","height":1.46,"bottom":.32,"caption_gap":.5,"xlabel_gap":3,"xlabel_x":.55},
+        "fig7-final18":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-final18-20261023"),("qmcpack144",project_root/"results/predictor-dimensionality-final18-qmcpack144-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-final18-20261023")],"output":project_root/"新论文/revised-fig/predictor-family-legacy-middle/iv-1d4r-vs-2d4r-legacy-middle","height":1.6,"bottom":.36,"caption_gap":.5,"xlabel_gap":3,"xlabel_x":.55,"multiline_labels":True},
         "fig8":{"families":("1d4r","1d6r"),"datasets":[("isabel",main),("cesmt",main),("letkf_qv",supplement),("aramco",main),("letkf",supplement),("qmcpack",qmcpack)],"output":project_root/"新论文/revised-fig/predictor-family-4r6r-middle/iv-1d4r-vs-1d6r-legacy-middle","height":2.8,"bottom":.24,"caption_gap":1,"xlabel_gap":3,"xlabel_x":.55},
     }
 
@@ -128,8 +143,8 @@ def main():
     parser.add_argument("figures",nargs="*")
     arguments=parser.parse_args()
     specs=specifications()
-    figures=arguments.figures or ("fig7","fig8","fig9")
-    unknown=set(figures)-{"fig7","fig8","fig9"}
+    figures=arguments.figures or ("fig7-final18",)
+    unknown=set(figures)-set(specs)-{"fig9"}
     if unknown:
         parser.error(f"unknown figures: {', '.join(sorted(unknown))}")
     for name in figures:

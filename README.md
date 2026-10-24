@@ -92,7 +92,7 @@ g++ -std=c++20 -O3 -march=native -I c_codes/asz_core c_codes/s2_many_prediction.
 
 For a full-size run, use `s2_many_prediction INPUT DIM0 DIM1 DIM2 OUTPUT_PREFIX FAMILY [EB0,EB1,...]`. `FAMILY` is `1d4r`, `2d4r`, `1d6r`, or `all`. The program refuses to replace existing output CSVs. Full-size exhaustive sweeps can be expensive and should run in an appropriate compute allocation.
 
-`summarize_prediction_sweep.py` is the single selector for the resulting CSVs. It estimates one shared local RD tangent from all candidates in scope and selects candidates while retaining the requested configuration dimensions. Its output always carries the selected axis, coefficient, QB order, BR, H1, PSNR, RMSE, and MAE.
+`summarize_prediction_sweep.py` is the single selector for the resulting CSVs. Its output always carries the selected axis, coefficient, QB order, BR, H1, PSNR, RMSE, and MAE. Before selection, it verifies every expected axis, QB order, coefficient, and error bound. The recognized coefficient grids are the 13-candidate 1D4R and 2D4R grids and the 40-, 42-, and 52-candidate 1D6R grids.
 
 ```bash
 # Retain every prediction axis and optimize coefficient and QB order.
@@ -106,9 +106,12 @@ python3 summarize_prediction_sweep.py PREFIX --family 1d4r --retain qb_order --o
 
 # Restrict axis and QB order,then retain every coefficient.
 python3 summarize_prediction_sweep.py PREFIX --family 1d4r --axis 0 --qb-order 0 --retain coefficient --output fixed-axis-order.csv
+
+# Average BR and PSNR across both families at each measured error bound,use one neighboring-bound slope per error bound,and retain each axis or axis pair.
+python3 summarize_prediction_sweep.py PREFIX --family 1d4r 2d4r --retain axis --selection shared-slope --target-bound 0.1 0.01 0.001 0.0001 0.00001 --output dimensionality-curves.csv
 ```
 
-The criteria `br-psnr`, `h1-psnr`, `rmse`, `mae`, and `psnr` are available through `--criterion`. The selector validates complete error-bound grids, records source hashes and slope endpoints, handles equal-rate and vertical references explicitly, and refuses to overwrite an existing output.
+The default `joint` selection estimates a tangent from the candidates in scope. `two-stage` reproduces the historical coefficient-then-QB-order selector. `shared-slope` first averages the rate metric and PSNR over every candidate at each error bound,computes one slope from the neighboring averaged points,and applies that slope to every family,axis,coefficient,and QB order at the target error bound. The optional `--slope-span` uses explicitly measured multiplicative endpoints instead. The criteria `br-psnr`, `h1-psnr`, `rmse`, `mae`, and `psnr` are available through `--criterion`. The selector records source hashes and slope endpoints,handles equal-rate and vertical references explicitly,and refuses to overwrite an existing output.
 
 `analyze_global_coefficient_selection.py` regenerates the manuscript's coefficient-proxy validation from the retained S2 measurements. It compares $H_1$--PSNR and the alternative proxy criteria with measured BR--PSNR and exports the validation figure and provenance. It requires `pdflatex` and an output directory that does not already exist, supplied through `--output`.
 
@@ -120,8 +123,14 @@ The current manuscript entry point is `新论文/main.tex`. It directly includes
 
 ```bash
 module load anaconda/2024.02-py311
-python plot_predictor_rd.py
-python plot_qb_order_rd.py
+python plot_predictor_rd.py fig7-final18
+```
+
+Run the test suite in the same plotting environment:
+
+```bash
+module load anaconda/2024.02-py311
+MPLCONFIGDIR=/tmp/asz-matplotlib python3 -m unittest discover -v
 ```
 
 `rasterize_paper_figures.py` optionally creates 300 dpi RGB PNG copies of the two stencil comparisons and the six-reference coefficient figure under `新论文/revised-fig/raster300/`. It uses a single-column width of 252 TeX points (1046 pixels at 300 dpi), preserves aspect ratios, and leaves the source PDFs and plot previews unchanged. These raster copies are currently separate from the figures included by the manuscript.
@@ -152,7 +161,7 @@ python3 plot_final_runtime.py
 python3 analyze_final_evaluation.py
 ```
 
-The figures are written as PDF and PNG files under `新论文/figs/5/`: `rate-distortion-final-eighteen-log`, `throughput-final-eighteen-vs-rel-eb`, and `runtime-breakdown-final-eighteen-middle-eb`. The throughput figure reports compression and decompression separately for ASZ, SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Codec timings exclude input/output file operations and post-run error verification. ASZ plan generation remains a separate preprocessing stage and is included in total runtime rather than compression throughput. The analysis writes `results/final_eighteen_analysis.csv`. All three scripts accept `--manifest` and `--result-directory` to select their inputs.
+The figures are written as PDF and PNG files under `新论文/figs/5/`: `rate-distortion-final-eighteen-log`, `throughput-final-eighteen-vs-rel-eb`, and `runtime-breakdown-final-eighteen-middle-eb`. The throughput figure reports compression and decompression separately for ASZ, SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Codec timings exclude input/output file operations, post-run error verification, and preprocessing. ASZ compression throughput includes its recorded data-range scan. ASZ plan generation remains a separate preprocessing stage and is included in total runtime rather than compression throughput. The analysis writes `results/final_eighteen_analysis.csv`. All three scripts accept `--manifest` and `--result-directory` to select their inputs.
 
 The RD summary integrates the log-bit-rate difference over the shared PSNR interval and reports the geometric mean compression-ratio gain across fields. It reports both the envelope of the high-performance baselines SZ3, QoZ, and ZFP and the envelope of all four baselines including the high-ratio SPERR baseline. Runtime analysis defaults to the middle error bound of each field and includes ASZ preprocessing, compression, and decompression. Pass `--rel-eb` to override this behavior with one common bound.
 
@@ -166,7 +175,7 @@ ASZ bitstreams intentionally do not embed `rel_eb` or the tuned compressor param
 
 ## Data format
 
-ASZ currently expects a raw, contiguous, three-dimensional float32 array and a matching `data_shape`. HDF5 inputs can be converted in chunks:
+ASZ currently expects a raw, contiguous, three-dimensional float32 array and a matching `data_shape`; every dimension must contain at least seven values. HDF5 inputs can be converted in chunks:
 
 ```bash
 python3 convert_hdf5_to_f32.py input.h5 output.f32 --dataset /entry/data/data --shape 4096,1558,1813 --chunk-size 8

@@ -31,8 +31,14 @@ def load_datasets(path=default_manifest):
         missing=set(rd_methods)-set(dataset["results"])
         if missing:
             raise ValueError(f"{dataset['title']} is missing result files for {','.join(sorted(missing))}")
-        if len(dataset.get("rel_eb_list",()))!=5:
+        bounds=dataset.get("rel_eb_list",())
+        if len(bounds)!=5:
             raise ValueError(f"{dataset['title']} must define five relative error bounds")
+        if len(set(bounds))!=len(bounds) or any(not isinstance(bound,(int,float)) or not math.isfinite(bound) or bound<=0 for bound in bounds):
+            raise ValueError(f"{dataset['title']} must define five distinct positive finite relative error bounds")
+        shape=dataset.get("shape",())
+        if len(shape)!=3 or any(not isinstance(size,int) or size<=0 for size in shape):
+            raise ValueError(f"{dataset['title']} must define three positive integer dimensions")
     return datasets
 
 
@@ -66,7 +72,7 @@ def read_method_rows(result_directory,dataset,method,timing=False,expected=5):
         reader=csv.DictReader(input_file)
         fieldnames=set(reader.fieldnames or ())
         rows=[row for row in reader if row["METHOD"]==method]
-    match_path=dataset.get("result_data_path")
+    match_path=dataset.get("result_data_path",dataset.get("data_path"))
     if match_path is not None:
         if "DATA_PATH" not in fieldnames:
             raise ValueError(f"{path} cannot select {dataset['title']} because it has no DATA_PATH column")
@@ -75,6 +81,19 @@ def read_method_rows(result_directory,dataset,method,timing=False,expected=5):
         raise ValueError(f"{path} contains multiple inputs but {dataset['title']} has no result_data_path")
     if len(rows)!=expected:
         raise ValueError(f"{path} must contain {expected} {method} points for {dataset['title']},found {len(rows)}")
+    actual_bounds=[float(row["REL_EB"]) for row in rows]
+    if len(set(actual_bounds))!=len(actual_bounds):
+        raise ValueError(f"{path} contains duplicate {method} relative error bounds for {dataset['title']}")
+    expected_bounds=dataset.get("rel_eb_list")
+    if expected_bounds is not None:
+        unmatched=list(actual_bounds)
+        for expected_bound in expected_bounds:
+            matches=[bound for bound in unmatched if math.isclose(bound,expected_bound,rel_tol=1e-12,abs_tol=0)]
+            if len(matches)!=1:
+                raise ValueError(f"{path} {method} relative error bounds do not match {dataset['title']}")
+            unmatched.remove(matches[0])
+        if unmatched:
+            raise ValueError(f"{path} {method} relative error bounds do not match {dataset['title']}")
     return rows
 
 
@@ -95,6 +114,10 @@ def preprocessing_time(row):
     if row.get("PREPROCESSING_TIME"):
         return float(row["PREPROCESSING_TIME"])
     return sum(float(row.get(key) or 0) for key in ("GET_DEFAULT_SLOPE_TIME","GENERATE_CONFIG_TIME","PREDICTOR_FAMILY_SELECTION_TIME"))
+
+
+def compression_time(row):
+    return float(row["COMPRESSION_TIME"])+float(row.get("DATA_RANGE_TIME") or 0)
 
 
 def row_at_rel_eb(rows,rel_eb):

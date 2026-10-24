@@ -36,7 +36,7 @@
     "summary_csv":"results/third_row_cesm_q_t31.csv"
   },
   {
-    "data_path_list":["/tmp/asz_flash_sedov22_dens.f32"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/FLASH4.5/Sedov/128x256x256-totally-7000-steps/sedov_22_dens.f32"],
     "data_shape":[128,256,256],
     "rel_eb_list":[0.01,0.001,0.0001],
     "method_list":["asz","sz3","qoz"],
@@ -45,7 +45,7 @@
     "summary_csv":"results/third_row_flash_sedov22_dens.csv"
   },
   {
-    "data_path_list":["/tmp/asz_qmcpack_orbital0.f32"],
+    "data_path_list":["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/asz_qmcpack_orbital0.f32"],
     "data_shape":[115,69,69],
     "rel_eb_list":[0.01,0.001,0.0001],
     "method_list":["asz","sz3","qoz"],

@@ -3,7 +3,7 @@
 
 The current design has three main limitations: reverse-greedy search is heuristic, plan reuse targets related arrays from the same application, and the implementation targets three-dimensional interpolation-based compression on CPUs.
 
-Reverse-greedy plan generation fixes each round once and does not guarantee a globally optimal joint configuration. The transfer experiment illustrates this property: with 16 representative plans, transferred plans slightly outperform self-generated plans on average. Broader joint or beam search would examine more configurations at additional preprocessing cost.
+Reverse-greedy plan generation fixes each round once and does not guarantee a globally optimal joint configuration. Broader joint or beam search would examine more configurations at additional preprocessing cost.
 
 The transfer experiments cover temporal sequences as well as non-temporal groups of related arrays. Their shared structure comes from one simulation, numerical representation, or acquisition workflow. Each representative is therefore assigned to a compatible group rather than transferred across unrelated applications. Grouping criteria for abrupt phase changes and substantially different tensor structures remain an avenue for future work.
 

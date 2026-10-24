@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int main(int argc,char* argv[])
+int main(int argc,char* argv[]) try
 {
     if(argc==2&&string(argv[1])=="--help")
     {
@@ -95,8 +95,25 @@ int main(int argc,char* argv[])
             param.set_t_policy(argv[++i]);
             continue;
         }
+        else
+            throw invalid_argument("unknown argument: "+arg);
     }
 
+    if(param.compressed_data_path.empty()||param.decompressed_data_path.empty())
+        throw invalid_argument("compressed-input and decompressed-output paths are required");
+    if(param.data_shape.size()!=3||any_of(param.data_shape.begin(),param.data_shape.end(),[](uint64_t size){return size<7;}))
+        throw invalid_argument("all three dimensions must be at least 7");
+    if(!(param.rel_eb>0&&isfinite(param.rel_eb)))
+        throw invalid_argument("relative error bound must be positive and finite");
+    uint64_t data_size=1;
+    for(uint64_t size:param.data_shape)
+    {
+        if(data_size>numeric_limits<uint64_t>::max()/size)
+            throw invalid_argument("data dimensions overflow the element count");
+        data_size*=size;
+    }
+    if(data_size>numeric_limits<size_t>::max()/sizeof(float))
+        throw invalid_argument("data dimensions exceed the addressable output size");
     if (!(param.pivot_eb_ratio>0&&param.pivot_eb_ratio<=1))
         throw invalid_argument("pivot_eb_ratio must be in (0,1]");
     if (!(param.eb_ratio>0&&param.eb_ratio<=1))
@@ -116,9 +133,13 @@ int main(int argc,char* argv[])
     if (!compressed_data_file)
         throw runtime_error("cannot open compressed input: "+param.compressed_data_path);
     uint64_t compressed_data_file_size=compressed_data_file.seekg(0,ios::end).tellg();
+    if(compressed_data_file_size==0)
+        throw runtime_error("compressed input is empty: "+param.compressed_data_path);
     compressed_data_file.seekg(0,ios::beg);
     param.zstd_bs_vec.resize(compressed_data_file_size);
     compressed_data_file.read(reinterpret_cast<char*>(param.zstd_bs_vec.data()),compressed_data_file_size);
+    if(!compressed_data_file)
+        throw runtime_error("cannot read complete compressed input: "+param.compressed_data_path);
     compressed_data_file.close();
 
     param.generate_config("decompress");
@@ -130,4 +151,9 @@ int main(int argc,char* argv[])
     if (!decompressed_data_file)
         throw runtime_error("cannot write decompressed output: "+param.decompressed_data_path);
     decompressed_data_file.close();
+}
+catch(const exception &error)
+{
+    fprintf(stderr,"error: %s\n",error.what());
+    return 1;
 }

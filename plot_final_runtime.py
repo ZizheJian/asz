@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from matplotlib.ticker import MaxNLocator,NullLocator
 
-from evaluation_datasets import dataset_size,default_manifest,load_datasets,load_timings,preprocessing_time,row_at_rel_eb,runtime_methods,styles,throughput_methods
+from evaluation_datasets import compression_time,dataset_size,default_manifest,load_datasets,load_timings,preprocessing_time,row_at_rel_eb,runtime_methods,styles,throughput_methods
 from paper_plot_layout import PANEL_ASPECT,add_panel_footers,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
@@ -27,7 +27,7 @@ def draw_throughput_panel(axis,dataset,timings,index):
     operations=(("COMPRESSION_TIME","-"),("DECOMPRESSION_TIME",(0,(2.4,1.4))))
     for time_field,linestyle in operations:
         for method in throughput_methods:
-            points=sorted((float(row["REL_EB"]),file_size/1e9/float(row[time_field])) for row in timings[method])
+            points=sorted((float(row["REL_EB"]),file_size/1e9/(compression_time(row) if time_field=="COMPRESSION_TIME" else float(row[time_field]))) for row in timings[method])
             all_values.extend(value for _,value in points)
             style=styles[method]
             axis.plot([point[0] for point in points],[point[1] for point in points],color=style["color"],linestyle=linestyle,linewidth=.8)
@@ -93,7 +93,7 @@ def save_runtime_bars(ordered,bar_timings,output_path,dpi,rel_eb):
         for method in runtime_methods:
             positions=[position+offsets[method] for position in group_positions]
             rows=[bar_timings[dataset["title"]][method] for dataset in panel_datasets]
-            compression=[float(row["COMPRESSION_TIME"]) for row in rows]
+            compression=[compression_time(row) for row in rows]
             decompression=[float(row["DECOMPRESSION_TIME"]) for row in rows]
             if method=="asz":
                 preprocessing=[preprocessing_time(row) for row in rows]

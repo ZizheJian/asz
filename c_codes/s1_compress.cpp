@@ -122,13 +122,33 @@ void validate_parameters(asz::param_c<T> &param,bool t_min_set,bool t_max_set)
 template<typename T>
 void load_input(asz::param_c<T> &param)
 {
-    param.data.resize(param.data_shape[0]*param.data_shape[1]*param.data_shape[2]);
+    if(param.original_data_path.empty()||param.compressed_data_path.empty())
+        throw invalid_argument("input and compressed-output paths are required");
+    if(param.data_shape.size()!=3||any_of(param.data_shape.begin(),param.data_shape.end(),[](uint64_t size){return size<7;}))
+        throw invalid_argument("all three dimensions must be at least 7");
+    if(!(param.rel_eb>0&&isfinite(param.rel_eb)))
+        throw invalid_argument("relative error bound must be positive and finite");
+    uint64_t data_size=1;
+    for(uint64_t size:param.data_shape)
+    {
+        if(data_size>numeric_limits<uint64_t>::max()/size)
+            throw invalid_argument("data dimensions overflow the element count");
+        data_size*=size;
+    }
+    if(data_size>numeric_limits<size_t>::max()/sizeof(T))
+        throw invalid_argument("data dimensions exceed the addressable input size");
+    param.data.resize(data_size);
     ifstream input(param.original_data_path,ios::binary);
     if(!input)
         throw runtime_error("cannot open input: "+param.original_data_path);
     input.read(reinterpret_cast<char*>(param.data.data()),param.data.size()*sizeof(T));
     if(!input)
         throw runtime_error("cannot read complete input: "+param.original_data_path);
+    if(input.peek()!=char_traits<char>::eof())
+        throw runtime_error("input size does not match the dimensions: "+param.original_data_path);
+    for(T value:param.data)
+        if(!isfinite(value))
+            throw runtime_error("input contains a nonfinite value: "+param.original_data_path);
     auto range_start_time=chrono::high_resolution_clock::now();
     auto [minimum,maximum]=minmax_element(param.data.begin(),param.data.end());
     param.min_val=*minimum;
@@ -151,7 +171,7 @@ void write_compressed_stream(const asz::param_c<T> &param)
         throw runtime_error("cannot write compressed output: "+param.compressed_data_path);
 }
 
-int main(int argc,char* argv[])
+int main(int argc,char* argv[]) try
 {
     if(argc==2&&string(argv[1])=="--help")
     {
@@ -374,6 +394,8 @@ int main(int argc,char* argv[])
             param.layer_diagnostics.enabled=true;
             continue;
         }
+        else
+            throw invalid_argument("unknown argument: "+arg);
     }
 
     validate_parameters(param,t_min_set,t_max_set);
@@ -382,4 +404,9 @@ int main(int argc,char* argv[])
     param.compress();
     write_compressed_stream(param);
     return 0;
+}
+catch(const exception &error)
+{
+    fprintf(stderr,"error: %s\n",error.what());
+    return 1;
 }
