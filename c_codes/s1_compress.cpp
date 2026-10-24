@@ -42,7 +42,12 @@ void prepare_compression_plan(asz::param_c<T> &param,const vector<string> &predi
     if (param.predictor_vec.size()>63)
         throw invalid_argument("predictor plan cannot contain more than 63 layers");
     if (param.auto_select_predictor_family)
-        param.select_predictor_family();
+    {
+        if(param.predictor_family_selector=="h1")
+            param.select_predictor_family();
+        else
+            param.select_predictor_family_mse();
+    }
     param.print_config();
 }
 
@@ -71,6 +76,20 @@ void validate_parameters(asz::param_c<T> &param,bool t_min_set,bool t_max_set)
         throw invalid_argument("predictor_family_sample_limit must be positive");
     if(!(param.predictor_family_mse_ratio_threshold>=0&&isfinite(param.predictor_family_mse_ratio_threshold)))
         throw invalid_argument("predictor_family_mse_ratio_threshold must be nonnegative and finite");
+    if(param.predictor_family_selector!="h1"&&param.predictor_family_selector!="mse")
+        throw invalid_argument("predictor_family_selector must be h1 or mse");
+    if(param.predictor_family_suffix_layers==0)
+        throw invalid_argument("predictor_family_suffix_layers must be positive");
+    if(param.predictor_family_sample_blocks==0)
+        throw invalid_argument("predictor_family_sample_blocks must be positive");
+    if(param.predictor_family_sample_point_limit==0)
+        throw invalid_argument("predictor_family_sample_point_limit must be positive");
+    if(!(param.predictor_family_sample_fraction_limit>0&&param.predictor_family_sample_fraction_limit<=1))
+        throw invalid_argument("predictor_family_sample_fraction_limit must be in (0,1]");
+    if(param.predictor_family_coarse_probe_block_pivot_ratio==0||param.predictor_family_fine_probe_block_pivot_ratio==0)
+        throw invalid_argument("predictor family probe block pivot ratios must be positive");
+    if(!(param.predictor_family_fine_eb_threshold>0&&isfinite(param.predictor_family_fine_eb_threshold)))
+        throw invalid_argument("predictor_family_fine_eb_threshold must be positive and finite");
     if(!(param.default_slope_invalid_ratio_threshold>0&&param.default_slope_invalid_ratio_threshold<=1))
         throw invalid_argument("default_slope_invalid_ratio_threshold must be in (0,1]");
     if(!(param.default_slope_fallback>0&&isfinite(param.default_slope_fallback)))
@@ -246,6 +265,46 @@ int main(int argc,char* argv[])
         else if (arg=="--predictor-family-mse-ratio-threshold")
         {
             param.predictor_family_mse_ratio_threshold=stof(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-selector")
+        {
+            param.predictor_family_selector=argv[++i];
+            continue;
+        }
+        else if(arg=="--predictor-family-suffix-layers")
+        {
+            param.predictor_family_suffix_layers=stoull(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-sample-blocks")
+        {
+            param.predictor_family_sample_blocks=stoull(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-sample-point-limit")
+        {
+            param.predictor_family_sample_point_limit=stoull(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-sample-fraction-limit")
+        {
+            param.predictor_family_sample_fraction_limit=stof(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-coarse-probe-block-pivot-ratio")
+        {
+            param.predictor_family_coarse_probe_block_pivot_ratio=stoull(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-fine-probe-block-pivot-ratio")
+        {
+            param.predictor_family_fine_probe_block_pivot_ratio=stoull(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-fine-eb-threshold")
+        {
+            param.predictor_family_fine_eb_threshold=stof(argv[++i]);
             continue;
         }
         else if (arg=="--default-slope-invalid-ratio-threshold")

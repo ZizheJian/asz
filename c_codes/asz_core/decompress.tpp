@@ -6,7 +6,7 @@ namespace asz
     void param_c<T>::dot_decompress(vector<qb_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,uint64_t qb_index)
     {
         T pred;
-        if (force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
+        if(force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
         {
             pred=(T)((75.0/128)*(compressed_data[pos-dist]+compressed_data[pos+dist])-(25.0/256)*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist])+(3.0/256)*(compressed_data[pos-5*dist]+compressed_data[pos+5*dist]));
         }
@@ -51,12 +51,26 @@ namespace asz
         uint64_t point_distance=stride[direction]/2;
         for(uint64_t axis=direction+1;axis<3;axis++)
             point_distance*=data_shape[axis];
-        for (uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
-        for (uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
-        for (uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+        if(direction==0)
         {
-            uint64_t coordinate[3]={i0,i1,i2};
-            dot_decompress(qb_vec,coordinate[direction],stride[direction]/2,block_loc[direction][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,point_distance,t,eb,qb_index);
+            for(uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+            for(uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+            for(uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+                dot_decompress(qb_vec,i0,stride[0]/2,block_loc[0][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,point_distance,t,eb,qb_index);
+        }
+        else if(direction==1)
+        {
+            for(uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+            for(uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+            for(uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+                dot_decompress(qb_vec,i1,stride[1]/2,block_loc[1][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,point_distance,t,eb,qb_index);
+        }
+        else
+        {
+            for(uint64_t i0=target_block_left[0],j0=0;i0<block_loc[0][1];i0+=stride[0],j0++)
+            for(uint64_t i1=target_block_left[1],j1=0;i1<block_loc[1][1];i1+=stride[1],j1++)
+            for(uint64_t i2=target_block_left[2],qb_index=qb_base+get_qb_index(j0,j1,0,qb_shape,qb_order);i2<block_loc[2][1];i2+=stride[2],qb_index+=qb_inner_stride)
+                dot_decompress(qb_vec,i2,stride[2]/2,block_loc[2][1],i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2,point_distance,t,eb,qb_index);
         }
         qb_pos+=qb_num;
     }

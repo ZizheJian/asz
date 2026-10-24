@@ -12,6 +12,7 @@ Optional task fields are:
 - `cleanup_after_each_test`: delete the compressed stream and reconstruction after recording metrics.
 - `comparison_baseline`: method name used to calculate `CR_DROP_PERCENT`.
 - `summary_csv`: project-relative or absolute summary path. It must appear together with `comparison_baseline`.
+- `output_directory`: project-relative or absolute directory for temporary compressed streams, reconstructions, and per-input CSV files. Use it when the input directory is read-only.
 
 The short method names are `asz`, `sz3`, `qoz`, `zfp`, and `sperr`. A named method object can set ASZ parameters or read/write a plan:
 
@@ -47,24 +48,31 @@ The short method names are `asz`, `sz3`, `qoz`, `zfp`, and `sperr`. A named meth
 Supported ASZ method fields include:
 
 - Plan parameters: `pivot_eb_ratio`, `eb_ratio`, `slope_ratio`, `block_pivot_ratio`, `max_layer_num`, `full_predictor_search_layer_num`, and `t_precision`.
-- Sampling and selection parameters: `generate_config_sample_stride`, `h1_block_sampling_num`, `stat_eb_ratio`, `predictor_family_sample_limit`, `predictor_family_mse_ratio_threshold`, `default_slope_invalid_ratio_threshold`, `default_slope_fallback`, and `default_slope_eb_span`.
+- Sampling and selection parameters: `generate_config_sample_stride`, `h1_block_sampling_num`, `stat_eb_ratio`, `predictor_family_suffix_layers`, `predictor_family_sample_blocks`, `predictor_family_sample_point_limit`, `predictor_family_sample_fraction_limit`, `predictor_family_coarse_probe_block_pivot_ratio`, `predictor_family_fine_probe_block_pivot_ratio`, `predictor_family_fine_eb_threshold`, `default_slope_invalid_ratio_threshold`, `default_slope_fallback`, and `default_slope_eb_span`.
 - Coefficient settings: `t_min`, `t_max`, `t_policy`, `block_t_policy`, and `report_t_histogram`.
 - Dataset-wide family override: `predictor_family`, either `cubic` or `quintic`.
+- Predictor-family selector: `predictor_family_selector`, either the default `h1` selector or the legacy `mse` selector. The legacy selector uses `predictor_family_sample_limit` and `predictor_family_mse_ratio_threshold`.
 - Error-bound-specific block policy: `coarse_block_pivot_ratio` and `fine_block_pivot_ratio`, which must be set together.
 
-Validate a configuration without touching the data:
+The default configuration search samples every fifth value along its two non-prediction axes. The default `h1` selector uses six suffix rounds, eight stratified candidate blocks, a 32,768-value absolute budget, and a 2% relative budget. Its probe block ratio is 3 for `rel_eb>1e-4` and 4 otherwise. These probe settings do not change the formal compression block ratio.
+
+Validate a configuration and input file sizes without running the codecs:
 
 ```bash
-python3 t1_start_compressors.py configs/example.json --dry-run
+python3 t1_start_compressors.py configs/isabel_pf01.json --dry-run
 ```
 
 ## Maintained experiment groups
 
-- `final_seventeen.json`: authoritative 17-field list shared by final RD, throughput, runtime, and aggregate analysis. The broader `family_mse_validation_eighteen.json` remains a selector-validation manifest rather than the paper's final field list.
-- `final_seventeen_miranda_density.json`: the missing five-point Miranda-density run. Its corrected shape is `256x384x384`.
-- `final_eighteen_*.json`,`final_twelve_qmcpack_orbital144.json`,`apsu006.json`,and `rtm_middle.json`: measurement batches supplying the current paper evaluation; some retain superseded candidate fields, and APS-Kaz-specific batches are historical inputs.
-- `isabel_plan_transfer.json`: Pf24 plan applied to the remaining Isabel pressure time steps and compared with self-generated plans, SZ3, and QoZ.
+- `final_eighteen.json`: authoritative 18-field analysis manifest shared by final RD, throughput, runtime, and aggregate analysis. It contains the selected input paths, shapes, five error bounds, and ASZ/SZ3/QoZ/ZFP/SPERR result paths. It uses a different schema from launcher tasks and is consumed by `evaluation_datasets.py`.
+- `final_seventeen_miranda_density.json` and `final_seventeen_isabel_f24.json`: historical focused runs retained for provenance. They do not define the final field list.
+- `isabel_f24_field_finalists.json`: historical screening of five Isabel fields at time step 24. The final evaluation selects PRECIP and QGRAUP.
+- `final_eighteen_*.json`,`final_twelve_qmcpack_orbital144.json`,`apsu006.json`,and `rtm_middle.json`: historical measurement batches that supply or precede parts of the current evaluation. The final measurements are written to `results/final18/`.
+- `isabel_plan_transfer.json`: historical pressure-field transfer configuration. The final temporal-reuse experiment must use the selected PRECIP field.
 - `aramco_plan_transfer.json`: Aramco time-step transfer check.
+- `basilisk_1024_field_screen.json`: three-point ASZ/SZ3/QoZ screening of the complete Basilisk `u` and `v` arrays as `1501x1024x1024` 3D tensors.
+- `flash_sedov22_field_screen.json`: three-point screening for six FLASH Sedov fields at the retained middle sample. Density is stored in `third_row_candidates.json`; `vlxa`,`vlya`,and `vlza` are constant-zero fields and therefore have no relative-error RD curves.
+- `qmcpack_orbital_plan_transfer.json` and `miranda_velocity_plan_transfer.json`: plan-transfer checks across related orbitals and velocity components.
 - `final_eighteen_nyx_baryon.json`: the selected Nyx baryon-density evaluation.
 - Dataset-named files such as `aps_kaz.json` and `scale_letkf_pres.json`: small focused runs.
 

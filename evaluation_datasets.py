@@ -4,27 +4,35 @@ import math
 from pathlib import Path
 
 project_root=Path(__file__).resolve().parent
-default_manifest=project_root/"configs/final_seventeen.json"
-methods=("asz","sz3","qoz")
+default_manifest=project_root/"configs/final_eighteen.json"
+rd_methods=("asz","sz3","qoz","zfp","sperr")
+throughput_methods=rd_methods
+runtime_methods=("asz","sz3","qoz")
+timing_methods=throughput_methods
+methods=rd_methods
 styles={
     "asz":{"label":"ASZ","color":"#000000","linestyle":"-","marker":"o"},
     "sz3":{"label":"SZ3","color":"#d62728","linestyle":"--","marker":"s"},
     "qoz":{"label":"QoZ","color":"#e6a700","linestyle":"-.","marker":"^"},
+    "zfp":{"label":"ZFP","color":"#1f77b4","linestyle":":","marker":"D"},
+    "sperr":{"label":"SPERR","color":"#2ca02c","linestyle":"--","marker":"v"},
 }
 
 
 def load_datasets(path=default_manifest):
     with open(path,encoding="utf-8") as input_file:
         datasets=json.load(input_file)
-    if len(datasets)!=17:
-        raise ValueError(f"evaluation manifest must contain 17 fields,found {len(datasets)}")
+    if len(datasets)!=18:
+        raise ValueError(f"evaluation manifest must contain 18 fields,found {len(datasets)}")
     titles=[dataset["title"] for dataset in datasets]
     if len(set(titles))!=len(titles):
         raise ValueError("evaluation manifest contains duplicate titles")
     for dataset in datasets:
-        missing=set(methods)-set(dataset["results"])
+        missing=set(rd_methods)-set(dataset["results"])
         if missing:
             raise ValueError(f"{dataset['title']} is missing result files for {','.join(sorted(missing))}")
+        if len(dataset.get("rel_eb_list",()))!=5:
+            raise ValueError(f"{dataset['title']} must define five relative error bounds")
     return datasets
 
 
@@ -71,11 +79,11 @@ def read_method_rows(result_directory,dataset,method,timing=False,expected=5):
 
 
 def read_curves(result_directory,dataset):
-    return {method:sorted((float(row["BR"]),float(row["PSNR"])) for row in read_method_rows(result_directory,dataset,method)) for method in methods}
+    return {method:sorted((float(row["BR"]),float(row["PSNR"])) for row in read_method_rows(result_directory,dataset,method)) for method in rd_methods}
 
 
-def load_timings(result_directory,dataset):
-    rows={method:read_method_rows(result_directory,dataset,method,timing=True) for method in methods}
+def load_timings(result_directory,dataset,selected_methods=timing_methods):
+    rows={method:read_method_rows(result_directory,dataset,method,timing=True) for method in selected_methods}
     for method,method_rows in rows.items():
         for row in method_rows:
             if not row.get("COMPRESSION_TIME") or not row.get("DECOMPRESSION_TIME"):

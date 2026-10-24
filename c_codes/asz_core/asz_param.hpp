@@ -154,6 +154,14 @@ namespace asz
             uint64_t generate_config_sample_stride=5;
             uint64_t predictor_family_sample_limit=10000;
             T predictor_family_mse_ratio_threshold=0.97;
+            string predictor_family_selector="h1";
+            uint64_t predictor_family_suffix_layers=6;
+            uint64_t predictor_family_sample_blocks=8;
+            uint64_t predictor_family_sample_point_limit=32768;
+            T predictor_family_sample_fraction_limit=0.02;
+            uint64_t predictor_family_coarse_probe_block_pivot_ratio=3;
+            uint64_t predictor_family_fine_probe_block_pivot_ratio=4;
+            T predictor_family_fine_eb_threshold=1e-4;
             T default_slope_invalid_ratio_threshold=1;
             T default_slope_fallback=1000;
             T default_slope_eb_span=1.5;
@@ -223,8 +231,8 @@ namespace asz
                     block_candidate_t=candidate_t;
             }
 
-            void get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<T> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,
-                uint64_t dist,T neg_2_stat_eb);
+            template<typename BlockLoc,typename Stride>
+            void get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,const vector<T> &data,const BlockLoc &block_loc,const Stride &stride,uint64_t dist,T neg_2_stat_eb);
             void get_h1_psnr(T &h1,T &psnr,unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,T t,T abs_eb,T stat_eb);
             void get_default_slope();
             void print_config();
@@ -232,6 +240,7 @@ namespace asz
             void generate_config_enumerate();
             void generate_config(string task);
             void select_predictor_family();
+            void select_predictor_family_mse();
             void block_sample_compress_cubic0_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
             void block_sample_compress_cubic0_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
@@ -256,6 +265,9 @@ namespace asz
             void print_layer_diagnostics(const vector<uint64_t> &layer_huffman_bytes);
             T compress();
             void block_compress(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,unsigned char direction,unsigned char qb_order);
+            template<bool diagnostics>
+            void block_compress_impl(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,unsigned char direction,unsigned char qb_order);
+            template<bool diagnostics>
             void dot_compress(vector<qb_t> &qb_vec,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,uint64_t qb_pos);
             void decompress();
             void block_decompress(vector<qb_t> &qb_vec,uint64_t &qb_pos,array<array<uint64_t,2>,3> &block_loc,array<uint64_t,3> &stride,T t,T eb,unsigned char direction,unsigned char qb_order);
@@ -269,5 +281,6 @@ namespace asz
 #include "get_h_psnr.tpp"
 #include "get_default_slope.tpp"
 #include "generate_config.tpp"
+#include "predictor_family.tpp"
 #include "compress.tpp"
 #include "decompress.tpp"

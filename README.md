@@ -1,10 +1,10 @@
 # ASZ
 
-ASZ is a research prototype for error-bounded lossy compression of three-dimensional float32 scientific data. It uses multilevel interpolation, an offline-generated plan for prediction axes and traversal orders, and adaptive per-block interpolation coefficients.
+ASZ is a research prototype for error-bounded lossy compression of three-dimensional float32 scientific data. It uses multilevel interpolation, an offline-generated plan for prediction axes and quantization-bin (QB) serialization orders, and adaptive per-block interpolation coefficients.
 
 The current workflow separates two costs:
 
-- Offline preprocessing generates a plan for a field and relative error bound. A plan can be reused across compatible time steps of the same field.
+- Offline preprocessing generates a plan and selects the dataset-wide 1D4R or 1D6R prediction stencil for a field and relative error bound. A plan can be reused across compatible time steps of the same field.
 - Online compression reuses that plan and selects the interpolation coefficient `t` independently for each block.
 
 The repository also contains launchers for SZ3, QoZ, ZFP, and SPERR. SZ3 and QoZ are built separately but use the repository's common Zstd version.
@@ -12,7 +12,7 @@ The repository also contains launchers for SZ3, QoZ, ZFP, and SPERR. SZ3 and QoZ
 ## Repository layout
 
 - `c_codes/`: ASZ compressor, decompressor, final-round simulator, and core library.
-- `configs/`: JSON experiment definitions.
+- `configs/`: JSON experiment definitions and the final evaluation manifest.
 - `plans/`: saved ASZ plans, including the Isabel plan-transfer experiment.
 - `csv/`: retained numerical summaries and tuning provenance.
 - `results/`: generated experiment output; ignored by Git.
@@ -20,13 +20,16 @@ The repository also contains launchers for SZ3, QoZ, ZFP, and SPERR. SZ3 and QoZ
 - `新论文/`: current ICDE manuscript and figures.
 - `旧论文/`: earlier manuscripts retained for reference.
 
+`t1_start_compressors.py` launches experiments. `evaluation_datasets.py` loads the shared evaluation manifest and result files, while `analyze_final_evaluation.py`, `plot_final_rd.py`, and `plot_final_runtime.py` produce the aggregate analysis and final figures. `paper_plot_layout.py` supplies shared plotting styles and layout helpers.
+
 ## Requirements
 
 - Linux with a C++20 compiler, an AVX2/FMA-capable CPU, and CMake 3.10 or newer.
 - Python 3 with NumPy.
 - Matplotlib for figures.
 - h5py and hdf5plugin only when converting compressed HDF5 data.
-- Slurm for the provided Anvil batch scripts.
+- Slurm for large experiments on Anvil. Historical batch scripts are available in Git history; submit the current Python launcher through an allocation appropriate to the input size.
+- TeX Live and `latexmk` for the manuscript; Pillow and `pdftoppm` for optional figure rasterization.
 
 Initialize the third-party repositories after cloning:
 
@@ -37,7 +40,7 @@ git submodule update --init --recursive
 Install the Python packages needed by the launchers, plots, and HDF5 converter:
 
 ```bash
-python3 -m pip install numpy matplotlib h5py hdf5plugin
+python3 -m pip install numpy matplotlib pillow h5py hdf5plugin
 ```
 
 ## Running compressor experiments
@@ -57,9 +60,11 @@ python3 t1_start_compressors.py isabel_pf01 --skip-build
 python3 t1_start_compressors.py isabel_pf01 --skip-build --no-csv
 ```
 
-`--dry-run` validates the JSON and prints commands without running them. `--skip-build` reuses installed binaries. `--no-csv` prevents per-input CSV files while still allowing a configured summary CSV.
+`--dry-run` validates the JSON, checks input file existence and size, and prints commands without running the codecs. `--skip-build` reuses installed binaries. `--no-csv` prevents per-input CSV files while still allowing a configured summary CSV.
 
 The launcher measures compressed size from the actual bitstream and independently computes PSNR, RMSE, and maximum error from the reconstructed float32 file. ASZ accepts maximum error up to `1.01*rel_eb*data_range`. Set `cleanup_after_each_test` to remove compressed and reconstructed files after their metrics have been recorded.
+
+The default predictor-family selector simulates the final six rounds with both 1D4R and 1D6R on as many as eight stratified blocks. Sampled blocks cover at most 32,768 values and 2% of the input. The probe uses `block_pivot_ratio=3` above relative error bound `1e-4` and `block_pivot_ratio=4` at or below it, independently of the formal compression block geometry. It selects 1D6R only when its sampled `PSNR-default_slope*H1` score is strictly higher, so a tie selects 1D4R. The reported predictor-family selection time belongs to preprocessing and is excluded from `Compression time`.
 
 See [configs/README.md](configs/README.md) for the JSON schema and plan examples.
 
@@ -77,6 +82,8 @@ The installed executables are `install/bin/s1_compress` and `install/bin/s1_deco
 
 `s2_many_prediction` exhaustively simulates the final prediction round for every requested prediction stencil, prediction axis, coefficient, and QB serialization order. It uses frozen original references and reports measured Huffman--Zstd bit rate, first-order entropy, reconstruction PSNR, prediction RMSE, prediction MAE, sample count, and internal encoding time. These are final-round symbol-stream diagnostics rather than complete compressed files.
 
+The following standalone build uses `build/common_zstd_build/lib/libzstd.a`, which the experiment launcher builds for SZ3 and QoZ:
+
 ```bash
 sweep_build=$(mktemp -d /tmp/asz-sweep-build.XXXXXX)
 g++ -std=c++20 -O3 -march=native -I c_codes/asz_core c_codes/s2_many_prediction.cpp build/common_zstd_build/lib/libzstd.a -pthread -o "$sweep_build/s2_many_prediction"
@@ -88,51 +95,56 @@ For a full-size run, use `s2_many_prediction INPUT DIM0 DIM1 DIM2 OUTPUT_PREFIX 
 `summarize_prediction_sweep.py` is the single selector for the resulting CSVs. It estimates one shared local RD tangent from all candidates in scope and selects candidates while retaining the requested configuration dimensions. Its output always carries the selected axis, coefficient, QB order, BR, H1, PSNR, RMSE, and MAE.
 
 ```bash
-# Figs. 7--8: retain every prediction axis and optimize coefficient and QB order.
+# Retain every prediction axis and optimize coefficient and QB order.
 python3 summarize_prediction_sweep.py PREFIX --family 1d4r --retain axis --output axis-curves.csv
 
-# Fig. 9: retain every coefficient and optimize prediction axis and QB order.
+# Retain every coefficient and optimize prediction axis and QB order.
 python3 summarize_prediction_sweep.py PREFIX --family 1d6r --retain coefficient --output coefficient-curves.csv
 
-# Fig. 10: retain every QB order and optimize prediction axis and coefficient.
+# Retain every QB order and optimize prediction axis and coefficient.
 python3 summarize_prediction_sweep.py PREFIX --family 1d4r --retain qb_order --output qb-order-curves.csv
 
-# Fig. 12(b,c): restrict axis and QB order,then retain every coefficient.
+# Restrict axis and QB order,then retain every coefficient.
 python3 summarize_prediction_sweep.py PREFIX --family 1d4r --axis 0 --qb-order 0 --retain coefficient --output fixed-axis-order.csv
 ```
 
 The criteria `br-psnr`, `h1-psnr`, `rmse`, `mae`, and `psnr` are available through `--criterion`. The selector validates complete error-bound grids, records source hashes and slope endpoints, handles equal-rate and vertical references explicitly, and refuses to overwrite an existing output.
 
-`analyze_global_coefficient_selection.py` regenerates the coefficient-proxy validation in Section V-D from the retained S2 measurements. It compares $H_1$--PSNR and the alternative proxy criteria with measured BR--PSNR and exports the validation figure and provenance.
+`analyze_global_coefficient_selection.py` regenerates the manuscript's coefficient-proxy validation from the retained S2 measurements. It compares $H_1$--PSNR and the alternative proxy criteria with measured BR--PSNR and exports the validation figure and provenance. It requires `pdflatex` and an output directory that does not already exist, supplied through `--output`.
 
-Paper Figs. 2--4 embed 300 dpi RGB PNGs instead of vector PDFs to reduce vector drawing work in PDF viewers. `rasterize_paper_figures.py` follows MRCZ's `pdftoppm` conversion workflow, using the final IEEEtran column width of 252 TeX points (1046 pixels at 300 dpi) and preserving each source figure's aspect ratio. Original vector PDFs and 400 dpi plot previews remain unchanged. After regenerating any of these figures, refresh the paper PNGs before compiling:
+`plot_predictor_rd.py` generates the prediction-stencil and coefficient RD figures from retained sweep measurements. `plot_qb_order_rd.py` generates the QB-order comparison from its selected-candidate CSV. Their default input paths refer to local files under `results/`.
+
+## Manuscript and figures
+
+The current manuscript entry point is `新论文/main.tex`. It directly includes vector PDFs for the prediction comparisons and final evaluation. Regenerate the prediction comparison figures from existing results with:
 
 ```bash
 module load anaconda/2024.02-py311
-python -m unittest -v test_paper_rasterization
-python rasterize_paper_figures.py
+python plot_predictor_rd.py
+python plot_qb_order_rd.py
+```
+
+`rasterize_paper_figures.py` optionally creates 300 dpi RGB PNG copies of the two stencil comparisons and the six-reference coefficient figure under `新论文/revised-fig/raster300/`. It uses a single-column width of 252 TeX points (1046 pixels at 300 dpi), preserves aspect ratios, and leaves the source PDFs and plot previews unchanged. These raster copies are currently separate from the figures included by the manuscript.
+
+Compile the manuscript from the repository root:
+
+```bash
 module load texlive/20200406
 cd 新论文
 latexmk -pdf -interaction=nonstopmode -halt-on-error -silent main.tex
 ```
 
-## Current 17-field evaluation
+## Current 18-field evaluation
 
-The current evaluation selects 17 fields from 12 scientific datasets. Isabel, Miranda, LETKF, CESM, and Nyx each contribute two fields. The other seven datasets contribute one field each. The authoritative list, input paths, per-method result files, and timing overrides are stored in `configs/final_seventeen.json`.
+The evaluation uses QMCPACK Orbital 144; FLASH density at time step 22; APS Kaz; Isabel PRECIP and QGRAUP at time step 24; Miranda velocity-$x$ and velocity-$z$; RTM Small 0360; Aramco 1800; SCALE-LETKF PRES and T; CESM VD01 and UU at time step 31; APS CSSI L0471; Nyx baryon density and temperature at index 632; and APSU 004 and 006. `configs/final_eighteen.json` is the authoritative analysis manifest for input paths, shapes, error bounds, and result files.
 
-Measurement batches remain split because the largest inputs need separate Slurm allocations:
+Each field is measured at five relative error bounds with ASZ, SZ3, QoZ, ZFP, and SPERR. APS Kaz uses `0.1,0.05,0.02,0.01,0.008`. APS CSSI L0471 uses `0.1,0.01,0.001,0.0003,0.00013` to distribute its measured PSNRs more evenly. APSU 004 and 006 use the same list because both contain integer detector counts over the observed range `[0,4095]`; the lowest bound gives an absolute error bound of `0.53235`, just above half an integer interval, while `1e-4` would already be below that threshold. All other fields use `0.1,0.01,0.001,0.0001,0.00001`. The runtime figure uses the middle error bound from each field's five-point RD range. Final result CSV files live under `results/final18/`; they must be regenerated after compressor changes.
 
-- `final_eighteen_asz_refresh_small.json`: seven ASZ refresh tasks.
-- `final_eighteen_asz_refresh_aps_kaz.json`: APS Kaz with its integer-data error-bound grid.
-- `final_eighteen_asz_refresh_e017.json`: E017.
-- `final_eighteen_asz_refresh_apsu004.json`: APSU004.
-- `final_eighteen_third_row.json`: six additional datasets with ASZ, SZ3, and QoZ.
-- `final_eighteen_nyx_baryon.json`: Nyx baryon density with all three methods.
-- `apsu006.json`: APSU006 with all three methods.
+The manifest has a different schema from runnable launcher configurations. Measurement batches should be split by input size so that the largest inputs receive separate Slurm allocations. Historical focused and screening configurations remain available as references, but they do not define the final field list.
 
-The retained batches also contain superseded candidate fields. Plotting and analysis load only the manifest, so RD and runtime cannot silently use different field lists. The `asz_refresh` configurations intentionally run only ASZ and reuse previously generated baseline results; they are not complete baseline regeneration workflows. Miranda density is the only planned field whose complete five-point result still needs to be generated with `configs/final_seventeen_miranda_density.json`.
+The final RD manifest is also the authoritative dataset pool for every measured figure in the paper. Predictor-family, coefficient-selection, plan-reuse, ablation, throughput, and runtime figures must use fields present in that manifest. After the 18-field manifest is frozen, regenerate earlier figures that still use superseded fields.
 
-Generate the current figures after those results are present:
+Generate the current figures and numerical summary from those results:
 
 ```bash
 python3 plot_final_rd.py
@@ -140,11 +152,15 @@ python3 plot_final_runtime.py
 python3 analyze_final_evaluation.py
 ```
 
+The figures are written as PDF and PNG files under `新论文/figs/5/`: `rate-distortion-final-eighteen-log`, `throughput-final-eighteen-vs-rel-eb`, and `runtime-breakdown-final-eighteen-middle-eb`. The throughput figure reports compression and decompression separately for ASZ, SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Codec timings exclude input/output file operations and post-run error verification. ASZ plan generation remains a separate preprocessing stage and is included in total runtime rather than compression throughput. The analysis writes `results/final_eighteen_analysis.csv`. All three scripts accept `--manifest` and `--result-directory` to select their inputs.
+
+The RD summary integrates the log-bit-rate difference over the shared PSNR interval and reports the geometric mean compression-ratio gain across fields. It reports both the envelope of the high-performance baselines SZ3, QoZ, and ZFP and the envelope of all four baselines including the high-ratio SPERR baseline. Runtime analysis defaults to the middle error bound of each field and includes ASZ preprocessing, compression, and decompression. Pass `--rel-eb` to override this behavior with one common bound.
+
 ## Plans and compatibility
 
-Plans are JSON documents indexed by relative error bound. Each entry records the dataset-wide predictor family and the ordered layer predictors. `write_plan` creates a plan; `read_plan` applies one.
+Plans are JSON documents indexed by relative error bound. Version 2 records one dataset-wide predictor family and the prediction axis and QB traversal order for every round. The loader remains compatible with version 1 plans. `write_plan` creates a version 2 plan; `read_plan` applies one.
 
-Plan reuse is intended for equal-shape time steps of the same physical field. The Isabel experiment validates this mode. The project does not claim that a plan transfers between unrelated datasets.
+Plan reuse targets compatible arrays with the same shape. `configs/isabel_plan_transfer.json` and `configs/aramco_plan_transfer.json` define temporal reuse experiments. `configs/qmcpack_orbital_plan_transfer.json` and `configs/miranda_velocity_plan_transfer.json` define reuse across related orbitals and velocity components. The transferred plan fixes the dataset-wide predictor family and every round's axis and traversal order, while block coefficients remain adaptive for the target file. Transfer quality must be evaluated for each related group.
 
 ASZ bitstreams intentionally do not embed `rel_eb` or the tuned compressor parameters. Compression and decompression must therefore use identical settings. Changing those settings without regenerating both sides can make a stream undecodable.
 
@@ -156,4 +172,4 @@ ASZ currently expects a raw, contiguous, three-dimensional float32 array and a m
 python3 convert_hdf5_to_f32.py input.h5 output.f32 --dataset /entry/data/data --shape 4096,1558,1813 --chunk-size 8
 ```
 
-The data catalog lives with the tensor data rather than in this source repository. Paths in the checked-in configurations are therefore specific to the Anvil project allocation.
+The source data catalog is `/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/data.json`. Paths in the checked-in configurations are specific to the Anvil project allocation.

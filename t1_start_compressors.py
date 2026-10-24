@@ -1,4 +1,4 @@
-import argparse,array,csv,errno,json,math,os,pty,re,shlex,subprocess,sys
+import argparse,array,csv,errno,hashlib,json,math,os,pty,re,shlex,subprocess,sys
 from pathlib import Path
 
 import numpy as np
@@ -9,7 +9,7 @@ asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_
 supported_compressors=("asz","sz3","qoz","zfp","sperr")
 traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
 asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","t_precision")
-asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","predictor_family_sample_limit","predictor_family_mse_ratio_threshold","default_slope_invalid_ratio_threshold","default_slope_fallback","default_slope_eb_span","t_min","t_max")
+asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","predictor_family_sample_limit","predictor_family_mse_ratio_threshold","predictor_family_suffix_layers","predictor_family_sample_blocks","predictor_family_sample_point_limit","predictor_family_sample_fraction_limit","predictor_family_coarse_probe_block_pivot_ratio","predictor_family_fine_probe_block_pivot_ratio","predictor_family_fine_eb_threshold","default_slope_invalid_ratio_threshold","default_slope_fallback","default_slope_eb_span","t_min","t_max")
 asz_block_policy_keys=("coarse_block_pivot_ratio","fine_block_pivot_ratio")
 
 
@@ -111,7 +111,7 @@ def prepare_methods(method_list,task_id):
         if isinstance(method,str):
             prepared={"name":method,"compressor":method}
         elif isinstance(method,dict):
-            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","t_policy","block_t_policy","report_t_histogram",*asz_parameter_keys,*asz_compress_parameter_keys,*asz_block_policy_keys}
+            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","predictor_family_selector","t_policy","block_t_policy","report_t_histogram",*asz_parameter_keys,*asz_compress_parameter_keys,*asz_block_policy_keys}
             unknown=method.keys()-allowed_keys
             if unknown:
                 raise ValueError(f"task {task_id}的method {method_id}包含未知参数：{','.join(sorted(unknown))}")
@@ -132,6 +132,9 @@ def prepare_methods(method_list,task_id):
         if "predictor_family" in prepared:
             if prepared["compressor"]!="asz" or prepared["predictor_family"] not in ("cubic","quintic"):
                 raise ValueError(f"task {task_id}的method {method_id}的predictor_family只能是cubic或quintic且只能用于asz")
+        if "predictor_family_selector" in prepared:
+            if prepared["compressor"]!="asz" or prepared["predictor_family_selector"] not in ("h1","mse"):
+                raise ValueError(f"task {task_id}的method {method_id}的predictor_family_selector只能是h1或mse且只能用于asz")
         if "t_policy" in prepared:
             if prepared["compressor"]!="asz" or prepared["t_policy"] not in ("adaptive","fixed_4_16","fixed_5_16"):
                 raise ValueError(f"task {task_id}的method {method_id}的t_policy只能是adaptive、fixed_4_16或fixed_5_16且只能用于asz")
@@ -148,7 +151,7 @@ def prepare_methods(method_list,task_id):
                 raise ValueError(f"task {task_id}的method {method_id}只有asz可以设置{key}")
             if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value):
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须是有限数字")
-            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","generate_config_sample_stride","h1_block_sampling_num","predictor_family_sample_limit","t_precision"):
+            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","generate_config_sample_stride","h1_block_sampling_num","predictor_family_sample_limit","predictor_family_suffix_layers","predictor_family_sample_blocks","predictor_family_sample_point_limit","predictor_family_coarse_probe_block_pivot_ratio","predictor_family_fine_probe_block_pivot_ratio","t_precision"):
                 if not isinstance(value,int) or value<=0:
                     raise ValueError(f"task {task_id}的method {method_id}的{key}必须是正整数")
                 if key in ("max_layer_num","full_predictor_search_layer_num") and value>63:
@@ -203,7 +206,7 @@ def load_tasks(json_path):
     if not tasks:
         raise ValueError("JSON中没有task")
     required_keys={"data_path_list","data_shape","rel_eb_list","method_list"}
-    allowed_keys=required_keys|{"cleanup_after_each_test","comparison_baseline","summary_csv"}
+    allowed_keys=required_keys|{"cleanup_after_each_test","comparison_baseline","summary_csv","output_directory"}
     prepared=[]
     for task_id,task in enumerate(tasks):
         if not isinstance(task,dict):
@@ -238,6 +241,8 @@ def load_tasks(json_path):
             raise ValueError(f"task {task_id}必须同时提供comparison_baseline和summary_csv")
         if task.get("summary_csv") is not None and not isinstance(task["summary_csv"],str):
             raise ValueError(f"task {task_id}的summary_csv必须是字符串")
+        if task.get("output_directory") is not None and (not isinstance(task["output_directory"],str) or not task["output_directory"]):
+            raise ValueError(f"task {task_id}的output_directory必须是非空字符串")
         if len(data_path_list)>1:
             for method in methods:
                 if "write_plan" in method and "{stem}" not in method["write_plan"] and "{name}" not in method["write_plan"]:
@@ -245,6 +250,8 @@ def load_tasks(json_path):
         prepared_task={**task,"data_path_list":[resolve_data_path(path) for path in data_path_list],"rel_eb_list":[float(value) for value in rel_eb_list],"method_list":methods}
         if prepared_task.get("summary_csv") is not None:
             prepared_task["summary_csv"]=resolve_task_path(prepared_task["summary_csv"])
+        if prepared_task.get("output_directory") is not None:
+            prepared_task["output_directory"]=resolve_task_path(prepared_task["output_directory"])
         prepared.append(prepared_task)
     return prepared
 
@@ -308,14 +315,21 @@ def parse_predictor_family_selection(output):
     if len(time_matches)!=1:
         raise RuntimeError(f"未能唯一解析ASZ predictor family selection time，实际找到{len(time_matches)}个")
     result={"predictor_family_selection_time":float(time_matches[0])}
+    h1_matches=re.findall(r"^Predictor family selection: selector=h1, .*$",output,re.MULTILINE)
+    if len(h1_matches)==1:
+        values=dict(item.split("=",1) for item in h1_matches[0].strip().split(": ",1)[1].split(", "))
+        result.update({"predictor_family_selector":"h1","predictor_family_suffix_layers":int(values["suffix_layers"]),"predictor_family_blocks":int(values["blocks"]),"predictor_family_sampled_block_points":int(values["sampled_block_points"]),"predictor_family_sample_point_budget":int(values["sample_point_budget"]),"predictor_family_probe_block_pivot_ratio":int(values["probe_block_pivot_ratio"]),"predictor_family":values["family"],"predictor_family_fallback":"fallback" in values})
+        if "points" in values:
+            result.update({"predictor_family_samples":int(values["points"]),"cubic_mse":float(values["cubic_mse"]),"quintic_mse":float(values["quintic_mse"]),"cubic_psnr":float(values["cubic_psnr"]),"quintic_psnr":float(values["quintic_psnr"]),"cubic_h1":float(values["cubic_h1"]),"quintic_h1":float(values["quintic_h1"]),"six_score_gain":float(values["six_score_gain"])})
+        return result
     matches=re.findall(r"^Predictor family selection: direction=([0-2]), samples=([0-9]+), cubic_mse=([0-9.eE+-]+), quintic_mse=([0-9.eE+-]+), family=(cubic|quintic)\r?$",output,re.MULTILINE)
     if len(matches)==1:
         direction,samples,cubic_mse,quintic_mse,family=matches[0]
-        result.update({"predictor_family_direction":int(direction),"predictor_family_samples":int(samples),"cubic_mse":float(cubic_mse),"quintic_mse":float(quintic_mse),"predictor_family":family,"predictor_family_fallback":False})
+        result.update({"predictor_family_selector":"mse","predictor_family_direction":int(direction),"predictor_family_samples":int(samples),"cubic_mse":float(cubic_mse),"quintic_mse":float(quintic_mse),"predictor_family":family,"predictor_family_fallback":False})
         return result
     fallback_matches=re.findall(r"^Predictor family selection: direction=([0-2]), no final-layer samples, family=cubic\r?$",output,re.MULTILINE)
     if len(fallback_matches)==1:
-        result.update({"predictor_family_direction":int(fallback_matches[0]),"predictor_family":"cubic","predictor_family_fallback":True})
+        result.update({"predictor_family_selector":"mse","predictor_family_direction":int(fallback_matches[0]),"predictor_family":"cubic","predictor_family_fallback":True})
         return result
     raise RuntimeError("未能唯一解析ASZ predictor family selection")
 
@@ -451,6 +465,12 @@ def parse_sz_result(output,compressor):
     result["br"]=32/result["cr"]
     return result
 
+def parse_codec_time(output,compressor,operation):
+    matches=re.findall(rf"^{operation} time = ([0-9.eE+-]+)",output,re.MULTILINE)
+    if not matches:
+        raise RuntimeError(f"未能解析{compressor}的{operation} time")
+    return float(matches[-1])
+
 def calculate_float32_metrics(original_path,reconstructed_path):
     original_size=original_path.stat().st_size
     reconstructed_size=reconstructed_path.stat().st_size
@@ -486,6 +506,9 @@ def calculate_float32_metrics(original_path,reconstructed_path):
     psnr=math.inf if mse==0 else 20*math.log10(value_range)-10*math.log10(mse)
     return {"psnr":psnr,"max_error":max_error,"value_range":value_range}
 
+def error_bound_tolerance(absolute_eb):
+    return absolute_eb*.01
+
 def calculate_float32_range(path):
     minimum=math.inf
     maximum=-math.inf
@@ -499,13 +522,21 @@ def calculate_float32_range(path):
         raise ValueError(f"数据范围无效：{path}")
     return maximum-minimum
 
+def codec_output_path(task,suffix):
+    data_path=task["data_path"]
+    output_directory=task.get("output_directory")
+    if output_directory is None:
+        return Path(str(data_path)+suffix)
+    prefix=hashlib.sha256(str(data_path).encode("utf-8")).hexdigest()[:12]
+    return output_directory/f"{prefix}_{data_path.name}{suffix}"
+
 def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     shape=task["data_shape"]
     data_path=task["data_path"]
-    compressed_path=Path(str(data_path)+".asz")
-    reconstructed_path=Path(str(data_path)+".bin")
+    compressed_path=codec_output_path(task,".asz")
+    reconstructed_path=codec_output_path(task,".bin")
     common=["-f","-i",data_path,"-3",*shape,"-M","REL",f"{rel_eb:.17g}"]
-    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num","generate_config_sample_stride":"--generate-config-sample-stride","h1_block_sampling_num":"--h1-block-sampling-num","stat_eb_ratio":"--stat-eb-ratio","predictor_family_sample_limit":"--predictor-family-sample-limit","predictor_family_mse_ratio_threshold":"--predictor-family-mse-ratio-threshold","default_slope_invalid_ratio_threshold":"--default-slope-invalid-ratio-threshold","default_slope_fallback":"--default-slope-fallback","default_slope_eb_span":"--default-slope-eb-span","t_precision":"--t-precision","t_min":"--t-min","t_max":"--t-max"}
+    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num","generate_config_sample_stride":"--generate-config-sample-stride","h1_block_sampling_num":"--h1-block-sampling-num","stat_eb_ratio":"--stat-eb-ratio","predictor_family_sample_limit":"--predictor-family-sample-limit","predictor_family_mse_ratio_threshold":"--predictor-family-mse-ratio-threshold","predictor_family_suffix_layers":"--predictor-family-suffix-layers","predictor_family_sample_blocks":"--predictor-family-sample-blocks","predictor_family_sample_point_limit":"--predictor-family-sample-point-limit","predictor_family_sample_fraction_limit":"--predictor-family-sample-fraction-limit","predictor_family_coarse_probe_block_pivot_ratio":"--predictor-family-coarse-probe-block-pivot-ratio","predictor_family_fine_probe_block_pivot_ratio":"--predictor-family-fine-probe-block-pivot-ratio","predictor_family_fine_eb_threshold":"--predictor-family-fine-eb-threshold","default_slope_invalid_ratio_threshold":"--default-slope-invalid-ratio-threshold","default_slope_fallback":"--default-slope-fallback","default_slope_eb_span":"--default-slope-eb-span","t_precision":"--t-precision","t_min":"--t-min","t_max":"--t-max"}
     method_options=dict(method)
     if plan_predictor_family is not None:
         method_options.setdefault("predictor_family",plan_predictor_family)
@@ -518,9 +549,11 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
             common.extend([option_names[key],method_options[key]])
     if "predictor_family" in method_options:
         common.extend(["--predictor-family",method_options["predictor_family"]])
+    if "predictor_family_selector" in method_options:
+        common.extend(["--predictor-family-selector",method_options["predictor_family_selector"]])
     if "t_policy" in method_options:
         common.extend(["--t-policy",method_options["t_policy"]])
-    compress_command=[asz_executable_directory/"s1_compress",*common]
+    compress_command=[asz_executable_directory/"s1_compress",*common,"-z",compressed_path,"-o",reconstructed_path]
     if "block_t_policy" in method_options:
         compress_command.extend(["--block-t-policy",method_options["block_t_policy"]])
     for key in asz_compress_parameter_keys:
@@ -531,7 +564,7 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     if predictors is not None:
         compress_command.extend(["--predictor-plan",",".join(predictors)])
     compression_output=run_command(compress_command,dry_run=dry_run)
-    decompression_output=run_command([asz_executable_directory/"s1_decompress",*common],dry_run=dry_run)
+    decompression_output=run_command([asz_executable_directory/"s1_decompress",*common,"-z",compressed_path,"-o",reconstructed_path],dry_run=dry_run)
     if dry_run:
         return None,None,None
     output=compression_output+decompression_output
@@ -542,8 +575,8 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     cr=data_path.stat().st_size/compressed_size
     metrics=calculate_float32_metrics(data_path,reconstructed_path)
     absolute_eb=rel_eb*metrics["value_range"]
-    tolerance=max(1.0,metrics["value_range"])*1e-12
-    if metrics["max_error"]>absolute_eb*1.01+tolerance:
+    tolerance=error_bound_tolerance(absolute_eb)
+    if metrics["max_error"]>absolute_eb+tolerance:
         raise RuntimeError(f"asz违反误差界：max_error={metrics['max_error']},absolute_eb={absolute_eb}")
     if not math.isclose(reported["cr"],cr,rel_tol=1e-5,abs_tol=1e-6):
         raise RuntimeError(f"asz报告的CR与压缩文件不一致：reported={reported['cr']},actual={cr}")
@@ -570,8 +603,8 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
 def run_sz_variant(compressor,task,rel_eb,dry_run):
     data_path=task["data_path"]
     shape=task["data_shape"]
-    compressed_path=Path(str(data_path)+f".{compressor}")
-    reconstructed_path=Path(str(data_path)+f".{compressor}.bin")
+    compressed_path=codec_output_path(task,f".{compressor}")
+    reconstructed_path=codec_output_path(task,f".{compressor}.bin")
     executable=project_root/f"install/{compressor}_install/bin"/("sz3" if compressor=="sz3" else "qoz")
     command=[executable,"-f","-i",data_path,"-z",compressed_path,"-o",reconstructed_path,"-3",shape[2],shape[1],shape[0],"-M","REL",f"{rel_eb:.17g}","-a"]
     if compressor=="qoz":
@@ -586,7 +619,7 @@ def run_sz_variant(compressor,task,rel_eb,dry_run):
     cr=data_path.stat().st_size/compressed_size
     metrics=calculate_float32_metrics(data_path,reconstructed_path)
     absolute_eb=rel_eb*metrics["value_range"]
-    tolerance=absolute_eb*1e-5+max(1.0,metrics["value_range"])*1e-12
+    tolerance=error_bound_tolerance(absolute_eb)
     if metrics["max_error"]>absolute_eb+tolerance:
         raise RuntimeError(f"{compressor}违反误差界：max_error={metrics['max_error']},absolute_eb={absolute_eb}")
     if not math.isclose(reported["cr"],cr,rel_tol=1e-5,abs_tol=1e-6):
@@ -598,27 +631,29 @@ def run_sz_variant(compressor,task,rel_eb,dry_run):
 def run_zfp(task,rel_eb,value_range,dry_run):
     data_path=task["data_path"]
     shape=task["data_shape"]
-    compressed_path=Path(str(data_path)+".zfp")
-    decompressed_path=Path(str(data_path)+".zfp.bin")
+    compressed_path=codec_output_path(task,".zfp")
+    decompressed_path=codec_output_path(task,".zfp.bin")
     absolute_eb=rel_eb*value_range if value_range is not None else f"<{rel_eb:.17g}*data_range>"
     executable=project_root/"install/zfp_install/bin/zfp"
     dimensions=["-3",shape[2],shape[1],shape[0]]
     absolute_eb_text=f"{absolute_eb:.17g}" if isinstance(absolute_eb,float) else absolute_eb
-    run_command([executable,"-f","-i",data_path,"-z",compressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
-    run_command([executable,"-f","-z",compressed_path,"-o",decompressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
+    compression_output=run_command([executable,"-f","-i",data_path,"-z",compressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
+    decompression_output=run_command([executable,"-f","-z",compressed_path,"-o",decompressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
     if dry_run:
         return None
+    compression_time=parse_codec_time(compression_output,"zfp","compression")
+    decompression_time=parse_codec_time(decompression_output,"zfp","decompression")
     compressed_size=compressed_path.stat().st_size
     if compressed_size<=0:
         raise RuntimeError(f"压缩文件为空：{compressed_path}")
     cr=data_path.stat().st_size/compressed_size
     metrics=calculate_float32_metrics(data_path,decompressed_path)
-    tolerance=absolute_eb*1e-5+max(1.0,value_range)*1e-12
+    tolerance=error_bound_tolerance(absolute_eb)
     if metrics["max_error"]>absolute_eb+tolerance:
         raise RuntimeError(f"zfp违反误差界：max_error={metrics['max_error']},absolute_eb={absolute_eb}")
-    return {"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size}
+    return {"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size,"compression_time":compression_time,"decompression_time":decompression_time}
 
-def cleanup_test_outputs(data_path,compressor):
+def cleanup_test_outputs(task,compressor):
     suffixes={
         "asz":(".asz",".bin"),
         "sz3":(".sz3",".sz3.bin"),
@@ -627,7 +662,7 @@ def cleanup_test_outputs(data_path,compressor):
         "sperr":(".sperr",".sperr.bin"),
     }
     for suffix in suffixes[compressor]:
-        output_path=Path(str(data_path)+suffix)
+        output_path=codec_output_path(task,suffix)
         if output_path.is_file():
             output_path.unlink()
             print(f"删除运行产物：{output_path}",flush=True)
@@ -635,27 +670,30 @@ def cleanup_test_outputs(data_path,compressor):
 def run_sperr(task,rel_eb,value_range,dry_run):
     data_path=task["data_path"]
     shape=task["data_shape"]
-    compressed_path=Path(str(data_path)+".sperr")
-    decompressed_path=Path(str(data_path)+".sperr.bin")
+    compressed_path=codec_output_path(task,".sperr")
+    decompressed_path=codec_output_path(task,".sperr.bin")
     absolute_eb=rel_eb*value_range if value_range is not None else f"<{rel_eb:.17g}*data_range>"
     executable=project_root/"install/sperr_install/bin/sperr3d"
     dimensions=["--dims",shape[2],shape[1],shape[0]]
     absolute_eb_text=f"{absolute_eb:.17g}" if isinstance(absolute_eb,float) else absolute_eb
-    run_command([executable,data_path,"-c","--ftype","32",*dimensions,"--bitstream",compressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
-    run_command([executable,compressed_path,"-d","--ftype","32",*dimensions,"--decomp_f",decompressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
+    compression_output=run_command([executable,data_path,"-c","--ftype","32",*dimensions,"--bitstream",compressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
+    decompression_output=run_command([executable,compressed_path,"-d","--ftype","32",*dimensions,"--decomp_f",decompressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
     if dry_run:
         return None
+    compression_time=parse_codec_time(compression_output,"sperr","compression")
+    decompression_time=parse_codec_time(decompression_output,"sperr","decompression")
     compressed_size=compressed_path.stat().st_size
     if compressed_size<=0:
         raise RuntimeError(f"压缩文件为空：{compressed_path}")
     cr=data_path.stat().st_size/compressed_size
     metrics=calculate_float32_metrics(data_path,decompressed_path)
-    tolerance=absolute_eb*1e-5+max(1.0,value_range)*1e-12
+    tolerance=error_bound_tolerance(absolute_eb)
     if metrics["max_error"]>absolute_eb+tolerance:
         raise RuntimeError(f"sperr违反误差界：max_error={metrics['max_error']},absolute_eb={absolute_eb}")
-    return {"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size}
+    return {"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size,"compression_time":compression_time,"decompression_time":decompression_time}
 
-def report_result(method_name,data_path,rel_eb,result,write_csv):
+def report_result(method_name,task,rel_eb,result,write_csv):
+    data_path=task["data_path"]
     time_text=""
     if "compression_time" in result:
         time_text=f",compression_time={result['compression_time']},decompression_time={result['decompression_time']}"
@@ -672,7 +710,7 @@ def report_result(method_name,data_path,rel_eb,result,write_csv):
         audit_text=f",max_error={result['max_error']},absolute_eb={result['absolute_eb']},compressed_bytes={result['compressed_bytes']}"
     print(f"result method={method_name},rel_eb={rel_eb:g},cr={result['cr']},br={result['br']},psnr={result['psnr']}{audit_text}{time_text}",flush=True)
     if write_csv:
-        add_csv(method_name,str(data_path)+".csv",rel_eb,result["br"],result["psnr"])
+        add_csv(method_name,codec_output_path(task,".csv"),rel_eb,result["br"],result["psnr"])
 
 def prepare_runtime_methods(methods,data_path,dry_run):
     runtime_methods=[]
@@ -693,6 +731,8 @@ def prepare_runtime_methods(methods,data_path,dry_run):
 def run_task(task,data_path,dry_run,write_csv):
     validate_data_file(data_path,task["data_shape"])
     data_task={**task,"data_path":data_path}
+    if data_task.get("output_directory") is not None and not dry_run:
+        data_task["output_directory"].mkdir(parents=True,exist_ok=True)
     runtime_methods=prepare_runtime_methods(task["method_list"],data_path,dry_run)
     value_range=None
     if any(method["compressor"] in ("zfp","sperr") for method in runtime_methods) and not dry_run:
@@ -703,28 +743,30 @@ def run_task(task,data_path,dry_run,write_csv):
             method_name=method["name"]
             compressor=method["compressor"]
             print(f"开始：method={method_name},compressor={compressor},data={data_path},rel_eb={rel_eb:g}",flush=True)
-            if compressor=="asz":
-                plan_predictor_family=None
-                if "read_plan" not in method:
-                    predictors=None
-                elif method["plans"] is None:
-                    predictors=[f"<from-plan:{method['read_plan']}>"]
+            try:
+                if compressor=="asz":
+                    plan_predictor_family=None
+                    if "read_plan" not in method:
+                        predictors=None
+                    elif method["plans"] is None:
+                        predictors=[f"<from-plan:{method['read_plan']}>"]
+                    else:
+                        predictors,plan_predictor_family=predictors_for_rel_eb(method["plans"],rel_eb,method["read_plan"])
+                    result,actual_predictors,actual_predictor_family=run_asz(data_task,rel_eb,predictors,method,dry_run,plan_predictor_family)
+                    if actual_predictors is not None and "write_plan" in method:
+                        method["written_plans"][rel_eb]=(actual_predictors,actual_predictor_family)
+                elif compressor in ("sz3","qoz"):
+                    result=run_sz_variant(compressor,data_task,rel_eb,dry_run)
+                elif compressor=="zfp":
+                    result=run_zfp(data_task,rel_eb,value_range,dry_run)
                 else:
-                    predictors,plan_predictor_family=predictors_for_rel_eb(method["plans"],rel_eb,method["read_plan"])
-                result,actual_predictors,actual_predictor_family=run_asz(data_task,rel_eb,predictors,method,dry_run,plan_predictor_family)
-                if actual_predictors is not None and "write_plan" in method:
-                    method["written_plans"][rel_eb]=(actual_predictors,actual_predictor_family)
-            elif compressor in ("sz3","qoz"):
-                result=run_sz_variant(compressor,data_task,rel_eb,dry_run)
-            elif compressor=="zfp":
-                result=run_zfp(data_task,rel_eb,value_range,dry_run)
-            else:
-                result=run_sperr(data_task,rel_eb,value_range,dry_run)
-            if result is not None:
-                report_result(method_name,data_path,rel_eb,result,write_csv)
-                records.append({"data_path":str(data_path),"rel_eb":rel_eb,"method":method_name,**result})
-                if task.get("cleanup_after_each_test",False):
-                    cleanup_test_outputs(data_path,compressor)
+                    result=run_sperr(data_task,rel_eb,value_range,dry_run)
+                if result is not None:
+                    report_result(method_name,data_task,rel_eb,result,write_csv)
+                    records.append({"data_path":str(data_path),"rel_eb":rel_eb,"method":method_name,**result})
+            finally:
+                if not dry_run and task.get("cleanup_after_each_test",False):
+                    cleanup_test_outputs(data_task,compressor)
     if not dry_run:
         for method in runtime_methods:
             if "write_plan" in method:
@@ -739,12 +781,12 @@ def write_comparison_summary(path,records,baseline_method):
     path.parent.mkdir(parents=True,exist_ok=True)
     temporary_path=path.with_name(path.name+".tmp")
     with open(temporary_path,"w",newline="",encoding="utf-8") as summary_file:
-        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT","PREPROCESSING_TIME","GET_DEFAULT_SLOPE_TIME","GENERATE_CONFIG_TIME","PREDICTOR_FAMILY_SELECTION_TIME","DATA_RANGE_TIME","COMPRESSION_TIME","DECOMPRESSION_TIME","DEFAULT_SLOPE","DEFAULT_SLOPE_MAX_INVALID_RATIO","DEFAULT_SLOPE_FALLBACK_USED","DEFAULT_SLOPE_FALLBACK_REASON","PREDICTOR_FAMILY","PREDICTOR_FAMILY_DIRECTION","PREDICTOR_FAMILY_SAMPLES","PREDICTOR_FAMILY_FALLBACK","CUBIC_MSE","QUINTIC_MSE","T_HISTOGRAM","T_FALLBACK_COUNT"]
+        fieldnames=["DATA_PATH","REL_EB","METHOD","CR","BR","PSNR","CR_DROP_PERCENT","PREPROCESSING_TIME","GET_DEFAULT_SLOPE_TIME","GENERATE_CONFIG_TIME","PREDICTOR_FAMILY_SELECTION_TIME","DATA_RANGE_TIME","COMPRESSION_TIME","DECOMPRESSION_TIME","DEFAULT_SLOPE","DEFAULT_SLOPE_MAX_INVALID_RATIO","DEFAULT_SLOPE_FALLBACK_USED","DEFAULT_SLOPE_FALLBACK_REASON","PREDICTOR_FAMILY","PREDICTOR_FAMILY_SELECTOR","PREDICTOR_FAMILY_DIRECTION","PREDICTOR_FAMILY_SAMPLES","PREDICTOR_FAMILY_BLOCKS","PREDICTOR_FAMILY_SAMPLED_BLOCK_POINTS","PREDICTOR_FAMILY_SAMPLE_POINT_BUDGET","PREDICTOR_FAMILY_PROBE_BLOCK_PIVOT_RATIO","PREDICTOR_FAMILY_FALLBACK","CUBIC_MSE","QUINTIC_MSE","CUBIC_PSNR","QUINTIC_PSNR","CUBIC_H1","QUINTIC_H1","SIX_SCORE_GAIN","T_HISTOGRAM","T_FALLBACK_COUNT"]
         writer=csv.DictWriter(summary_file,fieldnames=fieldnames,lineterminator="\n")
         writer.writeheader()
         for record in records:
             baseline_cr=baselines[(record["data_path"],record["rel_eb"])]["cr"]
-            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr,"PREPROCESSING_TIME":record.get("preprocessing_time",""),"GET_DEFAULT_SLOPE_TIME":record.get("get_default_slope_time",""),"GENERATE_CONFIG_TIME":record.get("generate_config_time",""),"PREDICTOR_FAMILY_SELECTION_TIME":record.get("predictor_family_selection_time",""),"DATA_RANGE_TIME":record.get("data_range_time",""),"COMPRESSION_TIME":record.get("compression_time",""),"DECOMPRESSION_TIME":record.get("decompression_time",""),"DEFAULT_SLOPE":record.get("default_slope",""),"DEFAULT_SLOPE_MAX_INVALID_RATIO":record.get("default_slope_max_invalid_ratio",""),"DEFAULT_SLOPE_FALLBACK_USED":record.get("default_slope_fallback_used",""),"DEFAULT_SLOPE_FALLBACK_REASON":record.get("default_slope_fallback_reason",""),"PREDICTOR_FAMILY":record.get("predictor_family",""),"PREDICTOR_FAMILY_DIRECTION":record.get("predictor_family_direction",""),"PREDICTOR_FAMILY_SAMPLES":record.get("predictor_family_samples",""),"PREDICTOR_FAMILY_FALLBACK":record.get("predictor_family_fallback",""),"CUBIC_MSE":record.get("cubic_mse",""),"QUINTIC_MSE":record.get("quintic_mse",""),"T_HISTOGRAM":record.get("t_histogram",""),"T_FALLBACK_COUNT":record.get("t_fallback_count","")})
+            writer.writerow({"DATA_PATH":record["data_path"],"REL_EB":record["rel_eb"],"METHOD":record["method"],"CR":record["cr"],"BR":record["br"],"PSNR":record["psnr"],"CR_DROP_PERCENT":100*(baseline_cr-record["cr"])/baseline_cr,"PREPROCESSING_TIME":record.get("preprocessing_time",""),"GET_DEFAULT_SLOPE_TIME":record.get("get_default_slope_time",""),"GENERATE_CONFIG_TIME":record.get("generate_config_time",""),"PREDICTOR_FAMILY_SELECTION_TIME":record.get("predictor_family_selection_time",""),"DATA_RANGE_TIME":record.get("data_range_time",""),"COMPRESSION_TIME":record.get("compression_time",""),"DECOMPRESSION_TIME":record.get("decompression_time",""),"DEFAULT_SLOPE":record.get("default_slope",""),"DEFAULT_SLOPE_MAX_INVALID_RATIO":record.get("default_slope_max_invalid_ratio",""),"DEFAULT_SLOPE_FALLBACK_USED":record.get("default_slope_fallback_used",""),"DEFAULT_SLOPE_FALLBACK_REASON":record.get("default_slope_fallback_reason",""),"PREDICTOR_FAMILY":record.get("predictor_family",""),"PREDICTOR_FAMILY_SELECTOR":record.get("predictor_family_selector",""),"PREDICTOR_FAMILY_DIRECTION":record.get("predictor_family_direction",""),"PREDICTOR_FAMILY_SAMPLES":record.get("predictor_family_samples",""),"PREDICTOR_FAMILY_BLOCKS":record.get("predictor_family_blocks",""),"PREDICTOR_FAMILY_SAMPLED_BLOCK_POINTS":record.get("predictor_family_sampled_block_points",""),"PREDICTOR_FAMILY_SAMPLE_POINT_BUDGET":record.get("predictor_family_sample_point_budget",""),"PREDICTOR_FAMILY_PROBE_BLOCK_PIVOT_RATIO":record.get("predictor_family_probe_block_pivot_ratio",""),"PREDICTOR_FAMILY_FALLBACK":record.get("predictor_family_fallback",""),"CUBIC_MSE":record.get("cubic_mse",""),"QUINTIC_MSE":record.get("quintic_mse",""),"CUBIC_PSNR":record.get("cubic_psnr",""),"QUINTIC_PSNR":record.get("quintic_psnr",""),"CUBIC_H1":record.get("cubic_h1",""),"QUINTIC_H1":record.get("quintic_h1",""),"SIX_SCORE_GAIN":record.get("six_score_gain",""),"T_HISTOGRAM":record.get("t_histogram",""),"T_FALLBACK_COUNT":record.get("t_fallback_count","")})
     os.replace(temporary_path,path)
     print(f"写入比较汇总：{path}",flush=True)
 

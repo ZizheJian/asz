@@ -1,6 +1,6 @@
 [
   {
-    "data_path_list": ["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/00/CLDICE_26x1800x3600.dat"],
+    "data_path_list": ["/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/CLDICE_26x1800x3600.dat"],
     "data_shape": [26,1800,3600],
     "rel_eb_list": [0.1,0.01,0.001,0.0001,0.00001],
     "method_list": ["asz","sz3","qoz"]

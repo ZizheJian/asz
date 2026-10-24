@@ -3,8 +3,8 @@
 namespace asz
 {
     template<typename T>
-    void param_c<T>::get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,vector<T> &data,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,uint64_t dist,
-        T neg_2_stat_eb)
+    template<typename BlockLoc,typename Stride>
+    void param_c<T>::get_AB_map(unordered_map<tuple<int64_t,int64_t>,uint64_t> &AB_map,const vector<T> &data,const BlockLoc &block_loc,const Stride &stride,uint64_t dist,T neg_2_stat_eb)
     {
         uint64_t sampling_stride=(block_loc[0][1]-block_loc[0][0])*(block_loc[1][1]-block_loc[1][0])*(block_loc[2][1]-block_loc[2][0]);
         sampling_stride=pow(((T)sampling_stride/(stride[0]*stride[1]*stride[2]*h1_block_sampling_num)),1.0/3);

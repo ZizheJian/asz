@@ -22,6 +22,14 @@ namespace asz
         printf("stat_eb_ratio=%.3f;\n",stat_eb_ratio);
         printf("predictor_family_sample_limit=%lu;\n",predictor_family_sample_limit);
         printf("predictor_family_mse_ratio_threshold=%.6f;\n",predictor_family_mse_ratio_threshold);
+        printf("predictor_family_selector=%s;\n",predictor_family_selector.c_str());
+        printf("predictor_family_suffix_layers=%lu;\n",predictor_family_suffix_layers);
+        printf("predictor_family_sample_blocks=%lu;\n",predictor_family_sample_blocks);
+        printf("predictor_family_sample_point_limit=%lu;\n",predictor_family_sample_point_limit);
+        printf("predictor_family_sample_fraction_limit=%.6f;\n",predictor_family_sample_fraction_limit);
+        printf("predictor_family_coarse_probe_block_pivot_ratio=%lu;\n",predictor_family_coarse_probe_block_pivot_ratio);
+        printf("predictor_family_fine_probe_block_pivot_ratio=%lu;\n",predictor_family_fine_probe_block_pivot_ratio);
+        printf("predictor_family_fine_eb_threshold=%.12g;\n",predictor_family_fine_eb_threshold);
         printf("default_slope_invalid_ratio_threshold=%.3f;\n",default_slope_invalid_ratio_threshold);
         printf("default_slope_fallback=%.6f;\n",default_slope_fallback);
         printf("default_slope_eb_span=%.6f;\n",default_slope_eb_span);
@@ -48,7 +56,7 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::select_predictor_family()
+    void param_c<T>::select_predictor_family_mse()
     {
         auto start_time=chrono::high_resolution_clock::now();
         if (predictor_vec.empty())
@@ -527,8 +535,34 @@ namespace asz
             throw invalid_argument("invalid task received in generate_config");
         
         auto start_time=chrono::high_resolution_clock::now();
+        double statistics_time=0;
+        double sample_prediction_time=0;
+        double lossless_estimation_time=0;
+        auto reserve_sample_qbs=[this](vector<qb_t> &qb_vec,const vector<uint64_t> &sample_stride,const vector<uint64_t> &stride,uint64_t direction)
+        {
+            uint64_t sample_capacity=1;
+            for(uint64_t axis=0;axis<3;axis++)
+            {
+                uint64_t start=axis==direction?stride[axis]/2:0;
+                if(start>=data_shape[axis])
+                {
+                    sample_capacity=0;
+                    break;
+                }
+                uint64_t count=1+(data_shape[axis]-start-1)/sample_stride[axis];
+                if(sample_capacity>data.size()/count)
+                {
+                    sample_capacity=data.size();
+                    break;
+                }
+                sample_capacity*=count;
+            }
+            qb_vec.reserve(sample_capacity);
+        };
         
         pivot_stride={1,1,1};
+        vector<qb_t> qb_vec;
+        vector<unsigned char> huffman_bs_vec,zstd_bs_vec;
         for (uint64_t layer=0;layer<max_layer_num;layer++)
         {
             T layer_eb=abs_eb*pow(eb_ratio,layer);
@@ -541,57 +575,68 @@ namespace asz
                 layer_candidate_predictors=candidate_predictors;
             else
                 layer_candidate_predictors={"cubic0_012","cubic1_012","cubic2_012"};
-            unordered_map<string,unordered_map<T,T>> h1,psnr,dist;//每个predictor在不同t时的h1、psnr、dist
             unordered_map<string,T> best_t;//每个predictor最好的t
             unordered_map<string,T> qb_br,qb_mse,qb_psnr;//每个predictor在采样数据上的实测br、mse、psnr
             unordered_map<string,uint64_t> qb_num;//每个predictor的qb数量和pivot的qb数量
+            array<unordered_map<tuple<int64_t,int64_t>,uint64_t>,3> AB_maps;
+            array<bool,3> AB_map_ready={false,false,false};
             for (string &predictor:layer_candidate_predictors)
             {
+                auto phase_start=chrono::high_resolution_clock::now();
                 // 采样数据，得到AB_map
                 vector<vector<uint64_t>> block_loc;
-                unordered_map<tuple<int64_t,int64_t>,uint64_t> AB_map;
-                if ((predictor.substr(0,6)=="cubic0") and (data_shape[0]>3*pivot_stride[0]))
+                unsigned char direction=predictor[5]-'0';
+                auto &AB_map=AB_maps[direction];
+                if(!AB_map_ready[direction]&&direction==0&&data_shape[0]>3*pivot_stride[0])
                 {
                     pivot_stride[0]*=2;
                     block_loc={{3*pivot_stride[0]/2,data_shape[0]-3*pivot_stride[0]/2},{0,data_shape[1]},{0,data_shape[2]}};
                     get_AB_map(AB_map,data,block_loc,pivot_stride,pivot_stride[0]*data_shape[1]*data_shape[2]/2,neg_2_stat_eb);
                     pivot_stride[0]/=2;
                 }
-                else if ((predictor.substr(0,6)=="cubic1") and (data_shape[1]>3*pivot_stride[1]))
+                else if(!AB_map_ready[direction]&&direction==1&&data_shape[1]>3*pivot_stride[1])
                 {
                     pivot_stride[1]*=2;
                     block_loc={{0,data_shape[0]},{3*pivot_stride[1]/2,data_shape[1]-3*pivot_stride[1]/2},{0,data_shape[2]}};
                     get_AB_map(AB_map,data,block_loc,pivot_stride,pivot_stride[1]*data_shape[2]/2,neg_2_stat_eb);
                     pivot_stride[1]/=2;
                 }
-                else if ((predictor.substr(0,6)=="cubic2") and (data_shape[2]>3*pivot_stride[2]))
+                else if(!AB_map_ready[direction]&&direction==2&&data_shape[2]>3*pivot_stride[2])
                 {
                     pivot_stride[2]*=2;
                     block_loc={{0,data_shape[0]},{0,data_shape[1]},{3*pivot_stride[2]/2,data_shape[2]-3*pivot_stride[2]/2}};
                     get_AB_map(AB_map,data,block_loc,pivot_stride,pivot_stride[2]/2,neg_2_stat_eb);
                     pivot_stride[2]/=2;
                 }
+                AB_map_ready[direction]=true;
                 // 估算h1和psnr，找到最好的t
                 T initial_t=t_policy=="adaptive"?(T)4/16:candidate_t.front();
+                T predictor_best_t=initial_t;
                 if (AB_map.empty())
-                    best_t[predictor]=initial_t;
+                    best_t[predictor]=predictor_best_t;
                 else
                 {
-                    best_t[predictor]=initial_t;
-                    get_h1_psnr(h1[predictor][initial_t],psnr[predictor][initial_t],AB_map,initial_t,layer_eb,stat_eb);
-                    dist[predictor][initial_t]=-layer_default_slope*h1[predictor][initial_t]+psnr[predictor][initial_t];
+                    T current_h1=0,current_psnr=0;
+                    get_h1_psnr(current_h1,current_psnr,AB_map,initial_t,layer_eb,stat_eb);
+                    T predictor_best_dist=-layer_default_slope*current_h1+current_psnr;
                     for (auto t:candidate_t)
                     {
                         if (t==initial_t)
                             continue;
-                        get_h1_psnr(h1[predictor][t],psnr[predictor][t],AB_map,t,layer_eb,stat_eb);
-                        dist[predictor][t]=-layer_default_slope*h1[predictor][t]+psnr[predictor][t];
-                        if (dist[predictor][t]>dist[predictor][best_t[predictor]])
-                            best_t[predictor]=t;
+                        get_h1_psnr(current_h1,current_psnr,AB_map,t,layer_eb,stat_eb);
+                        T current_dist=-layer_default_slope*current_h1+current_psnr;
+                        if(current_dist>predictor_best_dist)
+                        {
+                            predictor_best_t=t;
+                            predictor_best_dist=current_dist;
+                        }
                     }
+                    best_t[predictor]=predictor_best_t;
                 }
+                statistics_time+=chrono::duration<double>(chrono::high_resolution_clock::now()-phase_start).count();
                 // 用最好的t实际压缩得到br和psnr
-                vector<qb_t> qb_vec;
+                phase_start=chrono::high_resolution_clock::now();
+                qb_vec.clear();
                 block_loc={{0,data_shape[0]},{0,data_shape[1]},{0,data_shape[2]}};
                 if (predictor.substr(0,6)=="cubic0")
                 {
@@ -599,16 +644,19 @@ namespace asz
                     if (predictor=="cubic0_120")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0],pivot_stride[1]*generate_config_sample_stride,pivot_stride[2]*generate_config_sample_stride};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,0);
                         block_sample_compress_cubic0_120(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     else if (predictor=="cubic0_021")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*generate_config_sample_stride,pivot_stride[1],pivot_stride[2]*generate_config_sample_stride};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,0);
                         block_sample_compress_cubic0_021(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     else if (predictor=="cubic0_012")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*generate_config_sample_stride,pivot_stride[1]*generate_config_sample_stride,pivot_stride[2]};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,0);
                         block_sample_compress_cubic0_012(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     pivot_stride[0]/=2;
@@ -619,16 +667,19 @@ namespace asz
                     if (predictor=="cubic1_120")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0],pivot_stride[1]*generate_config_sample_stride,pivot_stride[2]*generate_config_sample_stride};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,1);
                         block_sample_compress_cubic1_120(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     else if (predictor=="cubic1_021")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*generate_config_sample_stride,pivot_stride[1],pivot_stride[2]*generate_config_sample_stride};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,1);
                         block_sample_compress_cubic1_021(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     else if (predictor=="cubic1_012")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*generate_config_sample_stride,pivot_stride[1]*generate_config_sample_stride,pivot_stride[2]};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,1);
                         block_sample_compress_cubic1_012(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     pivot_stride[1]/=2;
@@ -639,42 +690,47 @@ namespace asz
                     if (predictor=="cubic2_120")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0],pivot_stride[1]*generate_config_sample_stride,pivot_stride[2]*generate_config_sample_stride};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,2);
                         block_sample_compress_cubic2_120(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     else if (predictor=="cubic2_021")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*generate_config_sample_stride,pivot_stride[1],pivot_stride[2]*generate_config_sample_stride};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,2);
                         block_sample_compress_cubic2_021(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     else if (predictor=="cubic2_012")
                     {
                         vector<uint64_t> temp_stride={pivot_stride[0]*generate_config_sample_stride,pivot_stride[1]*generate_config_sample_stride,pivot_stride[2]};
+                        reserve_sample_qbs(qb_vec,temp_stride,pivot_stride,2);
                         block_sample_compress_cubic2_012(qb_vec,qb_mse[predictor],block_loc,temp_stride,pivot_stride,best_t[predictor],layer_eb,neg_2_layer_eb);
                     }
                     pivot_stride[2]/=2;
                 }
+                sample_prediction_time+=chrono::duration<double>(chrono::high_resolution_clock::now()-phase_start).count();
                 //////// lossless compress qb ////////
+                phase_start=chrono::high_resolution_clock::now();
                 if (!qb_vec.empty())
                 {
                     huffman_encoder_class<qb_t> huffman_encoder;
                     huffman_encoder.preprocess_encode(qb_vec.data(),qb_vec.size());
                     uint64_t huffman_bs_len=huffman_encoder.save_size()+huffman_encoder.encode_size();
-                    vector<unsigned char> huffman_bs_vec(huffman_bs_len);
+                    huffman_bs_vec.resize(huffman_bs_len);
                     unsigned char *huffman_bs=huffman_bs_vec.data();
                     huffman_encoder.save(huffman_bs);
                     huffman_encoder.encode(qb_vec.data(),qb_vec.size(),huffman_bs);
                     if (huffman_bs!=huffman_bs_vec.data()+huffman_bs_vec.size())
                         throw runtime_error("Huffman encoded size mismatch");
                     uint64_t max_zstd_bs_len=ZSTD_compressBound(huffman_bs_len);
-                    vector<unsigned char> zstd_bs_vec(max_zstd_bs_len);
+                    zstd_bs_vec.resize(max_zstd_bs_len);
                     uint64_t zstd_bs_len=ZSTD_compress(zstd_bs_vec.data(),max_zstd_bs_len,huffman_bs_vec.data(),huffman_bs_len,3);
-                    zstd_bs_vec.resize(zstd_bs_len);
                     T cr=(T)qb_vec.size()*sizeof(float)/zstd_bs_len;
                     qb_br[predictor]=8*sizeof(float)/cr;
                     qb_mse[predictor]=qb_mse[predictor]/qb_vec.size();
                     qb_psnr[predictor]=10*log10((max_val-min_val)*(max_val-min_val)/qb_mse[predictor]);
                     qb_num[predictor]=qb_vec.size();
                 }
+                lossless_estimation_time+=chrono::duration<double>(chrono::high_resolution_clock::now()-phase_start).count();
             }
             string best_layer_predictor="";
             T best_dist=-1e8;
@@ -702,6 +758,7 @@ namespace asz
         generate_pivot_stride_and_block_shape_and_block_num();
         
         auto end_time=chrono::high_resolution_clock::now();
+        printf("Generate config breakdown: statistics=%f s,sample prediction=%f s,lossless estimation=%f s\n",statistics_time,sample_prediction_time,lossless_estimation_time);
         printf("Generate config time: %f s\n",chrono::duration<double>(end_time-start_time).count());
     }
 }

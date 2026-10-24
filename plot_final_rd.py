@@ -11,7 +11,7 @@ from evaluation_datasets import dataset_size,default_manifest,format_size,load_d
 from paper_plot_layout import PANEL_ASPECT,add_panel_footers,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
-panel_titles={"Nyx Baryon density 632":"Nyx Baryon 632","Nyx Dark-matter density 632":"Nyx Dark matter 632"}
+panel_titles={"Nyx Baryon density 632":"Nyx Baryon 632","Nyx Temperature 632":"Nyx Temperature 632"}
 
 
 def pareto_frontier(points):
@@ -58,22 +58,24 @@ def draw_legend(axis):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Plot RD curves for the final 17-field evaluation")
+    parser=argparse.ArgumentParser(description="Plot RD curves for the final 18-field evaluation")
     parser.add_argument("--manifest",type=Path,default=default_manifest)
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
-    parser.add_argument("--output-pdf",type=Path,default=project_root/"新论文/figs/5/rate-distortion-seventeen-log.pdf")
-    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/5/rate-distortion-seventeen-log.png")
+    parser.add_argument("--output-pdf",type=Path,default=project_root/"新论文/figs/5/rate-distortion-final-eighteen-log.pdf")
+    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/5/rate-distortion-final-eighteen-log.png")
     parser.add_argument("--dpi",type=int,default=300)
     arguments=parser.parse_args()
     datasets=load_datasets(arguments.manifest)
     plt.rcParams.update({"font.family":"Nimbus Roman","mathtext.fontset":"stix","font.size":8,"axes.labelsize":8,"xtick.labelsize":8,"ytick.labelsize":8,"legend.fontsize":8,"pdf.fonttype":42,"ps.fonttype":42})
     ordered=sorted(datasets,key=lambda dataset:(dataset_size(dataset),dataset["title"]))
-    figure,axes=plt.subplots(3,6,figsize=(7.16,3.2))
+    figure,axes=plt.subplots(4,5,figsize=(7.16,5.0))
     for index,(dataset,axis) in enumerate(zip(ordered,axes.flat)):
         draw_dataset(axis,dataset,read_curves(arguments.result_directory,dataset),index)
-    draw_legend(axes.flat[-1])
+    draw_legend(axes.flat[len(ordered)])
+    for axis in list(axes.flat)[len(ordered)+1:]:
+        axis.axis("off")
     figure.subplots_adjust(left=.06,right=.995,bottom=.13,top=.985,wspace=.25,hspace=.25)
-    add_panel_footers(figure,list(axes.flat)[:len(ordered)],[f"({chr(ord('a')+index)}) {panel_titles.get(dataset['title'],dataset['title'])}" for index,dataset in enumerate(ordered)],6,"Bit rate (bits/value)",8,caption_gap_pt=1,xlabel_gap_pt=3,xlabel_x=.52)
+    add_panel_footers(figure,list(axes.flat)[:len(ordered)],[f"({chr(ord('a')+index)}) {panel_titles.get(dataset['title'],dataset['title'])}" for index,dataset in enumerate(ordered)],5,"Bit rate (bits/value)",8,caption_gap_pt=1,xlabel_gap_pt=3,xlabel_x=.52)
     figure.supylabel("PSNR (dB)",x=.006,fontsize=8)
     arguments.output_pdf.parent.mkdir(parents=True,exist_ok=True)
     figure.savefig(arguments.output_pdf)

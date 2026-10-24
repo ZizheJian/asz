@@ -1,0 +1,146 @@
+[
+  {
+    "title":"QMCPACK Orbital 144",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/QMCPACK/asz_qmcpack_orbital144.f32",
+    "shape":[115,69,69],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/qmcpack_orbital144.csv","sz3":"final18/qmcpack_orbital144.csv","qoz":"final18/qmcpack_orbital144.csv","zfp":"final18/qmcpack_orbital144.csv","sperr":"final18/qmcpack_orbital144.csv"},
+    "timing_results":{"zfp":"final18_throughput/qmcpack_orbital144.csv","sperr":"final18_throughput/qmcpack_orbital144.csv"}
+  },
+  {
+    "title":"FLASH Density 22",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/FLASH4.5/Sedov/128x256x256-totally-7000-steps/sedov_22_dens.f32",
+    "shape":[128,256,256],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/flash_density22.csv","sz3":"final18/flash_density22.csv","qoz":"final18/flash_density22.csv","zfp":"final18/flash_density22.csv","sperr":"final18/flash_density22.csv"},
+    "timing_results":{"zfp":"final18_throughput/flash_density22.csv","sperr":"final18_throughput/flash_density22.csv"}
+  },
+  {
+    "title":"APS Kaz",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_Kaz/xpcs-998x128x128.bin.f32",
+    "shape":[998,128,128],
+    "rel_eb_list":[0.1,0.05,0.02,0.01,0.008],
+    "results":{"asz":"final18/aps_kaz.csv","sz3":"final18/aps_kaz.csv","qoz":"final18/aps_kaz.csv","zfp":"final18/aps_kaz.csv","sperr":"final18/aps_kaz.csv"},
+    "timing_results":{"zfp":"final18_throughput/aps_kaz.csv","sperr":"final18_throughput/aps_kaz.csv"}
+  },
+  {
+    "title":"Isabel PRECIP 24",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/PRECIP/PRECIPf24.bin",
+    "shape":[100,500,500],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/isabel_precip24.csv","sz3":"final18/isabel_precip24.csv","qoz":"final18/isabel_precip24.csv","zfp":"final18/isabel_precip24.csv","sperr":"final18/isabel_precip24.csv"},
+    "timing_results":{"zfp":"final18_throughput/isabel_precip24.csv","sperr":"final18_throughput/isabel_precip24.csv"}
+  },
+  {
+    "title":"Isabel QGRAUP 24",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/ISABEL/QGRAUP/QGRAUPf24.bin",
+    "shape":[100,500,500],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/isabel_qgraup24.csv","sz3":"final18/isabel_qgraup24.csv","qoz":"final18/isabel_qgraup24.csv","zfp":"final18/isabel_qgraup24.csv","sperr":"final18/isabel_qgraup24.csv"},
+    "timing_results":{"zfp":"final18_throughput/isabel_qgraup24.csv","sperr":"final18_throughput/isabel_qgraup24.csv"}
+  },
+  {
+    "title":"Miranda Velocity-x",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityx.f32.dat",
+    "shape":[256,384,384],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/miranda_velocityx.csv","sz3":"final18/miranda_velocityx.csv","qoz":"final18/miranda_velocityx.csv","zfp":"final18/miranda_velocityx.csv","sperr":"final18/miranda_velocityx.csv"},
+    "timing_results":{"zfp":"final18_throughput/miranda_velocityx.csv","sperr":"final18_throughput/miranda_velocityx.csv"}
+  },
+  {
+    "title":"Miranda Velocity-z",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Miranda/velocityz.f32.dat",
+    "shape":[256,384,384],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/miranda_velocityz.csv","sz3":"final18/miranda_velocityz.csv","qoz":"final18/miranda_velocityz.csv","zfp":"final18/miranda_velocityz.csv","sperr":"final18/miranda_velocityz.csv"},
+    "timing_results":{"zfp":"final18_throughput/miranda_velocityz.csv","sperr":"final18_throughput/miranda_velocityz.csv"}
+  },
+  {
+    "title":"RTM Small 0360",
+    "data_path":"/anvil/projects/x-cis240669/RTM/RtmLab-smalldata-449x449x235/data-3600-intervals5/aramco-snapshot-0360.f32",
+    "shape":[449,449,235],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/rtm_small0360.csv","sz3":"final18/rtm_small0360.csv","qoz":"final18/rtm_small0360.csv","zfp":"final18/rtm_small0360.csv","sperr":"final18/rtm_small0360.csv"},
+    "timing_results":{"zfp":"final18_throughput/rtm_small0360.csv","sperr":"final18_throughput/rtm_small0360.csv"}
+  },
+  {
+    "title":"Aramco 1800",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/aramco/aramco-snapshot-1800.f32",
+    "shape":[449,449,235],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/aramco1800.csv","sz3":"final18/aramco1800.csv","qoz":"final18/aramco1800.csv","zfp":"final18/aramco1800.csv","sperr":"final18/aramco1800.csv"},
+    "timing_results":{"zfp":"final18_throughput/aramco1800.csv","sperr":"final18_throughput/aramco1800.csv"}
+  },
+  {
+    "title":"SCALE-LETKF PRES",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/PRES-98x1200x1200.dat",
+    "shape":[98,1200,1200],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/letkf_pres.csv","sz3":"final18/letkf_pres.csv","qoz":"final18/letkf_pres.csv","zfp":"final18/letkf_pres.csv","sperr":"final18/letkf_pres.csv"},
+    "timing_results":{"zfp":"final18_throughput/letkf_pres.csv","sperr":"final18_throughput/letkf_pres.csv"}
+  },
+  {
+    "title":"SCALE-LETKF T",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/SCALE_LETKF/T-98x1200x1200.dat",
+    "shape":[98,1200,1200],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/letkf_t.csv","sz3":"final18/letkf_t.csv","qoz":"final18/letkf_t.csv","zfp":"final18/letkf_t.csv","sperr":"final18/letkf_t.csv"},
+    "timing_results":{"zfp":"final18_throughput/letkf_t.csv","sperr":"final18_throughput/letkf_t.csv"}
+  },
+  {
+    "title":"CESM VD01 31",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/VD01_26x1800x3600.dat",
+    "shape":[26,1800,3600],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/cesm_vd01_31.csv","sz3":"final18/cesm_vd01_31.csv","qoz":"final18/cesm_vd01_31.csv","zfp":"final18/cesm_vd01_31.csv","sperr":"final18/cesm_vd01_31.csv"},
+    "timing_results":{"zfp":"final18_throughput/cesm_vd01_31.csv","sperr":"final18_throughput/cesm_vd01_31.csv"}
+  },
+  {
+    "title":"CESM UU 31",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/cesm-atm-1.5TB/31/UU_26x1800x3600.dat",
+    "shape":[26,1800,3600],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/cesm_uu_31.csv","sz3":"final18/cesm_uu_31.csv","qoz":"final18/cesm_uu_31.csv","zfp":"final18/cesm_uu_31.csv","sperr":"final18/cesm_uu_31.csv"},
+    "timing_results":{"zfp":"final18_throughput/cesm_uu_31.csv","sperr":"final18_throughput/cesm_uu_31.csv"}
+  },
+  {
+    "title":"APS CSSI L0471",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/9-ID_CSSI_data/benchmarkdata/Avg_L0471_Double_exp_elong_siemens_1p00sampit_0p05inplane_patch1_of1_part1_001.h5.f32",
+    "shape":[128,1813,1558],
+    "rel_eb_list":[0.1,0.01,0.001,0.0003,0.00013],
+    "results":{"asz":"final18/aps_cssi_l0471.csv","sz3":"final18/aps_cssi_l0471.csv","qoz":"final18/aps_cssi_l0471.csv","zfp":"final18/aps_cssi_l0471.csv","sperr":"final18/aps_cssi_l0471.csv"},
+    "timing_results":{"zfp":"final18_throughput/aps_cssi_l0471.csv","sperr":"final18_throughput/aps_cssi_l0471.csv"}
+  },
+  {
+    "title":"Nyx Baryon density 632",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/baryon_density.f32",
+    "shape":[1024,1024,1024],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/nyx_baryon_density.csv","sz3":"final18/nyx_baryon_density.csv","qoz":"final18/nyx_baryon_density.csv","zfp":"final18/nyx_baryon_density.csv","sperr":"final18/nyx_baryon_density.csv"},
+    "timing_results":{"zfp":"final18_throughput/nyx_baryon_density.csv","sperr":"final18_throughput/nyx_baryon_density.csv"}
+  },
+  {
+    "title":"Nyx Temperature 632",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/Nyx-bigdata/NVB_C009_l20n1024_S12345T632_z42/temperature.f32",
+    "shape":[1024,1024,1024],
+    "rel_eb_list":[0.1,0.01,0.001,0.0001,1e-05],
+    "results":{"asz":"final18/nyx_temperature.csv","sz3":"final18/nyx_temperature.csv","qoz":"final18/nyx_temperature.csv","zfp":"final18/nyx_temperature.csv","sperr":"final18/nyx_temperature.csv"},
+    "timing_results":{"zfp":"final18_throughput/nyx_temperature.csv","sperr":"final18_throughput/nyx_temperature.csv"}
+  },
+  {
+    "title":"APSU 004",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_004/APSU_TestData_004.h5.f32",
+    "shape":[1024,1558,1813],
+    "rel_eb_list":[0.1,0.01,0.001,0.0003,0.00013],
+    "results":{"asz":"final18/apsu004.csv","sz3":"final18/apsu004.csv","qoz":"final18/apsu004.csv","zfp":"final18/apsu004.csv","sperr":"final18/apsu004.csv"},
+    "timing_results":{"zfp":"final18_throughput/apsu004.csv","sperr":"final18_throughput/apsu004.csv"}
+  },
+  {
+    "title":"APSU 006",
+    "data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_006/APSU_TestData_006.h5.f32",
+    "shape":[4096,1558,1813],
+    "rel_eb_list":[0.1,0.01,0.001,0.0003,0.00013],
+    "results":{"asz":"final18/apsu006.csv","sz3":"final18/apsu006.csv","qoz":"final18/apsu006.csv","zfp":"final18/apsu006.csv","sperr":"final18/apsu006.csv"},
+    "timing_results":{"zfp":"final18_throughput/apsu006.csv","sperr":"final18/apsu006.csv"}
+  }
+]

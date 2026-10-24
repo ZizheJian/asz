@@ -4,10 +4,10 @@ import math
 import statistics
 from pathlib import Path
 
-from evaluation_datasets import default_manifest,load_datasets,load_timings,preprocessing_time,read_curves,row_at_rel_eb
+from evaluation_datasets import default_manifest,load_datasets,load_timings,preprocessing_time,read_curves,row_at_rel_eb,runtime_methods
 
 project_root=Path(__file__).resolve().parent
-fieldnames=["DATASET","ASZ_CR_X_SZ3","ASZ_CR_X_QOZ","ASZ_CR_X_BEST_BASELINE","ASZ_TOTAL_TIME","SZ3_TOTAL_TIME","QOZ_TOTAL_TIME","ASZ_PREPROCESSING_SHARE_PERCENT","ASZ_VS_SZ3_TIME_REDUCTION_PERCENT","ASZ_VS_QOZ_TIME_REDUCTION_PERCENT"]
+fieldnames=["DATASET","RUNTIME_REL_EB","ASZ_CR_X_SZ3","ASZ_CR_X_QOZ","ASZ_CR_X_ZFP","ASZ_CR_X_SPERR","ASZ_CR_X_HIGH_PERFORMANCE_ENVELOPE","ASZ_CR_X_BEST_BASELINE","ASZ_TOTAL_TIME","SZ3_TOTAL_TIME","QOZ_TOTAL_TIME","ASZ_PREPROCESSING_SHARE_PERCENT","ASZ_VS_SZ3_TIME_REDUCTION_PERCENT","ASZ_VS_QOZ_TIME_REDUCTION_PERCENT"]
 
 
 def geometric_mean(values):
@@ -76,12 +76,12 @@ def compare_to_envelope(candidate,baselines):
     crossings=[]
     for left,right in zip(raw_knots,raw_knots[1:]):
         active=[curve for curve in baselines if curve_contains(curve,left) and curve_contains(curve,right)]
-        if len(active)!=2:
-            continue
-        left_difference=interpolate_log_bitrate(active[0],left)-interpolate_log_bitrate(active[1],left)
-        right_difference=interpolate_log_bitrate(active[0],right)-interpolate_log_bitrate(active[1],right)
-        if left_difference*right_difference<0:
-            crossings.append(left+(right-left)*(-left_difference)/(right_difference-left_difference))
+        for first_index,first in enumerate(active):
+            for second in active[first_index+1:]:
+                left_difference=interpolate_log_bitrate(first,left)-interpolate_log_bitrate(second,left)
+                right_difference=interpolate_log_bitrate(first,right)-interpolate_log_bitrate(second,right)
+                if left_difference*right_difference<0:
+                    crossings.append(left+(right-left)*(-left_difference)/(right_difference-left_difference))
     knots=sorted({*raw_knots,*crossings})
     integral=0
     for left,right in zip(knots,knots[1:]):
@@ -111,11 +111,11 @@ def write_csv(path,rows):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Summarize RD and runtime for the final 17-field evaluation")
+    parser=argparse.ArgumentParser(description="Summarize RD and runtime for the final 18-field evaluation")
     parser.add_argument("--manifest",type=Path,default=default_manifest)
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
-    parser.add_argument("--rel-eb",type=float,default=1e-3)
-    parser.add_argument("--output",type=Path,default=project_root/"results/final_seventeen_analysis.csv")
+    parser.add_argument("--rel-eb",type=float)
+    parser.add_argument("--output",type=Path,default=project_root/"results/final_eighteen_analysis.csv")
     arguments=parser.parse_args()
     datasets=load_datasets(arguments.manifest)
     rows=[]
@@ -124,22 +124,31 @@ def main():
         asz=psnr_bitrate_curve(curves["asz"])
         sz3=psnr_bitrate_curve(curves["sz3"])
         qoz=psnr_bitrate_curve(curves["qoz"])
+        zfp=psnr_bitrate_curve(curves["zfp"])
+        sperr=psnr_bitrate_curve(curves["sperr"])
         asz_over_sz3=compare_curves(asz,sz3)
         asz_over_qoz=compare_curves(asz,qoz)
-        asz_over_best=compare_to_envelope(asz,[sz3,qoz])
-        timings=load_timings(arguments.result_directory,dataset)
-        asz_timing=row_at_rel_eb(timings["asz"],arguments.rel_eb)
-        sz3_timing=row_at_rel_eb(timings["sz3"],arguments.rel_eb)
-        qoz_timing=row_at_rel_eb(timings["qoz"],arguments.rel_eb)
+        asz_over_zfp=compare_curves(asz,zfp)
+        asz_over_sperr=compare_curves(asz,sperr)
+        asz_over_high_performance=compare_to_envelope(asz,[sz3,qoz,zfp])
+        asz_over_best=compare_to_envelope(asz,[sz3,qoz,zfp,sperr])
+        timings=load_timings(arguments.result_directory,dataset,runtime_methods)
+        selected_rel_eb=arguments.rel_eb if arguments.rel_eb is not None else dataset["rel_eb_list"][len(dataset["rel_eb_list"])//2]
+        asz_timing=row_at_rel_eb(timings["asz"],selected_rel_eb)
+        sz3_timing=row_at_rel_eb(timings["sz3"],selected_rel_eb)
+        qoz_timing=row_at_rel_eb(timings["qoz"],selected_rel_eb)
         asz_total=total_time(asz_timing,True)
         sz3_total=total_time(sz3_timing)
         qoz_total=total_time(qoz_timing)
-        rows.append({"DATASET":dataset["title"],"ASZ_CR_X_SZ3":1/asz_over_sz3,"ASZ_CR_X_QOZ":1/asz_over_qoz,"ASZ_CR_X_BEST_BASELINE":1/asz_over_best,"ASZ_TOTAL_TIME":asz_total,"SZ3_TOTAL_TIME":sz3_total,"QOZ_TOTAL_TIME":qoz_total,"ASZ_PREPROCESSING_SHARE_PERCENT":100*preprocessing_time(asz_timing)/asz_total,"ASZ_VS_SZ3_TIME_REDUCTION_PERCENT":100*(1-asz_total/sz3_total),"ASZ_VS_QOZ_TIME_REDUCTION_PERCENT":100*(1-asz_total/qoz_total)})
-    summary={"DATASET":"__SUMMARY__","ASZ_CR_X_SZ3":geometric_mean([float(row["ASZ_CR_X_SZ3"]) for row in rows]),"ASZ_CR_X_QOZ":geometric_mean([float(row["ASZ_CR_X_QOZ"]) for row in rows]),"ASZ_CR_X_BEST_BASELINE":geometric_mean([float(row["ASZ_CR_X_BEST_BASELINE"]) for row in rows]),"ASZ_TOTAL_TIME":"","SZ3_TOTAL_TIME":"","QOZ_TOTAL_TIME":"","ASZ_PREPROCESSING_SHARE_PERCENT":statistics.mean(float(row["ASZ_PREPROCESSING_SHARE_PERCENT"]) for row in rows),"ASZ_VS_SZ3_TIME_REDUCTION_PERCENT":statistics.mean(float(row["ASZ_VS_SZ3_TIME_REDUCTION_PERCENT"]) for row in rows),"ASZ_VS_QOZ_TIME_REDUCTION_PERCENT":statistics.mean(float(row["ASZ_VS_QOZ_TIME_REDUCTION_PERCENT"]) for row in rows)}
+        rows.append({"DATASET":dataset["title"],"RUNTIME_REL_EB":selected_rel_eb,"ASZ_CR_X_SZ3":1/asz_over_sz3,"ASZ_CR_X_QOZ":1/asz_over_qoz,"ASZ_CR_X_ZFP":1/asz_over_zfp,"ASZ_CR_X_SPERR":1/asz_over_sperr,"ASZ_CR_X_HIGH_PERFORMANCE_ENVELOPE":1/asz_over_high_performance,"ASZ_CR_X_BEST_BASELINE":1/asz_over_best,"ASZ_TOTAL_TIME":asz_total,"SZ3_TOTAL_TIME":sz3_total,"QOZ_TOTAL_TIME":qoz_total,"ASZ_PREPROCESSING_SHARE_PERCENT":100*preprocessing_time(asz_timing)/asz_total,"ASZ_VS_SZ3_TIME_REDUCTION_PERCENT":100*(1-asz_total/sz3_total),"ASZ_VS_QOZ_TIME_REDUCTION_PERCENT":100*(1-asz_total/qoz_total)})
+    summary={"DATASET":"__SUMMARY__","RUNTIME_REL_EB":"","ASZ_CR_X_SZ3":geometric_mean([float(row["ASZ_CR_X_SZ3"]) for row in rows]),"ASZ_CR_X_QOZ":geometric_mean([float(row["ASZ_CR_X_QOZ"]) for row in rows]),"ASZ_CR_X_ZFP":geometric_mean([float(row["ASZ_CR_X_ZFP"]) for row in rows]),"ASZ_CR_X_SPERR":geometric_mean([float(row["ASZ_CR_X_SPERR"]) for row in rows]),"ASZ_CR_X_HIGH_PERFORMANCE_ENVELOPE":geometric_mean([float(row["ASZ_CR_X_HIGH_PERFORMANCE_ENVELOPE"]) for row in rows]),"ASZ_CR_X_BEST_BASELINE":geometric_mean([float(row["ASZ_CR_X_BEST_BASELINE"]) for row in rows]),"ASZ_TOTAL_TIME":"","SZ3_TOTAL_TIME":"","QOZ_TOTAL_TIME":"","ASZ_PREPROCESSING_SHARE_PERCENT":statistics.mean(float(row["ASZ_PREPROCESSING_SHARE_PERCENT"]) for row in rows),"ASZ_VS_SZ3_TIME_REDUCTION_PERCENT":statistics.mean(float(row["ASZ_VS_SZ3_TIME_REDUCTION_PERCENT"]) for row in rows),"ASZ_VS_QOZ_TIME_REDUCTION_PERCENT":statistics.mean(float(row["ASZ_VS_QOZ_TIME_REDUCTION_PERCENT"]) for row in rows)}
     rows.append(summary)
     write_csv(arguments.output,rows)
     print(f"asz_cr_x_sz3={summary['ASZ_CR_X_SZ3']:.6f}")
     print(f"asz_cr_x_qoz={summary['ASZ_CR_X_QOZ']:.6f}")
+    print(f"asz_cr_x_zfp={summary['ASZ_CR_X_ZFP']:.6f}")
+    print(f"asz_cr_x_sperr={summary['ASZ_CR_X_SPERR']:.6f}")
+    print(f"asz_cr_x_high_performance_envelope={summary['ASZ_CR_X_HIGH_PERFORMANCE_ENVELOPE']:.6f}")
     print(f"asz_cr_x_best_baseline={summary['ASZ_CR_X_BEST_BASELINE']:.6f}")
     print(f"asz_vs_qoz_time_reduction_percent={summary['ASZ_VS_QOZ_TIME_REDUCTION_PERCENT']:.6f}")
     print(f"output={arguments.output}")

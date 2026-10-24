@@ -1,7 +1,7 @@
 \section{Performance Evaluation}
 \label{sec:evaluation}
 
-We evaluate ASZ in terms of rate--distortion performance, compression and decompression throughput, total runtime with per-file tuning, and plan reuse across related files. Our rate--distortion and runtime experiments use 17 fields spanning diverse scientific domains.
+We evaluate ASZ in terms of rate--distortion performance, compression and decompression throughput, total runtime with per-file tuning, and plan reuse across related files. Our rate--distortion and runtime experiments use 18 fields spanning diverse scientific domains.
 
 \subsection{Experimental Setup}
 \label{sec:evaluation:setup}
@@ -12,7 +12,7 @@ We conduct all experiments on Purdue Anvil. Each standard compute node contains 
 
 \subsubsection{Scientific Datasets}
 
-Table~\ref{tab:evaluation-datasets} summarizes the 17 fields used in the rate--distortion and runtime experiments. They span weather and climate data, seismic imaging, fluid dynamics, cosmology, electronic-structure calculations, and X-ray experiments. \textcolor{red}{For the plan-transfer experiments in Section~\ref{sec:evaluation:transfer}, we additionally use other fields and time steps from selected data sources represented in Table~\ref{tab:evaluation-datasets}.}
+Table~\ref{tab:evaluation-datasets} summarizes the 18 fields used in the rate--distortion and runtime experiments. They span weather and climate data, seismic imaging, fluid dynamics, cosmology, electronic-structure calculations, hydrodynamics, and X-ray experiments. For the plan-transfer experiments in Section~\ref{sec:evaluation:transfer}, we use related time steps or fields from data sources represented in Table~\ref{tab:evaluation-datasets}.
 
 \begin{table*}[htb]
     \centering
@@ -25,67 +25,67 @@ Table~\ref{tab:evaluation-datasets} summarizes the 17 fields used in the rate--d
         \textbf{Dataset} & \textbf{Field} & \textbf{Index} & \textbf{Domain} & \textbf{Size} &
         \textbf{Dataset} & \textbf{Field} & \textbf{Index} & \textbf{Domain} & \textbf{Size} \\
         \midrule
-        QMCPACK & Orbital & 144 & Electronic structure & 2.09~MiB & Isabel & PRECIP & 24 & Weather & 95.37~MiB \\
-        Isabel & QRAIN & 24 & Weather & 95.37~MiB & Miranda & Density & -- & Fluid & 144.00~MiB \\
-        Miranda & Velocity-$x$ & -- & Fluid & 144.00~MiB & Aramco & -- & 1800 & Seismic & 180.73~MiB \\
-        SCALE-LETKF & PRES & -- & Weather & 538.33~MiB & SCALE-LETKF & T & -- & Weather & 538.33~MiB \\
-        CESM & Q & 31 & Climate & 642.70~MiB & CESM & UU & 31 & Climate & 642.70~MiB \\
-        RTM & -- & 0750 & Seismic & 646.16~MiB & APS CSSI & -- & L0471 & X-ray & 1.35~GiB \\
-        Nyx & Baryon density & 632 & Cosmology & 4.00~GiB & Nyx & Dark-matter density & 632 & Cosmology & 4.00~GiB \\
-        APSU & -- & 004 & X-ray & 10.78~GiB & E & -- & 017 & X-ray & 10.78~GiB \\
-        APSU & -- & 006 & X-ray & 43.10~GiB & & & & & \\
+        QMCPACK & Orbital & 144 & Electronic structure & 2.09~MiB & FLASH & Density & 22 & Hydrodynamics & 32.00~MiB \\
+        APS & Kaz & -- & X-ray & 62.38~MiB & Isabel & PRECIP & 24 & Weather & 95.37~MiB \\
+        Isabel & QGRAUP & 24 & Weather & 95.37~MiB & Miranda & Velocity-$x$ & -- & Fluid & 144.00~MiB \\
+        Miranda & Velocity-$z$ & -- & Fluid & 144.00~MiB & RTM Small & -- & 0360 & Seismic & 180.73~MiB \\
+        Aramco & -- & 1800 & Seismic & 180.73~MiB & SCALE-LETKF & PRES & -- & Weather & 538.33~MiB \\
+        SCALE-LETKF & T & -- & Weather & 538.33~MiB & CESM & VD01 & 31 & Climate & 642.70~MiB \\
+        CESM & UU & 31 & Climate & 642.70~MiB & APS CSSI & -- & L0471 & X-ray & 1.35~GiB \\
+        Nyx & Baryon density & 632 & Cosmology & 4.00~GiB & Nyx & Temperature & 632 & Cosmology & 4.00~GiB \\
+        APSU & -- & 004 & X-ray & 10.78~GiB & APSU & -- & 006 & X-ray & 43.10~GiB \\
         \bottomrule
     \end{tabular}
 \end{table*}
 
 \subsubsection{Baselines and Metrics}
 
-We compare ASZ with SZ3 and QoZ, two state-of-the-art scientific lossy compressors.
+We compare ASZ with two groups of scientific lossy compressors. SZ3, QoZ, and ZFP form the high-performance group, covering prediction-based and block-transform methods. SPERR serves as a high-ratio wavelet-based baseline with substantially higher computational cost~\cite{liu2024high,li2023lossy}. We include all four baselines in every RD and throughput figure and report the high-performance envelope separately from the SPERR comparison.
 
 \subsection{Rate--Distortion Performance}
 \label{sec:evaluation:rd}
 
-Figure~\ref{fig:evaluation-rd} compares the full RD curves. At matched PSNRs, ASZ achieves lower bit rates across all 17 fields. Its compression ratios are $2.52\times$ and $2.07\times$ those of SZ3 and QoZ, respectively, on average.
+Figure~\ref{fig:evaluation-rd} compares the full RD curves. We compare curves over their common PSNR interval by integrating the difference in log bit rate and converting it into a multiplicative compression-ratio gain. Across the 18 fields, ASZ achieves geometric-mean compression ratios that are $2.47\times$, $2.06\times$, and $6.16\times$ those of SZ3, QoZ, and ZFP, respectively. Relative to an envelope that selects the lowest bit rate among these three high-performance baselines at each PSNR, ASZ's geometric-mean compression ratio is $1.90\times$ that of the envelope, and ASZ outperforms it on all 18 fields. SPERR provides a stronger RD reference at a much lower throughput. ASZ's geometric-mean compression ratio is $1.35\times$ that of SPERR, which ASZ outperforms on 10 of the 18 fields.
 
 \begin{figure*}[htb]
     \centering
-    \includegraphics[width=\textwidth]{figs/5/rate-distortion-seventeen-log.pdf}
-    \caption{Rate--distortion performance on 17 scientific fields. Each method is evaluated at five relative error bounds. A curve farther toward the upper left has lower storage cost at higher reconstruction quality.}
+    \IfFileExists{figs/5/rate-distortion-final-eighteen-log.pdf}{\includegraphics[width=\textwidth]{figs/5/rate-distortion-final-eighteen-log.pdf}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field rate--distortion figure pending.}}}
+    \caption{Rate--distortion performance on 18 scientific fields. Each method is evaluated at five relative error bounds. A curve farther toward the upper left has lower storage cost at higher reconstruction quality.}
     \label{fig:evaluation-rd}
 \end{figure*}
 
-These gains show that ASZ's per-round prediction-axis choices, variable-coefficient predictors, and selectable QB serialization orders enable more effective adaptation to the input data.
+The comparison evaluates how ASZ's per-round prediction-axis choices, variable-coefficient predictors, and selectable QB serialization orders adapt to each input.
 
 \subsection{Codec Throughput}
 \label{sec:evaluation:throughput}
 
-Figure~\ref{fig:evaluation-throughput} compares compression and decompression throughput across five relative error bounds. ASZ's compression and decompression throughputs generally lie between those of SZ3 and QoZ. Over all fields and error bounds, ASZ's compression and decompression throughputs are $1.52\times$ and $1.47\times$ those of QoZ, respectively, on average.
+Figure~\ref{fig:evaluation-throughput} compares ASZ with SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Compression and decompression are timed separately around each codec's in-memory operations. File input, file output, and post-run error verification are excluded. ASZ plan generation is reported separately as preprocessing and is included in the total-runtime evaluation below. Across the 90 field--error-bound combinations, ASZ provides geometric-mean speedups of $1.63\times$ for compression and $1.71\times$ for decompression relative to QoZ, with higher throughput in 89 and 86 combinations, respectively. Relative to SPERR, the corresponding speedups are $2.84\times$ and $4.00\times$, with ASZ faster in 89 and 90 combinations. ASZ attains geometric-mean throughputs of 74.6\% and 87.4\% relative to SZ3 for compression and decompression, and 45.8\% and 90.2\% relative to ZFP. These speed differences accompany the compression-ratio improvements reported in Section~\ref{sec:evaluation:rd}.
 
 \begin{figure*}[htb]
     \centering
-    \includegraphics[width=\textwidth]{figs/5/throughput-combined-vs-rel-eb.pdf}
-    \caption{Compression and decompression throughput across five relative error bounds. Solid and dashed curves denote compression and decompression, respectively.}
+    \IfFileExists{figs/5/throughput-final-eighteen-vs-rel-eb.pdf}{\includegraphics[width=\textwidth]{figs/5/throughput-final-eighteen-vs-rel-eb.pdf}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field throughput figure pending.}}}
+    \caption{Compression and decompression throughput of ASZ and four baselines across five relative error bounds. Solid and dashed curves denote compression and decompression, respectively.}
     \label{fig:evaluation-throughput}
 \end{figure*}
 
 \subsection{Runtime Performance}
 \label{sec:evaluation:runtime}
 
-We evaluate total runtime with per-file tuning at a relative error bound of $10^{-3}$, which is available for every field. For ASZ, a fresh plan is generated for each file, and the reported total time includes all preprocessing costs, together with compression and decompression.
+We evaluate total runtime with per-file tuning at the middle relative error bound in each field's five-point RD range. This point is $10^{-3}$ for every field except APS Kaz, whose middle point is $2\times10^{-2}$. For ASZ, a fresh plan is generated for each file, and the reported total time includes all preprocessing costs, together with compression and decompression.
 
-\begin{figure*}[htb]
+\begin{figure*}[htbp]
     \centering
-    \includegraphics[width=\textwidth]{figs/5/runtime-breakdown-seventeen-1e-3.pdf}
-    \caption{Codec runtime at relative error bound $10^{-3}$. Fields are grouped by uncompressed size. ASZ includes preprocessing, compression, and decompression. The SZ3 and QoZ compression segments include their internal autotuning. Labels above bars report total seconds.}
+    \IfFileExists{figs/5/runtime-breakdown-final-eighteen-middle-eb.pdf}{\includegraphics[width=\textwidth]{figs/5/runtime-breakdown-final-eighteen-middle-eb.pdf}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field runtime figure pending.}}}
+    \caption{Codec runtime at the middle relative error bound in each field's five-point RD range. Fields are grouped by uncompressed size. ASZ includes preprocessing, compression, and decompression. The SZ3 and QoZ compression segments include their internal autotuning. Labels above bars report total seconds.}
     \label{fig:evaluation-runtime}
 \end{figure*}
 
-Figure~\ref{fig:evaluation-runtime} shows that ASZ keeps its total cost below QoZ on 15 of 17 fields. It reduces total time by $11.6\%$ on average. Preprocessing accounts for $23.1\%$ of ASZ's total time on average.
+ASZ completes preprocessing, compression, and decompression faster than QoZ's compression and decompression on 14 of the 18 fields. Averaged across fields, ASZ reduces total runtime by 16.46\% relative to QoZ, while plan generation accounts for 23.80\% of ASZ's total time. ASZ uses $1.81\times$ the total runtime of SZ3 on average while providing a $2.47\times$ geometric-mean compression-ratio improvement at matched PSNR. The results show that ASZ preserves its compression advantage while retaining higher end-to-end speed than QoZ on most fields, even when each input generates a fresh plan.
 
 \subsection{Plan Transferability Across Related Files}
 \label{sec:evaluation:transfer}
 
-This subsection evaluates ASZ's ability to reuse a plan generated for one file on other related files. We consider two settings. Temporal reuse shares plans across related snapshots, such as Isabel P time steps 01--48 and Aramco snapshots 0001, 1800, and 3600. Non-temporal reuse instead transfers plans across distinct arrays from the same application: QMCPACK orbitals 0, 144, and 287 on a common spline grid and the $x$, $y$, and $z$ components of the Miranda velocity field.
+This subsection evaluates ASZ's ability to reuse a plan generated for one file on other related files. We consider two settings. Temporal reuse shares plans across related snapshots, such as Isabel PRECIP time steps 01--48 and Aramco snapshots 0001, 1800, and 3600. Non-temporal reuse instead transfers plans across distinct arrays from the same application: QMCPACK orbitals 0, 144, and 287 on a common spline grid and the $x$, $y$, and $z$ components of the Miranda velocity field.
 
 For an ordered sequence of $T$ files and a plan-generation budget $K$, we partition the files into $K$ contiguous segments of nearly equal length. The lower middle file of each segment generates one plan for the files in that segment. Thus, $K=1$ uses one representative for the complete sequence, while larger $K$ values shorten the reuse span. The non-temporal experiments designate one representative array in each related group and transfer its plan to the remaining members.
 
@@ -93,32 +93,7 @@ The transferred plan fixes the preprocessing decisions, including each round's p
 
 \subsubsection{Temporal Reuse}
 
-The $K=1$ experiment uses the plan generated from Isabel P 24 for all 48 pressure time steps. Relative to self-generated plans, its mean compression-ratio loss is only $2.48\%$. The maximum loss is $14.62\%$ on Isabel P 02, showing that a single global representative can miss a locally different early time step. Even under this most aggressive reuse, transferred-plan ASZ improves compression ratio by $45.6\%$ over SZ3 and $45.0\%$ over QoZ on average across the 47 nonrepresentative files.
-
-The mean loss decreases to $1.30\%$, $1.22\%$, and $0.77\%$ with 2, 4, and 8 plans, respectively. With 16 plans, the mean loss is $-0.05\%$ and the maximum loss is $4.47\%$. A negative loss means that transferred plans are marginally better on average than the plans generated from their target files. This outcome is possible because reverse-greedy generation is a heuristic, so the target file's generated plan is not guaranteed to be globally optimal. The maximum loss initially rises from $14.62\%$ with one plan to $15.51\%$ with two, then decreases to $8.07\%$, $5.26\%$, and $4.47\%$. Thus, a larger budget improves both average and worst-case transfer after four representative plans, while the two-plan partition still selects a weaker plan for Isabel P 02.
-
-These results show that reuse can be adjusted to the variation within a sequence. A stable region can share one plan across several files, while additional representatives limit the span of each transfer when the sequence changes more rapidly.
-
-% TODO: Add Aramco and RTM rows after their multi-time-step grouped-plan experiments are complete.
-\begin{table}[htb]
-    \centering
-    \caption{Equal-PSNR compression-ratio loss from reusing representative plans across time steps. The table reports the average and maximum loss relative to a self-generated plan.}
-    \label{tab:plan-transfer}
-    \footnotesize
-    \setlength{\tabcolsep}{5pt}
-    \begin{tabular}{lrrr}
-        \toprule
-        \textbf{Sequence} & \textbf{$K$} & \textbf{Mean Loss} & \textbf{Max Loss} \\
-        \midrule
-        Isabel P (48 steps) & 1 & $2.48\%$ & $14.62\%$ \\
-        Isabel P & 2 & $1.30\%$ & $15.51\%$ \\
-        Isabel P & 4 & $1.22\%$ & $8.07\%$ \\
-        Isabel P & 8 & $0.77\%$ & $5.26\%$ \\
-        Isabel P & 16 & $-0.05\%$ & $4.47\%$ \\
-        Isabel P & 48 & $0.00\%$ & $0.00\%$ \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+The temporal experiment uses the plan generated from Isabel PRECIP 24 and applies it to the remaining PRECIP time steps. We evaluate plan budgets $K\in\{1,2,4,8,16,48\}$ and compare each transferred plan with a plan generated from the target file. \textcolor{red}{Report the mean and maximum equal-PSNR compression-ratio losses after the PRECIP experiment.}
 
 \subsubsection{Reuse Across Non-Temporal Related Arrays}
 
