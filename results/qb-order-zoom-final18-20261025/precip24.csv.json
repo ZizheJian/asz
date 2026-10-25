@@ -1,0 +1,112 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24",
+  "families": [
+    "1d4r"
+  ],
+  "retain": [
+    "qb_order"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_convention": {
+    "1d4r": "t",
+    "2d4r": "t",
+    "1d6r": "a is the per-reference weight at +/-5h,b is the per-reference weight at +/-3h,and the +/-h weight is 1/2-a-b"
+  },
+  "coefficient_grids": {
+    "1d4r": "1d4r"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.002,
+    0.0015,
+    0.001,
+    0.00075,
+    0.0005
+  ],
+  "target_bounds": [
+    0.002,
+    0.0015,
+    0.001,
+    0.00075,
+    0.0005
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.002": {
+      "coarse_eb": 0.002,
+      "fine_eb": 0.0015,
+      "coarse_mean_rate": 0.12816447721015264,
+      "coarse_mean_psnr": 74.11391563639077,
+      "fine_mean_rate": 0.15407728261372575,
+      "fine_mean_psnr": 75.77666975962808,
+      "slope": 64.16727549723466,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.0015": {
+      "coarse_eb": 0.002,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.12816447721015264,
+      "coarse_mean_psnr": 74.11391563639077,
+      "fine_mean_rate": 0.19605017061188104,
+      "fine_mean_psnr": 78.23136772359973,
+      "slope": 60.65272196371391,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.001": {
+      "coarse_eb": 0.0015,
+      "fine_eb": 0.00075,
+      "coarse_mean_rate": 0.15407728261372575,
+      "coarse_mean_psnr": 75.77666975962808,
+      "fine_mean_rate": 0.23116059350072954,
+      "fine_mean_psnr": 80.04353686422527,
+      "slope": 55.35396774604018,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.00075000000000000002": {
+      "coarse_eb": 0.001,
+      "fine_eb": 0.0005,
+      "coarse_mean_rate": 0.19605017061188104,
+      "coarse_mean_psnr": 78.23136772359973,
+      "fine_mean_rate": 0.28787721481987766,
+      "fine_mean_psnr": 82.67895428614743,
+      "slope": 48.43438663313076,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.00050000000000000001": {
+      "coarse_eb": 0.00075,
+      "fine_eb": 0.0005,
+      "coarse_mean_rate": 0.23116059350072954,
+      "coarse_mean_psnr": 80.04353686422527,
+      "fine_mean_rate": 0.28787721481987766,
+      "fine_mean_psnr": 82.67895428614743,
+      "slope": 46.466403686011034,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    }
+  },
+  "uniform_sample_count": 10804500,
+  "input_rows": 585,
+  "output_rows": 15,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r0_xx0.csv": "4a6db8b54bff44cb831057153feac7a7ac0136ae6cccb3dd4d819d772d06e007",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r0_xx1.csv": "d81b95c7e979d17710b70128b35925cf5afe60b20a3f90c7d521553859e0c430",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r0_xx2.csv": "274ea045ce98f867c7f4fb61c086906e4e81264e34b48c8d92bb3696c222ff88",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r1_xx0.csv": "7d763fed93968ac464ed22077cd3344d1af93c41b8f23eff945ae50c4cd57e03",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r1_xx1.csv": "4353cfd9d276c1727e9a6993a19e5fe3f93a4a8bb93bf5c00d539413cf120a78",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r1_xx2.csv": "8f0728cbbc0f4a576f6121b3fc1eeffd997671bbddff1e41ac78fc62cf82dd3a",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r2_xx0.csv": "c9cb6590d69d2793487ceefd8caa9f3d2690696f0d2395b6dbe6925c0b339f75",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r2_xx1.csv": "abb56dd9a4effc5e3b4cc8d6a59f2d58e384a5e893c80386bb97939bc9efc19b",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/precip24_1d4r2_xx2.csv": "beb353a2672814e81e3ed9045135e8a4061a74bf62468e49a4929f698ae0af08"
+  },
+  "program_sha256": "8e47ee849630768a31e7d0bf68453ce659a26729d493fcc5f059f98795dc8424"
+}

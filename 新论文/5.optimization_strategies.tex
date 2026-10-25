@@ -121,11 +121,11 @@ Figure~\ref{fig:configuration-space:qb-order} compares the rate--distortion curv
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\columnwidth]{revised-fig/qb-order-rd.png}
-\caption{Rate--distortion comparison of QB serialization orders after independently selecting the best prediction axis and coefficient for each order. Labels $x$, $y$, and $z$ identify the fastest-varying axis of the serialized QB tensor. Filled markers highlight the error bound with the largest best-to-worst compression-ratio difference in each panel, and the annotations report that ratio.}
+\caption{Rate--distortion comparison of QB serialization orders after independently selecting the best prediction axis and coefficient for each order. Labels $x$, $y$, and $z$ identify the fastest-varying axis of the serialized QB tensor. The five relative error bounds from $5\times10^{-4}$ to $2\times10^{-3}$ provide a detailed view around $10^{-3}$.}
 \label{fig:configuration-space:qb-order}
 \end{figure}
 
-The results confirm that QB serialization order affects rate--distortion performance. Across the three examples, the largest separation between the best and worst orders reaches $1.38\times$ in compression ratio at equal PSNR, motivating its inclusion as a round-wise configuration choice.
+The results confirm that QB serialization order affects rate--distortion performance. Across the three examples, the largest separation between the best and worst orders reaches $1.49\times$ in compression ratio at equal PSNR, motivating its inclusion as a round-wise configuration choice.
 
 \subsection{Proxy-Based Coefficient Selection}
 \label{sec:configuration-space:coefficient-selection}

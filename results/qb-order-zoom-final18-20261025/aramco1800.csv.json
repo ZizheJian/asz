@@ -1,0 +1,112 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800",
+  "families": [
+    "1d4r"
+  ],
+  "retain": [
+    "qb_order"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_convention": {
+    "1d4r": "t",
+    "2d4r": "t",
+    "1d6r": "a is the per-reference weight at +/-5h,b is the per-reference weight at +/-3h,and the +/-h weight is 1/2-a-b"
+  },
+  "coefficient_grids": {
+    "1d4r": "1d4r"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.002,
+    0.0015,
+    0.001,
+    0.00075,
+    0.0005
+  ],
+  "target_bounds": [
+    0.002,
+    0.0015,
+    0.001,
+    0.00075,
+    0.0005
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.002": {
+      "coarse_eb": 0.002,
+      "fine_eb": 0.0015,
+      "coarse_mean_rate": 0.12455164977749957,
+      "coarse_mean_psnr": 70.36172666590313,
+      "fine_mean_rate": 0.1611776497639599,
+      "fine_mean_psnr": 71.92047017412618,
+      "slope": 42.558387724547366,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.0015": {
+      "coarse_eb": 0.002,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.12455164977749957,
+      "coarse_mean_psnr": 70.36172666590313,
+      "fine_mean_rate": 0.22550604692065784,
+      "fine_mean_psnr": 74.2858436799769,
+      "slope": 38.87019411853039,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.001": {
+      "coarse_eb": 0.0015,
+      "fine_eb": 0.00075,
+      "coarse_mean_rate": 0.1611776497639599,
+      "coarse_mean_psnr": 71.92047017412618,
+      "fine_mean_rate": 0.2825910653439619,
+      "fine_mean_psnr": 76.06135908379981,
+      "slope": 34.10569490934971,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.00075000000000000002": {
+      "coarse_eb": 0.001,
+      "fine_eb": 0.0005,
+      "coarse_mean_rate": 0.22550604692065784,
+      "coarse_mean_psnr": 74.2858436799769,
+      "fine_mean_rate": 0.3810771122139316,
+      "fine_mean_psnr": 78.68201509750972,
+      "slope": 28.258284464693993,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.00050000000000000001": {
+      "coarse_eb": 0.00075,
+      "fine_eb": 0.0005,
+      "coarse_mean_rate": 0.2825910653439619,
+      "coarse_mean_psnr": 76.06135908379981,
+      "fine_mean_rate": 0.3810771122139316,
+      "fine_mean_psnr": 78.68201509750972,
+      "slope": 26.609414196205222,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    }
+  },
+  "uniform_sample_count": 21681113,
+  "input_rows": 585,
+  "output_rows": 15,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r0_xx0.csv": "49ede071120d5eac91172d3108a6fcb6fb28cbed7b60531ca214dd47b761cebf",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r0_xx1.csv": "87406a67ab406f373421bd670d9163f35eb20afe6fc71826db16f7b20d757faa",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r0_xx2.csv": "9db3f7108e444406dd29538577950383a6c1ccf87f0407de1e1d8df5cd35fd9c",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r1_xx0.csv": "2feb4b3a6ea8d460c397c14c26ebefe398b6d93057371f05cd2db0e1937b8d77",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r1_xx1.csv": "dc2ee15caab1a03de70acf4e10d792ac97eeed38f60495a9cd2bc6179d757e38",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r1_xx2.csv": "9182071ad06594039533594ee35602dae3a4f7cc6682ea0f8cff6b8a914c1b3d",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r2_xx0.csv": "09c0e3028ea47fe8c7a3af00dc47a44145ca499244e64eaf3fd84d6e6959d225",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r2_xx1.csv": "002391e92c934878aa45f789516cf654e2adebd1d5fc955d69cea0bffc67d12c",
+    "/home/x-zjian1/asz/results/qb-order-zoom-final18-20261025/aramco1800_1d4r2_xx2.csv": "d60511dedf4e66dbf9435151854287cdbb091a16abd66cb82784edeff601943d"
+  },
+  "program_sha256": "8e47ee849630768a31e7d0bf68453ce659a26729d493fcc5f059f98795dc8424"
+}
