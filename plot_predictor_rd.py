@@ -9,7 +9,7 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
 from paper_plot_layout import PANEL_ASPECT,add_panel_footers,place_legend_above_axes,style_plot_axis
-from paperfig import PANEL_GAP_WITHOUT_Y_DECORATION_PT,PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_grid,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis as style_paper_axis
+from paperfig import PANEL_GAP_WITHOUT_Y_DECORATION_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_grid,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis as style_paper_axis
 
 project_root=Path(__file__).resolve().parent
 family_styles=((0,(3,2)),(0,(1.5,1)),(0,(3,1.5,.75,1)))
@@ -162,7 +162,7 @@ def render_coefficient_figure(output_png):
     coefficient_styles={"quintic":{"color":"#b2182b","linewidth":1.1,"linestyle":"-"},"other":{"color":".72","linewidth":.45,"linestyle":"-"}}
     apply_paper_style()
     paper_spec=PaperFigureSpec.column()
-    figure,axes=plt.subplots(1,3,figsize=paper_spec.size_in,dpi=paper_spec.dpi,sharey=False)
+    figure,axes=plt.subplots(1,3,figsize=paper_spec.size_in,dpi=paper_spec.dpi,sharey=True)
     for axis,key in zip(axes,selected):
         dataset_rows=[row for row in rows if row["dataset"]==key]
         curves=defaultdict(list)
@@ -181,11 +181,12 @@ def render_coefficient_figure(output_png):
         axis.xaxis.set_major_locator(LogLocator(base=10,numticks=3))
         axis.xaxis.set_minor_locator(NullLocator())
         axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
+        hide_outside_x_tick_labels(axis)
         style_paper_axis(axis)
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
         axis.set_axisbelow(True)
     axes[0].set_ylabel("PSNR (dB)")
-    layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
+    layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],label="Fixed quintic",**coefficient_styles["quintic"]),Line2D([],[],label="Best per error bound",color=".1",linewidth=.85,linestyle=(0,(2.5,2.5))),Line2D([],[],label="Other coefficients",**coefficient_styles["other"])]
     legend_above(axes[1],handles=handles,ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=4))
     captions=add_panel_captions(figure,axes,["(a) Aramco\n1800","(b) SCALE-LETKF\nPRES","(c) QMCPACK\nOrbital 144"],gap_pt=2,source="ticks")
