@@ -16,6 +16,13 @@ family_styles=((0,(3,2)),(0,(1.5,1)),(0,(3,1.5,.75,1)))
 family_colors=("#2166ac","#b2182b")
 names={"isabel":"Isabel P 24","cldice":"CESM CLDICE 31","cesmt":"CESM T 31","aramco":"Aramco 1800","letkf":"SCALE-LETKF PRES","letkf_qv":"SCALE-LETKF QV","qmcpack":"QMCPACK Orbital 0","precip24":"Isabel PRECIP 24","qmcpack144":"QMCPACK Orbital 144","aramco1800":"Aramco 1800","vd01_31":"CESM VD01 31","letkf_pres":"SCALE-LETKF PRES","letkf_t":"SCALE-LETKF T"}
 multiline_names={"isabel":"Isabel P\n24","cesmt":"CESM T\n31","aramco":"Aramco\n1800","letkf":"SCALE-LETKF\nPRES","letkf_qv":"SCALE-LETKF\nQV","qmcpack":"QMCPACK\nOrbital 0","precip24":"Isabel PRECIP\n24","qmcpack144":"QMCPACK\nOrbital 144","aramco1800":"Aramco\n1800","vd01_31":"CESM VD01\n31","letkf_pres":"SCALE-LETKF\nPRES","letkf_t":"SCALE-LETKF\nT"}
+row_names={**multiline_names,"precip24":"Isabel PRECIP 24","aramco1800":"Aramco 1800"}
+
+
+def hide_outside_x_tick_labels(axis):
+    lower,upper=axis.get_xlim()
+    for location,label in zip(axis.get_xticks(),axis.get_xticklabels()):
+        if location<lower or location>upper:label.set_visible(False)
 
 
 def read_family(path,family):
@@ -53,6 +60,7 @@ def draw_panel(axis,directory,key,families,paperfig_layout=False):
     axis.xaxis.set_major_locator(LogLocator(base=10,numticks=3))
     axis.xaxis.set_minor_locator(NullLocator())
     axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
+    hide_outside_x_tick_labels(axis)
     if paperfig_layout:
         style_paper_axis(axis)
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
@@ -86,7 +94,7 @@ def render_paperfig_row(spec,output_png):
     handles=family_legend_handles(spec["families"])
     order=(0,3,1,4,2,5)
     legend_above(axes[1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=5))
-    captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {multiline_names[key]}" for index,(key,_) in enumerate(datasets)],gap_pt=2,source="ticks")
+    captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {row_names[key]}" for index,(key,_) in enumerate(datasets)],gap_pt=2,source="ticks")
     add_shared_xlabel(figure,axes,"Bit rate (bits/value)",gap_pt=2,source_artists=captions)
     output_png.parent.mkdir(parents=True,exist_ok=True)
     save_paper_png_vertical_crop(figure,output_png,paper_spec,edge_gap_pt=3)

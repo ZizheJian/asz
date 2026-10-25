@@ -48,6 +48,10 @@ def render(rows,output_png):
     for axis,(dataset,_) in zip(axes,datasets):
         selected=[row for row in rows if row["dataset"]==dataset]
         bounds=sorted({row["rel_eb"] for row in selected},reverse=True)
+        groups={bound:[row for row in selected if row["rel_eb"]==bound] for bound in bounds}
+        max_bound=max(bounds,key=lambda bound:max(row["BR"] for row in groups[bound])/min(row["BR"] for row in groups[bound]))
+        max_group=groups[max_bound]
+        max_ratio=max(row["BR"] for row in max_group)/min(row["BR"] for row in max_group)
         for order in orders:
             points=[next(row for row in selected if row["rel_eb"]==bound and row["qb_order"]==order) for bound in bounds]
             axis.plot([row["BR"] for row in points],[row["PSNR"] for row in points],linewidth=.8,marker=markers[order],markersize=2.5,markerfacecolor="white",markeredgewidth=.55,**styles[order])
@@ -58,26 +62,10 @@ def render(rows,output_png):
         style_plot_axis(axis)
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
         axis.set_axisbelow(True)
-        if dataset=="aramco1800":
-            focus=[row for row in selected if row["rel_eb"]==.001]
-            best=min(focus,key=lambda row:row["BR"])
-            worst=max(focus,key=lambda row:row["BR"])
-            ratio=worst["BR"]/best["BR"]
-            span=worst["BR"]-best["BR"]
-            center=sum(row["PSNR"] for row in focus)/len(focus)
-            inset=axis.inset_axes([.07,.53,.51,.32])
-            for order in orders:
-                point=next(row for row in focus if row["qb_order"]==order)
-                inset.plot(point["BR"],point["PSNR"],marker=markers[order],markersize=3.2,markerfacecolor="white",markeredgewidth=.65,linestyle="None",**styles[order])
-            inset.set_xlim(best["BR"]-.25*span,worst["BR"]+.25*span)
-            inset.set_ylim(center-.16,center+.16)
-            inset.set_xticks((best["BR"],worst["BR"]),labels=(f"{best['BR']:.4f}",f"{worst['BR']:.4f}"))
-            inset.set_yticks(())
-            inset.tick_params(axis="x",labelsize=5.5,length=2,pad=1)
-            inset.set_title(rf"$\epsilon=10^{{-3}}$: {ratio:.2f}$\times$",fontsize=6,pad=1)
-            for spine in inset.spines.values():
-                spine.set_linewidth(.5)
-            inset.annotate("",xy=(worst["BR"],center-.1),xytext=(best["BR"],center-.1),arrowprops={"arrowstyle":"<->","color":".25","linewidth":.5,"shrinkA":0,"shrinkB":0})
+        for order in orders:
+            point=next(row for row in max_group if row["qb_order"]==order)
+            axis.plot(point["BR"],point["PSNR"],marker=markers[order],markersize=3,markerfacecolor=styles[order]["color"],markeredgewidth=.55,linestyle="None",**styles[order])
+        axis.text(.04,.95,rf"Max. CR ratio: {max_ratio:.2f}$\times$",transform=axis.transAxes,fontsize=6,ha="left",va="top",bbox={"facecolor":"white","edgecolor":"none","pad":.5,"alpha":.8})
     axes[0].set_ylabel("PSNR (dB)")
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],label=rf"${axis}$ fastest",linewidth=.8,marker=markers[order],markersize=2.5,markerfacecolor="white",markeredgewidth=.55,**styles[order]) for axis,order in zip(("x","y","z"),orders)]
