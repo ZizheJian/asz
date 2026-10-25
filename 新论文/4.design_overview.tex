@@ -1,12 +1,12 @@
 \section{ASZ Architecture and Tuning Granularity}
 \label{sec:overview}
 
-ASZ follows the preprocessing--compression organization of the SZ pipeline while changing how configurations are generated and applied. During preprocessing, ASZ constructs a configuration plan that specifies the prediction axis and QB serialization order for each round. During compression, this plan guides prediction, while coefficient adaptation is performed separately for each data block. Figure~\ref{fig:overview:asz-workflow} summarizes this workflow.
+ASZ follows the preprocessing--compression organization of the SZ pipeline while changing how configurations are generated and applied. During preprocessing, ASZ constructs a configuration plan that specifies one prediction stencil for the entire field, together with one prediction axis and one QB serialization order for each round. During compression, this plan guides prediction, while coefficient adaptation is performed separately for each data block. Figure~\ref{fig:overview:asz-workflow} summarizes this workflow.
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/asz-workflow.pdf}
-\caption{ASZ workflow. Preprocessing constructs a configuration plan that specifies the prediction axis and QB serialization order for each round. The plan guides compression, including block-specific coefficient selection for 1D4R. 1D4R and 1D6R denote one-dimensional predictors using four and six references, respectively. Sections~\ref{sec:configuration-space:predictors}--\ref{sec:configuration-space:reference-count} detail their construction and selection.}
+\includegraphics[width=\columnwidth]{revised-fig/asz_diagram.png}
+\caption{ASZ workflow. Preprocessing constructs a configuration plan that specifies one prediction stencil for the entire field, together with one prediction axis and one QB serialization order for each round. The plan guides compression, including block-specific coefficient selection for 1D4R. 1D4R and 1D6R denote one-dimensional predictors using four and six references, respectively. Sections~\ref{sec:configuration-space:predictors}--\ref{sec:configuration-space:reference-count} detail their construction and selection.}
 \label{fig:overview:asz-workflow}
 \end{figure}
 
