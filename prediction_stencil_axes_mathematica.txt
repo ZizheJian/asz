@@ -38,38 +38,82 @@ viewTarget={0,0,0};
 viewPosition={8,-2.8,2.2};
 viewUpDirection={0,0,1};
 
-makePanel[references_,panelLabel_]:=Module[{backgroundPoints,tensorTubes,stencilTubes},
+makePanel[references_]:=Module[{backgroundPoints,tensorTubes,stencilTubes},
 backgroundPoints=Complement[tensorPoints,Join[{targetPoint},references]];
 tensorTubes=trimmedTube[#[[1]],pointRadius[#[[1]],references],#[[2]],pointRadius[#[[2]],references],tensorTubeRadius]&/@tensorEdges;
 stencilTubes=trimmedTube[#,referenceRadius,targetPoint,targetRadius,referenceTubeRadius]&/@references;
-Labeled[Graphics3D[{
+Graphics3D[{
 {tensorLineColor,tensorTubes},
 {referenceLineColor,stencilTubes},
 {tensorPointColor,Specularity[White,16],Sphere[#,tensorPointRadius]&/@backgroundPoints},
 {referenceColor,Specularity[White,20],Sphere[#,referenceRadius]&/@references},
 {targetColor,Specularity[White,20],Sphere[targetPoint,targetRadius]}},
-Boxed->False,Axes->False,ViewVector->{viewPosition,viewTarget},ViewVertical->viewUpDirection,ViewProjection->"Perspective",ViewAngle->26 Degree,SphericalRegion->False,BoxRatios->Automatic,PlotRange->{{-2.4,2.4},{-1.4,1.4},{-1.4,1.4}},PlotRangeClipping->True,ImagePadding->1,ImageMargins->0,ImageSize->{76,69},Lighting->{{"Ambient",GrayLevel[0.28]},{"Directional",GrayLevel[0.72],ImageScaled[{0.20,0.80,2.0}]},{"Directional",GrayLevel[0.30],ImageScaled[{0.80,0.20,2.0}]}},Method->{"SpherePoints"->96},Background->None],Style[panelLabel,Black,FontFamily->"Times",FontSize->9],Bottom,Spacings->0,Frame->None,FrameMargins->0,ImageMargins->0,Background->None]
+Boxed->False,Axes->False,ViewVector->{viewPosition,viewTarget},ViewVertical->viewUpDirection,ViewProjection->"Perspective",ViewAngle->26 Degree,SphericalRegion->False,BoxRatios->Automatic,PlotRange->{{-2.4,2.4},{-1.4,1.4},{-1.4,1.4}},PlotRangeClipping->True,ImagePadding->1,ImageMargins->0,ImageSize->Large,Lighting->{{"Ambient",GrayLevel[0.28]},{"Directional",GrayLevel[0.72],ImageScaled[{0.20,0.80,2.0}]},{"Directional",GrayLevel[0.30],ImageScaled[{0.80,0.20,2.0}]}},Method->{"SpherePoints"->96},Background->None]
 ];
 
-panels=MapThread[makePanel,{referenceSets,panelLabels}];
+panels=makePanel/@referenceSets;
 
-(*三个subfigure共用右侧单列legend。subcaption略大于legend文字。*)
+(*按IEEE单栏的最终物理尺寸直接生成图片，避免LaTeX再次缩放标题和legend。*)
+exportResolution=300;
+columnWidthPoints=252;
+pointsPerInch=72.27;
+exportWidthPixels=Round[columnWidthPoints*exportResolution/pointsPerInch];
+panelLabelFontSize=9;
 legendFontSize=8;
 pointLegend=PointLegend[{tensorPointColor,referenceColor,targetColor},{"Grid Point","Reference","Prediction Target"},LegendLayout->"Column",LegendMarkerSize->8,LabelStyle->Directive[Black,FontFamily->"Times",FontSize->legendFontSize],LegendFunction->(Framed[#,FrameStyle->None,Background->None,FrameMargins->0]&)];
 
-(*先组合三幅子图和右侧legend，总宽高比由内容自然决定。*)
-panelRow=GraphicsRow[panels,Spacings->0,ImageSize->228,Frame->None,Dividers->None,Background->None];
-stencilFigure=Labeled[panelRow,pointLegend,Right,Spacings->0,Frame->None,FrameMargins->0,ImageMargins->0,Background->None];
-stencilFigure
+(*三维主体使用alpha通道裁边，标题和legend按最终字号独立渲染。*)
+plotImages=ImageCrop[Rasterize[#,"Image",ImageResolution->exportResolution,Background->None]]&/@panels;
+labelImages=ImageCrop[Rasterize[Style[#,Black,FontFamily->"Times",FontSize->panelLabelFontSize],"Image",ImageResolution->exportResolution,Background->White]]&/@panelLabels;
+legendImage=ImageCrop[Rasterize[pointLegend,"Image",ImageResolution->exportResolution,Background->White]];
 
-(*导出到当前Notebook所在目录；若Notebook尚未保存，则导出到当前工作目录。*)
-outputDirectory=Quiet@Check[NotebookDirectory[],Directory[]];
-If[!StringQ[outputDirectory],outputDirectory=Directory[]];
-pdfPath=FileNameJoin[{outputDirectory,"stencils-in-3-directions.pdf"}];
-exportResolution=600;
-exportImage=Rasterize[stencilFigure,"Image",ImageResolution->exportResolution,Background->White];
-outerPadding=Round[1.5*exportResolution/72];
-exportImage=ImagePad[ImageCrop[exportImage],outerPadding,White];
-Export[pdfPath,exportImage,"PDF",ImageResolution->exportResolution];
+(*先为标题和legend保留最终尺寸，再将三幅三维主体缩放到剩余栏宽。*)
+horizontalPadding=6;
+verticalPadding=4;
+panelGap=4;
+labelGap=2;
+legendGap=8;
+legendWidth=ImageDimensions[legendImage][[1]];
+plotsTargetWidth=exportWidthPixels-2*horizontalPadding-2*panelGap-legendGap-legendWidth;
+If[plotsTargetWidth<=0,Print["Legend is too wide for the target column width."];Abort[]];
+panelTargetWidths=ConstantArray[Quotient[plotsTargetWidth,3],3];
+widthRemainder=Mod[plotsTargetWidth,3];
+If[widthRemainder>0,panelTargetWidths[[1;;widthRemainder]]+=1];
 
-pdfPath
+(*每个标题在自己的子图下方居中，标题不会随三维主体缩放。*)
+makePanelImage[plotImage_,labelImage_,targetWidth_]:=Module[{resizedPlot,paddedLabel,labelWidth},
+resizedPlot=RemoveAlphaChannel[ImageResize[plotImage,{targetWidth,Automatic}],White];
+labelWidth=ImageDimensions[labelImage][[1]];
+If[labelWidth>targetWidth,Print["Panel label is wider than its panel."];Abort[]];
+paddedLabel=ImagePad[labelImage,{{Floor[(targetWidth-labelWidth)/2],Ceiling[(targetWidth-labelWidth)/2]},{0,labelGap}},White];
+ImageAssemble[{{resizedPlot},{paddedLabel}}]
+];
+panelImages=MapThread[makePanelImage,{plotImages,labelImages,panelTargetWidths}];
+
+(*子图之间加入固定像素间距，然后将legend在右侧垂直居中。*)
+panelRow=ImageAssemble[{MapIndexed[If[First[#2]<Length[panelImages],ImagePad[#1,{{0,panelGap},{0,0}},White],#1]&,panelImages]}];
+panelRowHeight=ImageDimensions[panelRow][[2]];
+legendHeight=ImageDimensions[legendImage][[2]];
+contentHeight=Max[panelRowHeight,legendHeight];
+panelRowBottomPadding=Floor[(contentHeight-panelRowHeight)/2];
+panelRowTopPadding=contentHeight-panelRowHeight-panelRowBottomPadding;
+legendBottomPadding=Floor[(contentHeight-legendHeight)/2];
+legendTopPadding=contentHeight-legendHeight-legendBottomPadding;
+panelRow=ImagePad[panelRow,{{0,legendGap},{panelRowBottomPadding,panelRowTopPadding}},White];
+legendPanel=ImagePad[legendImage,{{0,0},{legendBottomPadding,legendTopPadding}},White];
+exportImage=ImageAssemble[{{panelRow,legendPanel}}];
+
+(*最后添加页面留白，并精确固定为IEEE单栏宽度。*)
+croppedExportImage=ImagePad[exportImage,{{horizontalPadding,horizontalPadding},{verticalPadding,verticalPadding}},White];
+finalImage=ImageResize[croppedExportImage,{exportWidthPixels,Automatic}];
+finalImage
+
+(*直接覆盖论文引用的300 dpi PNG。Notebook应保存在项目根目录。*)
+projectDirectory=Quiet@Check[NotebookDirectory[],Directory[]];
+If[!StringQ[projectDirectory],projectDirectory=Directory[]];
+outputDirectory=FileNameJoin[{projectDirectory,"新论文","revised-fig","raster300"}];
+If[!DirectoryQ[outputDirectory],CreateDirectory[outputDirectory,CreateIntermediateDirectories->True]];
+pngPath=FileNameJoin[{outputDirectory,"stencils-in-3-directions.png"}];
+Export[pngPath,finalImage,"PNG",ImageResolution->exportResolution];
+
+pngPath

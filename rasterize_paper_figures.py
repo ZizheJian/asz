@@ -10,7 +10,6 @@ output_root=paper_root/"revised-fig"/"raster300"
 column_width_pt=252
 points_per_inch=72.27
 figures=(
-    "stencils-in-3-directions.pdf",
 )
 
 
