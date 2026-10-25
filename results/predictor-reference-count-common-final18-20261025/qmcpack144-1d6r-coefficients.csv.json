@@ -1,0 +1,107 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144",
+  "families": [
+    "1d6r"
+  ],
+  "retain": [
+    "coefficient"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_grids": {
+    "1d6r": "transition"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 0.0013169537500195053,
+      "coarse_mean_psnr": 62.288906892354575,
+      "fine_mean_rate": 0.030789642144859342,
+      "fine_mean_psnr": 64.21997258280868,
+      "slope": 65.5205139274706,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.0013169537500195053,
+      "coarse_mean_psnr": 62.288906892354575,
+      "fine_mean_rate": 0.39732941651925197,
+      "fine_mean_psnr": 72.2842121056147,
+      "slope": 25.23987539019616,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 0.030789642144859342,
+      "coarse_mean_psnr": 64.21997258280868,
+      "fine_mean_rate": 2.1355286345519064,
+      "fine_mean_psnr": 86.58542159206304,
+      "slope": 10.626233984327206,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.39732941651925197,
+      "coarse_mean_psnr": 72.2842121056147,
+      "fine_mean_rate": 5.39708352995139,
+      "fine_mean_psnr": 105.28471382379955,
+      "slope": 6.6004249348037005,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 2.1355286345519064,
+      "coarse_mean_psnr": 86.58542159206304,
+      "fine_mean_rate": 5.39708352995139,
+      "fine_mean_psnr": 105.28471382379955,
+      "slope": 5.733244673610245,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    }
+  },
+  "uniform_sample_count": 182753,
+  "input_rows": 1890,
+  "output_rows": 210,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r0_xx0.csv": "c20b9a4b419e0fdf9674a4e045dff96770daedd526260f5f0683ed253e859e51",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r0_xx1.csv": "d2097090cafa8c5d3ea11d429b2f8cdccc9f79fdc9018766023ba215f89b4cca",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r0_xx2.csv": "d45940a48debd38e71d77f5baf25f1fc5aece01831edafd4f8d7c2150e122a04",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r1_xx0.csv": "795185bc8e333467a2e42132370d3780571407c84e811471a57b8c9ce96a4061",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r1_xx1.csv": "6f8874a1904a35ffce1e9e1359a9b4c308287122331a992c37b5216916ad4b8a",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r1_xx2.csv": "605b2d2c694324024193ecd9c16d5801ccc4da49add533cbfceae43771af84f1",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r2_xx0.csv": "5fa6a2aace8d6f08fcf5c9fd267d6cc7f96360cd4c960ea3daac98f91f8c309f",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r2_xx1.csv": "68b93826eb4f538e47ed958af8ce00c1c8c78480067c1928daa35d785677d2a0",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/qmcpack144_1d6r2_xx2.csv": "f2cd2cdb946e81360c34b4e0433fb9dd8fc1c25ccbd59fee4cfba738dd22d1e2"
+  },
+  "program_sha256": "2c54ada4b25741d768660ac9bc633d7a572b7f156115ae32d69552fdf38c02e5"
+}

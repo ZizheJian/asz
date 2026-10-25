@@ -80,14 +80,14 @@ It should be noted that QoZ selects each one-dimensional predictor from only a f
 \subsection{Four- versus Six-Reference Prediction}
 \label{sec:configuration-space:reference-count}
 
-We next determine when the two additional references of 1D6R improve compression and whether their coefficients require tuning. We find that 1D6R benefits some data files and that fixed-quintic coefficients are generally sufficient in these cases.
+We next determine when the two additional references of 1D6R improve compression and whether their coefficients require tuning. The results show two regimes: 1D6R closely tracks 1D4R on some fields and clearly improves rate--distortion performance on others. Fixed-quintic coefficients account for most selected 1D6R settings, while a few fine-error cases benefit from transition coefficients.
 
-Figure~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the rate--distortion performance of 1D4R and 1D6R on six datasets. The two predictors perform nearly identically in most cases, while 1D6R offers advantages on some data files. Each predictor is evaluated along three prediction axes and therefore contributes three curves to each plot.
+Figure~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the two families on six fields from our final evaluation set. We use the same fixed checkerboard of interior targets as in Section~\ref{sec:configuration-space:dimensionality}. For each prediction axis and error bound, a common rate--distortion slope selects the best QB serialization order and the best coefficient from 13 1D4R candidates or 42 1D6R candidates. The 1D6R grid includes exact embeddings of all 13 1D4R candidates, so it can reproduce their prediction behavior while also exploring six-reference corrections. The curves are nearly coincident for PRECIP, VD01, and LETKF T, whereas 1D6R gives clear improvements for Aramco, LETKF PRES, and QMCPACK.
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/predictor-family-4r6r-middle/iv-1d4r-vs-1d6r-legacy-middle.pdf}
-\caption{Rate--distortion comparison of 1D4R and 1D6R. Each predictor contributes three curves, one per axis. The two predictors perform nearly identically in (a)--(c), whereas 1D6R offers advantages in (d)--(f).}
+\includegraphics[width=\columnwidth]{revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets.pdf}
+\caption{Rate--distortion comparison of 1D4R and 1D6R on common targets. Each family contributes three curves, one per prediction axis, after selecting its coefficient and QB serialization order. The curves nearly coincide in (a)--(c), while 1D6R improves rate--distortion performance in (d)--(f).}
 \label{fig:configuration-space:1d4r-vs-1d6r}
 \end{figure}
 
@@ -95,20 +95,17 @@ Figure~\ref{fig:configuration-space:1d6r-coefficients} further compares 1D6R und
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/1d6r-coefficients-middle/iv-1d6r-coefficients.pdf}
-\caption{Rate--distortion curves for 42 fixed 1D6R coefficient pairs. Fixed quintic interpolation is among the strongest settings overall.}
+\includegraphics[width=\columnwidth]{revised-fig/1d6r-coefficients-common-final18/iv-1d6r-coefficients-common-targets.pdf}
+\caption{Rate--distortion curves for 42 fixed 1D6R coefficient pairs on common targets. Fixed quintic interpolation follows the best-per-error-bound curve throughout Aramco and QMCPACK and at four of the five LETKF PRES error bounds.}
 \label{fig:configuration-space:1d6r-coefficients}
 \end{figure}
 
-Figure~\ref{fig:configuration-space:1d6r-coefficients} shows little improvement from searching the 42 coefficient pairs over the fixed-quintic setting $(a,b)=(3/256,-25/256)$ in Eq.~\eqref{eq:configuration-space:1d6r-prediction}. In fixed-quintic 1D6R, each outermost reference accounts for only about $0.84\%$ of the total absolute coefficient magnitude, yet this small weight provides an effective and precise correction. Changing the coefficient pair rarely improves this correction and can instead diminish its benefit. By contrast, changing $t$ in 1D4R directly redistributes substantial weight between the near and far reference pairs, producing a broader range of prediction behaviors. ASZ therefore chooses between variable-coefficient 1D4R and fixed-quintic 1D6R.
+After selecting the best direction and QB order for each field and error bound in Figure~\ref{fig:configuration-space:1d4r-vs-1d6r}, fixed quintic is the best 1D6R coefficient pair in 22 of 30 cases. Transition coefficients are selected in five cases, and the remaining three select an embedded 1D4R candidate. Figure~\ref{fig:configuration-space:1d6r-coefficients} shows that fixed quintic traces the best-per-error-bound curve at every Aramco and QMCPACK point and at four of five LETKF PRES points. The finest LETKF PRES bound is the visible exception where a transition coefficient improves the curve. In fixed-quintic 1D6R, each outermost reference accounts for only about $0.84\%$ of the total absolute coefficient magnitude, yet this small weight provides an effective correction. Changing $t$ in 1D4R directly redistributes substantial weight between the near and far reference pairs and therefore provides a broader range of prediction behaviors. ASZ retains variable-coefficient 1D4R and fixed-quintic 1D6R, then uses the family selector to choose between them for each field and error bound.
 
 % TODO: 最佳系数来自指定的有限网格，而非所有实数系数的全局最优。正式报告各prediction stencil的网格范围和步长。
 % 1D4R与2D4R使用results/predictor-dimensionality-common-final18-20261024。单轮、固定原始参考值，所有family、方向和QB顺序使用各维去掉两侧五层后的同一棋盘目标集合；机制段落是可能的解释，不是1D4R必然胜出的理论证明。
-% 第二组实验：Fig. 3为单栏两行三列。上排Isabel Pf24、CESM T t31、LETKF QV (log10)，下排Aramco 1800、LETKF PRES、QMCPACK orbital 0。使用results/predictor-family-4r6r-middle-21250842-recovered、results/predictor-family-4r6r-supplement-21274865-recovered及results/predictor-family-4r6r-qmcpack-orbital0-20261011。CLDICE原始测量仍保留，未计入当前六图；上排三例接近重合，Aramco与QMCPACK明显受益、PRES较温和。QMCPACK依据已有原始参考MSE选择为收益案例，因此此图不能用于估计总体收益出现频率。
-% 固定系数比较：results/1d6r-coefficients-three-20261011，每个数据42个系数各选5个方向/QB顺序最优点。QMCPACK为新增完整穷举，其他数据复用原始CSV。只有PRES的0.1端点局部参考完全重合且各轴码率不等，显式--expand-flat-reference扩至0.1与0.001的平均RD点，其他评分参考不变；具体端点及原CSV哈希保存在CSV/JSON。图4红线为固定五次系数，黑虚线为各误差界独立选择系数的最优点连线，并非另一个固定系数或插值后的包络。QMCPACK的5个误差界均选择固定五次系数，按三个方向分别选择时15个点也均为固定五次系数。
-% TODO: PRES在1e-5下过渡系数(247/1536,379/1536)、x方向、xx2优于固定五次系数：BR=0.043723358585859、PSNR=113.0988287234236；固定五次最佳BR=0.053443181818182、PSNR=109.41677733253238，甚至被1D4R的BR=0.051559848484848、PSNR=112.171002012328898压倒。因此结论为固定五次系数总体表现较好，不能写“总是最优”；仍需量化固定系数的完整压缩损失。
+% 第二组实验与固定系数比较均使用results/predictor-reference-count-common-final18-20261025。Fig. 3上排为PRECIP 24、VD01 31、LETKF T，下排为Aramco 1800、LETKF PRES、QMCPACK orbital 144。所有family、方向、QB顺序和系数使用相同的公共目标点。42组transition系数包含固定五次、六点等权、全部13组嵌入1D4R以及类别间中点。30个field--EB组合中，最佳1D6R系数为固定五次22次、过渡系数5次、嵌入1D4R 3次。Fig. 4从同一批原始CSV中逐系数选择最佳方向和QB顺序。
 % TODO: results/predictor-family-paper-refined与revised-fig/predictor-family-refined为共享目标、原始参考值固定的采样单轮诊断，不能当作完整ASZ压缩器结果。历史完整压缩器选择器验证的来源为results/predictor_family_rd_extremes_*.csv，仍需扩展数据和误差界检验泛化。
-% 第二组候选使用transition模式的42组有理数参数，覆盖全部13组1D4R；shared1d模式统一四点和六点预测的目标位置。结论依据实际RD结果，不能由ASZ选择记录代替。
 
 \subsection{Quantization-Bin Serialization Order}
 \label{sec:configuration-space:serialization}

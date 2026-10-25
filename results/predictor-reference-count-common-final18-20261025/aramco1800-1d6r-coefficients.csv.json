@@ -1,0 +1,107 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800",
+  "families": [
+    "1d6r"
+  ],
+  "retain": [
+    "coefficient"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_grids": {
+    "1d6r": "transition"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 0.0008859030935986561,
+      "coarse_mean_psnr": 58.200734268072196,
+      "fine_mean_rate": 0.032540392945137823,
+      "fine_mean_psnr": 62.78196683377005,
+      "slope": 144.72615376788627,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.0008859030935986561,
+      "coarse_mean_psnr": 58.200734268072196,
+      "fine_mean_rate": 0.2975565334398112,
+      "fine_mean_psnr": 74.0273225561822,
+      "slope": 53.34733765064808,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 0.032540392945137823,
+      "coarse_mean_psnr": 62.78196683377005,
+      "fine_mean_rate": 1.197812818409418,
+      "fine_mean_psnr": 89.78635092695325,
+      "slope": 23.174309717681535,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.2975565334398112,
+      "coarse_mean_psnr": 74.0273225561822,
+      "fine_mean_rate": 3.0065779391642873,
+      "fine_mean_psnr": 107.26388541173704,
+      "slope": 12.268844677757853,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 1.197812818409418,
+      "coarse_mean_psnr": 89.78635092695325,
+      "fine_mean_rate": 3.0065779391642873,
+      "fine_mean_psnr": 107.26388541173704,
+      "slope": 9.662688805879737,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    }
+  },
+  "uniform_sample_count": 21681113,
+  "input_rows": 1890,
+  "output_rows": 210,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r0_xx0.csv": "58aa5bf3d363d61d497b40ca89046d99a92f548ef3b8a678c5d24dca26d70d42",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r0_xx1.csv": "01a36814fdaae052f45caf0458111adb47f7806ad13ba545c80f519ca4deb886",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r0_xx2.csv": "aaf85e207e499bbd47f44e5bdeefb7044b523619275a8bc46d672d8bfeb51832",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r1_xx0.csv": "f645544751ddff177022c99e3506c39652a264a732f69592f6f5a0877e24fee1",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r1_xx1.csv": "aaaddf77a75df0b32d83854f6667936dbd6da04ec11bf211c98dfb8bcbb1fe38",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r1_xx2.csv": "b6b1a1c984c72cc315a11d1a36ae00d9ec0ff7720af6885316c9c7c8b60eb329",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r2_xx0.csv": "c3f2d6f6be170a6e6c8edb8a83ff43a0ce8b08c9d492cd6630554a97072da99b",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r2_xx1.csv": "463c129fd38982462716f22747eef991f77aa19c48dcbc2a5ed1e53d9802f3cc",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/aramco1800_1d6r2_xx2.csv": "e137edd6deb2dac8a37d46632c6146d6b3ab08e6bb0edef887375cb04cbfac42"
+  },
+  "program_sha256": "2c54ada4b25741d768660ac9bc633d7a572b7f156115ae32d69552fdf38c02e5"
+}

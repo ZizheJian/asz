@@ -468,7 +468,8 @@ try
 {
     if (argc==2&&string(argv[1])=="--help")
     {
-        printf("usage: s2_many_prediction input dim0 dim1 dim2 output_prefix [1d4r|2d4r|1d6r|all [eb0,eb1,... [legacy|augmented|transition [legacy|shared1d|common]]]]\n");
+        printf("usage: s2_many_prediction input dim0 dim1 dim2 output_prefix [family-or-stencil [eb0,eb1,... [legacy|augmented|transition [legacy|shared1d|common]]]]\n");
+        printf("family-or-stencil: 1d4r, 2d4r, 1d6r, all, or one exact stencil such as 1d4r2 or 1d6r0\n");
         return 0;
     }
     if (argc!=1&&(argc<6||argc>10))
@@ -495,8 +496,9 @@ try
         while (getline(bounds,bound,','))
             rel_eb_vec.push_back(stod(bound));
     }
-    if (family!="all"&&family!="1d4r"&&family!="2d4r"&&family!="1d6r")
-        throw runtime_error("unknown predictor family");
+    vector<string> stencil_vec={"1d4r0","1d4r1","1d4r2","2d4r01","2d4r02","2d4r12","1d6r0","1d6r1","1d6r2"};
+    if (family!="all"&&family!="1d4r"&&family!="2d4r"&&family!="1d6r"&&find(stencil_vec.begin(),stencil_vec.end(),family)==stencil_vec.end())
+        throw runtime_error("unknown predictor family or stencil");
     string six_grid=argc>=9?argv[8]:"legacy";
     if (six_grid!="legacy"&&six_grid!="augmented"&&six_grid!="transition")
         throw runtime_error("six-reference grid must be legacy, augmented or transition");
@@ -510,7 +512,7 @@ try
         if (!isfinite(bound)||bound<=0)
             throw runtime_error("error bounds must be positive and finite");
     vector<string> predictor_vec;
-    for (string stencil:{"1d4r0","1d4r1","1d4r2","2d4r01","2d4r02","2d4r12","1d6r0","1d6r1","1d6r2"})
+    for (const string &stencil:stencil_vec)
         if (family=="all"||stencil.starts_with(family))
             for (int order=0;order<3;order++)
                 predictor_vec.push_back(stencil+"_xx"+to_string(order));

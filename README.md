@@ -124,7 +124,7 @@ The current manuscript entry point is `新论文/main.tex`. It directly includes
 
 ```bash
 module load anaconda/2024.02-py311
-python plot_predictor_rd.py fig7-final18
+python plot_predictor_rd.py fig7-final18 fig8-final18 fig9
 ```
 
 Run the test suite in the same plotting environment:

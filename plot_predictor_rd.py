@@ -1,4 +1,4 @@
-import argparse,csv
+import argparse,csv,math
 from collections import defaultdict
 from pathlib import Path
 
@@ -13,8 +13,8 @@ from paper_plot_layout import PANEL_ASPECT,add_panel_footers,place_legend_above_
 project_root=Path(__file__).resolve().parent
 family_styles=((0,(3,2)),(0,(1.5,1)),(0,(3,1.5,.75,1)))
 family_colors=("#2166ac","#b2182b")
-names={"isabel":"Isabel P 24","cldice":"CESM CLDICE 31","cesmt":"CESM T 31","aramco":"Aramco 1800","letkf":"SCALE-LETKF PRES","letkf_qv":"SCALE-LETKF QV","qmcpack":"QMCPACK Orbital 0","precip24":"Isabel PRECIP 24","qmcpack144":"QMCPACK Orbital 144","aramco1800":"Aramco 1800"}
-multiline_names={"isabel":"Isabel P\n24","cesmt":"CESM T\n31","aramco":"Aramco\n1800","letkf":"SCALE-LETKF\nPRES","letkf_qv":"SCALE-LETKF\nQV","qmcpack":"QMCPACK\nOrbital 0","precip24":"Isabel PRECIP\n24","qmcpack144":"QMCPACK\nOrbital 144","aramco1800":"Aramco\n1800"}
+names={"isabel":"Isabel P 24","cldice":"CESM CLDICE 31","cesmt":"CESM T 31","aramco":"Aramco 1800","letkf":"SCALE-LETKF PRES","letkf_qv":"SCALE-LETKF QV","qmcpack":"QMCPACK Orbital 0","precip24":"Isabel PRECIP 24","qmcpack144":"QMCPACK Orbital 144","aramco1800":"Aramco 1800","vd01_31":"CESM VD01 31","letkf_pres":"SCALE-LETKF PRES","letkf_t":"SCALE-LETKF T"}
+multiline_names={"isabel":"Isabel P\n24","cesmt":"CESM T\n31","aramco":"Aramco\n1800","letkf":"SCALE-LETKF\nPRES","letkf_qv":"SCALE-LETKF\nQV","qmcpack":"QMCPACK\nOrbital 0","precip24":"Isabel PRECIP\n24","qmcpack144":"QMCPACK\nOrbital 144","aramco1800":"Aramco\n1800","vd01_31":"CESM VD01\n31","letkf_pres":"SCALE-LETKF\nPRES","letkf_t":"SCALE-LETKF\nT"}
 
 
 def read_family(path,family):
@@ -87,10 +87,15 @@ def render_figure(spec,output_pdf,output_png):
 
 
 def render_coefficient_figure(output_pdf,output_png):
-    input_path=project_root/"results/1d6r-coefficients-three-20261011/selected.csv"
-    with input_path.open(newline="",encoding="utf-8") as source:
-        rows=list(csv.DictReader(source))
-    selected=("aramco","letkf","qmcpack")
+    input_directory=project_root/"results/predictor-reference-count-common-final18-20261025"
+    selected=("aramco1800","letkf_pres","qmcpack144")
+    rows=[]
+    for key in selected:
+        with (input_directory/f"{key}-1d6r-coefficients.csv").open(newline="",encoding="utf-8") as source:
+            for row in csv.DictReader(source):
+                row["dataset"]=key
+                row["coefficient_kind"]="quintic" if math.isclose(float(row["t1"]),119/768,rel_tol=1e-12,abs_tol=1e-15) and math.isclose(float(row["t2"]),203/768,rel_tol=1e-12,abs_tol=1e-15) else "other"
+                rows.append(row)
     coefficient_styles={"quintic":{"color":"#b2182b","linewidth":1.1,"linestyle":"-"},"other":{"color":".72","linewidth":.45,"linestyle":"-"}}
     with plt.rc_context({"font.family":"Nimbus Roman","mathtext.fontset":"stix","font.size":8,"axes.labelsize":8,"xtick.labelsize":8,"ytick.labelsize":8,"legend.fontsize":8,"pdf.fonttype":42,"ps.fonttype":42}):
         figure,axes=plt.subplots(1,3,figsize=(3.5,1.38),squeeze=False)
@@ -118,7 +123,7 @@ def render_coefficient_figure(output_pdf,output_png):
         handles=[Line2D([],[],label="Fixed quintic",**coefficient_styles["quintic"]),Line2D([],[],label="Best per error bound",color=".1",linewidth=.85,linestyle=(0,(2.5,2.5))),Line2D([],[],label="Other coefficients",**coefficient_styles["other"])]
         legend=figure.legend(handles=handles,loc="upper center",bbox_to_anchor=(.5,1),ncol=3,frameon=False,handlelength=1,handletextpad=.3,columnspacing=.4,borderaxespad=0)
         place_legend_above_axes(figure,legend,list(axes.flat))
-        add_panel_footers(figure,list(axes.flat),["(a) Aramco\n1800","(b) SCALE-LETKF\nPRES","(c) QMCPACK\nOrbital 0"],3,"Bit rate (bits/value)",8,caption_gap_pt=1,xlabel_gap_pt=3,xlabel_x=.55)
+        add_panel_footers(figure,list(axes.flat),["(a) Aramco\n1800","(b) SCALE-LETKF\nPRES","(c) QMCPACK\nOrbital 144"],3,"Bit rate (bits/value)",8,caption_gap_pt=1,xlabel_gap_pt=3,xlabel_x=.55)
         figure.supylabel("PSNR (dB)",x=.005,fontsize=8)
         output_pdf.parent.mkdir(parents=True,exist_ok=True)
         figure.savefig(output_pdf)
@@ -135,6 +140,7 @@ def specifications():
         "fig7":{"families":("1d4r","2d4r"),"datasets":[("isabel",legacy),("cldice",legacy),("aramco",legacy)],"output":project_root/"新论文/revised-fig/predictor-family-legacy-middle/iv-1d4r-vs-2d4r-legacy-middle","height":1.46,"bottom":.32,"caption_gap":.5,"xlabel_gap":3,"xlabel_x":.55},
         "fig7-final18":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-common-final18-20261024"),("qmcpack144",project_root/"results/predictor-dimensionality-common-final18-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-common-final18-20261024")],"output":project_root/"新论文/revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets","height":1.6,"bottom":.36,"caption_gap":.5,"xlabel_gap":3,"xlabel_x":.55,"multiline_labels":True},
         "fig8":{"families":("1d4r","1d6r"),"datasets":[("isabel",main),("cesmt",main),("letkf_qv",supplement),("aramco",main),("letkf",supplement),("qmcpack",qmcpack)],"output":project_root/"新论文/revised-fig/predictor-family-4r6r-middle/iv-1d4r-vs-1d6r-legacy-middle","height":2.8,"bottom":.24,"caption_gap":1,"xlabel_gap":3,"xlabel_x":.55},
+        "fig8-final18":{"families":("1d4r","1d6r"),"datasets":[("precip24",project_root/"results/predictor-reference-count-common-final18-20261025"),("vd01_31",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_t",project_root/"results/predictor-reference-count-common-final18-20261025"),("aramco1800",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_pres",project_root/"results/predictor-reference-count-common-final18-20261025"),("qmcpack144",project_root/"results/predictor-reference-count-common-final18-20261025")],"output":project_root/"新论文/revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets","height":2.8,"bottom":.24,"caption_gap":1,"xlabel_gap":3,"xlabel_x":.55},
     }
 
 
@@ -149,7 +155,7 @@ def main():
         parser.error(f"unknown figures: {', '.join(sorted(unknown))}")
     for name in figures:
         if name=="fig9":
-            output=project_root/"新论文/revised-fig/1d6r-coefficients-middle/iv-1d6r-coefficients"
+            output=project_root/"新论文/revised-fig/1d6r-coefficients-common-final18/iv-1d6r-coefficients-common-targets"
             render_coefficient_figure(output.with_suffix(".pdf"),output.with_suffix(".png"))
             print(f"wrote {output}.pdf")
             continue

@@ -1,0 +1,107 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres",
+  "families": [
+    "1d6r"
+  ],
+  "retain": [
+    "coefficient"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_grids": {
+    "1d6r": "transition"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 3.4666272929999998e-06,
+      "coarse_mean_psnr": 74.2532890174229,
+      "fine_mean_rate": 3.4666272929999998e-06,
+      "fine_mean_psnr": 74.2532890174229,
+      "slope": null,
+      "score_kind": "equal-rate",
+      "candidate_count": 378
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 3.4666272929999998e-06,
+      "coarse_mean_psnr": 74.2532890174229,
+      "fine_mean_rate": 0.03470977933657126,
+      "fine_mean_psnr": 75.35431122715181,
+      "slope": 31.72397537450203,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 3.4666272929999998e-06,
+      "coarse_mean_psnr": 74.2532890174229,
+      "fine_mean_rate": 0.5668402921817229,
+      "fine_mean_psnr": 87.32643128245273,
+      "slope": 23.063325591527743,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.03470977933657126,
+      "coarse_mean_psnr": 75.35431122715181,
+      "fine_mean_rate": 2.1913411948261183,
+      "fine_mean_psnr": 105.55641659519313,
+      "slope": 14.004296307250794,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.5668402921817229,
+      "coarse_mean_psnr": 87.32643128245273,
+      "fine_mean_rate": 2.1913411948261183,
+      "fine_mean_psnr": 105.55641659519313,
+      "slope": 11.221899158729464,
+      "score_kind": "shared-tangent",
+      "candidate_count": 378
+    }
+  },
+  "uniform_sample_count": 62308400,
+  "input_rows": 1890,
+  "output_rows": 210,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r0_xx0.csv": "4c4af8d2f3ce571550ca379b19fe99adc17712de48e22c183d251d3641007bd9",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r0_xx1.csv": "41d6ee2c66ba7b354272452204f079d8e096f5c09ceaf3e60bbfb9a4ec7a7c3d",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r0_xx2.csv": "e37b4ea3f3171ddd2a083c62c379b6013dbd6cdeb8d106dde48ad7d282ad0bfc",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r1_xx0.csv": "50c932fd002d4f9464c3bf86e93dc55d36b78b080093571260f5f65039cf3928",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r1_xx1.csv": "ab74034292773d0adc8dc84e3da417911877e0037c2590d86ea3bc34186db5ef",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r1_xx2.csv": "b74d0333d090b63a5392cb093a4a068a2844d0a9dd96a7b4460025a2422e02b4",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r2_xx0.csv": "8899d558a1d195a818d61843a69a56cff1bcec5dcc471a7a872a2d5ff5de0896",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r2_xx1.csv": "f2e6802f470b51f4fc5105713bc6f6c2f28efe9f626efe8d4ed512539ee2a7fa",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/letkf_pres_1d6r2_xx2.csv": "493418cbcc0082b7248aedad011d4441be737aa21a2386a86a03160fc0cb4893"
+  },
+  "program_sha256": "2c54ada4b25741d768660ac9bc633d7a572b7f156115ae32d69552fdf38c02e5"
+}

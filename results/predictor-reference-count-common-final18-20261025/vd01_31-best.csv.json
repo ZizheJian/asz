@@ -1,0 +1,118 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31",
+  "families": [
+    "1d4r",
+    "1d6r"
+  ],
+  "retain": [
+    "axis"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_grids": {
+    "1d6r": "transition",
+    "1d4r": "1d4r"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 4.954542232545455e-06,
+      "coarse_mean_psnr": 83.89062300626458,
+      "fine_mean_rate": 0.0023155908220880038,
+      "fine_mean_psnr": 84.46804708941882,
+      "slope": 249.89830212064453,
+      "score_kind": "shared-tangent",
+      "candidate_count": 495
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 4.954542232545455e-06,
+      "coarse_mean_psnr": 83.89062300626458,
+      "fine_mean_rate": 0.033554744783701684,
+      "fine_mean_psnr": 90.15343115839232,
+      "slope": 186.67205091454244,
+      "score_kind": "shared-tangent",
+      "candidate_count": 495
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 0.0023155908220880038,
+      "coarse_mean_psnr": 84.46804708941882,
+      "fine_mean_rate": 0.19171027465486,
+      "fine_mean_psnr": 101.94467007986323,
+      "slope": 92.27620668527094,
+      "score_kind": "shared-tangent",
+      "candidate_count": 495
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.033554744783701684,
+      "coarse_mean_psnr": 90.15343115839232,
+      "fine_mean_rate": 0.5955237603466544,
+      "fine_mean_psnr": 117.96107445074396,
+      "slope": 49.48252042774159,
+      "score_kind": "shared-tangent",
+      "candidate_count": 495
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.19171027465486,
+      "coarse_mean_psnr": 101.94467007986323,
+      "fine_mean_rate": 0.5955237603466544,
+      "fine_mean_psnr": 117.96107445074396,
+      "slope": 39.662876398102895,
+      "score_kind": "shared-tangent",
+      "candidate_count": 495
+    }
+  },
+  "uniform_sample_count": 51408800,
+  "input_rows": 2475,
+  "output_rows": 30,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r0_xx0.csv": "982d8405620901c0f4ac7cd7f3630d1cba26bc4bc88d06841c21c96fa29d03f3",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r0_xx1.csv": "c2ab5b07414785467a0a3014820814481850726b05b1f0584de7aedc7b54f59a",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r0_xx2.csv": "b0920c8785b8cf1da0c936fdfdc0d18be18c8d1b9f31e904facabf7a85b818a5",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r1_xx0.csv": "98be0e475cee5de84f924bc523348e5220dff46bb2faa1cbdcbfd0ce02c97660",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r1_xx1.csv": "d731895ead86501c812fd1c302ef962bc7a476fc47c5f31cc741f93a6d6cf236",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r1_xx2.csv": "a317703a35d7069712c3c53fb38c365c4a879b3632d090b8583f1061d7c643ed",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r2_xx0.csv": "9ce322f6ac1456b0115d8e9dc1f450b1a5cb0c1202f3050b27a5204d4973b922",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r2_xx1.csv": "d4b11fe7696287b0ca85c3bfd3423b81e2396e11843f084cae7833a6784e1c96",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d4r2_xx2.csv": "85e40808a923fdd0615fce5d86ea143a647f4a81e25ee1953938738815e7878d",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r0_xx0.csv": "dd48cd54265b20afc7034e711c8cd79e0a10552ff505b3eab42cd18c30c0a4d6",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r0_xx1.csv": "87c9cc21f78342deb2615cc7444a7647260063bf6908aed6e9d0c482066580d5",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r0_xx2.csv": "081dd902b3de0446e7994e37952ec95c77a1da07288f5d7502d6e01d9c360cf6",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r1_xx0.csv": "69426cfbee96bc1c3cba80b1c2d9b8467b19c05b8eb2ad6574b406f742bbe500",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r1_xx1.csv": "d5add6b48017d41b8cd2b3e67c3f25949ff7ba883d0aa823444e6a6755612e48",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r1_xx2.csv": "9309ca317be8a639021cfb1536c0fe786f5443bede76b1846763cff914774188",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r2_xx0.csv": "ca4da5dfcd0340cbecf7cd7c8a8e1de94e8e5768080b34336d6fda044d7617b7",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r2_xx1.csv": "870ef0b0ac746e5b12e6ed284dd619288fe2ca7dd6638f81c569a4dbb9352b59",
+    "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r2_xx2.csv": "5a6ab5d834f5b2afc7a6e4c08c50bce86aedda0d6596842d9107323a9b2066a6"
+  },
+  "program_sha256": "2c54ada4b25741d768660ac9bc633d7a572b7f156115ae32d69552fdf38c02e5"
+}
