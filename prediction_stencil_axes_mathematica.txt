@@ -90,8 +90,15 @@ ImageAssemble[{{resizedPlot},{paddedLabel}}]
 ];
 panelImages=MapThread[makePanelImage,{plotImages,labelImages,panelTargetWidths}];
 
+(*裁边后的三维主体高度可能略有不同；在顶部补白，使三个标题保持同一基线。*)
+If[!And@@(ImageQ/@panelImages),Print["Failed to render one or more panels."];Abort[]];
+panelHeights=ImageDimensions[#][[2]]&/@panelImages;
+commonPanelHeight=Max@@panelHeights;
+panelImages=MapThread[ImagePad[#1,{{0,0},{0,commonPanelHeight-#2}},White]&,{panelImages,panelHeights}];
+
 (*子图之间加入固定像素间距，然后将legend在右侧垂直居中。*)
 panelRow=ImageAssemble[{MapIndexed[If[First[#2]<Length[panelImages],ImagePad[#1,{{0,panelGap},{0,0}},White],#1]&,panelImages]}];
+If[!ImageQ[panelRow],Print["Failed to assemble the panel row."];Abort[]];
 panelRowHeight=ImageDimensions[panelRow][[2]];
 legendHeight=ImageDimensions[legendImage][[2]];
 contentHeight=Max[panelRowHeight,legendHeight];
@@ -102,10 +109,12 @@ legendTopPadding=contentHeight-legendHeight-legendBottomPadding;
 panelRow=ImagePad[panelRow,{{0,legendGap},{panelRowBottomPadding,panelRowTopPadding}},White];
 legendPanel=ImagePad[legendImage,{{0,0},{legendBottomPadding,legendTopPadding}},White];
 exportImage=ImageAssemble[{{panelRow,legendPanel}}];
+If[!ImageQ[exportImage],Print["Failed to assemble the panels and legend."];Abort[]];
 
 (*最后添加页面留白，并精确固定为IEEE单栏宽度。*)
 croppedExportImage=ImagePad[exportImage,{{horizontalPadding,horizontalPadding},{verticalPadding,verticalPadding}},White];
 finalImage=ImageResize[croppedExportImage,{exportWidthPixels,Automatic}];
+If[!ImageQ[finalImage],Print["Failed to create the final image."];Abort[]];
 finalImage
 
 (*直接覆盖论文引用的300 dpi PNG。Notebook应保存在项目根目录。*)
