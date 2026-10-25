@@ -13,7 +13,6 @@ project_root=Path(__file__).resolve().parent
 datasets=(("precip24","Isabel PRECIP\n24"),("qmcpack144","QMCPACK\nOrbital 144"),("aramco1800","Aramco\n1800"))
 orders=(0,1,2)
 styles={0:{"color":"#2166ac"},1:{"color":"#b2182b"},2:{"color":"#1b7837"}}
-markers={0:"o",1:"s",2:"^"}
 
 
 def load_rows(directory):
@@ -41,17 +40,26 @@ def load_rows(directory):
     return rows
 
 
-def render(rows,output_png):
+def render(rows,extension_rows,output_png):
     apply_paper_style()
     spec=PaperFigureSpec.column()
     figure,axes=plt.subplots(1,3,figsize=spec.size_in,dpi=spec.dpi,sharey=False)
     for axis,(dataset,_) in zip(axes,datasets):
-        selected=[row for row in rows if row["dataset"]==dataset]
+        local=[row for row in rows if row["dataset"]==dataset]
+        local_bounds=sorted({row["rel_eb"] for row in local},reverse=True)
+        outer=[row for row in extension_rows if row["dataset"]==dataset and (row["rel_eb"]>max(local_bounds) or row["rel_eb"]<min(local_bounds))]
+        selected=local+outer
         bounds=sorted({row["rel_eb"] for row in selected},reverse=True)
         for order in orders:
             points=[next(row for row in selected if row["rel_eb"]==bound and row["qb_order"]==order) for bound in bounds]
-            axis.plot([row["BR"] for row in points],[row["PSNR"] for row in points],linewidth=.8,marker=markers[order],markersize=2.5,markerfacecolor="white",markeredgewidth=.55,**styles[order])
+            axis.plot([row["BR"] for row in points],[row["PSNR"] for row in points],linewidth=.8,**styles[order])
+        local_rates=[row["BR"] for row in local]
+        local_psnr=[row["PSNR"] for row in local]
+        rate_padding=(max(local_rates)/min(local_rates))**.035
+        psnr_padding=(max(local_psnr)-min(local_psnr))*.04
         axis.set_xscale("log")
+        axis.set_xlim(min(local_rates)/rate_padding,max(local_rates)*rate_padding)
+        axis.set_ylim(min(local_psnr)-psnr_padding,max(local_psnr)+psnr_padding)
         axis.xaxis.set_major_locator(LogLocator(base=10,subs=(1,2,5),numticks=6))
         axis.xaxis.set_major_formatter(LogFormatterSciNotation(base=10,labelOnlyBase=True))
         axis.xaxis.set_minor_locator(NullLocator())
@@ -61,7 +69,7 @@ def render(rows,output_png):
         axis.set_axisbelow(True)
     axes[0].set_ylabel("PSNR (dB)")
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
-    handles=[Line2D([],[],label=rf"${axis}$ fastest",linewidth=.8,marker=markers[order],markersize=2.5,markerfacecolor="white",markeredgewidth=.55,**styles[order]) for axis,order in zip(("x","y","z"),orders)]
+    handles=[Line2D([],[],label=rf"${axis}$ fastest",linewidth=.8,**styles[order]) for axis,order in zip(("x","y","z"),orders)]
     legend_above(axes[1],handles=handles,ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=5))
     captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {label}" for index,(_,label) in enumerate(datasets)],gap_pt=2,source="ticks")
     add_shared_xlabel(figure,axes,"Bit rate (bits/value)",gap_pt=2,source_artists=captions)
@@ -73,9 +81,10 @@ def render(rows,output_png):
 def main():
     parser=argparse.ArgumentParser(description="Plot independently optimized QB serialization-order RD curves")
     parser.add_argument("--input-directory",type=Path,default=project_root/"results/qb-order-zoom-final18-20261025")
+    parser.add_argument("--extension-directory",type=Path,default=project_root/"results/qb-order-common-final18-20261025")
     parser.add_argument("--output-png",type=Path,default=project_root/"新论文/revised-fig/qb-order-rd.png")
     arguments=parser.parse_args()
-    render(load_rows(arguments.input_directory),arguments.output_png)
+    render(load_rows(arguments.input_directory),load_rows(arguments.extension_directory),arguments.output_png)
     print(f"wrote {arguments.output_png}")
 
 
