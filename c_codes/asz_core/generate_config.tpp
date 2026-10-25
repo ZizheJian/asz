@@ -111,7 +111,7 @@ namespace asz
                 cubic_prediction=-(data[pos-3*dist]+(double)data[pos+3*dist])/16+9*(data[pos-dist]+(double)data[pos+dist])/16;
             double quintic_prediction=cubic_prediction;
             if (i>=5&&i+5<right)
-                quintic_prediction=(75.0/128)*(data[pos-dist]+(double)data[pos+dist])-(25.0/256)*(data[pos-3*dist]+(double)data[pos+3*dist])+(3.0/256)*(data[pos-5*dist]+(double)data[pos+5*dist]);
+                quintic_prediction=one_d_six_quintic_inner*(data[pos-dist]+(double)data[pos+dist])+one_d_six_quintic_b*(data[pos-3*dist]+(double)data[pos+3*dist])+one_d_six_quintic_a*(data[pos-5*dist]+(double)data[pos+5*dist]);
             long double cubic_error=cubic_prediction-(double)data[pos];
             long double quintic_error=quintic_prediction-(double)data[pos];
             cubic_squared_error+=cubic_error*cubic_error;

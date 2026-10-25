@@ -11,7 +11,7 @@ class PredictionSweepSummaryTest(unittest.TestCase):
         self.temporary=tempfile.TemporaryDirectory()
         self.directory=Path(self.temporary.name)
         self.prefix=self.directory/"sample"
-        header=("rel_eb","t1","BR","H1","PSNR","RMSE","MAE","SAMPLES")
+        header=("rel_eb","t","BR","H1","PSNR","RMSE","MAE","SAMPLES")
         for axis in range(3):
             for order in range(3):
                 path=self.directory/f"sample_1d4r{axis}_xx{order}.csv"
@@ -21,7 +21,7 @@ class PredictionSweepSummaryTest(unittest.TestCase):
                     for bound,base_rate,base_psnr in ((.1,1,40),(.01,2,50),(.001,3,60)):
                         for coefficient in (index/32 for index in range(13)):
                             penalty=abs(axis-1)+order+abs(coefficient-.3125)*10
-                            writer.writerow({"rel_eb":bound,"t1":coefficient,"BR":base_rate+penalty*.01,"H1":base_rate+penalty*.02,"PSNR":base_psnr-penalty,"RMSE":penalty+1,"MAE":penalty+2,"SAMPLES":100})
+                            writer.writerow({"rel_eb":bound,"t":coefficient,"BR":base_rate+penalty*.01,"H1":base_rate+penalty*.02,"PSNR":base_psnr-penalty,"RMSE":penalty+1,"MAE":penalty+2,"SAMPLES":100})
 
     def tearDown(self):
         self.temporary.cleanup()
@@ -77,6 +77,33 @@ class PredictionSweepSummaryTest(unittest.TestCase):
         grids=six_reference_grids()
         self.assertEqual({name:len(grid) for name,grid in grids.items()},{"legacy":40,"augmented":52,"transition":42})
         self.assertTrue(all(len(set(grid))==len(grid) for grid in grids.values()))
+        self.assertIn((3/256,-25/256),grids["transition"])
+        self.assertIn((0,1/4),grids["transition"])
+        self.assertIn((0,-1/8),grids["transition"])
+
+    def test_legacy_six_reference_offsets_are_converted_to_weights(self):
+        path=self.directory/"legacy_1d6r0_xx0.csv"
+        with open(path,"w",newline="",encoding="utf-8") as output_file:
+            writer=csv.DictWriter(output_file,fieldnames=("rel_eb","t1","t2","BR","H1","PSNR","RMSE","MAE","SAMPLES"),lineterminator="\n")
+            writer.writeheader()
+            writer.writerow({"rel_eb":.001,"t1":119/768,"t2":203/768,"BR":1,"H1":1,"PSNR":80,"RMSE":1,"MAE":1,"SAMPLES":100})
+        rows,_=read_rows(self.directory/"legacy",{"1d6r"})
+        self.assertEqual(len(rows),1)
+        self.assertAlmostEqual(rows[0]["a"],3/256)
+        self.assertAlmostEqual(rows[0]["b"],-25/256)
+        self.assertIsNone(rows[0]["t"])
+
+    def test_six_reference_weight_columns_are_read_directly(self):
+        path=self.directory/"weights_1d6r0_xx0.csv"
+        with open(path,"w",newline="",encoding="utf-8") as output_file:
+            writer=csv.DictWriter(output_file,fieldnames=("rel_eb","a","b","BR","H1","PSNR","RMSE","MAE","SAMPLES"),lineterminator="\n")
+            writer.writeheader()
+            writer.writerow({"rel_eb":.001,"a":3/256,"b":-25/256,"BR":1,"H1":1,"PSNR":80,"RMSE":1,"MAE":1,"SAMPLES":100})
+        rows,_=read_rows(self.directory/"weights",{"1d6r"})
+        self.assertEqual(len(rows),1)
+        self.assertAlmostEqual(rows[0]["a"],3/256)
+        self.assertAlmostEqual(rows[0]["b"],-25/256)
+        self.assertIsNone(rows[0]["t"])
 
     def test_shared_slope_uses_averaged_auxiliary_bounds(self):
         rows,_=read_rows(self.prefix,{"1d4r"})

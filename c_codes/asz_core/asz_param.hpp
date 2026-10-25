@@ -69,6 +69,9 @@ namespace std
 namespace asz
 {
     using qb_t=int32_t;
+    inline constexpr double one_d_six_quintic_a=3.0/256;
+    inline constexpr double one_d_six_quintic_b=-25.0/256;
+    inline constexpr double one_d_six_quintic_inner=0.5-one_d_six_quintic_a-one_d_six_quintic_b;
 
     struct layer_diagnostics_c
     {

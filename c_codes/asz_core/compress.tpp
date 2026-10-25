@@ -9,7 +9,7 @@ namespace asz
         T pred;
         if(force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
         {
-            pred=(T)((75.0/128)*(compressed_data[pos-dist]+compressed_data[pos+dist])-(25.0/256)*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist])+(3.0/256)*(compressed_data[pos-5*dist]+compressed_data[pos+5*dist]));
+            pred=(T)(one_d_six_quintic_inner*(compressed_data[pos-dist]+compressed_data[pos+dist])+one_d_six_quintic_b*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist])+one_d_six_quintic_a*(compressed_data[pos-5*dist]+compressed_data[pos+5*dist]));
         }
         else if (i<=half_stride)
         {

@@ -8,7 +8,7 @@ namespace asz
         T pred;
         if(force_quintic&&i>=5*half_stride&&i+5*half_stride<right)
         {
-            pred=(T)((75.0/128)*(compressed_data[pos-dist]+compressed_data[pos+dist])-(25.0/256)*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist])+(3.0/256)*(compressed_data[pos-5*dist]+compressed_data[pos+5*dist]));
+            pred=(T)(one_d_six_quintic_inner*(compressed_data[pos-dist]+compressed_data[pos+dist])+one_d_six_quintic_b*(compressed_data[pos-3*dist]+compressed_data[pos+3*dist])+one_d_six_quintic_a*(compressed_data[pos-5*dist]+compressed_data[pos+5*dist]));
         }
         else if (i<=half_stride)
         {
@@ -179,7 +179,7 @@ namespace asz
             //////// 逐层解压 ////////
             for (uint32_t layer_id=0;layer_id<layer_num;layer_id++)
             {
-                //////// 获取最好t2 ////////
+                //////// 获取最佳t ////////
                 if (t_int_vec.empty())
                     throw runtime_error("compressed stream contains no t value");
                 T best_t=(T)t_int_vec[t_int_vec.size()==1?0:t_pos]/t_precision;

@@ -1,10 +1,10 @@
 // 这个程序模拟不同预测轴和QB顺序，并记录各组系数和rel_eb对应的BR、H1、PSNR、RMSE与MAE。
 // 1d4r预测公式是：
-//      err=(0.25-t1)*(data[-3]+data[3])+(0.25+t1)*(data[-1]+data[1])-data[0]
+//      err=(0.25-t)*(data[-3]+data[3])+(0.25+t)*(data[-1]+data[1])-data[0]
 // 2d4r预测公式是：
-//      err=(0.25+t1)*(data[-1,0]+data[1,0])+(0.25-t1)*(data[0,-1]+data[0,1])-data[0]
+//      err=(0.25+t)*(data[-1,0]+data[1,0])+(0.25-t)*(data[0,-1]+data[0,1])-data[0]
 // 1d6r预测公式是：
-//      err=(1/6-t1)*(data[-5]+data[5])+(1/6-t2)*(data[-3]+data[3])+(1/6+t1+t2)*(data[-1]+data[1])-data[0]
+//      err=a*(data[-5]+data[5])+b*(data[-3]+data[3])+(0.5-a-b)*(data[-1]+data[1])-data[0]
 
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@ using namespace std;
 using namespace csv_tools;
 
 void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<int64_t> &qb_vec,double max_val,double min_val,
-    double rel_eb,vector<double> &t_vec,double mse,double pred_rmse,double pred_mae);
+    double rel_eb,vector<double> &coefficient_vec,double mse,double pred_rmse,double pred_mae,const string &predictor);
 
 void compress_1d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_rmse,double &pred_mae,vector<float> &data,
     vector<uint64_t> &data_shape,vector<uint64_t> &adjacent_pos_dist_vec,double abs_eb,double neg_2_eb,vector<double> t_vec,
@@ -64,16 +64,16 @@ void compress_2d4r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_rmse,dou
 }
 
 void compress_1d6r_dot(vector<int64_t> &qb_vec,double &mse,double &pred_rmse,double &pred_mae,vector<float> &data,
-    vector<uint64_t> &data_shape,vector<uint64_t> &adjacent_pos_dist_vec,double abs_eb,double neg_2_eb,vector<double> t_vec,
+    vector<uint64_t> &data_shape,vector<uint64_t> &adjacent_pos_dist_vec,double abs_eb,double neg_2_eb,vector<double> coefficient_vec,
     uint64_t i0,uint64_t i1,uint64_t i2)
 {
     uint64_t adjacent_pos_dist=adjacent_pos_dist_vec[0];
-    double t1=t_vec[0];
-    double t2=t_vec[1];
+    double a=coefficient_vec[0];
+    double b=coefficient_vec[1];
     uint64_t pos=i0*data_shape[1]*data_shape[2]+i1*data_shape[2]+i2;
-    double pred=(1.0/6-t1)*(data[pos-5*adjacent_pos_dist]+data[pos+5*adjacent_pos_dist]);
-    pred+=(1.0/6-t2)*(data[pos-3*adjacent_pos_dist]+data[pos+3*adjacent_pos_dist]);
-    pred+=(1.0/6+t1+t2)*(data[pos-adjacent_pos_dist]+data[pos+adjacent_pos_dist]);
+    double pred=a*(data[pos-5*adjacent_pos_dist]+data[pos+5*adjacent_pos_dist]);
+    pred+=b*(data[pos-3*adjacent_pos_dist]+data[pos+3*adjacent_pos_dist]);
+    pred+=(0.5-a-b)*(data[pos-adjacent_pos_dist]+data[pos+adjacent_pos_dist]);
     pred_rmse+=pow(pred-data[pos],2);
     pred_mae+=fabs(pred-data[pos]);
     int64_t qb=llround((pred-data[pos])*neg_2_eb);
@@ -87,27 +87,27 @@ vector<vector<double>> six_reference_grid(const string &mode)
     if (mode=="transition")
     {
         // 三类端点：六点等权、五次插值、13组1D4R；再加入不同类别之间的中点。
-        vector<vector<double>> grid={{0,0},{119.0/768,203.0/768}};
+        vector<vector<double>> grid={{1.0/6,1.0/6},{3.0/256,-25.0/256}};
         for (int i=0;i<=12;i++)
-            grid.push_back({1.0/6,(3*i-8)/96.0});
-        grid.push_back({119.0/1536,203.0/1536});
+            grid.push_back({0,(8-i)/32.0});
+        grid.push_back({137.0/1536,53.0/1536});
         for (int i=0;i<=12;i++)
         {
-            grid.push_back({1.0/12,(3*i-8)/192.0});
-            grid.push_back({247.0/1536,(24*i+139)/1536.0});
+            grid.push_back({1.0/12,(40-3*i)/192.0});
+            grid.push_back({3.0/512,(39-8*i)/512.0});
         }
         return grid;
     }
     vector<vector<double>> grid;
     for (auto i1:{0,11,22,31,41})
     for (auto i2:{0,113,248,341,453,567,680,793})
-        grid.push_back({(float)i1/186,(float)i2/1488});
+        grid.push_back({1.0/6-(float)i1/186,1.0/6-(float)i2/1488});
     if (mode=="augmented")
     {
         // 保留旧网格，补入精确五次插值和全部1D4R候选；近似重复点替换为精确系数。
-        vector<vector<double>> exact={{119.0/768,203.0/768}};
+        vector<vector<double>> exact={{3.0/256,-25.0/256}};
         for (int i=0;i<=12;i++)
-            exact.push_back({1.0/6,i/32.0-1.0/12});
+            exact.push_back({0,(8-i)/32.0});
         for (const auto &candidate:exact)
         {
             auto match=find_if(grid.begin(),grid.end(),[&](const auto &point){return fabs(point[0]-candidate[0])<1e-7&&fabs(point[1]-candidate[1])<1e-7;});
@@ -191,9 +191,9 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
     else
         throw runtime_error("没见过的predictor");
     if ((predictor.starts_with("1d4r")) || (predictor.starts_with("2d4r")))
-        create_csv_header(temp_csv_path,"rel_eb","t1");
+        create_csv_header(temp_csv_path,"rel_eb","t");
     else if (predictor.starts_with("1d6r"))
-        create_csv_header(temp_csv_path,"rel_eb","t1","t2");
+        create_csv_header(temp_csv_path,"rel_eb","a","b");
     for (double rel_eb:rel_eb_vec)
     {
         double abs_eb=rel_eb*(max_val-min_val);
@@ -266,7 +266,7 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
                         compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 lossless_encode_and_write_csv(temp_csv_path,stride,qb_vec,max_val,min_val,rel_eb,t_vec,
-                    mse,pred_rmse,pred_mae);
+                    mse,pred_rmse,pred_mae,predictor);
             }
         }
         else if (predictor.starts_with("2d4r"))
@@ -336,82 +336,82 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
                         compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
                             t_vec,i0,i1,i2);
                 lossless_encode_and_write_csv(temp_csv_path,stride,qb_vec,max_val,min_val,rel_eb,t_vec,
-                    mse,pred_rmse,pred_mae);
+                    mse,pred_rmse,pred_mae,predictor);
             }
         }
         else if (predictor.starts_with("1d6r"))
         {
-            auto t_vec_vec=six_reference_grid(six_grid);
-            for (vector<double> &t_vec:t_vec_vec)
+            auto coefficient_vec_vec=six_reference_grid(six_grid);
+            for (vector<double> &coefficient_vec:coefficient_vec_vec)
             {
                 double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
                 qb_vec.reserve(qb_capacity);
                 if (targets=="common")
-                    for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,t_vec,i0,i1,i2);});
+                    for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,coefficient_vec,i0,i1,i2);});
                 else if (predictor=="1d6r0_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=5;i0+5<data_shape[0];i0+=2)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r0_xx1")
                     for (uint64_t i0=5;i0+5<data_shape[0];i0+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=1)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r0_xx2")
                     for (uint64_t i0=5;i0+5<data_shape[0];i0+=2*stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=1)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r1_xx0")
                     for (uint64_t i1=5;i1+5<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=0;i0<data_shape[0];i0+=1)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r1_xx1")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i1=5;i1+5<data_shape[1];i1+=2)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r1_xx2")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i1=5;i1+5<data_shape[1];i1+=2*stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=1)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r2_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=5;i2+5<data_shape[2];i2+=2*stride)
                     for (uint64_t i0=0;i0<data_shape[0];i0+=1)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r2_xx1")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i2=5;i2+5<data_shape[2];i2+=2*stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=1)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
+                            coefficient_vec,i0,i1,i2);
                 else if (predictor=="1d6r2_xx2")
                     for (uint64_t i0=0;i0<data_shape[0];i0+=stride)
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=5;i2+5<data_shape[2];i2+=2)
                         compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,
-                            t_vec,i0,i1,i2);
-                lossless_encode_and_write_csv(temp_csv_path,stride,qb_vec,max_val,min_val,rel_eb,t_vec,
-                    mse,pred_rmse,pred_mae);
+                            coefficient_vec,i0,i1,i2);
+                lossless_encode_and_write_csv(temp_csv_path,stride,qb_vec,max_val,min_val,rel_eb,coefficient_vec,
+                    mse,pred_rmse,pred_mae,predictor);
             }
         }
     }
 }
 
 void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<int64_t> &qb_vec,
-    double max_val,double min_val,double rel_eb,vector<double> &t_vec,double mse,double pred_rmse,double pred_mae)
+    double max_val,double min_val,double rel_eb,vector<double> &coefficient_vec,double mse,double pred_rmse,double pred_mae,const string &predictor)
 {
     auto encode_start=chrono::steady_clock::now();
     if (qb_vec.empty())
@@ -442,10 +442,10 @@ void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<
     pred_rmse=sqrt(pred_rmse/qb_vec.size());
     pred_mae/=qb_vec.size();
     double psnr=10*log10(pow(max_val-min_val,2)/mse);
-    if (t_vec.size()==1)
-        printf("rel_eb=%f, t1=%f\n",rel_eb,t_vec[0]);
-    else if (t_vec.size()==2)
-        printf("rel_eb=%f, t1=%f, t2=%f\n",rel_eb,t_vec[0],t_vec[1]);
+    if (predictor.starts_with("1d6r"))
+        printf("rel_eb=%f, a=%f, b=%f\n",rel_eb,coefficient_vec[0],coefficient_vec[1]);
+    else
+        printf("rel_eb=%f, t=%f\n",rel_eb,coefficient_vec[0]);
     printf("BR=%f, CR=%f\n",br,cr);
     printf("H1=%f, H1_cr=%f\n",H1,(8*sizeof(float))/(H1));
     printf("RMSE=%f, MAE=%f\n",pred_rmse,pred_mae);
@@ -453,7 +453,7 @@ void lossless_encode_and_write_csv(string &temp_csv_path,uint64_t stride,vector<
     printf("\n");
     vector<double> query_row_key;
     query_row_key.push_back(rel_eb);
-    query_row_key.insert(query_row_key.end(),t_vec.begin(),t_vec.end());
+    query_row_key.insert(query_row_key.end(),coefficient_vec.begin(),coefficient_vec.end());
     write_csv_item(temp_csv_path,query_row_key,br_name,br);
     write_csv_item(temp_csv_path,query_row_key,h1_name,H1);
     write_csv_item(temp_csv_path,query_row_key,pred_rmse_name,pred_rmse);

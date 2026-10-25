@@ -94,7 +94,7 @@ def render_coefficient_figure(output_pdf,output_png):
         with (input_directory/f"{key}-1d6r-coefficients.csv").open(newline="",encoding="utf-8") as source:
             for row in csv.DictReader(source):
                 row["dataset"]=key
-                row["coefficient_kind"]="quintic" if math.isclose(float(row["t1"]),119/768,rel_tol=1e-12,abs_tol=1e-15) and math.isclose(float(row["t2"]),203/768,rel_tol=1e-12,abs_tol=1e-15) else "other"
+                row["coefficient_kind"]="quintic" if math.isclose(float(row["a"]),3/256,rel_tol=1e-12,abs_tol=1e-15) and math.isclose(float(row["b"]),-25/256,rel_tol=1e-12,abs_tol=1e-15) else "other"
                 rows.append(row)
     coefficient_styles={"quintic":{"color":"#b2182b","linewidth":1.1,"linestyle":"-"},"other":{"color":".72","linewidth":.45,"linestyle":"-"}}
     with plt.rc_context({"font.family":"Nimbus Roman","mathtext.fontset":"stix","font.size":8,"axes.labelsize":8,"xtick.labelsize":8,"ytick.labelsize":8,"legend.fontsize":8,"pdf.fonttype":42,"ps.fonttype":42}):
@@ -104,7 +104,7 @@ def render_coefficient_figure(output_pdf,output_png):
             dataset_rows=[row for row in rows if row["dataset"]==key]
             curves=defaultdict(list)
             for row in dataset_rows:
-                curves[(row["t1"],row["t2"])].append(row)
+                curves[(row["a"],row["b"])].append(row)
             for curve in curves.values():
                 points=sorted(((float(row["BR"]),float(row["PSNR"]),row["coefficient_kind"]) for row in curve))
                 style=coefficient_styles["quintic" if points[0][2]=="quintic" else "other"]

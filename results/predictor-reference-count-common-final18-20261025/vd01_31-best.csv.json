@@ -9,9 +9,14 @@
   ],
   "criterion": "br-psnr",
   "selection": "shared-slope",
+  "coefficient_convention": {
+    "1d4r": "t",
+    "2d4r": "t",
+    "1d6r": "a is the per-reference weight at +/-5h,b is the per-reference weight at +/-3h,and the +/-h weight is 1/2-a-b"
+  },
   "coefficient_grids": {
-    "1d6r": "transition",
-    "1d4r": "1d4r"
+    "1d4r": "1d4r",
+    "1d6r": "transition"
   },
   "filters": {
     "axis": [],
@@ -114,5 +119,5 @@
     "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r2_xx1.csv": "870ef0b0ac746e5b12e6ed284dd619288fe2ca7dd6638f81c569a4dbb9352b59",
     "/home/x-zjian1/asz/results/predictor-reference-count-common-final18-20261025/vd01_31_1d6r2_xx2.csv": "5a6ab5d834f5b2afc7a6e4c08c50bce86aedda0d6596842d9107323a9b2066a6"
   },
-  "program_sha256": "2c54ada4b25741d768660ac9bc633d7a572b7f156115ae32d69552fdf38c02e5"
+  "program_sha256": "8e47ee849630768a31e7d0bf68453ce659a26729d493fcc5f059f98795dc8424"
 }
