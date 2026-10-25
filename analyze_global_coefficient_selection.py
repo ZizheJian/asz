@@ -202,7 +202,7 @@ def plot_validation_triptych(measurements,rows,output):
     axes[0].set_ylabel("Agreement (%)")
     axes[0].set_xticks(range(len(criteria)),labels,rotation=45,ha="right",rotation_mode="anchor")
     axes[0].set_xlabel("Selection criterion")
-    axes[0].text(0,values[0]+3,f"{values[0]:.2f}",ha="center",va="bottom",fontsize=6,color="#243391")
+    axes[0].text(0.08,values[0]+3,f"{values[0]:.2f}",ha="center",va="bottom",fontsize=6,color="#243391")
     grouped=measurements[("Isabel_Pf24",0,0)]
     normalizer=Normalize(min(candidate_t),max(candidate_t))
     color_map=plt.get_cmap("viridis")
