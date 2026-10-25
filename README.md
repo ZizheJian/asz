@@ -85,12 +85,13 @@ The installed executables are `install/bin/s1_compress` and `install/bin/s1_deco
 The following standalone build uses `build/common_zstd_build/lib/libzstd.a`, which the experiment launcher builds for SZ3 and QoZ:
 
 ```bash
-sweep_build=$(mktemp -d /tmp/asz-sweep-build.XXXXXX)
+sweep_build=build/predictor_dimensionality
+mkdir -p "$sweep_build"
 g++ -std=c++20 -O3 -march=native -I c_codes/asz_core c_codes/s2_many_prediction.cpp build/common_zstd_build/lib/libzstd.a -pthread -o "$sweep_build/s2_many_prediction"
 "$sweep_build/s2_many_prediction" --help
 ```
 
-For a full-size run, use `s2_many_prediction INPUT DIM0 DIM1 DIM2 OUTPUT_PREFIX FAMILY [EB0,EB1,...]`. `FAMILY` is `1d4r`, `2d4r`, `1d6r`, or `all`. The program refuses to replace existing output CSVs. Full-size exhaustive sweeps can be expensive and should run in an appropriate compute allocation.
+For a full-size run, use `s2_many_prediction INPUT DIM0 DIM1 DIM2 OUTPUT_PREFIX FAMILY [EB0,EB1,... [SIX_GRID [TARGET_MODE]]]`. `FAMILY` is `1d4r`, `2d4r`, `1d6r`, or `all`. `TARGET_MODE=common` evaluates every family, prediction direction, and QB order on one fixed checkerboard of targets after excluding five layers from every boundary. This mode makes cross-family comparisons use exactly the same data points and supports all 1D6R references. Use `--require-uniform-samples` when summarizing these runs so that an inconsistent sweep fails instead of producing a figure. The program refuses to replace existing output CSVs. Full-size exhaustive sweeps can be expensive and should run in an appropriate compute allocation.
 
 `summarize_prediction_sweep.py` is the single selector for the resulting CSVs. Its output always carries the selected axis, coefficient, QB order, BR, H1, PSNR, RMSE, and MAE. Before selection, it verifies every expected axis, QB order, coefficient, and error bound. The recognized coefficient grids are the 13-candidate 1D4R and 2D4R grids and the 40-, 42-, and 52-candidate 1D6R grids.
 

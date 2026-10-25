@@ -1,0 +1,118 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24",
+  "families": [
+    "1d4r",
+    "2d4r"
+  ],
+  "retain": [
+    "axis"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_grids": {
+    "2d4r": "2d4r",
+    "1d4r": "1d4r"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 0.0022288592162255,
+      "coarse_mean_psnr": 57.77322426850663,
+      "fine_mean_rate": 0.0361585774841363,
+      "fine_mean_psnr": 65.51452137179118,
+      "slope": 228.15683414046842,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.0022288592162255,
+      "coarse_mean_psnr": 57.77322426850663,
+      "fine_mean_rate": 0.18347281541839366,
+      "fine_mean_psnr": 78.22021151163193,
+      "slope": 112.81472591735834,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 0.0361585774841363,
+      "coarse_mean_psnr": 65.51452137179118,
+      "fine_mean_rate": 0.5733539610157686,
+      "fine_mean_psnr": 94.21653891106853,
+      "slope": 53.42938234238801,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.18347281541839366,
+      "coarse_mean_psnr": 78.22021151163193,
+      "fine_mean_rate": 1.2692709250221397,
+      "fine_mean_psnr": 112.14627232707106,
+      "slope": 31.245275263759844,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.5733539610157686,
+      "coarse_mean_psnr": 94.21653891106853,
+      "fine_mean_rate": 1.2692709250221397,
+      "fine_mean_psnr": 112.14627232707106,
+      "slope": 25.764185015381216,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    }
+  },
+  "uniform_sample_count": 10804500,
+  "input_rows": 1170,
+  "output_rows": 30,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r0_xx0.csv": "455e822a82260873ec8556d48d9d58b83dae1c094260546421b2b7ba1515a46b",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r0_xx1.csv": "594507acc492e01999e236978d332547eff1ae74190303b0ef8f052791acd1b3",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r0_xx2.csv": "783f1aa4187a9e1c9035b5cc0e69589ef1f3cd6c21197c9289406942729a6ee3",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r1_xx0.csv": "c92f96b8e6c0980c8e4fc3d4c0497a8de082a26dba1db6dec5ed95496352f08f",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r1_xx1.csv": "cdd9bf7387aed406a846476d424535e1c2b2b85d4d2c39958fb18435f216d004",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r1_xx2.csv": "00386dec952e51e9e54733de8aa0b4c57c6f0197edc1877cef27361aed5a56eb",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r2_xx0.csv": "1bfa44899e6083922fec7d38e90190e1c13579db5b3bc53d3241da0d4cd47fc7",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r2_xx1.csv": "9cb594fca89574d55eac2b0698ae30ad74264b103619359697a7d26cc951a82e",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_1d4r2_xx2.csv": "ff451c17ca506fd94863de69d1910ce6a9378caab918905c5e6de53726cc1668",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r01_xx0.csv": "3cc4fb94e4c3f9941ec4d51ac6ecf4bacd86f4d2b4a8b61eb5743af9e9c0bec6",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r01_xx1.csv": "3134d3093416f75926a5c74f191d614d6486c3f6e490b30c7a3d6b8a473d929c",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r01_xx2.csv": "e356400548094089da08bcaccefb2cf9e590e8e48b76fa0857aa9d62b76b6162",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r02_xx0.csv": "f4daa80da47b548ea59f2aef3b512272383b69bf5213a36c41ac0860aef491da",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r02_xx1.csv": "aea5577d7611879d558521cc2bafc46f75df0b5c842fa7b6ced34e9f1a1c34c4",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r02_xx2.csv": "699fc32675483fb3d40fff9d5167fe40c8fa976f1f54bd7ffeb9e8a30782e7b4",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r12_xx0.csv": "19c65bdbc301e328917a07a4d7046ff1f6af3e4a75395f3e144e9c3567c3679f",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r12_xx1.csv": "aec17883c596447411f07629d172c708b5c769514df7b1442b091dbc5dd9ec5f",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/precip24_2d4r12_xx2.csv": "69045ddedf783e3fa443a04f3529e93e10afac92d90ea51ad9c0f5b0f5cda113"
+  },
+  "program_sha256": "2c54ada4b25741d768660ac9bc633d7a572b7f156115ae32d69552fdf38c02e5"
+}

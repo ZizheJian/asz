@@ -120,8 +120,36 @@ vector<vector<double>> six_reference_grid(const string &mode)
     return grid;
 }
 
+template<typename Function>
+void for_each_common_target(const vector<uint64_t> &data_shape,int order,Function function)
+{
+    constexpr uint64_t margin=5;
+    auto visit=[&](uint64_t i0,uint64_t i1,uint64_t i2)
+    {
+        if ((i0+i1+i2)%2==1)
+            function(i0,i1,i2);
+    };
+    if (order==0)
+        for (uint64_t i1=margin;i1+margin<data_shape[1];i1++)
+        for (uint64_t i2=margin;i2+margin<data_shape[2];i2++)
+        for (uint64_t i0=margin;i0+margin<data_shape[0];i0++)
+            visit(i0,i1,i2);
+    else if (order==1)
+        for (uint64_t i0=margin;i0+margin<data_shape[0];i0++)
+        for (uint64_t i2=margin;i2+margin<data_shape[2];i2++)
+        for (uint64_t i1=margin;i1+margin<data_shape[1];i1++)
+            visit(i0,i1,i2);
+    else if (order==2)
+        for (uint64_t i0=margin;i0+margin<data_shape[0];i0++)
+        for (uint64_t i1=margin;i1+margin<data_shape[1];i1++)
+        for (uint64_t i2=margin;i2+margin<data_shape[2];i2++)
+            visit(i0,i1,i2);
+    else
+        throw runtime_error("unknown QB order");
+}
+
 void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,double max_val,double min_val,
-    vector<double> &rel_eb_vec,uint64_t stride,string predictor,const string &six_grid,bool shared_1d)
+    vector<double> &rel_eb_vec,uint64_t stride,string predictor,const string &six_grid,const string &targets)
 {
     string temp_csv_path=csv_path.substr(0,csv_path.size()-4)+"_"+predictor+".csv";
     vector<uint64_t> adjacent_pos_dist_vec;
@@ -158,7 +186,7 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
         double neg_2_eb=1/(2*abs_eb);
         if (predictor.starts_with("1d4r"))
         {
-            uint64_t margin=shared_1d?5:3;
+            uint64_t margin=targets=="shared1d"?5:3;
             vector<vector<double>> t_vec_vec;
             for (int i=0;i<=12;i++)
                 t_vec_vec.push_back({(float)i/32});
@@ -167,7 +195,9 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
                 double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
                 qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
-                if (predictor=="1d4r0_xx0")
+                if (targets=="common")
+                    for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,t_vec,i0,i1,i2);});
+                else if (predictor=="1d4r0_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=margin;i0+margin<data_shape[0];i0+=2)
@@ -235,7 +265,9 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
                 double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
                 qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
-                if (predictor=="2d4r01_xx0")
+                if (targets=="common")
+                    for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,t_vec,i0,i1,i2);});
+                else if (predictor=="2d4r01_xx0")
                     for (uint64_t i1=1;i1+1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=1;i0+1<data_shape[0];i0+=2)
@@ -301,7 +333,9 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
                 double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
                 qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
-                if (predictor=="1d6r0_xx0")
+                if (targets=="common")
+                    for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,t_vec,i0,i1,i2);});
+                else if (predictor=="1d6r0_xx0")
                     for (uint64_t i1=0;i1<data_shape[1];i1+=stride)
                     for (uint64_t i2=0;i2<data_shape[2];i2+=stride)
                     for (uint64_t i0=5;i0+5<data_shape[0];i0+=2)
@@ -420,7 +454,7 @@ try
 {
     if (argc==2&&string(argv[1])=="--help")
     {
-        printf("usage: s2_many_prediction input dim0 dim1 dim2 output_prefix [1d4r|2d4r|1d6r|all [eb0,eb1,... [legacy|augmented|transition [legacy|shared1d]]]]\n");
+        printf("usage: s2_many_prediction input dim0 dim1 dim2 output_prefix [1d4r|2d4r|1d6r|all [eb0,eb1,... [legacy|augmented|transition [legacy|shared1d|common]]]]\n");
         return 0;
     }
     if (argc!=1&&(argc<6||argc>10))
@@ -453,8 +487,8 @@ try
     if (six_grid!="legacy"&&six_grid!="augmented"&&six_grid!="transition")
         throw runtime_error("six-reference grid must be legacy, augmented or transition");
     string targets=argc>=10?argv[9]:"legacy";
-    if (targets!="legacy"&&targets!="shared1d")
-        throw runtime_error("target mode must be legacy or shared1d");
+    if (targets!="legacy"&&targets!="shared1d"&&targets!="common")
+        throw runtime_error("target mode must be legacy, shared1d or common");
     printf("six_reference_grid=%s, candidates=%zu, targets=%s\n",six_grid.c_str(),six_reference_grid(six_grid).size(),targets.c_str());
     if (rel_eb_vec.empty())
         throw runtime_error("error-bound grid is empty");
@@ -473,7 +507,7 @@ try
     if (!parent.empty())
         filesystem::create_directories(parent);
     string csv_path=output_prefix+".csv";
-    // stride>1会随遍历顺序改变采样集合，因此不开放该选项；shared1d统一四点与六点的边界。
+    // stride>1会随遍历顺序改变采样集合，因此不开放该选项；common统一所有family、方向和QB顺序的目标点。
     uint64_t stride=1;
     uint64_t data_size=1;
     for (uint64_t dimension:data_shape)
@@ -503,7 +537,7 @@ try
     for (const auto &predictor:predictor_vec)
     {
         auto predictor_start=chrono::steady_clock::now();
-        compress(data,data_shape,csv_path,max_val,min_val,rel_eb_vec,stride,predictor,six_grid,targets=="shared1d");
+        compress(data,data_shape,csv_path,max_val,min_val,rel_eb_vec,stride,predictor,six_grid,targets);
         printf("predictor=%s, elapsed_seconds=%.6f\n",predictor.c_str(),chrono::duration<double>(chrono::steady_clock::now()-predictor_start).count());
     }
     printf("total_seconds=%.6f\n",chrono::duration<double>(chrono::steady_clock::now()-started).count());

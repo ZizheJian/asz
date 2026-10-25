@@ -46,11 +46,11 @@ This predictor recovers fixed six-point quintic interpolation at $a=3/256$ and $
 \subsection{One- versus Two-Dimensional Prediction}
 \label{sec:configuration-space:dimensionality}
 
-We compare the compression performance of 1D4R and 2D4R to determine which prediction stencil to retain. Figure~\ref{fig:configuration-space:1d4r-vs-2d4r} reports their rate--distortion curves on three datasets. We evaluate the three individual prediction axes for 1D4R and the three axis pairs for 2D4R, selecting the best coefficient and QB serialization order for each. We find that 1D4R provides a better overall rate--distortion trade-off than 2D4R and therefore exclude 2D4R from the remaining configuration space.
+We compare the compression performance of 1D4R and 2D4R to determine which prediction stencil to retain. Figure~\ref{fig:configuration-space:1d4r-vs-2d4r} reports their rate--distortion curves on three datasets. We evaluate the three individual prediction axes for 1D4R and the three axis pairs for 2D4R, selecting the best coefficient and QB serialization order for each. The diagnostic isolates one final prediction round by holding its reference values fixed at the original data. Every candidate predicts the same checkerboard subset of interior targets, with five layers excluded from each boundary to support the widest stencil. This controlled target set gives every family, direction, and serialization order the same sample count. We find that 1D4R provides a better overall rate--distortion trade-off than 2D4R and therefore exclude 2D4R from the remaining configuration space.
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/predictor-family-legacy-middle/iv-1d4r-vs-2d4r-legacy-middle.pdf}
+\includegraphics[width=\columnwidth]{revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets.pdf}
 \caption{Rate--distortion comparison of 1D4R and 2D4R. Each curve represents one prediction axis for 1D4R or one pair of prediction axes for 2D4R after selecting the best coefficient and QB serialization order. We observe a better overall rate--distortion trade-off with 1D4R in all three cases.}
 \label{fig:configuration-space:1d4r-vs-2d4r}
 \end{figure}
@@ -103,7 +103,7 @@ Figure~\ref{fig:configuration-space:1d6r-coefficients} further compares 1D6R und
 Figure~\ref{fig:configuration-space:1d6r-coefficients} shows little improvement from searching the 42 coefficient pairs over the fixed-quintic setting $(a,b)=(3/256,-25/256)$ in Eq.~\eqref{eq:configuration-space:1d6r-prediction}. In fixed-quintic 1D6R, each outermost reference accounts for only about $0.84\%$ of the total absolute coefficient magnitude, yet this small weight provides an effective and precise correction. Changing the coefficient pair rarely improves this correction and can instead diminish its benefit. By contrast, changing $t$ in 1D4R directly redistributes substantial weight between the near and far reference pairs, producing a broader range of prediction behaviors. ASZ therefore chooses between variable-coefficient 1D4R and fixed-quintic 1D6R.
 
 % TODO: 最佳系数来自指定的有限网格，而非所有实数系数的全局最优。正式报告各prediction stencil的网格范围和步长。
-% 第一组实测结果：results/predictor-family-legacy-middle-21244405。单轮、固定原始参考值、stencil-specific目标集合；机制段落是可能的解释，不是1D4R必然胜出的理论证明。
+% 1D4R与2D4R使用results/predictor-dimensionality-common-final18-20261024。单轮、固定原始参考值，所有family、方向和QB顺序使用各维去掉两侧五层后的同一棋盘目标集合；机制段落是可能的解释，不是1D4R必然胜出的理论证明。
 % 第二组实验：Fig. 3为单栏两行三列。上排Isabel Pf24、CESM T t31、LETKF QV (log10)，下排Aramco 1800、LETKF PRES、QMCPACK orbital 0。使用results/predictor-family-4r6r-middle-21250842-recovered、results/predictor-family-4r6r-supplement-21274865-recovered及results/predictor-family-4r6r-qmcpack-orbital0-20261011。CLDICE原始测量仍保留，未计入当前六图；上排三例接近重合，Aramco与QMCPACK明显受益、PRES较温和。QMCPACK依据已有原始参考MSE选择为收益案例，因此此图不能用于估计总体收益出现频率。
 % 固定系数比较：results/1d6r-coefficients-three-20261011，每个数据42个系数各选5个方向/QB顺序最优点。QMCPACK为新增完整穷举，其他数据复用原始CSV。只有PRES的0.1端点局部参考完全重合且各轴码率不等，显式--expand-flat-reference扩至0.1与0.001的平均RD点，其他评分参考不变；具体端点及原CSV哈希保存在CSV/JSON。图4红线为固定五次系数，黑虚线为各误差界独立选择系数的最优点连线，并非另一个固定系数或插值后的包络。QMCPACK的5个误差界均选择固定五次系数，按三个方向分别选择时15个点也均为固定五次系数。
 % TODO: PRES在1e-5下过渡系数(247/1536,379/1536)、x方向、xx2优于固定五次系数：BR=0.043723358585859、PSNR=113.0988287234236；固定五次最佳BR=0.053443181818182、PSNR=109.41677733253238，甚至被1D4R的BR=0.051559848484848、PSNR=112.171002012328898压倒。因此结论为固定五次系数总体表现较好，不能写“总是最优”；仍需量化固定系数的完整压缩损失。

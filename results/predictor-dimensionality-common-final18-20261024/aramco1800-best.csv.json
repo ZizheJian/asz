@@ -1,0 +1,118 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800",
+  "families": [
+    "1d4r",
+    "2d4r"
+  ],
+  "retain": [
+    "axis"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_grids": {
+    "1d4r": "1d4r",
+    "2d4r": "2d4r"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 0.00025212065497986325,
+      "coarse_mean_psnr": 60.89949304899641,
+      "fine_mean_rate": 0.012589053143198132,
+      "fine_mean_psnr": 64.47333809967616,
+      "slope": 289.6866829815884,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.00025212065497986325,
+      "coarse_mean_psnr": 60.89949304899641,
+      "fine_mean_rate": 0.176832500983572,
+      "fine_mean_psnr": 74.36860707030114,
+      "slope": 76.27752299683878,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 0.012589053143198132,
+      "coarse_mean_psnr": 64.47333809967616,
+      "fine_mean_rate": 0.884184136254452,
+      "fine_mean_psnr": 90.05365279842336,
+      "slope": 29.348851541745134,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.176832500983572,
+      "coarse_mean_psnr": 74.36860707030114,
+      "fine_mean_rate": 2.5340305784227644,
+      "fine_mean_psnr": 107.34831278149171,
+      "slope": 13.991062535999943,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.884184136254452,
+      "coarse_mean_psnr": 90.05365279842336,
+      "fine_mean_rate": 2.5340305784227644,
+      "fine_mean_psnr": 107.34831278149171,
+      "slope": 10.482587676668158,
+      "score_kind": "shared-tangent",
+      "candidate_count": 234
+    }
+  },
+  "uniform_sample_count": 21681113,
+  "input_rows": 1170,
+  "output_rows": 30,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r0_xx0.csv": "e4fd75bd0f180fc8abe4285e85d62a9bc6db2ca55d73c04d0c1ca4c8bb6165eb",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r0_xx1.csv": "5c09e4152a80d3073a7b92a57807479ead3f241cf622f91586bce2db616094e9",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r0_xx2.csv": "761466b6c086c1f4e52741d3f1edf3ffd1af6bfdce2e11411391f8cbf10e52ac",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r1_xx0.csv": "706db524ad6b4e465a410b01d95dc01badff4ea504e1d724433623df46a1d9fa",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r1_xx1.csv": "eb7691c95d5decc272e5deda0d5cbfbfd81bf9124d9cc22cbdfac7c5740b44cf",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r1_xx2.csv": "90ddc71a384ea7ead6e04c5ea61c755fcaf9b758596c1dd06f41d5179a96983f",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r2_xx0.csv": "6fcec29be71d02091dda48b2608170a49e34ad62921c9eff1e86b06873705061",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r2_xx1.csv": "5f14e6ccc4e1b86ad8feabd1ded50fb4e020aeb301ac3582832b7f8b8839f28c",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r2_xx2.csv": "866395242e61e38a355f5e6f11a34bfaf1baecf30ef4e61a121d6afe0352bf90",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r01_xx0.csv": "49d061568a85e26f7f23adfb13df20fff27431307234f9c584f9f3e1d577ceab",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r01_xx1.csv": "4ad50487b5940bdf1c574b471716dcaa38e60495dfef3474fe237742d46e194f",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r01_xx2.csv": "7b113fa97a44578d346066177fd3a88fea07a3de7101e5f9db67ab08b8175a29",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r02_xx0.csv": "53986f3df26b81e930b92efb639a430ad251e1e67c41fb0a97e068a29123939d",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r02_xx1.csv": "8fc5613819aaaf946a99122e093ff75e89df5436ba38bc9235a65a0211ed7c89",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r02_xx2.csv": "0b5ce311c8e643bc2577cad07fc9af8b6df2f2c09ae4e3765acb30d7c0552c1f",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r12_xx0.csv": "914fd10adff66074eabe5529bc1a91c9f8a6ca9bf6515fe1ff0dce38883f8db9",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r12_xx1.csv": "ef274b40a3002ee4efe8fb74bacefcc5fb91faef503bfeda96e2efaf566550bb",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_2d4r12_xx2.csv": "415ffa4f3af7634ca6cb9f1a39da559660495a8fa6477ce84c2120322f17b2db"
+  },
+  "program_sha256": "2c54ada4b25741d768660ac9bc633d7a572b7f156115ae32d69552fdf38c02e5"
+}
