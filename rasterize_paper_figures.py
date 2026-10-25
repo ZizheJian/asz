@@ -10,8 +10,6 @@ output_root=paper_root/"revised-fig"/"raster300"
 column_width_pt=252
 points_per_inch=72.27
 figures=(
-    "predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets.pdf",
-    "1d6r-coefficients-common-final18/iv-1d6r-coefficients-common-targets.pdf",
 )
 
 
