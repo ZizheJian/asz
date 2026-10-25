@@ -189,7 +189,7 @@ def plot_validation_triptych(measurements,rows,output):
     import matplotlib.pyplot as plt
     from matplotlib.colors import Normalize
     from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
-    from paperfig import PANEL_GAP_WITH_YLABEL_PT,PaperFigureSpec,add_panel_captions,apply_paper_style,layout_panel_row,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
+    from paperfig import PANEL_GAP_WITH_YLABEL_PT,PaperFigureSpec,add_panel_captions,apply_paper_style,layout_panel_row,save_paper_png_vertical_crop,style_plot_axis
     summary={row["criterion"]:row for row in summarize(rows)}
     apply_paper_style()
     spec=PaperFigureSpec.column()
@@ -225,7 +225,7 @@ def plot_validation_triptych(measurements,rows,output):
         style_plot_axis(axis)
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55,axis="y" if index==0 else "both")
         axis.set_axisbelow(True)
-    layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=78,panel_gap_pt=PANEL_GAP_WITH_YLABEL_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
+    layout_panel_row(figure,axes,(1,1,1),bottom_pt=78,panel_gap_pt=PANEL_GAP_WITH_YLABEL_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     add_panel_captions(figure,axes,titles,gap_pt=2,source="xlabel")
     save_paper_png_vertical_crop(figure,output/"coefficient-proxy-validation.png",spec,edge_gap_pt=3)
     plt.close(figure)
