@@ -148,10 +148,24 @@ void for_each_common_target(const vector<uint64_t> &data_shape,int order,Functio
         throw runtime_error("unknown QB order");
 }
 
+uint64_t common_target_count(const vector<uint64_t> &data_shape)
+{
+    auto parity_counts=[](uint64_t size)
+    {
+        uint64_t count=size>10?size-10:0;
+        return pair<uint64_t,uint64_t>{(count+1)/2,count/2};
+    };
+    auto [odd0,even0]=parity_counts(data_shape[0]);
+    auto [odd1,even1]=parity_counts(data_shape[1]);
+    auto [odd2,even2]=parity_counts(data_shape[2]);
+    return odd0*even1*even2+even0*odd1*even2+even0*even1*odd2+odd0*odd1*odd2;
+}
+
 void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,double max_val,double min_val,
     vector<double> &rel_eb_vec,uint64_t stride,string predictor,const string &six_grid,const string &targets)
 {
     string temp_csv_path=csv_path.substr(0,csv_path.size()-4)+"_"+predictor+".csv";
+    uint64_t qb_capacity=targets=="common"?common_target_count(data_shape):data_shape[0]*data_shape[1]*data_shape[2];
     vector<uint64_t> adjacent_pos_dist_vec;
     if ((predictor.starts_with("1d4r0")) || (predictor.starts_with("1d6r0")))
         adjacent_pos_dist_vec.push_back(data_shape[1]*data_shape[2]);
@@ -194,7 +208,7 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
             {
                 double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
-                qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
+                qb_vec.reserve(qb_capacity);
                 if (targets=="common")
                     for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_1d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,t_vec,i0,i1,i2);});
                 else if (predictor=="1d4r0_xx0")
@@ -264,7 +278,7 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
             {
                 double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
-                qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
+                qb_vec.reserve(qb_capacity);
                 if (targets=="common")
                     for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_2d4r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,t_vec,i0,i1,i2);});
                 else if (predictor=="2d4r01_xx0")
@@ -332,7 +346,7 @@ void compress(vector<float> &data,vector<uint64_t> &data_shape,string &csv_path,
             {
                 double mse=0,pred_rmse=0,pred_mae=0;
                 vector<int64_t> qb_vec;
-                qb_vec.reserve(data_shape[0]*data_shape[1]*data_shape[2]);
+                qb_vec.reserve(qb_capacity);
                 if (targets=="common")
                     for_each_common_target(data_shape,predictor.back()-'0',[&](uint64_t i0,uint64_t i1,uint64_t i2){compress_1d6r_dot(qb_vec,mse,pred_rmse,pred_mae,data,data_shape,adjacent_pos_dist_vec,abs_eb,neg_2_eb,t_vec,i0,i1,i2);});
                 else if (predictor=="1d6r0_xx0")
