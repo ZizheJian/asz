@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
-from paperfig import PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
+from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
 datasets=(("precip24","Isabel PRECIP\n24"),("qmcpack144","QMCPACK\nOrbital 144"),("aramco1800","Aramco\n1800"))
@@ -79,7 +79,7 @@ def render(rows,output_png):
                 spine.set_linewidth(.5)
             inset.annotate("",xy=(worst["BR"],center-.1),xytext=(best["BR"],center-.1),arrowprops={"arrowstyle":"<->","color":".25","linewidth":.5,"shrinkA":0,"shrinkB":0})
     axes[0].set_ylabel("PSNR (dB)")
-    layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=8,left_edge_gap_pt=3,right_edge_gap_pt=3)
+    layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],label=rf"${axis}$ fastest",linewidth=.8,marker=markers[order],markersize=2.5,markerfacecolor="white",markeredgewidth=.55,**styles[order]) for axis,order in zip(("x","y","z"),orders)]
     legend_above(axes[1],handles=handles,ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=5))
     captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {label}" for index,(_,label) in enumerate(datasets)],gap_pt=2,source="ticks")
