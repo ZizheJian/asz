@@ -37,6 +37,12 @@ Initialize the third-party repositories after cloning:
 git submodule update --init --recursive
 ```
 
+Install the shared publication-figure geometry helper in the active Python environment:
+
+```bash
+python3 -m pip install --no-build-isolation -e third_party/paperfig
+```
+
 Install the Python packages needed by the launchers, plots, and HDF5 converter:
 
 ```bash

@@ -9,6 +9,7 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
 from paper_plot_layout import PANEL_ASPECT,add_panel_footers,place_legend_above_axes,style_plot_axis
+from paperfig import PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis as style_paper_axis
 
 project_root=Path(__file__).resolve().parent
 family_styles=((0,(3,2)),(0,(1.5,1)),(0,(3,1.5,.75,1)))
@@ -38,7 +39,7 @@ def read_family(path,family):
     return curves,suffixes
 
 
-def draw_panel(axis,directory,key,families):
+def draw_panel(axis,directory,key,families,paperfig_layout=False):
     for family_index,family in enumerate(families):
         path=directory/f"{key}-{family}-best.csv"
         if not path.exists():
@@ -49,11 +50,47 @@ def draw_panel(axis,directory,key,families):
             shifted=(sum(style[1])/2,style[1]) if family_index==0 else style
             axis.plot(*zip(*points),color=family_colors[family_index],linestyle=shifted,linewidth=.8,dash_capstyle="butt")
     axis.set_xscale("log")
-    axis.set_box_aspect(1/PANEL_ASPECT)
     axis.xaxis.set_major_locator(LogLocator(base=10,numticks=3))
     axis.xaxis.set_minor_locator(NullLocator())
     axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
-    style_plot_axis(axis)
+    if paperfig_layout:
+        style_paper_axis(axis)
+        axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
+        axis.set_axisbelow(True)
+    else:
+        axis.set_box_aspect(1/PANEL_ASPECT)
+        style_plot_axis(axis)
+
+
+def family_legend_handles(families):
+    handles=[]
+    for family_index,family in enumerate(families):
+        directions=("xy","xz","yz") if family=="2d4r" else ("x","y","z")
+        for direction,style in zip(directions,family_styles):
+            shifted=(sum(style[1])/2,style[1]) if family_index==0 else style
+            handles.append(Line2D([],[],color=family_colors[family_index],linestyle=shifted,linewidth=.8,label=f"{family.upper()} {direction}"))
+    return handles
+
+
+def render_paperfig_row(spec,output_png):
+    datasets=spec["datasets"]
+    if len(datasets)!=3:
+        raise ValueError("paperfig row rendering requires exactly three datasets")
+    apply_paper_style()
+    paper_spec=PaperFigureSpec.column()
+    figure,axes=plt.subplots(1,3,figsize=paper_spec.size_in,dpi=paper_spec.dpi,sharey=True)
+    for axis,(key,directory) in zip(axes,datasets):
+        draw_panel(axis,directory,key,spec["families"],paperfig_layout=True)
+    axes[0].set_ylabel("PSNR (dB)")
+    layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=8,left_edge_gap_pt=3,right_edge_gap_pt=3)
+    handles=family_legend_handles(spec["families"])
+    order=(0,3,1,4,2,5)
+    legend_above(axes[1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=5))
+    captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {multiline_names[key]}" for index,(key,_) in enumerate(datasets)],gap_pt=2,source="ticks")
+    add_shared_xlabel(figure,axes,"Bit rate (bits/value)",gap_pt=2,source_artists=captions)
+    output_png.parent.mkdir(parents=True,exist_ok=True)
+    save_paper_png_vertical_crop(figure,output_png,paper_spec,edge_gap_pt=3)
+    plt.close(figure)
 
 
 def render_figure(spec,output_pdf,output_png):
@@ -68,12 +105,7 @@ def render_figure(spec,output_pdf,output_png):
             axis.set_visible(False)
         for axis,(key,directory) in zip(panel_axes,datasets):
             draw_panel(axis,directory,key,spec["families"])
-        handles=[]
-        for family_index,family in enumerate(spec["families"]):
-            directions=("xy","xz","yz") if family=="2d4r" else ("x","y","z")
-            for direction,style in zip(directions,family_styles):
-                shifted=(sum(style[1])/2,style[1]) if family_index==0 else style
-                handles.append(Line2D([],[],color=family_colors[family_index],linestyle=shifted,linewidth=.8,label=f"{family.upper()} {direction}"))
+        handles=family_legend_handles(spec["families"])
         order=(0,3,1,4,2,5)
         legend=figure.legend([handles[index] for index in order],[handles[index].get_label() for index in order],loc="upper center",bbox_to_anchor=(.5,1),ncol=3,frameon=False,handlelength=1.3,handletextpad=.35,columnspacing=.8,labelspacing=.12,borderaxespad=0)
         place_legend_above_axes(figure,legend,panel_axes)
@@ -138,7 +170,7 @@ def specifications():
     qmcpack=project_root/"results/predictor-family-4r6r-qmcpack-orbital0-20261011"
     return {
         "fig7":{"families":("1d4r","2d4r"),"datasets":[("isabel",legacy),("cldice",legacy),("aramco",legacy)],"output":project_root/"新论文/revised-fig/predictor-family-legacy-middle/iv-1d4r-vs-2d4r-legacy-middle","height":1.46,"bottom":.32,"caption_gap":.5,"xlabel_gap":3,"xlabel_x":.55},
-        "fig7-final18":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-common-final18-20261024"),("qmcpack144",project_root/"results/predictor-dimensionality-common-final18-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-common-final18-20261024")],"output":project_root/"新论文/revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets","height":1.6,"bottom":.36,"caption_gap":.5,"xlabel_gap":3,"xlabel_x":.55,"multiline_labels":True},
+        "fig7-final18":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-common-final18-20261024"),("qmcpack144",project_root/"results/predictor-dimensionality-common-final18-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-common-final18-20261024")],"output":project_root/"新论文/revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets","paperfig":True},
         "fig8":{"families":("1d4r","1d6r"),"datasets":[("isabel",main),("cesmt",main),("letkf_qv",supplement),("aramco",main),("letkf",supplement),("qmcpack",qmcpack)],"output":project_root/"新论文/revised-fig/predictor-family-4r6r-middle/iv-1d4r-vs-1d6r-legacy-middle","height":2.8,"bottom":.24,"caption_gap":1,"xlabel_gap":3,"xlabel_x":.55},
         "fig8-final18":{"families":("1d4r","1d6r"),"datasets":[("precip24",project_root/"results/predictor-reference-count-common-final18-20261025"),("vd01_31",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_t",project_root/"results/predictor-reference-count-common-final18-20261025"),("aramco1800",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_pres",project_root/"results/predictor-reference-count-common-final18-20261025"),("qmcpack144",project_root/"results/predictor-reference-count-common-final18-20261025")],"output":project_root/"新论文/revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets","height":2.8,"bottom":.24,"caption_gap":1,"xlabel_gap":3,"xlabel_x":.55},
     }
@@ -160,8 +192,12 @@ def main():
             print(f"wrote {output}.pdf")
             continue
         output=specs[name]["output"]
-        render_figure(specs[name],output.with_suffix(".pdf"),output.with_suffix(".png"))
-        print(f"wrote {output}.pdf")
+        if specs[name].get("paperfig"):
+            render_paperfig_row(specs[name],output.with_suffix(".png"))
+            print(f"wrote {output}.png")
+        else:
+            render_figure(specs[name],output.with_suffix(".pdf"),output.with_suffix(".png"))
+            print(f"wrote {output}.pdf")
 
 
 if __name__=="__main__":
