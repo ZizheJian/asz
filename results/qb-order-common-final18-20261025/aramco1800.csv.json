@@ -1,0 +1,112 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800",
+  "families": [
+    "1d4r"
+  ],
+  "retain": [
+    "qb_order"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_convention": {
+    "1d4r": "t",
+    "2d4r": "t",
+    "1d6r": "a is the per-reference weight at +/-5h,b is the per-reference weight at +/-3h,and the +/-h weight is 1/2-a-b"
+  },
+  "coefficient_grids": {
+    "1d4r": "1d4r"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 0.0004942787217847265,
+      "coarse_mean_psnr": 59.64687272187083,
+      "fine_mean_rate": 0.01958368254378981,
+      "fine_mean_psnr": 63.72079911356939,
+      "slope": 213.41297138899608,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.0004942787217847265,
+      "coarse_mean_psnr": 59.64687272187083,
+      "fine_mean_rate": 0.22550604692065784,
+      "fine_mean_psnr": 74.2858436799769,
+      "slope": 65.05869037555252,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 0.01958368254378981,
+      "coarse_mean_psnr": 63.72079911356939,
+      "fine_mean_rate": 1.0117973139771883,
+      "fine_mean_psnr": 89.94745524366486,
+      "slope": 26.43246907645001,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.22550604692065784,
+      "coarse_mean_psnr": 74.2858436799769,
+      "fine_mean_rate": 2.728528416556702,
+      "fine_mean_psnr": 107.36713288606704,
+      "slope": 13.216537577688676,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 1.0117973139771883,
+      "coarse_mean_psnr": 89.94745524366486,
+      "fine_mean_rate": 2.728528416556702,
+      "fine_mean_psnr": 107.36713288606704,
+      "slope": 10.147004161704674,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    }
+  },
+  "uniform_sample_count": 21681113,
+  "input_rows": 585,
+  "output_rows": 15,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r0_xx0.csv": "e4fd75bd0f180fc8abe4285e85d62a9bc6db2ca55d73c04d0c1ca4c8bb6165eb",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r0_xx1.csv": "5c09e4152a80d3073a7b92a57807479ead3f241cf622f91586bce2db616094e9",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r0_xx2.csv": "761466b6c086c1f4e52741d3f1edf3ffd1af6bfdce2e11411391f8cbf10e52ac",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r1_xx0.csv": "706db524ad6b4e465a410b01d95dc01badff4ea504e1d724433623df46a1d9fa",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r1_xx1.csv": "eb7691c95d5decc272e5deda0d5cbfbfd81bf9124d9cc22cbdfac7c5740b44cf",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r1_xx2.csv": "90ddc71a384ea7ead6e04c5ea61c755fcaf9b758596c1dd06f41d5179a96983f",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r2_xx0.csv": "6fcec29be71d02091dda48b2608170a49e34ad62921c9eff1e86b06873705061",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r2_xx1.csv": "5f14e6ccc4e1b86ad8feabd1ded50fb4e020aeb301ac3582832b7f8b8839f28c",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/aramco1800_1d4r2_xx2.csv": "866395242e61e38a355f5e6f11a34bfaf1baecf30ef4e61a121d6afe0352bf90"
+  },
+  "program_sha256": "8e47ee849630768a31e7d0bf68453ce659a26729d493fcc5f059f98795dc8424"
+}

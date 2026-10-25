@@ -122,15 +122,16 @@ The default `joint` selection estimates a tangent from the candidates in scope. 
 
 `analyze_global_coefficient_selection.py` regenerates the manuscript's coefficient-proxy validation from the retained S2 measurements. It compares $H_1$--PSNR and the alternative proxy criteria with measured BR--PSNR and exports the validation figure and provenance. It requires `pdflatex` and an output directory that does not already exist, supplied through `--output`.
 
-`plot_predictor_rd.py` generates the prediction-stencil and coefficient RD figures from retained sweep measurements. `plot_qb_order_rd.py` generates the QB-order comparison from its selected-candidate CSV. Their default input paths refer to local files under `results/`.
+`plot_predictor_rd.py` generates the prediction-stencil and coefficient RD figures from retained sweep measurements. `plot_qb_order_rd.py` generates the QB-order comparison from three selected-candidate CSVs. Each QB order in those summaries independently selects its best prediction axis and coefficient at every error bound. Their default input paths refer to retained files under `results/`.
 
 ## Manuscript and figures
 
-The current manuscript entry point is `新论文/main.tex`. It directly includes vector PDFs for the prediction comparisons and final evaluation. Regenerate the prediction comparison figures from existing results with:
+The current manuscript entry point is `新论文/main.tex`. Figures 7--10 are 300 dpi PNGs generated with `paperfig` at the IEEE single-column width, with a `sqrt(2):1` aspect ratio for every panel. Regenerate them from existing results with:
 
 ```bash
 module load anaconda/2024.02-py311
 python plot_predictor_rd.py fig7-final18 fig8-final18 fig9
+python plot_qb_order_rd.py
 ```
 
 Run the test suite in the same plotting environment:
@@ -139,8 +140,6 @@ Run the test suite in the same plotting environment:
 module load anaconda/2024.02-py311
 MPLCONFIGDIR=/tmp/asz-matplotlib python3 -m unittest discover -v
 ```
-
-`rasterize_paper_figures.py` optionally creates 300 dpi RGB PNG copies of the two stencil comparisons and the six-reference coefficient figure under `新论文/revised-fig/raster300/`. It uses a single-column width of 252 TeX points (1046 pixels at 300 dpi), preserves aspect ratios, and leaves the source PDFs and plot previews unchanged. These raster copies are currently separate from the figures included by the manuscript.
 
 Compile the manuscript from the repository root:
 

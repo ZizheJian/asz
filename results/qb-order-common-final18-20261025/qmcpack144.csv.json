@@ -1,0 +1,112 @@
+{
+  "input_prefix": "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144",
+  "families": [
+    "1d4r"
+  ],
+  "retain": [
+    "qb_order"
+  ],
+  "criterion": "br-psnr",
+  "selection": "shared-slope",
+  "coefficient_convention": {
+    "1d4r": "t",
+    "2d4r": "t",
+    "1d6r": "a is the per-reference weight at +/-5h,b is the per-reference weight at +/-3h,and the +/-h weight is 1/2-a-b"
+  },
+  "coefficient_grids": {
+    "1d4r": "1d4r"
+  },
+  "filters": {
+    "axis": [],
+    "qb_order": [],
+    "coefficient": []
+  },
+  "relative_error_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "target_bounds": [
+    0.1,
+    0.01,
+    0.001,
+    0.0001,
+    1e-05
+  ],
+  "slope_mode": "neighboring-measured-bounds",
+  "slope_span": null,
+  "shared_slopes": {
+    "0.10000000000000001": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.01,
+      "coarse_mean_rate": 0.001181923142165,
+      "coarse_mean_psnr": 64.08472007427228,
+      "fine_mean_rate": 0.01810523671177123,
+      "fine_mean_psnr": 65.47254892966023,
+      "slope": 82.00692197067428,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.01": {
+      "coarse_eb": 0.1,
+      "fine_eb": 0.001,
+      "coarse_mean_rate": 0.001181923142165,
+      "coarse_mean_psnr": 64.08472007427228,
+      "fine_mean_rate": 0.2688888243489262,
+      "fine_mean_psnr": 73.01969091288582,
+      "slope": 33.375945103905586,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.001": {
+      "coarse_eb": 0.01,
+      "fine_eb": 0.0001,
+      "coarse_mean_rate": 0.01810523671177123,
+      "coarse_mean_psnr": 65.47254892966023,
+      "fine_mean_rate": 1.7397384850066884,
+      "fine_mean_psnr": 86.49920030316684,
+      "slope": 12.213200107706522,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "0.0001": {
+      "coarse_eb": 0.001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 0.2688888243489262,
+      "coarse_mean_psnr": 73.01969091288582,
+      "fine_mean_rate": 4.9116632645220415,
+      "fine_mean_psnr": 105.1619387995654,
+      "slope": 6.923069018507196,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    },
+    "1.0000000000000001e-05": {
+      "coarse_eb": 0.0001,
+      "fine_eb": 1e-05,
+      "coarse_mean_rate": 1.7397384850066884,
+      "coarse_mean_psnr": 86.49920030316684,
+      "fine_mean_rate": 4.9116632645220415,
+      "fine_mean_psnr": 105.1619387995654,
+      "slope": 5.883726693938211,
+      "score_kind": "shared-tangent",
+      "candidate_count": 117
+    }
+  },
+  "uniform_sample_count": 182753,
+  "input_rows": 585,
+  "output_rows": 15,
+  "input_sha256": {
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r0_xx0.csv": "7bfb445896800214ab174dd4169703a0de634f1712df917daa786af229f00119",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r0_xx1.csv": "ed0a52808213bcb0037b484bee2e69676ab30b05f6edf3ee72e39930853e7f24",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r0_xx2.csv": "b0952598e8addcb0039bacc9a1f989221bbb86f375ebe6e296960bec1d7a9028",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r1_xx0.csv": "787b80e1fb7c8e7cce0e30cb1409bf8ce5b01cb248db0c64adbd13aaa51483cc",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r1_xx1.csv": "63afb5824532e185b7212e1f7f9003647ba59743334ab466d1f4c8992f49effc",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r1_xx2.csv": "43acbba1c7219421aafd289c50c2d606a6baddbc7b1e88b92b016cc1cebb70a3",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r2_xx0.csv": "fbf9b41512c31a353f7debbf06933d46f67ac4dd6092fa14dcf5d4ae354ebfb3",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r2_xx1.csv": "15d6e210d0799f7db95c9d0e7e4fd047b00bb2e451dbb3580e28f4570699e70a",
+    "/home/x-zjian1/asz/results/predictor-dimensionality-common-final18-20261024/qmcpack144_1d4r2_xx2.csv": "afa73515ccadf199de0599bcc4fa61a19333014b2bbdd3e20760a228265b4547"
+  },
+  "program_sha256": "8e47ee849630768a31e7d0bf68453ce659a26729d493fcc5f059f98795dc8424"
+}
