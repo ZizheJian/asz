@@ -1,7 +1,7 @@
 \section{Performance Evaluation}
 \label{sec:evaluation}
 
-We evaluate ASZ in terms of rate--distortion performance, compression and decompression throughput, total runtime with per-file tuning, and plan reuse across related files. Our rate--distortion and runtime experiments use 18 fields spanning diverse scientific domains.
+We evaluate ASZ in terms of rate--distortion performance, codec time across error bounds, total runtime with per-file tuning, and plan reuse across related files.
 
 \subsection{Experimental Setup}
 \label{sec:evaluation:setup}
@@ -40,47 +40,35 @@ Table~\ref{tab:evaluation-datasets} summarizes the 18 fields used in the rate--d
 
 \subsubsection{Baselines and Metrics}
 
-We compare ASZ with two groups of scientific lossy compressors. SZ3, QoZ, and ZFP form the high-performance group, covering prediction-based and block-transform methods. SPERR serves as a high-ratio wavelet-based baseline with substantially higher computational cost~\cite{liu2024high,li2023lossy}. We include all four baselines in every RD and throughput figure and report the high-performance envelope separately from the SPERR comparison.
+We compare ASZ with two groups of scientific lossy compressors. SZ3, QoZ, and ZFP form the high-performance group, covering prediction-based and block-transform methods. SPERR serves as a high-ratio wavelet-based baseline~\cite{liu2024high,li2023lossy}.
 
 \subsection{Rate--Distortion Performance}
 \label{sec:evaluation:rd}
 
-Figure~\ref{fig:evaluation-rd} compares the full RD curves. We compare curves over their common PSNR interval by integrating the difference in log bit rate and converting it into a multiplicative compression-ratio gain. Across the 18 fields, ASZ achieves geometric-mean compression ratios that are $2.47\times$, $2.06\times$, and $6.16\times$ those of SZ3, QoZ, and ZFP, respectively. Relative to an envelope that selects the lowest bit rate among these three high-performance baselines at each PSNR, ASZ's geometric-mean compression ratio is $1.90\times$ that of the envelope, and ASZ outperforms it on all 18 fields. SPERR provides a stronger RD reference at a much lower throughput. ASZ's geometric-mean compression ratio is $1.35\times$ that of SPERR, which ASZ outperforms on 10 of the 18 fields.
+Figure~\ref{fig:evaluation-rd} compares the full RD curves. We summarize each comparison over the common PSNR range as a compression-ratio gain. Across the 18 fields, ASZ achieves geometric-mean compression ratios that are $2.47\times$, $2.06\times$, $6.16\times$, and $1.35\times$ those of SZ3, QoZ, ZFP, and SPERR, respectively. ASZ outperforms SZ3, QoZ, and ZFP on all 18 fields and SPERR on 10 fields.
+
+ASZ improves on SZ3 and QoZ by adapting both prediction and lossless coding at finer granularity. Its unrestricted per-round axis choices can repeatedly use the direction that best matches the correlations at the current reference spacings. For 1D4R, ASZ searches a finer coefficient set within each block than QoZ's predefined one-dimensional formulas, allowing closer adaptation to local correlations. ASZ also selects a QB serialization order for every round, placing strongly correlated QBs consecutively before Huffman encoding and Zstd. These choices reduce prediction residuals and make the QB stream more compressible.
+
+SPERR comes closest to ASZ because both methods perform multiscale spatial decorrelation. ASZ's coarse-to-fine interpolation converts the directional correlations selected in each round into prediction residuals. SPERR instead uses a fixed multilevel three-dimensional CDF 9/7 transform that recursively processes all three axes, exploiting spatial coherence across multiple scales and compacting information into wavelet coefficients. However, this shared principle does not give SPERR ASZ's data-dependent adaptation. SPERR uses a fixed transform rather than selecting the prediction axis and coefficients for each round or block. Its pointwise error guarantee also requires a separate stream of corrections for reconstructed values that exceed the error bound. These differences help explain why ASZ attains a $1.35\times$ geometric-mean compression-ratio advantage and outperforms SPERR on 10 of the 18 fields. SPERR's codec time is also higher because it performs the multilevel transform, repeatedly traverses coefficient bit planes, and applies an inverse transform to locate outliers within each large three-dimensional chunk. The \texttt{sperr3d} default used in our experiments sets the preferred chunk size to $256^3$ values. Section~\ref{sec:evaluation:codec-time} quantifies this time difference.
 
 \begin{figure*}[htb]
     \centering
-    \IfFileExists{figs/5/rate-distortion-final-eighteen-log.pdf}{\includegraphics[width=\textwidth]{figs/5/rate-distortion-final-eighteen-log.pdf}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field rate--distortion figure pending.}}}
-    \caption{Rate--distortion performance on 18 scientific fields. Each method is evaluated at five relative error bounds. A curve farther toward the upper left has lower storage cost at higher reconstruction quality.}
+    \IfFileExists{figs/5/rate-distortion-final-eighteen-log.png}{\includegraphics{figs/5/rate-distortion-final-eighteen-log.png}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field rate--distortion figure pending.}}}
+    \caption{Rate--distortion performance on 18 scientific fields. At matched PSNR, ASZ achieves $2.47\times$, $2.06\times$, $6.16\times$, and $1.35\times$ the geometric-mean compression ratios of SZ3, QoZ, ZFP, and SPERR, respectively, outperforming the first three on all 18 fields and SPERR on 10.}
     \label{fig:evaluation-rd}
 \end{figure*}
 
-The comparison evaluates how ASZ's per-round prediction-axis choices, variable-coefficient predictors, and selectable QB serialization orders adapt to each input.
+\subsection{Codec Time Across Error Bounds}
+\label{sec:evaluation:codec-time}
 
-\subsection{Codec Throughput}
-\label{sec:evaluation:throughput}
-
-Figure~\ref{fig:evaluation-throughput} compares ASZ with SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Compression and decompression are timed separately around each codec's in-memory operations. File input, file output, post-run error verification, and preprocessing are excluded. ASZ's compression time includes its data-range scan. ASZ plan generation is reported separately as preprocessing and is included in the total-runtime evaluation below. Across the 90 field--error-bound combinations, ASZ provides geometric-mean speedups of $1.48\times$ for compression and $1.71\times$ for decompression relative to QoZ, with higher throughput in 87 and 86 combinations, respectively. Relative to SPERR, the corresponding speedups are $2.57\times$ and $4.00\times$, with ASZ faster in 89 and 90 combinations. ASZ attains geometric-mean throughputs of 67.5\% and 87.4\% relative to SZ3 for compression and decompression, and 41.5\% and 90.2\% relative to ZFP. These speed differences accompany the compression-ratio improvements reported in Section~\ref{sec:evaluation:rd}.
+Figure~\ref{fig:evaluation-codec-time} compares ASZ with SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Each stacked bar reports the additive time of the in-memory codec stages. ASZ includes preprocessing, compression, and decompression, while each baseline includes compression and decompression. File input, file output, and post-run error verification are excluded. ASZ's compression segment includes its data-range scan, and the SZ3 and QoZ compression segments include their internal autotuning. Across the 90 field--error-bound combinations, ASZ's geometric-mean total time is $0.86\times$ that of QoZ and $0.46\times$ that of SPERR, and ASZ is faster in 68 and 88 combinations, respectively. Its total time is $1.83\times$ that of SZ3 and $2.52\times$ that of ZFP. Considering the timed stages separately, ASZ provides geometric-mean compression and decompression speedups of $1.48\times$ and $1.71\times$ over QoZ and $2.57\times$ and $4.00\times$ over SPERR. At the middle error bound of each field, plan generation accounts for 22.47\% of ASZ's total time. These time differences accompany the compression-ratio improvements reported in Section~\ref{sec:evaluation:rd}.
 
 \begin{figure*}[htb]
     \centering
-    \IfFileExists{figs/5/throughput-final-eighteen-vs-rel-eb.pdf}{\includegraphics[width=\textwidth]{figs/5/throughput-final-eighteen-vs-rel-eb.pdf}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field throughput figure pending.}}}
-    \caption{Compression and decompression throughput of ASZ and four baselines across five relative error bounds. Solid and dashed curves denote compression and decompression, respectively.}
-    \label{fig:evaluation-throughput}
+    \IfFileExists{figs/5/time-breakdown-final-eighteen-vs-rel-eb.png}{\includegraphics{figs/5/time-breakdown-final-eighteen-vs-rel-eb.png}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field codec-time figure pending.}}}
+    \caption{Codec time across five relative error bounds. Each error-bound group contains one bar per method. ASZ stacks preprocessing, compression, and decompression, while each baseline stacks compression and decompression. Including preprocessing, ASZ's geometric-mean total time is $0.86\times$ that of QoZ and $0.46\times$ that of SPERR.}
+    \label{fig:evaluation-codec-time}
 \end{figure*}
-
-\subsection{Runtime Performance}
-\label{sec:evaluation:runtime}
-
-We evaluate total runtime with per-file tuning at the middle relative error bound in each field's five-point RD range. This point is $10^{-3}$ for every field except APS Kaz, whose middle point is $2\times10^{-2}$. For ASZ, a fresh plan is generated for each file, and the reported total time includes all preprocessing costs, together with compression and decompression.
-
-\begin{figure*}[htbp]
-    \centering
-    \IfFileExists{figs/5/runtime-breakdown-final-eighteen-middle-eb.pdf}{\includegraphics[width=\textwidth]{figs/5/runtime-breakdown-final-eighteen-middle-eb.pdf}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field runtime figure pending.}}}
-    \caption{Codec runtime at the middle relative error bound in each field's five-point RD range. Fields are grouped by uncompressed size. ASZ includes preprocessing, compression, and decompression. The SZ3 and QoZ compression segments include their internal autotuning. Labels above bars report total seconds.}
-    \label{fig:evaluation-runtime}
-\end{figure*}
-
-ASZ completes preprocessing, compression, and decompression faster than QoZ's compression and decompression on 14 of the 18 fields. Averaged across fields, ASZ reduces total runtime by 11.44\% relative to QoZ, while plan generation accounts for 22.47\% of ASZ's total time. ASZ uses $1.92\times$ the total runtime of SZ3 on average while providing a $2.47\times$ geometric-mean compression-ratio improvement at matched PSNR. The results show that ASZ preserves its compression advantage while retaining higher end-to-end speed than QoZ on most fields, even when each input generates a fresh plan.
 
 \subsection{Plan Transferability Across Related Files}
 \label{sec:evaluation:transfer}

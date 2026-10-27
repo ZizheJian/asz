@@ -8,14 +8,13 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
-from paper_plot_layout import PANEL_ASPECT,add_panel_footers,place_legend_above_axes,style_plot_axis
-from paperfig import PANEL_GAP_WITHOUT_Y_DECORATION_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_grid,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis as style_paper_axis
+from paperfig import PANEL_GAP_WITHOUT_Y_DECORATION_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_grid,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
 family_styles=((0,(3,2)),(0,(1.5,1)),(0,(3,1.5,.75,1)))
 family_colors=("#2166ac","#b2182b")
-names={"isabel":"Isabel P 24","cldice":"CESM CLDICE 31","cesmt":"CESM T 31","aramco":"Aramco 1800","letkf":"SCALE-LETKF PRES","letkf_qv":"SCALE-LETKF QV","qmcpack":"QMCPACK Orbital 0","precip24":"Isabel PRECIP 24","qmcpack144":"QMCPACK Orbital 144","aramco1800":"Aramco 1800","vd01_31":"CESM VD01 31","letkf_pres":"SCALE-LETKF PRES","letkf_t":"SCALE-LETKF T"}
-multiline_names={"isabel":"Isabel P\n24","cesmt":"CESM T\n31","aramco":"Aramco\n1800","letkf":"SCALE-LETKF\nPRES","letkf_qv":"SCALE-LETKF\nQV","qmcpack":"QMCPACK\nOrbital 0","precip24":"Isabel PRECIP\n24","qmcpack144":"QMCPACK\nOrbital 144","aramco1800":"Aramco\n1800","vd01_31":"CESM VD01\n31","letkf_pres":"SCALE-LETKF\nPRES","letkf_t":"SCALE-LETKF\nT"}
+names={"precip24":"Isabel PRECIP 24","qmcpack144":"QMCPACK Orbital 144","aramco1800":"Aramco 1800","vd01_31":"CESM VD01 31","letkf_pres":"SCALE-LETKF PRES","letkf_t":"SCALE-LETKF T"}
+multiline_names={"precip24":"Isabel PRECIP\n24","qmcpack144":"QMCPACK\nOrbital 144","aramco1800":"Aramco\n1800","vd01_31":"CESM VD01\n31","letkf_pres":"SCALE-LETKF\nPRES","letkf_t":"SCALE-LETKF\nT"}
 row_names={**multiline_names,"precip24":"Isabel PRECIP 24","aramco1800":"Aramco 1800"}
 
 
@@ -46,7 +45,7 @@ def read_family(path,family):
     return curves,suffixes
 
 
-def draw_panel(axis,directory,key,families,paperfig_layout=False):
+def draw_panel(axis,directory,key,families):
     for family_index,family in enumerate(families):
         path=directory/f"{key}-{family}-best.csv"
         if not path.exists():
@@ -61,13 +60,9 @@ def draw_panel(axis,directory,key,families,paperfig_layout=False):
     axis.xaxis.set_minor_locator(NullLocator())
     axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
     hide_outside_x_tick_labels(axis)
-    if paperfig_layout:
-        style_paper_axis(axis)
-        axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
-        axis.set_axisbelow(True)
-    else:
-        axis.set_box_aspect(1/PANEL_ASPECT)
-        style_plot_axis(axis)
+    style_plot_axis(axis)
+    axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
+    axis.set_axisbelow(True)
 
 
 def family_legend_handles(families):
@@ -88,7 +83,7 @@ def render_paperfig_row(spec,output_png):
     paper_spec=PaperFigureSpec.column()
     figure,axes=plt.subplots(1,3,figsize=paper_spec.size_in,dpi=paper_spec.dpi,sharey=True)
     for axis,(key,directory) in zip(axes,datasets):
-        draw_panel(axis,directory,key,spec["families"],paperfig_layout=True)
+        draw_panel(axis,directory,key,spec["families"])
     axes[0].set_ylabel("PSNR (dB)")
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=family_legend_handles(spec["families"])
@@ -109,44 +104,20 @@ def render_paperfig_grid(spec,output_png):
     paper_spec=PaperFigureSpec.column()
     figure,axes=plt.subplots(2,3,figsize=paper_spec.size_in,dpi=paper_spec.dpi,sharey="row",squeeze=False)
     for axis,(key,directory) in zip(axes.flat,datasets):
-        draw_panel(axis,directory,key,spec["families"],paperfig_layout=True)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,column_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,row_content_gap_pt=24,left_edge_gap_pt=14,right_edge_gap_pt=3)
+        draw_panel(axis,directory,key,spec["families"])
+    single_line_keys={"precip24","vd01_31","letkf_t","aramco1800"}
+    labels=[f"({chr(97+index)}) {names[key] if key in single_line_keys else multiline_names[key]}" for index,(key,_) in enumerate(datasets)]
+    for axis,label in zip(axes.flat,labels):
+        axis.set_xlabel(label,labelpad=2)
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,column_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
     handles=family_legend_handles(spec["families"])
     order=(0,3,1,4,2,5)
     legend_above(axes[0,1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=5))
-    labels=[f"({chr(97+index)}) {multiline_names[key]}" for index,(key,_) in enumerate(datasets)]
-    add_panel_captions(figure,axes[0],labels[:3],gap_pt=2,source="ticks")
-    bottom_captions=add_panel_captions(figure,axes[1],labels[3:],gap_pt=2,source="ticks")
-    add_shared_xlabel(figure,axes[1],"Bit rate (bits/value)",gap_pt=2,source_artists=bottom_captions)
+    add_shared_xlabel(figure,axes[1],"Bit rate (bits/value)",gap_pt=2,source_artists=[axis.xaxis.label for axis in axes[1]])
     figure.supylabel("PSNR (dB)",x=7/paper_spec.width_pt,fontsize=8)
     output_png.parent.mkdir(parents=True,exist_ok=True)
     save_paper_png_vertical_crop(figure,output_png,paper_spec,edge_gap_pt=3)
     plt.close(figure)
-
-
-def render_figure(spec,output_pdf,output_png):
-    datasets=spec["datasets"]
-    columns=3
-    rows=(len(datasets)+columns-1)//columns
-    with plt.rc_context({"font.family":"Nimbus Roman","mathtext.fontset":"stix","font.size":8,"axes.labelsize":8,"xtick.labelsize":8,"ytick.labelsize":8,"legend.fontsize":8,"pdf.fonttype":42,"ps.fonttype":42}):
-        figure,axes=plt.subplots(rows,columns,figsize=(3.5,spec["height"]),sharey="row",squeeze=False)
-        figure.subplots_adjust(left=.12,right=.99,bottom=spec["bottom"],top=.72 if rows==1 else .83,wspace=.22,hspace=.72)
-        panel_axes=list(axes.flat)[:len(datasets)]
-        for axis in list(axes.flat)[len(datasets):]:
-            axis.set_visible(False)
-        for axis,(key,directory) in zip(panel_axes,datasets):
-            draw_panel(axis,directory,key,spec["families"])
-        handles=family_legend_handles(spec["families"])
-        order=(0,3,1,4,2,5)
-        legend=figure.legend([handles[index] for index in order],[handles[index].get_label() for index in order],loc="upper center",bbox_to_anchor=(.5,1),ncol=3,frameon=False,handlelength=1.3,handletextpad=.35,columnspacing=.8,labelspacing=.12,borderaxespad=0)
-        place_legend_above_axes(figure,legend,panel_axes)
-        labels=[f"({chr(97+index)}) {multiline_names[key] if rows>1 or spec.get('multiline_labels') else names[key]}" for index,(key,_) in enumerate(datasets)]
-        add_panel_footers(figure,panel_axes,labels,columns,"Bit rate (bits/value)",8,caption_gap_pt=spec["caption_gap"],xlabel_gap_pt=spec["xlabel_gap"],xlabel_x=spec["xlabel_x"])
-        figure.supylabel("PSNR (dB)",x=.005,fontsize=8)
-        output_pdf.parent.mkdir(parents=True,exist_ok=True)
-        figure.savefig(output_pdf)
-        figure.savefig(output_png,dpi=400)
-        plt.close(figure)
 
 
 def render_coefficient_figure(output_png):
@@ -182,14 +153,14 @@ def render_coefficient_figure(output_png):
         axis.xaxis.set_minor_locator(NullLocator())
         axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
         hide_outside_x_tick_labels(axis)
-        style_paper_axis(axis)
+        style_plot_axis(axis)
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
         axis.set_axisbelow(True)
     axes[0].set_ylabel("PSNR (dB)")
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],label="Fixed quintic",**coefficient_styles["quintic"]),Line2D([],[],label="Best per error bound",color=".1",linewidth=.85,linestyle=(0,(2.5,2.5))),Line2D([],[],label="Other coefficients",**coefficient_styles["other"])]
     legend_above(axes[1],handles=handles,ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=4))
-    captions=add_panel_captions(figure,axes,["(a) Aramco\n1800","(b) SCALE-LETKF\nPRES","(c) QMCPACK\nOrbital 144"],gap_pt=2,source="ticks")
+    captions=add_panel_captions(figure,axes,["(a) Aramco 1800","(b) SCALE-LETKF\nPRES","(c) QMCPACK\nOrbital 144"],gap_pt=2,source="ticks")
     add_shared_xlabel(figure,axes,"Bit rate (bits/value)",gap_pt=2,source_artists=captions)
     output_png.parent.mkdir(parents=True,exist_ok=True)
     save_paper_png_vertical_crop(figure,output_png,paper_spec,edge_gap_pt=3)
@@ -197,15 +168,9 @@ def render_coefficient_figure(output_png):
 
 
 def specifications():
-    legacy=project_root/"results/predictor-family-legacy-middle-21244405"
-    main=project_root/"results/predictor-family-4r6r-middle-21250842-recovered"
-    supplement=project_root/"results/predictor-family-4r6r-supplement-21274865-recovered"
-    qmcpack=project_root/"results/predictor-family-4r6r-qmcpack-orbital0-20261011"
     return {
-        "fig7":{"families":("1d4r","2d4r"),"datasets":[("isabel",legacy),("cldice",legacy),("aramco",legacy)],"output":project_root/"新论文/revised-fig/predictor-family-legacy-middle/iv-1d4r-vs-2d4r-legacy-middle","height":1.46,"bottom":.32,"caption_gap":.5,"xlabel_gap":3,"xlabel_x":.55},
-        "fig7-final18":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-common-final18-20261024"),("qmcpack144",project_root/"results/predictor-dimensionality-common-final18-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-common-final18-20261024")],"output":project_root/"新论文/revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets","paperfig":True},
-        "fig8":{"families":("1d4r","1d6r"),"datasets":[("isabel",main),("cesmt",main),("letkf_qv",supplement),("aramco",main),("letkf",supplement),("qmcpack",qmcpack)],"output":project_root/"新论文/revised-fig/predictor-family-4r6r-middle/iv-1d4r-vs-1d6r-legacy-middle","height":2.8,"bottom":.24,"caption_gap":1,"xlabel_gap":3,"xlabel_x":.55},
-        "fig8-final18":{"families":("1d4r","1d6r"),"datasets":[("precip24",project_root/"results/predictor-reference-count-common-final18-20261025"),("vd01_31",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_t",project_root/"results/predictor-reference-count-common-final18-20261025"),("aramco1800",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_pres",project_root/"results/predictor-reference-count-common-final18-20261025"),("qmcpack144",project_root/"results/predictor-reference-count-common-final18-20261025")],"output":project_root/"新论文/revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets","paperfig":True},
+        "fig7":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-common-final18-20261024"),("qmcpack144",project_root/"results/predictor-dimensionality-common-final18-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-common-final18-20261024")],"output":project_root/"新论文/revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets"},
+        "fig8":{"families":("1d4r","1d6r"),"datasets":[("precip24",project_root/"results/predictor-reference-count-common-final18-20261025"),("vd01_31",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_t",project_root/"results/predictor-reference-count-common-final18-20261025"),("aramco1800",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_pres",project_root/"results/predictor-reference-count-common-final18-20261025"),("qmcpack144",project_root/"results/predictor-reference-count-common-final18-20261025")],"output":project_root/"新论文/revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets"},
     }
 
 
@@ -214,7 +179,7 @@ def main():
     parser.add_argument("figures",nargs="*")
     arguments=parser.parse_args()
     specs=specifications()
-    figures=arguments.figures or ("fig7-final18",)
+    figures=arguments.figures or ("fig7",)
     unknown=set(figures)-set(specs)-{"fig9"}
     if unknown:
         parser.error(f"unknown figures: {', '.join(sorted(unknown))}")
@@ -225,13 +190,9 @@ def main():
             print(f"wrote {output}.png")
             continue
         output=specs[name]["output"]
-        if specs[name].get("paperfig"):
-            renderer=render_paperfig_row if len(specs[name]["datasets"])==3 else render_paperfig_grid
-            renderer(specs[name],output.with_suffix(".png"))
-            print(f"wrote {output}.png")
-        else:
-            render_figure(specs[name],output.with_suffix(".pdf"),output.with_suffix(".png"))
-            print(f"wrote {output}.pdf")
+        renderer=render_paperfig_row if len(specs[name]["datasets"])==3 else render_paperfig_grid
+        renderer(specs[name],output.with_suffix(".png"))
+        print(f"wrote {output}.png")
 
 
 if __name__=="__main__":

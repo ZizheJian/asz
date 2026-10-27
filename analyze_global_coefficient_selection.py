@@ -3,8 +3,6 @@ import csv
 import hashlib
 import json
 import math
-import shutil
-import subprocess
 from collections import defaultdict
 from pathlib import Path
 
@@ -146,43 +144,6 @@ def write_csv(path,rows,fieldnames):
         writer.writerows(rows)
     temporary.replace(path)
 
-def plot_heatmap(rows,output):
-    proxy=[row for row in rows if row["criterion"]=="h1_psnr" and not row["ground_tied"]]
-    agreements=[[0 for _ in rel_ebs] for _ in datasets]
-    totals=[[0 for _ in rel_ebs] for _ in datasets]
-    for dataset_index,(dataset,_,_,_) in enumerate(datasets):
-        for eb_index,rel_eb in enumerate(rel_ebs):
-            cell=[row for row in proxy if row["dataset"]==dataset and row["rel_eb"]==rel_eb]
-            agreements[dataset_index][eb_index]=sum(row["agreement"] for row in cell)
-            totals[dataset_index][eb_index]=len(cell)
-    lines=[r"\documentclass[tikz,border=2pt]{standalone}",r"\usepackage{newtxtext,newtxmath}",r"\begin{document}",r"\begin{tikzpicture}[font=\scriptsize]",r"\def\cw{0.73}",r"\def\ch{0.43}"]
-    for row_index,(_,label,_,_) in enumerate(datasets):
-        y=-row_index*0.43
-        lines.append(rf"\node[anchor=east] at (-0.08,{y-0.215:.4f}) {{{label}}};")
-        for column_index in range(len(rel_ebs)):
-            intensity=round(100*agreements[row_index][column_index]/totals[row_index][column_index])
-            text_color="white" if intensity>=60 else "black"
-            x=column_index*0.73
-            lines.append(rf"\filldraw[fill=blue!{intensity}!white,draw=white,line width=0.25pt] ({x:.4f},{y:.4f}) rectangle ({x+0.73:.4f},{y-0.43:.4f});")
-            lines.append(rf"\node[text={text_color}] at ({x+0.365:.4f},{y-0.215:.4f}) {{{agreements[row_index][column_index]}/{totals[row_index][column_index]}}};")
-    bottom=-len(datasets)*0.43
-    for column_index,power in enumerate(range(1,6)):
-        lines.append(rf"\node[anchor=north] at ({column_index*0.73+0.365:.4f},{bottom-0.03:.4f}) {{$10^{{-{power}}}$}};")
-    lines.append(rf"\node[anchor=north] at ({5*0.73/2:.4f},{bottom-0.43:.4f}) {{Relative error bound}};")
-    bar_x=5*0.73+0.20
-    for index in range(50):
-        intensity=round(100*index/49)
-        y=bottom+index*(len(datasets)*0.43/50)
-        lines.append(rf"\fill[blue!{intensity}!white] ({bar_x:.4f},{y:.4f}) rectangle ({bar_x+0.16:.4f},{y+len(datasets)*0.43/50+0.001:.4f});")
-    lines.extend([rf"\node[anchor=west] at ({bar_x+0.20:.4f},{bottom:.4f}) {{0\%}};",rf"\node[anchor=west] at ({bar_x+0.20:.4f},0) {{100\%}};",rf"\node[rotate=90] at ({bar_x+0.72:.4f},{bottom/2:.4f}) {{Agreement}};",r"\end{tikzpicture}",r"\end{document}"])
-    tex_path=output/"global-coefficient-selection-heatmap.tex"
-    with open(tex_path,"w",encoding="utf-8") as output_file:
-        output_file.write("\n".join(lines)+"\n")
-    pdflatex=shutil.which("pdflatex")
-    if pdflatex is None:
-        raise RuntimeError(f"pdflatex is unavailable; generated {tex_path}")
-    subprocess.run([pdflatex,"-interaction=nonstopmode","-halt-on-error",tex_path.name],cwd=output,check=True,stdout=subprocess.DEVNULL)
-
 def plot_validation_triptych(measurements,rows,output):
     import matplotlib
     matplotlib.use("Agg")
@@ -201,7 +162,6 @@ def plot_validation_triptych(measurements,rows,output):
     axes[0].set_yticks([0,50,100])
     axes[0].set_ylabel("Agreement (%)")
     axes[0].set_xticks(range(len(criteria)),labels,rotation=45,ha="right",rotation_mode="anchor")
-    axes[0].set_xlabel("Selection criterion")
     axes[0].text(0.08,values[0]+3,f"{values[0]:.2f}",ha="center",va="bottom",fontsize=6,color="#243391")
     grouped=measurements[("Isabel_Pf24",0,0)]
     normalizer=Normalize(min(candidate_t),max(candidate_t))
@@ -257,7 +217,6 @@ def main():
     summary=summarize(rows)
     write_csv(output/"cases.csv",rows,list(rows[0]))
     write_csv(output/"summary.csv",summary,list(summary[0]))
-    plot_heatmap(rows,output)
     plot_validation_triptych(measurements,rows,output)
     report={"protocol":"global 1D4R coefficient selection on fixed dataset/direction/QB-order cases; actual Huffman-Zstd QB-stream BR-PSNR is ground truth","datasets":[dataset for dataset,_,_,_ in datasets],"relative_error_bounds":rel_ebs,"directions":[0,1,2],"qb_orders":[0,1,2],"candidate_t":[f"{round(t*32)}/32" for t in candidate_t],"tie_break":"ASZ order: initialize at 1/4,then scan candidates in ascending order; ground-score ties count as agreement","slope":"neighboring coefficient-averaged points; centered differences internally and one-sided differences at endpoints","rate_scope":"Huffman plus Zstd level-3 quantization-symbol bytes only; legacy single-round prediction with frozen original references,not full-compressor RD","input_sha256":input_hashes}
     temporary=output/"report.json.tmp"

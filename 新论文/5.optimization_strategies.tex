@@ -50,7 +50,7 @@ We compare the compression performance of 1D4R and 2D4R to determine which predi
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets.png}
+\includegraphics{revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets.png}
 \caption{Rate--distortion comparison of 1D4R and 2D4R. Each curve represents one prediction axis for 1D4R or one pair of prediction axes for 2D4R after selecting the best coefficient and QB serialization order. We observe a better overall rate--distortion trade-off with 1D4R in all three cases.}
 \label{fig:configuration-space:1d4r-vs-2d4r}
 \end{figure}
@@ -86,7 +86,7 @@ Figure~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the two families on s
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets.png}
+\includegraphics{revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets.png}
 \caption{Rate--distortion comparison of 1D4R and 1D6R on common targets. Each family contributes three curves, one per prediction axis, after selecting its coefficient and QB serialization order. The curves nearly coincide in (a)--(c), while 1D6R improves rate--distortion performance in (d)--(f).}
 \label{fig:configuration-space:1d4r-vs-1d6r}
 \end{figure}
@@ -95,8 +95,8 @@ Figure~\ref{fig:configuration-space:1d6r-coefficients} further compares 1D6R und
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/1d6r-coefficients-common-final18/iv-1d6r-coefficients-common-targets.png}
-\caption{Rate--distortion curves for 42 fixed 1D6R coefficient pairs on common targets. Fixed quintic interpolation follows the best-per-error-bound curve throughout Aramco and QMCPACK and at four of the five LETKF PRES error bounds.}
+\includegraphics{revised-fig/1d6r-coefficients-common-final18/iv-1d6r-coefficients-common-targets.png}
+\caption{Rate--distortion curves for 42 fixed 1D6R coefficient pairs on common targets. Fixed quintic interpolation gives the best rate--distortion performance in most cases.}
 \label{fig:configuration-space:1d6r-coefficients}
 \end{figure}
 
@@ -120,12 +120,12 @@ Figure~\ref{fig:configuration-space:qb-order} compares the rate--distortion curv
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/qb-order-rd.png}
-\caption{Rate--distortion comparison of QB serialization orders after independently selecting the best prediction axis and coefficient for each order. Labels $x$, $y$, and $z$ identify the fastest-varying axis of the serialized QB tensor. The displayed range focuses on five relative error bounds from $5\times10^{-4}$ to $2\times10^{-3}$, while measurements outside this range extend each curve to the panel boundary.}
+\includegraphics{revised-fig/qb-order-rd.png}
+\caption{Rate--distortion comparison of QB serialization orders after independently selecting the best prediction axis and coefficient for each order. Labels $x$, $y$, and $z$ identify the fastest-varying axis of the serialized QB tensor. Across the three examples and their common PSNR intervals, the geometric mean of the best-to-worst compression-ratio improvement is $1.17\times$.}
 \label{fig:configuration-space:qb-order}
 \end{figure}
 
-The results confirm that QB serialization order affects rate--distortion performance. Across the three examples, the largest separation between the best and worst orders reaches $1.49\times$ in compression ratio at equal PSNR, motivating its inclusion as a round-wise configuration choice.
+This separation motivates QB serialization order as a round-wise configuration choice.
 
 \subsection{Proxy-Based Coefficient Selection}
 \label{sec:configuration-space:coefficient-selection}
@@ -166,8 +166,8 @@ Replacing BR with $H_1$ accelerates coefficient evaluation because $H_1$ depends
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\columnwidth]{revised-fig/coefficient-proxy-validation.png}
-\caption{Coefficient-selection proxy validation. (a) $H_1$--PSNR achieves the highest agreement with measured single-round BR--PSNR among the proxy criteria, selecting the same coefficient in 95.93\% of the cases. (b)--(c) BR--PSNR and $H_1$--PSNR curves for Isabel P 24 with prediction axis 0 and QB order 0. Each color denotes one of the eleven coefficient candidates, and each curve contains the five relative error bounds from $10^{-1}$ to $10^{-5}$.}
+\includegraphics{revised-fig/coefficient-proxy-validation.png}
+\caption{Coefficient-selection proxy validation. (a) $H_1$--PSNR achieves the highest agreement with measured single-round BR--PSNR among the proxy criteria, selecting the same coefficient in 95.93\% of the cases. (b)--(c) BR--PSNR and $H_1$--PSNR curves for Isabel P 24 with prediction axis 0 and QB order 0. Each color denotes one of the eleven coefficient candidates, and each curve contains the five relative error bounds from $10^{-1}$ to $10^{-5}$. The closely matched curve shapes preserve the relative performance of the candidate coefficients across the five error bounds, explaining the high agreement in (a).}
 \label{fig:configuration-space:global-coefficient-selection}
 \end{figure}
 

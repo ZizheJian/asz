@@ -10,7 +10,7 @@ from matplotlib.ticker import LogFormatterSciNotation,LogLocator,MaxNLocator,Nul
 from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
-datasets=(("precip24","Isabel PRECIP\n24"),("qmcpack144","QMCPACK\nOrbital 144"),("aramco1800","Aramco\n1800"))
+datasets=(("precip24","Isabel PRECIP 24"),("qmcpack144","QMCPACK\nOrbital 144"),("aramco1800","Aramco 1800"))
 orders=(0,1,2)
 styles={0:{"color":"#2166ac"},1:{"color":"#b2182b"},2:{"color":"#1b7837"}}
 
