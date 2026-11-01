@@ -9,7 +9,7 @@ asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_
 supported_compressors=("asz","sz3","qoz","zfp","sperr")
 traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
 asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","t_precision")
-asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","predictor_family_sample_limit","predictor_family_mse_ratio_threshold","predictor_family_suffix_layers","predictor_family_sample_blocks","predictor_family_sample_point_limit","predictor_family_sample_fraction_limit","predictor_family_coarse_probe_block_pivot_ratio","predictor_family_fine_probe_block_pivot_ratio","predictor_family_fine_eb_threshold","default_slope_invalid_ratio_threshold","default_slope_fallback","default_slope_eb_span","t_min","t_max")
+asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","predictor_family_sample_limit","predictor_family_mse_ratio_threshold","predictor_family_suffix_layers","predictor_family_sample_blocks","predictor_family_sample_point_limit","predictor_family_sample_fraction_limit","predictor_family_coarse_probe_block_pivot_ratio","predictor_family_fine_probe_block_pivot_ratio","predictor_family_fine_eb_threshold","predictor_family_probe_axis_extension","default_slope_invalid_ratio_threshold","default_slope_fallback","default_slope_eb_span","t_min","t_max")
 asz_block_policy_keys=("coarse_block_pivot_ratio","fine_block_pivot_ratio")
 
 
@@ -111,7 +111,7 @@ def prepare_methods(method_list,task_id):
         if isinstance(method,str):
             prepared={"name":method,"compressor":method}
         elif isinstance(method,dict):
-            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","predictor_family_selector","t_policy","block_t_policy","report_t_histogram",*asz_parameter_keys,*asz_compress_parameter_keys,*asz_block_policy_keys}
+            allowed_keys={"name","compressor","read_plan","write_plan","predictor_family","predictor_family_selector","predictor_family_probe_context","t_policy","block_t_policy","report_t_histogram",*asz_parameter_keys,*asz_compress_parameter_keys,*asz_block_policy_keys}
             unknown=method.keys()-allowed_keys
             if unknown:
                 raise ValueError(f"task {task_id}的method {method_id}包含未知参数：{','.join(sorted(unknown))}")
@@ -135,6 +135,9 @@ def prepare_methods(method_list,task_id):
         if "predictor_family_selector" in prepared:
             if prepared["compressor"]!="asz" or prepared["predictor_family_selector"] not in ("h1","mse"):
                 raise ValueError(f"task {task_id}的method {method_id}的predictor_family_selector只能是h1或mse且只能用于asz")
+        if "predictor_family_probe_context" in prepared:
+            if prepared["compressor"]!="asz" or prepared["predictor_family_probe_context"] not in ("blocks","halo"):
+                raise ValueError(f"task {task_id}的method {method_id}的predictor_family_probe_context只能是blocks或halo且只能用于asz")
         if "t_policy" in prepared:
             if prepared["compressor"]!="asz" or prepared["t_policy"] not in ("adaptive","fixed_4_16","fixed_5_16"):
                 raise ValueError(f"task {task_id}的method {method_id}的t_policy只能是adaptive、fixed_4_16或fixed_5_16且只能用于asz")
@@ -151,7 +154,7 @@ def prepare_methods(method_list,task_id):
                 raise ValueError(f"task {task_id}的method {method_id}只有asz可以设置{key}")
             if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value):
                 raise ValueError(f"task {task_id}的method {method_id}的{key}必须是有限数字")
-            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","generate_config_sample_stride","h1_block_sampling_num","predictor_family_sample_limit","predictor_family_suffix_layers","predictor_family_sample_blocks","predictor_family_sample_point_limit","predictor_family_coarse_probe_block_pivot_ratio","predictor_family_fine_probe_block_pivot_ratio","t_precision"):
+            if key in ("block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","generate_config_sample_stride","h1_block_sampling_num","predictor_family_sample_limit","predictor_family_suffix_layers","predictor_family_sample_blocks","predictor_family_sample_point_limit","predictor_family_coarse_probe_block_pivot_ratio","predictor_family_fine_probe_block_pivot_ratio","predictor_family_probe_axis_extension","t_precision"):
                 if not isinstance(value,int) or value<=0:
                     raise ValueError(f"task {task_id}的method {method_id}的{key}必须是正整数")
                 if key in ("max_layer_num","full_predictor_search_layer_num") and value>63:
@@ -536,7 +539,7 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     compressed_path=codec_output_path(task,".asz")
     reconstructed_path=codec_output_path(task,".bin")
     common=["-f","-i",data_path,"-3",*shape,"-M","REL",f"{rel_eb:.17g}"]
-    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num","generate_config_sample_stride":"--generate-config-sample-stride","h1_block_sampling_num":"--h1-block-sampling-num","stat_eb_ratio":"--stat-eb-ratio","predictor_family_sample_limit":"--predictor-family-sample-limit","predictor_family_mse_ratio_threshold":"--predictor-family-mse-ratio-threshold","predictor_family_suffix_layers":"--predictor-family-suffix-layers","predictor_family_sample_blocks":"--predictor-family-sample-blocks","predictor_family_sample_point_limit":"--predictor-family-sample-point-limit","predictor_family_sample_fraction_limit":"--predictor-family-sample-fraction-limit","predictor_family_coarse_probe_block_pivot_ratio":"--predictor-family-coarse-probe-block-pivot-ratio","predictor_family_fine_probe_block_pivot_ratio":"--predictor-family-fine-probe-block-pivot-ratio","predictor_family_fine_eb_threshold":"--predictor-family-fine-eb-threshold","default_slope_invalid_ratio_threshold":"--default-slope-invalid-ratio-threshold","default_slope_fallback":"--default-slope-fallback","default_slope_eb_span":"--default-slope-eb-span","t_precision":"--t-precision","t_min":"--t-min","t_max":"--t-max"}
+    option_names={"pivot_eb_ratio":"--pivot-eb-ratio","eb_ratio":"--eb-ratio","slope_ratio":"--slope-ratio","block_pivot_ratio":"--block-pivot-ratio","max_layer_num":"--max-layer-num","full_predictor_search_layer_num":"--full-predictor-search-layer-num","generate_config_sample_stride":"--generate-config-sample-stride","h1_block_sampling_num":"--h1-block-sampling-num","stat_eb_ratio":"--stat-eb-ratio","predictor_family_sample_limit":"--predictor-family-sample-limit","predictor_family_mse_ratio_threshold":"--predictor-family-mse-ratio-threshold","predictor_family_suffix_layers":"--predictor-family-suffix-layers","predictor_family_sample_blocks":"--predictor-family-sample-blocks","predictor_family_sample_point_limit":"--predictor-family-sample-point-limit","predictor_family_sample_fraction_limit":"--predictor-family-sample-fraction-limit","predictor_family_coarse_probe_block_pivot_ratio":"--predictor-family-coarse-probe-block-pivot-ratio","predictor_family_fine_probe_block_pivot_ratio":"--predictor-family-fine-probe-block-pivot-ratio","predictor_family_fine_eb_threshold":"--predictor-family-fine-eb-threshold","predictor_family_probe_axis_extension":"--predictor-family-probe-axis-extension","default_slope_invalid_ratio_threshold":"--default-slope-invalid-ratio-threshold","default_slope_fallback":"--default-slope-fallback","default_slope_eb_span":"--default-slope-eb-span","t_precision":"--t-precision","t_min":"--t-min","t_max":"--t-max"}
     method_options=dict(method)
     if plan_predictor_family is not None:
         method_options.setdefault("predictor_family",plan_predictor_family)
@@ -556,6 +559,8 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     compress_command=[asz_executable_directory/"s1_compress",*common,"-z",compressed_path,"-o",reconstructed_path]
     if "block_t_policy" in method_options:
         compress_command.extend(["--block-t-policy",method_options["block_t_policy"]])
+    if "predictor_family_probe_context" in method_options:
+        compress_command.extend(["--predictor-family-probe-context",method_options["predictor_family_probe_context"]])
     for key in asz_compress_parameter_keys:
         if key in method_options:
             compress_command.extend([option_names[key],method_options[key]])

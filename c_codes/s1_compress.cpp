@@ -90,6 +90,10 @@ void validate_parameters(asz::param_c<T> &param,bool t_min_set,bool t_max_set)
         throw invalid_argument("predictor family probe block pivot ratios must be positive");
     if(!(param.predictor_family_fine_eb_threshold>0&&isfinite(param.predictor_family_fine_eb_threshold)))
         throw invalid_argument("predictor_family_fine_eb_threshold must be positive and finite");
+    if(param.predictor_family_probe_axis_extension==0)
+        throw invalid_argument("predictor_family_probe_axis_extension must be positive");
+    if(param.predictor_family_probe_context!="blocks"&&param.predictor_family_probe_context!="halo")
+        throw invalid_argument("predictor_family_probe_context must be blocks or halo");
     if(!(param.default_slope_invalid_ratio_threshold>0&&param.default_slope_invalid_ratio_threshold<=1))
         throw invalid_argument("default_slope_invalid_ratio_threshold must be in (0,1]");
     if(!(param.default_slope_fallback>0&&isfinite(param.default_slope_fallback)))
@@ -325,6 +329,16 @@ int main(int argc,char* argv[]) try
         else if(arg=="--predictor-family-fine-eb-threshold")
         {
             param.predictor_family_fine_eb_threshold=stof(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-probe-axis-extension")
+        {
+            param.predictor_family_probe_axis_extension=stoull(argv[++i]);
+            continue;
+        }
+        else if(arg=="--predictor-family-probe-context")
+        {
+            param.predictor_family_probe_context=argv[++i];
             continue;
         }
         else if (arg=="--default-slope-invalid-ratio-threshold")

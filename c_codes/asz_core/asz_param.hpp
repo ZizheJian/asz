@@ -165,6 +165,8 @@ namespace asz
             uint64_t predictor_family_coarse_probe_block_pivot_ratio=3;
             uint64_t predictor_family_fine_probe_block_pivot_ratio=4;
             T predictor_family_fine_eb_threshold=1e-4;
+            uint64_t predictor_family_probe_axis_extension=1;//probe block沿suffix预测轴加长的倍数，不超过正式block长度
+            string predictor_family_probe_context="blocks";//blocks先压缩前方相邻block，halo只保留原始值halo
             T default_slope_invalid_ratio_threshold=1;
             T default_slope_fallback=1000;
             T default_slope_eb_span=1.5;

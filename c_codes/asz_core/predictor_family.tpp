@@ -35,6 +35,7 @@ namespace asz
             local.quintic_fallback_t_policy=probe.quintic_fallback_t_policy;
             local.quintic_fallback_t=probe.quintic_fallback_t;
             local.stat_eb_ratio=probe.stat_eb_ratio;
+            local.predictor_family_probe_context=probe.predictor_family_probe_context;
             local.set_t_policy(probe.t_policy);
         }
 
@@ -137,12 +138,14 @@ namespace asz
             vector<qb_t> context_qbs;
             vector<long double> prediction_sse(layer_num),reconstruction_sse(layer_num);
             vector<uint64_t> layer_counts(layer_num);
+            // halo模式不压缩前方相邻block，target左侧只保留copy_local_context复制的原始值halo
+            bool halo_context=probe.predictor_family_probe_context=="halo";
             for(const point_t &target_block:target_blocks)
             {
                 point_t context_block_begin,target_block_end,context_begin,context_end;
                 for(int axis=0;axis<3;axis++)
                 {
-                    context_block_begin[axis]=target_block[axis]?target_block[axis]-1:0;
+                    context_block_begin[axis]=halo_context||target_block[axis]==0?target_block[axis]:target_block[axis]-1;
                     target_block_end[axis]=target_block[axis]+1;
                     context_begin[axis]=context_block_begin[axis]*probe.block_shape[axis];
                     context_end[axis]=min(target_block_end[axis]*probe.block_shape[axis]+1,probe.data_shape[axis]);
@@ -231,6 +234,13 @@ namespace asz
         probe.predictor_vec.assign(predictor_vec.end()-suffix_layers,predictor_vec.end());
         probe.block_pivot_ratio=rel_eb<=predictor_family_fine_eb_threshold?predictor_family_fine_probe_block_pivot_ratio:predictor_family_coarse_probe_block_pivot_ratio;
         probe.generate_pivot_stride_and_block_shape_and_block_num();
+        // 1D预测只受预测轴方向的block长度影响，只沿suffix中出现的预测轴加长，并以正式block长度为上限
+        for(int axis=0;axis<3;axis++)
+        {
+            if(probe.pivot_stride[axis]>1)
+                probe.block_shape[axis]=max(probe.block_shape[axis],min(probe.block_shape[axis]*predictor_family_probe_axis_extension,block_shape[axis]));
+            probe.block_num[axis]=(data_shape[axis]+probe.block_shape[axis]-1)/probe.block_shape[axis];
+        }
         auto candidates=predictor_family_detail::make_stratified_targets(probe.block_num,predictor_family_sample_blocks);
         uint64_t fraction_budget=(uint64_t)floor((long double)data.size()*predictor_family_sample_fraction_limit);
         uint64_t point_budget=min(predictor_family_sample_point_limit,fraction_budget);
@@ -239,7 +249,7 @@ namespace asz
         if(targets.empty())
         {
             force_quintic=false;
-            printf("Predictor family selection: selector=h1, suffix_layers=%lu, blocks=0, sampled_block_points=0, sample_point_budget=%lu, probe_block_pivot_ratio=%lu, fallback=point_budget, family=cubic\n",suffix_layers,point_budget,probe.block_pivot_ratio);
+            printf("Predictor family selection: selector=h1, suffix_layers=%lu, blocks=0, sampled_block_points=0, sample_point_budget=%lu, probe_block_pivot_ratio=%lu, probe_axis_extension=%lu, probe_block_shape=%lux%lux%lu, probe_context=%s, fallback=point_budget, family=cubic\n",suffix_layers,point_budget,probe.block_pivot_ratio,predictor_family_probe_axis_extension,probe.block_shape[0],probe.block_shape[1],probe.block_shape[2],predictor_family_probe_context.c_str());
         }
         else
         {
@@ -248,7 +258,7 @@ namespace asz
             long double psnr_gain=isinf(quintic.reconstruction_psnr)&&quintic.reconstruction_psnr==cubic.reconstruction_psnr?0:quintic.reconstruction_psnr-cubic.reconstruction_psnr;
             long double score_gain=psnr_gain-(long double)default_slope*(quintic.h1-cubic.h1);
             force_quintic=score_gain>0;
-            printf("Predictor family selection: selector=h1, suffix_layers=%lu, blocks=%lu, sampled_block_points=%lu, sample_point_budget=%lu, probe_block_pivot_ratio=%lu, points=%lu, cubic_mse=%.12Le, quintic_mse=%.12Le, cubic_psnr=%.12Le, quintic_psnr=%.12Le, cubic_h1=%.12Le, quintic_h1=%.12Le, six_score_gain=%.12Le, family=%s\n",suffix_layers,(uint64_t)targets.size(),sampled_points,point_budget,probe.block_pivot_ratio,cubic.point_count,cubic.prediction_mse,quintic.prediction_mse,cubic.reconstruction_psnr,quintic.reconstruction_psnr,cubic.h1,quintic.h1,score_gain,force_quintic?"quintic":"cubic");
+            printf("Predictor family selection: selector=h1, suffix_layers=%lu, blocks=%lu, sampled_block_points=%lu, sample_point_budget=%lu, probe_block_pivot_ratio=%lu, probe_axis_extension=%lu, probe_block_shape=%lux%lux%lu, probe_context=%s, points=%lu, cubic_mse=%.12Le, quintic_mse=%.12Le, cubic_psnr=%.12Le, quintic_psnr=%.12Le, cubic_h1=%.12Le, quintic_h1=%.12Le, six_score_gain=%.12Le, family=%s\n",suffix_layers,(uint64_t)targets.size(),sampled_points,point_budget,probe.block_pivot_ratio,predictor_family_probe_axis_extension,probe.block_shape[0],probe.block_shape[1],probe.block_shape[2],predictor_family_probe_context.c_str(),cubic.point_count,cubic.prediction_mse,quintic.prediction_mse,cubic.reconstruction_psnr,quintic.reconstruction_psnr,cubic.h1,quintic.h1,score_gain,force_quintic?"quintic":"cubic");
         }
         auto end_time=chrono::high_resolution_clock::now();
         printf("Predictor family selection time: %f s\n",chrono::duration<double>(end_time-start_time).count());
