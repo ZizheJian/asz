@@ -175,7 +175,17 @@ The RD summary integrates the log-bit-rate difference over the shared PSNR inter
 
 Plans are JSON documents indexed by relative error bound. Version 2 records one dataset-wide predictor family and the prediction axis and QB traversal order for every round. The loader remains compatible with version 1 plans. `write_plan` creates a version 2 plan; `read_plan` applies one.
 
-Plan reuse targets compatible arrays with the same shape. `configs/isabel_plan_transfer.json` and `configs/aramco_plan_transfer.json` define temporal reuse experiments. `configs/qmcpack_orbital_plan_transfer.json` and `configs/miranda_velocity_plan_transfer.json` define reuse across related orbitals and velocity components. The transferred plan fixes the dataset-wide predictor family and every round's axis and traversal order, while block coefficients remain adaptive for the target file. Transfer quality must be evaluated for each related group.
+Plan reuse targets compatible arrays with the same shape. The manuscript's temporal reuse experiment covers Isabel PRECIP time steps 01--48, RTM Small snapshots 0335--0385, and CESM UU time steps 00--62 at relative error bounds `1e-2,1e-3,1e-4`. For `m` files sharing one plan, each sequence is split into `floor(T/m)` windows of `m` files whose middle file generates the plan; the remaining files are split between the two ends, with the extra file at the back, and join the first and last windows. Every file first generates its own plan, then every distinct representative--target pair is compressed once and shared by all `m` values. `analyze_temporal_plan_reuse.py` averages BR and NMSE over all files at each error bound, interpolates `log(BR)` over PSNR at the self-plan PSNR of `1e-3`, and also reports the minimum and maximum per-file losses. `plot_temporal_plan_reuse.py` plots these losses against `m`.
+
+```bash
+python3 scripts/prepare_temporal_plan_reuse.py
+sbatch --cpus-per-task=16 --time=00:20:00 scripts/run_temporal_plan_reuse.sbatch isabel_precip
+sbatch --cpus-per-task=16 --time=00:20:00 scripts/run_temporal_plan_reuse.sbatch rtm_small
+sbatch --cpus-per-task=32 --time=00:45:00 scripts/run_temporal_plan_reuse.sbatch cesm_uu 16
+python3 plot_temporal_plan_reuse.py
+```
+
+The optional second argument of the batch script sets the number of concurrent launcher processes; CESM UU uses half of the CPUs because one process reaches about 2 GB. The batch script skips configurations whose summary CSV already exists. `configs/aramco_plan_transfer.json` defines an earlier Aramco temporal check. `configs/qmcpack_orbital_plan_transfer.json` and `configs/miranda_velocity_plan_transfer.json` define reuse across related orbitals and velocity components. The transferred plan fixes the dataset-wide predictor family and every round's axis and traversal order, while block coefficients remain adaptive for the target file. Transfer quality must be evaluated for each related group.
 
 ASZ bitstreams intentionally do not embed `rel_eb` or the tuned compressor parameters. Compression and decompression must therefore use identical settings. Changing those settings without regenerating both sides can make a stream undecodable.
 
