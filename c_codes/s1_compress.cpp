@@ -42,12 +42,7 @@ void prepare_compression_plan(asz::param_c<T> &param,const vector<string> &predi
     if (param.predictor_vec.size()>63)
         throw invalid_argument("predictor plan cannot contain more than 63 layers");
     if (param.auto_select_predictor_family)
-    {
-        if(param.predictor_family_selector=="h1")
-            param.select_predictor_family();
-        else
-            param.select_predictor_family_mse();
-    }
+        param.select_predictor_family();
     param.print_config();
 }
 
@@ -72,12 +67,6 @@ void validate_parameters(asz::param_c<T> &param,bool t_min_set,bool t_max_set)
         throw invalid_argument("h1_block_sampling_num must be positive");
     if(!(param.stat_eb_ratio>0&&param.stat_eb_ratio<=1))
         throw invalid_argument("stat_eb_ratio must be in (0,1]");
-    if(param.predictor_family_sample_limit==0)
-        throw invalid_argument("predictor_family_sample_limit must be positive");
-    if(!(param.predictor_family_mse_ratio_threshold>=0&&isfinite(param.predictor_family_mse_ratio_threshold)))
-        throw invalid_argument("predictor_family_mse_ratio_threshold must be nonnegative and finite");
-    if(param.predictor_family_selector!="h1"&&param.predictor_family_selector!="mse")
-        throw invalid_argument("predictor_family_selector must be h1 or mse");
     if(param.predictor_family_suffix_layers==0)
         throw invalid_argument("predictor_family_suffix_layers must be positive");
     if(param.predictor_family_sample_blocks==0)
@@ -90,10 +79,6 @@ void validate_parameters(asz::param_c<T> &param,bool t_min_set,bool t_max_set)
         throw invalid_argument("predictor family probe block pivot ratios must be positive");
     if(!(param.predictor_family_fine_eb_threshold>0&&isfinite(param.predictor_family_fine_eb_threshold)))
         throw invalid_argument("predictor_family_fine_eb_threshold must be positive and finite");
-    if(param.predictor_family_probe_axis_extension==0)
-        throw invalid_argument("predictor_family_probe_axis_extension must be positive");
-    if(param.predictor_family_probe_context!="blocks"&&param.predictor_family_probe_context!="halo")
-        throw invalid_argument("predictor_family_probe_context must be blocks or halo");
     if(!(param.default_slope_invalid_ratio_threshold>0&&param.default_slope_invalid_ratio_threshold<=1))
         throw invalid_argument("default_slope_invalid_ratio_threshold must be in (0,1]");
     if(!(param.default_slope_fallback>0&&isfinite(param.default_slope_fallback)))
@@ -110,17 +95,7 @@ void validate_parameters(asz::param_c<T> &param,bool t_min_set,bool t_max_set)
         throw invalid_argument("t_min and t_max must be representable at t_precision");
     if(param.t_min>(T)4/16||param.t_max<(T)5/16)
         throw invalid_argument("t range must include 4/16 and 5/16");
-    if(!(param.insufficient_sample_t>=param.t_min&&param.insufficient_sample_t<=param.t_max))
-        throw invalid_argument("insufficient_sample_t must be inside the t range");
-    if(abs(param.insufficient_sample_t*param.t_precision-round(param.insufficient_sample_t*param.t_precision))>1e-6)
-        throw invalid_argument("insufficient_sample_t must be representable at t_precision");
-    if(param.quintic_fallback_t_policy!="block"&&param.quintic_fallback_t_policy!="fixed")
-        throw invalid_argument("quintic_fallback_t_policy must be block or fixed");
-    if(!(param.quintic_fallback_t>=param.t_min&&param.quintic_fallback_t<=param.t_max))
-        throw invalid_argument("quintic_fallback_t must be inside the t range");
-    if(abs(param.quintic_fallback_t*param.t_precision-round(param.quintic_fallback_t*param.t_precision))>1e-6)
-        throw invalid_argument("quintic_fallback_t must be representable at t_precision");
-    param.set_t_policy(param.t_policy);
+    param.set_t_candidates();
 }
 
 template<typename T>
@@ -281,21 +256,6 @@ int main(int argc,char* argv[]) try
             param.stat_eb_ratio=stof(argv[++i]);
             continue;
         }
-        else if (arg=="--predictor-family-sample-limit")
-        {
-            param.predictor_family_sample_limit=stoull(argv[++i]);
-            continue;
-        }
-        else if (arg=="--predictor-family-mse-ratio-threshold")
-        {
-            param.predictor_family_mse_ratio_threshold=stof(argv[++i]);
-            continue;
-        }
-        else if(arg=="--predictor-family-selector")
-        {
-            param.predictor_family_selector=argv[++i];
-            continue;
-        }
         else if(arg=="--predictor-family-suffix-layers")
         {
             param.predictor_family_suffix_layers=stoull(argv[++i]);
@@ -331,16 +291,6 @@ int main(int argc,char* argv[]) try
             param.predictor_family_fine_eb_threshold=stof(argv[++i]);
             continue;
         }
-        else if(arg=="--predictor-family-probe-axis-extension")
-        {
-            param.predictor_family_probe_axis_extension=stoull(argv[++i]);
-            continue;
-        }
-        else if(arg=="--predictor-family-probe-context")
-        {
-            param.predictor_family_probe_context=argv[++i];
-            continue;
-        }
         else if (arg=="--default-slope-invalid-ratio-threshold")
         {
             param.default_slope_invalid_ratio_threshold=stof(argv[++i]);
@@ -373,39 +323,9 @@ int main(int argc,char* argv[]) try
             t_max_set=true;
             continue;
         }
-        else if (arg=="--t-policy")
-        {
-            param.t_policy=argv[++i];
-            continue;
-        }
-        else if (arg=="--block-t-policy")
-        {
-            param.block_t_policy=argv[++i];
-            continue;
-        }
-        else if(arg=="--insufficient-sample-t")
-        {
-            param.insufficient_sample_t=stof(argv[++i]);
-            continue;
-        }
-        else if(arg=="--quintic-fallback-t-policy")
-        {
-            param.quintic_fallback_t_policy=argv[++i];
-            continue;
-        }
-        else if(arg=="--quintic-fallback-t")
-        {
-            param.quintic_fallback_t=stof(argv[++i]);
-            continue;
-        }
         else if (arg=="--report-t-histogram")
         {
             param.report_t_histogram=true;
-            continue;
-        }
-        else if (arg=="--report-layer-diagnostics")
-        {
-            param.layer_diagnostics.enabled=true;
             continue;
         }
         else

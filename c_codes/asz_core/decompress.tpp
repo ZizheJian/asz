@@ -180,11 +180,9 @@ namespace asz
             for (uint32_t layer_id=0;layer_id<layer_num;layer_id++)
             {
                 //////// 获取最佳t ////////
-                if (t_int_vec.empty())
-                    throw runtime_error("compressed stream contains no t value");
-                T best_t=(T)t_int_vec[t_int_vec.size()==1?0:t_pos]/t_precision;
-                if (t_int_vec.size()!=1)
-                    t_pos++;
+                if (t_pos>=t_int_vec.size())
+                    throw runtime_error("compressed stream contains too few t values");
+                T best_t=(T)t_int_vec[t_pos++]/t_precision;
                 //////// 预测 ////////
                 unsigned char direction=predictor_direction[layer_id];
                 unsigned char order=predictor_order[layer_id];

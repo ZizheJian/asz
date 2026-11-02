@@ -1,3 +1,0 @@
-[
-  {"name":"APSU006","data_path":"/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_006/APSU_TestData_006.h5.f32","data_shape":[4096,1558,1813],"rel_eb_list":[0.1,0.01,0.001,0.0001,0.00001]}
-]

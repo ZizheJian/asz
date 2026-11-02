@@ -20,9 +20,6 @@ namespace asz
         printf("generate_config_sample_stride=%lu;\n",generate_config_sample_stride);
         printf("h1_block_sampling_num=%lu;\n",h1_block_sampling_num);
         printf("stat_eb_ratio=%.3f;\n",stat_eb_ratio);
-        printf("predictor_family_sample_limit=%lu;\n",predictor_family_sample_limit);
-        printf("predictor_family_mse_ratio_threshold=%.6f;\n",predictor_family_mse_ratio_threshold);
-        printf("predictor_family_selector=%s;\n",predictor_family_selector.c_str());
         printf("predictor_family_suffix_layers=%lu;\n",predictor_family_suffix_layers);
         printf("predictor_family_sample_blocks=%lu;\n",predictor_family_sample_blocks);
         printf("predictor_family_sample_point_limit=%lu;\n",predictor_family_sample_point_limit);
@@ -44,93 +41,11 @@ namespace asz
             printf("%s%.6f",candidate_it==block_candidate_t.begin()?"":",",*candidate_it);
         printf("};\n");
         printf("block_pivot_ratio=%lu;\n",block_pivot_ratio);
-        printf("t_policy=%s;\n",t_policy.c_str());
-        printf("block_t_policy=%s;\n",block_t_policy.c_str());
         printf("insufficient_sample_t=%.6f;\n",insufficient_sample_t);
-        printf("quintic_fallback_t_policy=%s;\n",quintic_fallback_t_policy.c_str());
-        printf("quintic_fallback_t=%.6f;\n",quintic_fallback_t);
         printf("predictor_family=%s;\n",force_quintic?"quintic":"cubic");
         printf("pivot_stride={%lu,%lu,%lu};\n",pivot_stride[0],pivot_stride[1],pivot_stride[2]);
         printf("block_shape={%lu,%lu,%lu};\n",block_shape[0],block_shape[1],block_shape[2]);
         printf("block_num={%lu,%lu,%lu};\n",block_num[0],block_num[1],block_num[2]);
-    }
-
-    template<typename T>
-    void param_c<T>::select_predictor_family_mse()
-    {
-        auto start_time=chrono::high_resolution_clock::now();
-        if (predictor_vec.empty())
-            throw runtime_error("cannot select predictor family without a predictor plan");
-        int direction=predictor_vec.back()[5]-'0';
-        uint64_t direction_size=data_shape[direction]/2;
-        if (direction_size==0)
-        {
-            force_quintic=false;
-            printf("Predictor family selection: direction=%d, no final-layer samples, family=cubic\n",direction);
-            auto end_time=chrono::high_resolution_clock::now();
-            printf("Predictor family selection time: %f s\n",chrono::duration<double>(end_time-start_time).count());
-            return;
-        }
-        uint64_t sample_space=direction_size;
-        for (int axis=0;axis<3;axis++)
-            if (axis!=direction)
-                sample_space*=data_shape[axis];
-        uint64_t sample_num=min(sample_space,predictor_family_sample_limit);
-        mt19937_64 random_generator(0);
-        long double cubic_squared_error=0,quintic_squared_error=0;
-        auto evaluate_sample=[&](uint64_t logical_index)
-        {
-            uint64_t coordinate[3];
-            for (int axis=2;axis>=0;axis--)
-            {
-                uint64_t axis_size=axis==direction?direction_size:data_shape[axis];
-                coordinate[axis]=logical_index%axis_size;
-                logical_index/=axis_size;
-            }
-            coordinate[direction]=2*coordinate[direction]+1;
-            uint64_t pos=coordinate[0]*data_shape[1]*data_shape[2]+coordinate[1]*data_shape[2]+coordinate[2];
-            uint64_t dist=direction==0?data_shape[1]*data_shape[2]:direction==1?data_shape[2]:1;
-            uint64_t block_id=coordinate[direction]/block_shape[direction];
-            uint64_t right=min((block_id+1)*block_shape[direction]+1,data_shape[direction]);
-            uint64_t i=coordinate[direction];
-            double cubic_prediction;
-            if (i<=1)
-            {
-                if (i+1>=right)
-                    cubic_prediction=data[pos-dist];
-                else if (i+3>=right)
-                    cubic_prediction=((double)data[pos-dist]+data[pos+dist])/2;
-                else
-                    cubic_prediction=(3*(double)data[pos-dist]+6*(double)data[pos+dist]-data[pos+3*dist])/8;
-            }
-            else if (i+1>=right)
-                cubic_prediction=(-(double)data[pos-3*dist]+3*(double)data[pos-dist])/2;
-            else if (i+3>=right)
-                cubic_prediction=(-(double)data[pos-3*dist]+6*(double)data[pos-dist]+3*(double)data[pos+dist])/8;
-            else
-                cubic_prediction=-(data[pos-3*dist]+(double)data[pos+3*dist])/16+9*(data[pos-dist]+(double)data[pos+dist])/16;
-            double quintic_prediction=cubic_prediction;
-            if (i>=5&&i+5<right)
-                quintic_prediction=one_d_six_quintic_inner*(data[pos-dist]+(double)data[pos+dist])+one_d_six_quintic_b*(data[pos-3*dist]+(double)data[pos+3*dist])+one_d_six_quintic_a*(data[pos-5*dist]+(double)data[pos+5*dist]);
-            long double cubic_error=cubic_prediction-(double)data[pos];
-            long double quintic_error=quintic_prediction-(double)data[pos];
-            cubic_squared_error+=cubic_error*cubic_error;
-            quintic_squared_error+=quintic_error*quintic_error;
-        };
-        if (sample_num==sample_space)
-            for (uint64_t sample_id=0;sample_id<sample_num;sample_id++)
-                evaluate_sample(sample_id);
-        else
-            for (uint64_t sample_id=0;sample_id<sample_num;sample_id++)
-            {
-                uint64_t segment_begin=(uint64_t)((unsigned __int128)sample_id*sample_space/sample_num);
-                uint64_t segment_end=(uint64_t)((unsigned __int128)(sample_id+1)*sample_space/sample_num);
-                evaluate_sample(segment_begin+random_generator()%(segment_end-segment_begin));
-            }
-        force_quintic=quintic_squared_error<cubic_squared_error*predictor_family_mse_ratio_threshold;
-        printf("Predictor family selection: direction=%d, samples=%lu, cubic_mse=%.12Le, quintic_mse=%.12Le, family=%s\n",direction,sample_num,cubic_squared_error/sample_num,quintic_squared_error/sample_num,force_quintic?"quintic":"cubic");
-        auto end_time=chrono::high_resolution_clock::now();
-        printf("Predictor family selection time: %f s\n",chrono::duration<double>(end_time-start_time).count());
     }
 
     template<typename T>
@@ -610,7 +525,7 @@ namespace asz
                 }
                 AB_map_ready[direction]=true;
                 // 估算h1和psnr，找到最好的t
-                T initial_t=t_policy=="adaptive"?(T)4/16:candidate_t.front();
+                T initial_t=(T)4/16;
                 T predictor_best_t=initial_t;
                 if (AB_map.empty())
                     best_t[predictor]=predictor_best_t;

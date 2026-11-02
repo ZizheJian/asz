@@ -90,11 +90,6 @@ int main(int argc,char* argv[]) try
             param.t_precision=stoi(argv[++i]);
             continue;
         }
-        else if (arg=="--t-policy")
-        {
-            param.set_t_policy(argv[++i]);
-            continue;
-        }
         else
             throw invalid_argument("unknown argument: "+arg);
     }

@@ -77,7 +77,7 @@ namespace asz
     {
         bool enabled=false;
         uint64_t current_layer=0;
-        vector<long double> prediction_squared_error,prediction_absolute_error,reconstruction_squared_error,reconstruction_absolute_error;
+        vector<long double> prediction_squared_error,reconstruction_squared_error;
         vector<uint64_t> count;
 
         void reset(uint64_t layer_num)
@@ -85,9 +85,7 @@ namespace asz
             if(!enabled)
                 return;
             prediction_squared_error.assign(layer_num,0);
-            prediction_absolute_error.assign(layer_num,0);
             reconstruction_squared_error.assign(layer_num,0);
-            reconstruction_absolute_error.assign(layer_num,0);
             count.assign(layer_num,0);
         }
 
@@ -99,9 +97,7 @@ namespace asz
             long double prediction_error=(long double)prediction-(long double)original;
             long double reconstruction_error=(long double)reconstruction-(long double)original;
             prediction_squared_error[current_layer]+=prediction_error*prediction_error;
-            prediction_absolute_error[current_layer]+=abs(prediction_error);
             reconstruction_squared_error[current_layer]+=reconstruction_error*reconstruction_error;
-            reconstruction_absolute_error[current_layer]+=abs(reconstruction_error);
             count[current_layer]++;
         }
     };
@@ -155,9 +151,6 @@ namespace asz
             uint64_t h1_block_sampling_num=256;
             T stat_eb_ratio=0.2;
             uint64_t generate_config_sample_stride=5;
-            uint64_t predictor_family_sample_limit=10000;
-            T predictor_family_mse_ratio_threshold=0.97;
-            string predictor_family_selector="h1";
             uint64_t predictor_family_suffix_layers=6;
             uint64_t predictor_family_sample_blocks=8;
             uint64_t predictor_family_sample_point_limit=32768;
@@ -165,19 +158,13 @@ namespace asz
             uint64_t predictor_family_coarse_probe_block_pivot_ratio=3;
             uint64_t predictor_family_fine_probe_block_pivot_ratio=4;
             T predictor_family_fine_eb_threshold=1e-4;
-            uint64_t predictor_family_probe_axis_extension=1;//probe block沿suffix预测轴加长的倍数，不超过正式block长度
-            string predictor_family_probe_context="blocks";//blocks先压缩前方相邻block，halo只保留原始值halo
             T default_slope_invalid_ratio_threshold=1;
             T default_slope_fallback=1000;
             T default_slope_eb_span=1.5;
 
             vector<T> candidate_t;
             vector<T> block_candidate_t;
-            string t_policy="adaptive";
-            string block_t_policy="peaks";
             T insufficient_sample_t=(T)4/16;
-            string quintic_fallback_t_policy="block";
-            T quintic_fallback_t=(T)4/16;
             T default_slope;
 
             bool config_generated=false;
@@ -201,39 +188,19 @@ namespace asz
 
             param_c()
             {
-                set_t_policy("adaptive");
+                set_t_candidates();
             }
 
-            void set_t_policy(const string &policy)
+            void set_t_candidates()
             {
-                t_policy=policy;
+                if (t_precision%32||t_min>(T)1/16||t_max<(T)11/32)
+                    throw invalid_argument("block t candidates require t_precision divisible by 32 and t range covering [1/16,11/32]");
                 candidate_t.clear();
-                block_candidate_t.clear();
-                if (block_t_policy!="peaks"&&block_t_policy!="full")
-                    throw invalid_argument("block_t_policy must be peaks or full");
-                if (policy=="adaptive")
-                {
-                    int t_min_i=llround(t_min*t_precision);
-                    int t_max_i=llround(t_max*t_precision);
-                    for (int t_i=t_min_i;t_i<=t_max_i;t_i++)
-                        candidate_t.push_back((T)t_i/t_precision);
-                    if (block_t_policy=="peaks")
-                    {
-                        if (t_precision%32||t_min>(T)1/16||t_max<(T)11/32)
-                            throw invalid_argument("peaks block_t_policy requires t_precision divisible by 32 and t range covering [1/16,11/32]");
-                        block_candidate_t={(T)1/16,(T)1/4,(T)9/32,(T)5/16,(T)11/32};
-                    }
-                    else
-                        block_candidate_t=candidate_t;
-                }
-                else if (policy=="fixed_4_16")
-                    candidate_t.push_back((T)4/16);
-                else if (policy=="fixed_5_16")
-                    candidate_t.push_back((T)5/16);
-                else
-                    throw invalid_argument("t_policy must be adaptive, fixed_4_16, or fixed_5_16");
-                if (policy!="adaptive")
-                    block_candidate_t=candidate_t;
+                int t_min_i=llround(t_min*t_precision);
+                int t_max_i=llround(t_max*t_precision);
+                for (int t_i=t_min_i;t_i<=t_max_i;t_i++)
+                    candidate_t.push_back((T)t_i/t_precision);
+                block_candidate_t={(T)1/16,(T)1/4,(T)9/32,(T)5/16,(T)11/32};
             }
 
             template<typename BlockLoc,typename Stride>
@@ -245,7 +212,6 @@ namespace asz
             void generate_config_enumerate();
             void generate_config(string task);
             void select_predictor_family();
-            void select_predictor_family_mse();
             void block_sample_compress_cubic0_120(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
                 vector<uint64_t> &stride,T t,T eb,T neg_2_ebtemp_stride);
             void block_sample_compress_cubic0_021(vector<qb_t> &qb_vec,T &mse,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &sample_stride,
@@ -267,7 +233,6 @@ namespace asz
             void dot_sample_compress(vector<qb_t> &qb_vec,T &mse,uint64_t i,uint64_t half_stride,uint64_t right,uint64_t pos,uint64_t dist,T t,T eb,
                 T neg_2_eb);
             T select_block_coefficient(const string &predictor,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T layer_eb,T layer_default_slope,bool &used_fallback);
-            void print_layer_diagnostics(const vector<uint64_t> &layer_huffman_bytes);
             T compress();
             void block_compress(vector<qb_t> &qb_vec,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T t,T eb,unsigned char direction,unsigned char qb_order);
             template<bool diagnostics>

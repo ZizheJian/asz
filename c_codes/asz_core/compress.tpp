@@ -91,9 +91,6 @@ namespace asz
     T param_c<T>::select_block_coefficient(const string &predictor,vector<vector<uint64_t>> &block_loc,vector<uint64_t> &stride,T layer_eb,T layer_default_slope,bool &used_fallback)
     {
         used_fallback=false;
-        if(t_policy!="adaptive")
-            return block_candidate_t.front();
-
         unsigned char direction=predictor[5]-'0';
         T best_t=insufficient_sample_t;
         if(direction>2||block_loc[direction][1]<=block_loc[direction][0]+3*stride[direction])
@@ -107,6 +104,9 @@ namespace asz
         for(uint64_t axis=0;axis<3;axis++)
         {
             sample_loc[axis]={block_loc[axis][0],block_loc[axis][1]};
+            // 非预测轴的下侧面由前方block压缩，其重建值会让统计偏向前方block的t，因此只在本block要预测的点上抽样
+            if(axis!=direction&&block_loc[axis][0]!=0)
+                sample_loc[axis][0]+=stride[axis];
             sample_stride[axis]=stride[axis];
         }
         sample_loc[direction][0]+=3*stride[direction]/2;
@@ -144,47 +144,6 @@ namespace asz
     }
 
     template<typename T>
-    void param_c<T>::print_layer_diagnostics(const vector<uint64_t> &layer_huffman_bytes)
-    {
-        long double value_range=(long double)max_val-(long double)min_val;
-        uint32_t layer_num=predictor_vec.size();
-        for(uint32_t layer_id=0;layer_id<layer_num;layer_id++)
-        {
-            const vector<qb_t> &layer_qbs=qb_vec_vec[layer_id+1];
-            uint64_t point_count=layer_diagnostics.count[layer_id];
-            if(point_count!=layer_qbs.size())
-                throw runtime_error("layer diagnostic count does not match quantization-bin count");
-            if(point_count==0)
-                continue;
-
-            unordered_map<qb_t,uint64_t> frequencies;
-            for(qb_t qb:layer_qbs)
-                frequencies[qb]++;
-            long double h1=0;
-            uint64_t zero_count=0;
-            for(const auto &[qb,count]:frequencies)
-            {
-                long double probability=(long double)count/point_count;
-                h1-=probability*log2(probability);
-                if(qb==0)
-                    zero_count=count;
-            }
-
-            long double prediction_mse=layer_diagnostics.prediction_squared_error[layer_id]/point_count;
-            long double prediction_mae=layer_diagnostics.prediction_absolute_error[layer_id]/point_count;
-            long double reconstruction_mse=layer_diagnostics.reconstruction_squared_error[layer_id]/point_count;
-            long double reconstruction_mae=layer_diagnostics.reconstruction_absolute_error[layer_id]/point_count;
-            long double reconstruction_psnr=reconstruction_mse==0?INFINITY:10*log10(value_range*value_range/reconstruction_mse);
-            long double layer_slope=default_slope*pow(slope_ratio,(int32_t)layer_num-(int32_t)layer_id-1);
-            long double h1_psnr_score=reconstruction_psnr-layer_slope*h1;
-            long double layer_eb=abs_eb*pow(eb_ratio,layer_num-layer_id-1);
-            long double huffman_bps=(long double)8*layer_huffman_bytes[layer_id+1]/point_count;
-            long double zero_fraction=(long double)zero_count/point_count;
-            printf("Layer diagnostics: layer=%u, predictor=%s, points=%lu, eb=%.12Le, prediction_mse=%.12Le, prediction_mae=%.12Le, reconstruction_mse=%.12Le, reconstruction_mae=%.12Le, reconstruction_psnr=%.12Le, h1=%.12Le, zero_fraction=%.12Le, huffman_bytes=%lu, huffman_bps=%.12Le, slope=%.12Le, h1_psnr_score=%.12Le\n",layer_id,predictor_vec[layer_id].c_str(),point_count,layer_eb,prediction_mse,prediction_mae,reconstruction_mse,reconstruction_mae,reconstruction_psnr,h1,zero_fraction,layer_huffman_bytes[layer_id+1],huffman_bps,layer_slope,h1_psnr_score);
-        }
-    }
-
-    template<typename T>
     T param_c<T>::compress()
     {
         printf("min_val=%f max_val=%f\n",min_val,max_val);
@@ -197,11 +156,7 @@ namespace asz
             qb_vec_vec[i].reserve((uint64_t)(data.size()*pow(2,(int64_t)i-(int64_t)qb_vec_vec.size()+1)));
         t_int_vec.clear();
         uint64_t t_fallback_count=0;
-        bool fixed_quintic_fallback=force_quintic&&quintic_fallback_t_policy=="fixed";
-        if(t_policy!="adaptive"||fixed_quintic_fallback)
-            t_int_vec.push_back(llround((fixed_quintic_fallback?quintic_fallback_t:block_candidate_t.front())*t_precision));
         uint32_t layer_num=predictor_vec.size();
-        layer_diagnostics.reset(layer_num);
 
         //////// 存储pivot points ////////
         uint64_t pivot_num=(data_shape[0]+pivot_stride[0]-1)/pivot_stride[0];
@@ -240,16 +195,14 @@ namespace asz
                 T layer_default_slope=default_slope*pow(slope_ratio,(int32_t)layer_num-(int32_t)layer_id-1);
                 //////// 为当前block选择系数 ////////
                 bool used_fallback=false;
-                T best_t=fixed_quintic_fallback?quintic_fallback_t:select_block_coefficient(predictor,block_loc,stride,layer_eb,layer_default_slope,used_fallback);
+                T best_t=select_block_coefficient(predictor,block_loc,stride,layer_eb,layer_default_slope,used_fallback);
                 if(used_fallback)
                     t_fallback_count++;
-                if(t_policy=="adaptive"&&!fixed_quintic_fallback)
-                    t_int_vec.push_back(llround(best_t*t_precision));
+                t_int_vec.push_back(llround(best_t*t_precision));
                 //////// 预测 ////////
                 unsigned char direction=predictor[5]-'0';
                 unsigned char order=predictor[9]-'0';
                 vector<qb_t> &layer_qbs=qb_vec_vec[layer_id+1];
-                layer_diagnostics.current_layer=layer_id;
                 block_compress(layer_qbs,block_loc,stride,best_t,layer_eb,direction,order);
                 stride[direction]/=2;
             }
@@ -318,7 +271,6 @@ namespace asz
                     throw runtime_error("Huffman encoded size mismatch");
             }
         }
-        vector<uint64_t> layer_huffman_bytes(layer_diagnostics.enabled?qb_vec_vec.size():0,0);
         for (uint64_t i=0;i<qb_vec_vec.size();i++)
         {   
             uint64_t len=qb_vec_vec[i].size();
@@ -330,8 +282,6 @@ namespace asz
             huffman_encoder_class<qb_t> huffman_encoder;
             huffman_encoder.preprocess_encode(qb_vec_vec[i].data(),qb_vec_vec[i].size());
             uint64_t encoded_size=huffman_encoder.save_size()+huffman_encoder.encode_size();
-            if (layer_diagnostics.enabled)
-                layer_huffman_bytes[i]=encoded_size;
             huffman_bs=append_huffman_bytes(encoded_size);
             unsigned char *huffman_end=huffman_bs+encoded_size;
             huffman_encoder.save(huffman_bs);
@@ -367,8 +317,6 @@ namespace asz
         printf("max_err= %f (%f%%)\n",max_err,max_err*100/abs_eb);
         printf("CR: %f, BR: %f, PSNR: %f\n",cr,br,psnr);
         printf("dist=%f\n",-default_slope*br+psnr);
-        if(layer_diagnostics.enabled)
-            print_layer_diagnostics(layer_huffman_bytes);
         return -default_slope*br+psnr;
     }
 }
