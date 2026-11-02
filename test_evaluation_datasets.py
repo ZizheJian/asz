@@ -63,9 +63,9 @@ class EvaluationDatasetTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"found 0"):
                 read_method_rows(root,dataset,"asz")
 
-    def test_data_range_scan_is_compression(self):
+    def test_data_range_scan_is_not_counted_twice(self):
         row={"COMPRESSION_TIME":"2.5","PREPROCESSING_TIME":"1.0","DATA_RANGE_TIME":"0.25"}
-        self.assertEqual(compression_time(row),2.75)
+        self.assertEqual(compression_time(row),2.5)
         self.assertEqual(preprocessing_time(row),1.0)
         self.assertEqual(compression_time({"COMPRESSION_TIME":"2.5","DATA_RANGE_TIME":""}),2.5)
 

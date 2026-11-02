@@ -116,8 +116,9 @@ def preprocessing_time(row):
     return sum(float(row.get(key) or 0) for key in ("GET_DEFAULT_SLOPE_TIME","GENERATE_CONFIG_TIME","PREDICTOR_FAMILY_SELECTION_TIME"))
 
 
+# ASZ输出的Compression time已经包含数据范围扫描，DATA_RANGE_TIME只是其中的一部分
 def compression_time(row):
-    return float(row["COMPRESSION_TIME"])+float(row.get("DATA_RANGE_TIME") or 0)
+    return float(row["COMPRESSION_TIME"])
 
 
 def row_at_rel_eb(rows,rel_eb):

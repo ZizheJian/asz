@@ -5,7 +5,7 @@
 set -euo pipefail
 cd /home/x-zjian1/asz
 group=${1:?缺少实验组名称}
-if [[ "$group" == "apsu006" || "$group" == "apsu006_sperr" ]];then
+if [[ "$group" == *apsu006* ]];then
     index=${SLURM_ARRAY_TASK_ID:?APSU006需要Slurm array}
     configuration="configs/.final18_rd_${group}_${index}.json"
 else
