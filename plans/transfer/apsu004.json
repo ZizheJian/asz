@@ -3,18 +3,10 @@
   "plans": [
     {
       "rel_eb": 0.1,
-      "predictor_family": "quintic",
+      "predictor_family": "cubic",
       "layers": [
         {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
+          "prediction_direction": 2,
           "traversal_order": [
             0,
             1,
@@ -38,30 +30,6 @@
           ]
         },
         {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
           "prediction_direction": 1,
           "traversal_order": [
             0,
@@ -70,7 +38,7 @@
           ]
         },
         {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -78,7 +46,39 @@
           ]
         },
         {
-          "prediction_direction": 2,
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -94,45 +94,37 @@
           ]
         },
         {
-          "prediction_direction": 2,
+          "prediction_direction": 0,
           "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
             1,
-            2
+            2,
+            0
           ]
         },
         {
           "prediction_direction": 0,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
           ]
         }
       ]
     },
     {
       "rel_eb": 0.01,
-      "predictor_family": "quintic",
+      "predictor_family": "cubic",
       "layers": [
         {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
+          "prediction_direction": 1,
           "traversal_order": [
             0,
             1,
@@ -148,23 +140,7 @@
           ]
         },
         {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
           "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
           "traversal_order": [
             0,
             1,
@@ -188,15 +164,7 @@
           ]
         },
         {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -212,7 +180,31 @@
           ]
         },
         {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
           "traversal_order": [
             1,
             2,
@@ -222,24 +214,32 @@
         {
           "prediction_direction": 0,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
+            0
           ]
         },
         {
-          "prediction_direction": 2,
+          "prediction_direction": 0,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
           ]
         }
       ]
     },
     {
       "rel_eb": 0.001,
-      "predictor_family": "quintic",
+      "predictor_family": "cubic",
       "layers": [
         {
           "prediction_direction": 2,
@@ -250,22 +250,6 @@
           ]
         },
         {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
           "prediction_direction": 2,
           "traversal_order": [
             0,
@@ -282,7 +266,7 @@
           ]
         },
         {
-          "prediction_direction": 2,
+          "prediction_direction": 1,
           "traversal_order": [
             0,
             1,
@@ -298,23 +282,7 @@
           ]
         },
         {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -330,34 +298,66 @@
           ]
         },
         {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
             2,
-            1
+            0
           ]
         },
         {
           "prediction_direction": 0,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
+            0
           ]
         },
         {
-          "prediction_direction": 2,
+          "prediction_direction": 0,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
           ]
         }
       ]
     },
     {
-      "rel_eb": 0.0001,
-      "predictor_family": "quintic",
+      "rel_eb": 0.0003,
+      "predictor_family": "cubic",
       "layers": [
         {
           "prediction_direction": 2,
@@ -368,22 +368,6 @@
           ]
         },
         {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
           "prediction_direction": 2,
           "traversal_order": [
             0,
@@ -400,7 +384,7 @@
           ]
         },
         {
-          "prediction_direction": 2,
+          "prediction_direction": 1,
           "traversal_order": [
             0,
             1,
@@ -416,15 +400,7 @@
           ]
         },
         {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -440,69 +416,85 @@
           ]
         },
         {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
             2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
+            0
           ]
         },
         {
           "prediction_direction": 0,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
           ]
         }
       ]
     },
     {
-      "rel_eb": 1e-05,
-      "predictor_family": "quintic",
+      "rel_eb": 0.00013,
+      "predictor_family": "cubic",
       "layers": [
         {
+          "prediction_direction": 1,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 1,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
           "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
           "traversal_order": [
             0,
             1,
@@ -526,23 +518,7 @@
           ]
         },
         {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -558,23 +534,7 @@
           ]
         },
         {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -585,8 +545,48 @@
           "prediction_direction": 0,
           "traversal_order": [
             0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
             2,
-            1
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "prediction_direction": 0,
+          "traversal_order": [
+            1,
+            2,
+            0
           ]
         }
       ]

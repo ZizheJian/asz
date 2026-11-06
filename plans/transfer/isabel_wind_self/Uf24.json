@@ -2,124 +2,6 @@
   "version": 2,
   "plans": [
     {
-      "rel_eb": 0.1,
-      "predictor_family": "quintic",
-      "layers": [
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            1,
-            2,
-            0
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        }
-      ]
-    },
-    {
       "rel_eb": 0.01,
       "predictor_family": "quintic",
       "layers": [
@@ -132,7 +14,23 @@
           ]
         },
         {
-          "prediction_direction": 0,
+          "prediction_direction": 2,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 1,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 2,
           "traversal_order": [
             0,
             1,
@@ -172,7 +70,7 @@
           ]
         },
         {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
           "traversal_order": [
             0,
             1,
@@ -180,7 +78,7 @@
           ]
         },
         {
-          "prediction_direction": 0,
+          "prediction_direction": 1,
           "traversal_order": [
             0,
             1,
@@ -196,19 +94,19 @@
           ]
         },
         {
-          "prediction_direction": 1,
+          "prediction_direction": 0,
           "traversal_order": [
-            0,
             1,
-            2
+            2,
+            0
           ]
         },
         {
-          "prediction_direction": 0,
+          "prediction_direction": 2,
           "traversal_order": [
-            0,
             1,
-            2
+            2,
+            0
           ]
         },
         {
@@ -217,22 +115,6 @@
             1,
             2,
             0
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            2,
-            1
           ]
         }
       ]
@@ -250,6 +132,22 @@
           ]
         },
         {
+          "prediction_direction": 2,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 1,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
           "prediction_direction": 1,
           "traversal_order": [
             0,
@@ -306,35 +204,11 @@
           ]
         },
         {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
           "prediction_direction": 2,
           "traversal_order": [
             0,
             1,
             2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            2,
-            1
           ]
         },
         {
@@ -348,9 +222,17 @@
         {
           "prediction_direction": 2,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
+            0
+          ]
+        },
+        {
+          "prediction_direction": 1,
+          "traversal_order": [
+            1,
+            2,
+            0
           ]
         }
       ]
@@ -368,6 +250,46 @@
           ]
         },
         {
+          "prediction_direction": 2,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 1,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 2,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 2,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "prediction_direction": 1,
+          "traversal_order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
           "prediction_direction": 0,
           "traversal_order": [
             0,
@@ -418,175 +340,17 @@
         {
           "prediction_direction": 1,
           "traversal_order": [
-            0,
             1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
             2,
-            1
+            0
           ]
         },
         {
           "prediction_direction": 2,
           "traversal_order": [
-            0,
+            1,
             2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        }
-      ]
-    },
-    {
-      "rel_eb": 1e-05,
-      "predictor_family": "quintic",
-      "layers": [
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 2,
-          "traversal_order": [
-            0,
-            2,
-            1
-          ]
-        },
-        {
-          "prediction_direction": 1,
-          "traversal_order": [
-            0,
-            1,
-            2
-          ]
-        },
-        {
-          "prediction_direction": 0,
-          "traversal_order": [
-            0,
-            2,
-            1
+            0
           ]
         }
       ]

@@ -10,7 +10,10 @@ fields={
     "isabel_precip":{"title":"Isabel PRECIP","shape":[100,500,500],"labels":[f"{index:02d}" for index in range(1,49)],"path":data_root+"/ISABEL/PRECIP/PRECIPf{label}.bin"},
     "rtm_small":{"title":"RTM Small","shape":[449,449,235],"labels":[f"{index:04d}" for index in range(335,386)],"path":rtm_root+"/aramco-snapshot-{label}.f32"},
     "cesm_uu":{"title":"CESM UU","shape":[26,1800,3600],"labels":[f"{index:02d}" for index in range(63)],"path":data_root+"/cesm-atm-1.5TB/{label}/UU_26x1800x3600.dat"},
+    # 非时间复用：按orbital编号排序，与时间步复用用同样的窗口和损失定义
+    "qmcpack_orbital":{"title":"QMCPACK Orbital","shape":[115,69,69],"labels":[str(index) for index in range(288)],"path":data_root+"/QMCPACK/orbitals/orbital{label}.f32"},
 }
+temporal_fields=("isabel_precip","rtm_small","cesm_uu")
 uses_list=(1,3,5,9,17)
 bounds=(.01,.001,.0001)
 target_bound=.001
@@ -38,7 +41,7 @@ def transfer_csv_path(field,representative_label,target_label):
     return result_root/field/"transfer"/f"{representative_label}_to_{target_label}.csv"
 
 
-# 每个窗口的核心含uses个文件，代表文件位于核心中心；尾部文件前端分floor(r/2)个、后端分ceil(r/2)个，并入首尾窗口
+# 每个窗口含uses个文件，代表文件位于窗口中心；放不下一个完整窗口的余数文件前端floor(r/2)个、后端ceil(r/2)个，不参与该uses的统计
 def reuse_windows(count,uses):
     if uses<1 or uses%2==0:
         raise ValueError(f"uses must be a positive odd number: {uses}")
@@ -49,13 +52,7 @@ def reuse_windows(count,uses):
     windows=[]
     for window_id in range(window_count):
         begin=front+window_id*uses
-        representative=begin+uses//2
-        end=begin+uses
-        if window_id==0:
-            begin=0
-        if window_id==window_count-1:
-            end=count
-        windows.append((representative,tuple(range(begin,end))))
+        windows.append((begin+uses//2,tuple(range(begin,begin+uses))))
     return windows
 
 
@@ -97,9 +94,10 @@ def interpolate_bit_rate(curve,psnr):
     raise AssertionError("interpolation interval not found")
 
 
-def compression_ratio_loss(self_curve,reuse_curve):
+# 相同PSNR下复用plan与自身plan的压缩比之比，1表示没有损失，小于1表示复用后变差
+def relative_compression_ratio(self_curve,reuse_curve):
     psnr,self_rate=self_curve[target_bound]
-    return 100*(1-self_rate/interpolate_bit_rate(reuse_curve,psnr))
+    return self_rate/interpolate_bit_rate(reuse_curve,psnr)
 
 
 def load_field(field):
@@ -113,23 +111,24 @@ def load_field(field):
 
 def analyze_field(field,self_curves,transfer_curves):
     labels=fields[field]["labels"]
-    self_aggregate=aggregate_curves(self_curves)
     summary=[]
     detail=[]
     for uses in uses_list:
         windows=reuse_windows(len(labels),uses)
-        reuse_curves=list(self_curves)
-        file_losses=[]
-        for representative,members in windows:
-            for target in members:
+        members=[target for _,window in windows for target in window]
+        reuse_curves={target:self_curves[target] for target in members}
+        file_ratios=[]
+        for representative,window in windows:
+            for target in window:
                 if target==representative:
                     continue
                 reuse_curves[target]=transfer_curves[(representative,target)]
-                loss=compression_ratio_loss(self_curves[target],reuse_curves[target])
-                file_losses.append(loss)
-                detail.append({"FIELD":field,"USES":uses,"REPRESENTATIVE":labels[representative],"FILE":labels[target],"DISTANCE":abs(target-representative),"SELF_PSNR":self_curves[target][target_bound][0],"SELF_BR":self_curves[target][target_bound][1],"REUSE_BR":interpolate_bit_rate(reuse_curves[target],self_curves[target][target_bound][0]),"CR_LOSS_PERCENT":loss})
-        reuse_aggregate=aggregate_curves(reuse_curves)
-        summary.append({"FIELD":field,"USES":uses,"PLAN_COUNT":len(windows),"FILE_COUNT":len(labels),"TARGET_PSNR":self_aggregate[target_bound][0],"SELF_BR":self_aggregate[target_bound][1],"REUSE_BR":interpolate_bit_rate(reuse_aggregate,self_aggregate[target_bound][0]),"AGGREGATE_CR_LOSS_PERCENT":compression_ratio_loss(self_aggregate,reuse_aggregate),"MIN_FILE_CR_LOSS_PERCENT":min(file_losses,default=""),"MAX_FILE_CR_LOSS_PERCENT":max(file_losses,default="")})
+                ratio=relative_compression_ratio(self_curves[target],reuse_curves[target])
+                file_ratios.append(ratio)
+                detail.append({"FIELD":field,"USES":uses,"REPRESENTATIVE":labels[representative],"FILE":labels[target],"DISTANCE":abs(target-representative),"SELF_PSNR":self_curves[target][target_bound][0],"SELF_BR":self_curves[target][target_bound][1],"REUSE_BR":interpolate_bit_rate(reuse_curves[target],self_curves[target][target_bound][0]),"RELATIVE_CR":ratio})
+        self_aggregate=aggregate_curves([self_curves[target] for target in members])
+        reuse_aggregate=aggregate_curves([reuse_curves[target] for target in members])
+        summary.append({"FIELD":field,"USES":uses,"PLAN_COUNT":len(windows),"FILE_COUNT":len(members),"TARGET_PSNR":self_aggregate[target_bound][0],"SELF_BR":self_aggregate[target_bound][1],"REUSE_BR":interpolate_bit_rate(reuse_aggregate,self_aggregate[target_bound][0]),"AGGREGATE_RELATIVE_CR":relative_compression_ratio(self_aggregate,reuse_aggregate),"MIN_FILE_RELATIVE_CR":min(file_ratios,default=""),"MAX_FILE_RELATIVE_CR":max(file_ratios,default="")})
     return summary,detail
 
 
@@ -144,16 +143,16 @@ def write_csv(path,rows):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Summarize equal-PSNR compression-ratio loss of temporal plan reuse")
+    parser=argparse.ArgumentParser(description="Summarize the equal-PSNR relative compression ratio of plan reuse")
     parser.add_argument("--field",nargs="+",choices=list(fields),default=list(fields))
     arguments=parser.parse_args()
     for field in arguments.field:
         summary,detail=analyze_field(field,*load_field(field))
-        write_csv(result_root/field/"loss.csv",summary)
-        write_csv(result_root/field/"file_loss.csv",detail)
+        write_csv(result_root/field/"relative_cr.csv",summary)
+        write_csv(result_root/field/"file_relative_cr.csv",detail)
         for row in summary:
-            range_text="" if row["USES"]==1 else f",file_loss=[{row['MIN_FILE_CR_LOSS_PERCENT']:.3f}%,{row['MAX_FILE_CR_LOSS_PERCENT']:.3f}%]"
-            print(f"{field}: uses={row['USES']},plans={row['PLAN_COUNT']},aggregate_loss={row['AGGREGATE_CR_LOSS_PERCENT']:.3f}%{range_text}")
+            range_text="" if row["USES"]==1 else f",file_relative_cr=[{row['MIN_FILE_RELATIVE_CR']:.4f},{row['MAX_FILE_RELATIVE_CR']:.4f}]"
+            print(f"{field}: uses={row['USES']},plans={row['PLAN_COUNT']},files={row['FILE_COUNT']},aggregate_relative_cr={row['AGGREGATE_RELATIVE_CR']:.4f}{range_text}")
 
 
 if __name__=="__main__":

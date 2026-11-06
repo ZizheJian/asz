@@ -1,0 +1,58 @@
+[
+  {
+    "data_path_list": [
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_004/APSU_TestData_004.h5.f32"
+    ],
+    "data_shape": [
+      1024,
+      1558,
+      1813
+    ],
+    "rel_eb_list": [
+      0.1,
+      0.01,
+      0.001,
+      0.0003,
+      0.00013
+    ],
+    "method_list": [
+      {
+        "name": "asz_apsu004_plan_source",
+        "compressor": "asz",
+        "write_plan": "plans/transfer/apsu004.json"
+      }
+    ],
+    "cleanup_after_each_test": true,
+    "comparison_baseline": "asz_apsu004_plan_source",
+    "summary_csv": "results/apsu004_plan_source.csv",
+    "output_directory": "/anvil/scratch/x-zjian1/asz-apsu-plan-transfer/apsu004"
+  },
+  {
+    "data_path_list": [
+      "/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/APS_DYS/xpcs_datasets/APSU_TestData_006/APSU_TestData_006.h5.f32"
+    ],
+    "data_shape": [
+      4096,
+      1558,
+      1813
+    ],
+    "rel_eb_list": [
+      0.1,
+      0.01,
+      0.001,
+      0.0003,
+      0.00013
+    ],
+    "method_list": [
+      {
+        "name": "asz_apsu004_plan",
+        "compressor": "asz",
+        "read_plan": "plans/transfer/apsu004.json"
+      }
+    ],
+    "cleanup_after_each_test": true,
+    "comparison_baseline": "asz_apsu004_plan",
+    "summary_csv": "results/apsu006_apsu004_plan.csv",
+    "output_directory": "/anvil/scratch/x-zjian1/asz-apsu-plan-transfer/apsu006"
+  }
+]
