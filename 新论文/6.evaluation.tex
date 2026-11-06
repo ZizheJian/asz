@@ -1,7 +1,7 @@
 \section{Performance Evaluation}
 \label{sec:evaluation}
 
-We evaluate ASZ in terms of rate--distortion performance, codec time across error bounds, total runtime with per-file tuning, and plan reuse across related files.
+We evaluate ASZ in terms of rate--distortion performance, total runtime across error bounds with per-file tuning, and plan reuse across related files.
 
 \subsection{Experimental Setup}
 \label{sec:evaluation:setup}
@@ -40,7 +40,7 @@ Table~\ref{tab:evaluation-datasets} summarizes the 18 fields used in the rate--d
 
 \subsubsection{Baselines and Metrics}
 
-We compare ASZ with two groups of scientific lossy compressors. SZ3, QoZ, and ZFP form the high-performance group, covering prediction-based and block-transform methods. SPERR serves as a high-ratio wavelet-based baseline~\cite{liu2024high,li2023lossy}.
+We compare ASZ with two groups of scientific lossy compressors. SZ3, QoZ, and ZFP form the high-performance group, covering prediction-based and block-transform methods. SPERR serves as a high-ratio wavelet-based baseline.
 
 \subsection{Rate--Distortion Performance}
 \label{sec:evaluation:rd}
@@ -58,31 +58,53 @@ SPERR comes closest to ASZ because both methods perform multiscale spatial decor
     \label{fig:evaluation-rd}
 \end{figure*}
 
-\subsection{Codec Time Across Error Bounds}
+\subsection{Total Runtime Across Error Bounds}
 \label{sec:evaluation:codec-time}
 
-Figure~\ref{fig:evaluation-codec-time} compares ASZ with SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Each stacked bar reports the additive time of the in-memory codec stages. ASZ includes preprocessing, compression, and decompression, while each baseline includes compression and decompression. File input, file output, and post-run error verification are excluded. ASZ's compression segment includes its data-range scan, and the SZ3 and QoZ compression segments include their internal autotuning. Across the 90 field--error-bound combinations, ASZ's geometric-mean total time is $0.81\times$ that of QoZ and $0.43\times$ that of SPERR, and ASZ is faster in 70 and 89 combinations, respectively. Its total time is $1.72\times$ that of SZ3 and $2.36\times$ that of ZFP. Considering the timed stages separately, ASZ provides geometric-mean compression and decompression speedups of $1.63\times$ and $1.71\times$ over QoZ and $2.85\times$ and $4.02\times$ over SPERR. At the middle error bound of each field, plan generation accounts for 23.94\% of ASZ's total time. These time differences accompany the compression-ratio improvements reported in Section~\ref{sec:evaluation:rd}.
+Figure~\ref{fig:evaluation-codec-time} compares ASZ with SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Each stacked bar reports the total runtime as the sum of the timed in-memory stages. ASZ includes preprocessing, compression, and decompression, while each baseline includes compression and decompression. File input, file output, and post-run error verification are excluded. ASZ's compression segment includes its data-range scan, and the SZ3 and QoZ compression segments include their built-in tuning. Across the 90 field--error-bound combinations, ASZ's geometric-mean total runtime is $0.81\times$ that of QoZ and $0.43\times$ that of SPERR, and ASZ is faster in 70 and 89 combinations, respectively. Its total runtime is $1.72\times$ that of SZ3 and $2.36\times$ that of ZFP. Considering the timed stages separately, ASZ provides geometric-mean compression and decompression speedups of $1.63\times$ and $1.71\times$ over QoZ and $2.85\times$ and $4.02\times$ over SPERR. At the middle error bound of each field, plan generation accounts for 23.94\% of ASZ's total runtime. These time differences accompany the compression-ratio improvements reported in Section~\ref{sec:evaluation:rd}.
 
 \begin{figure*}[htb]
     \centering
     \IfFileExists{figs/5/time-breakdown-final-eighteen-vs-rel-eb.png}{\includegraphics{figs/5/time-breakdown-final-eighteen-vs-rel-eb.png}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field codec-time figure pending.}}}
-    \caption{Codec time across five relative error bounds. Each error-bound group contains one bar per method. ASZ stacks preprocessing, compression, and decompression, while each baseline stacks compression and decompression. Including preprocessing, ASZ's geometric-mean total time is $0.81\times$ that of QoZ and $0.43\times$ that of SPERR.}
+    \caption{Total runtime across five relative error bounds. Each error-bound group contains one bar per method. ASZ stacks preprocessing, compression, and decompression, while each baseline stacks compression and decompression. ASZ's geometric-mean total runtime is $0.81\times$ that of QoZ and $0.43\times$ that of SPERR.}
     \label{fig:evaluation-codec-time}
 \end{figure*}
 
 \subsection{Plan Transferability Across Related Files}
 \label{sec:evaluation:transfer}
 
-This subsection evaluates ASZ's ability to reuse a plan generated for one file on other related files. We consider two settings. Temporal reuse shares plans across related snapshots, such as Isabel PRECIP time steps 01--48 and Aramco snapshots 0001, 1800, and 3600. Non-temporal reuse instead transfers plans across distinct arrays from the same application: QMCPACK orbitals 0, 144, and 287 on a common spline grid and the $x$, $y$, and $z$ components of the Miranda velocity field.
+This subsection evaluates ASZ's ability to reuse a plan generated for one file on other related files. We consider two settings. Temporal reuse shares plans across consecutive snapshots of Isabel PRECIP, RTM Small, and CESM UU. Non-temporal reuse transfers plans across distinct arrays from the same application, namely QMCPACK orbitals, the three Isabel wind components, and two APSU datasets of different sizes.
 
-For an ordered sequence of $T$ files and a plan-generation budget $K$, we partition the files into $K$ contiguous segments of nearly equal length. The lower middle file of each segment generates one plan for the files in that segment. Thus, $K=1$ uses one representative for the complete sequence, while larger $K$ values shorten the reuse span. The non-temporal experiments designate one representative array in each related group and transfer its plan to the remaining members.
+For an ordered sequence of $T$ files in which $m$ files share one plan, with $m$ odd, we place $\lfloor T/m\rfloor$ contiguous windows of $m$ files at the center of the sequence. The middle file of each window generates the plan for every file in that window. The remaining $T-m\lfloor T/m\rfloor$ files at the two ends lie outside every window and are excluded from the statistics for that $m$, so each target file lies within $(m-1)/2$ positions of the file that generated its plan. Thus, $m=1$ generates a plan for every file, and larger values of $m$ apply each plan to files farther from the file that generated it.
 
-The transferred plan fixes the preprocessing decisions, including each round's prediction axis and QB serialization order. Block coefficients remain adaptive for every target file, as described in Section~\ref{sec:overview:plan-reuse}. We compare the transferred-plan curve with a plan generated from the target file itself using the matched-PSNR procedure in Section~\ref{sec:evaluation:rd}. For the integrated bit-rate ratio $r=\mathrm{BR}_{\mathrm{transfer}}/\mathrm{BR}_{\mathrm{self}}$, the compression-ratio loss is $100(1-1/r)\%$.
+The transferred plan fixes the preprocessing decisions, including each round's prediction axis and QB serialization order. Block coefficients remain adaptive for every target file, as described in Section~\ref{sec:overview:plan-reuse}. Each target file also generates its own plan as the reference, and we compress every file with both plans at relative error bounds $10^{-2}$, $10^{-3}$, and $10^{-4}$. At the PSNR that the self-generated plan attains at $10^{-3}$, we interpolate the bit rate of the transferred plan, $\mathrm{BR}_{\mathrm{transfer}}$, linearly in $\log(\mathrm{BR})$ over PSNR. The relative compression ratio $\mathrm{BR}_{\mathrm{self}}/\mathrm{BR}_{\mathrm{transfer}}$ then compares the two plans at matched PSNR, where $\mathrm{BR}_{\mathrm{self}}$ is the bit rate of the self-generated plan. A value of 1 indicates identical compression ratios, and values below and above 1 indicate that the transferred plan compresses the file worse or better, respectively. For each value of $m$, the average relative compression ratio applies this procedure to the curves averaged over the evaluated files, with BR and normalized mean squared error averaged at each error bound, and the minimum is the smallest value among individual files.
 
 \subsubsection{Temporal Reuse}
 
-The temporal experiment uses the plan generated from Isabel PRECIP 24 and applies it to the remaining PRECIP time steps. We evaluate plan budgets $K\in\{1,2,4,8,16,48\}$ and compare each transferred plan with a plan generated from the target file. \textcolor{red}{Report the mean and maximum equal-PSNR compression-ratio losses after the PRECIP experiment.}
+The temporal experiment covers Isabel PRECIP time steps 01--48, RTM Small snapshots 0335--0385, and CESM UU time steps 00--62. These sequences contain PRECIP 24, RTM Small 0360, and CESM UU 31 from the 18 evaluated fields. We evaluate $m\in\{1,3,5,9,17\}$.
+
+Figure~\ref{fig:evaluation-temporal-reuse} shows that the average relative compression ratio stays between 0.98 and 1.02 on all three sequences for every $m$. Values above 1 occur because plan generation relies on sampled estimates, so a neighboring file's plan occasionally compresses a target better than the target's own plan. The lowest single-file ratios are 0.87, 0.93, and 0.88 on Isabel PRECIP, RTM Small, and CESM UU, respectively. The minimum varies irregularly with $m$ because it depends on a few files whose windows change with $m$. How many snapshots can share one plan depends on the similarity between snapshots and therefore varies across fields. For the three sequences evaluated here, every group size from 3 to 17 keeps the average compression ratio within 2\% of per-file plan generation.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics{revised-fig/temporal-plan-reuse.png}
+    \caption{Relative compression ratio of temporal plan reuse at matched PSNR. Each panel plots the average over the evaluated files and the minimum over individual files against the number of files that share one plan. A value of 1 means that the transferred plan matches the self-generated plan.}
+    \label{fig:evaluation-temporal-reuse}
+\end{figure}
 
 \subsubsection{Reuse Across Non-Temporal Related Arrays}
 
-The second setting evaluates plan reuse across a non-temporal file attribute. For QMCPACK, this attribute is the orbital index: the plan generated for orbital 144 is applied to orbitals 0 and 287, all represented on the same $115\times69\times69$ spline grid. For Miranda, it is the vector component: the plan generated for Velocity-$x$ is applied to Velocity-$y$ and Velocity-$z$, all stored on the same $256\times384\times384$ grid. Each experiment regenerates the low-cost block coefficients for every target array.
+The non-temporal experiments transfer plans across arrays that come from the same application but differ in orbital index, velocity component, or number of frames. Figure~\ref{fig:evaluation-non-temporal-reuse} shows that transferability depends on how similar the arrays are. Neighboring QMCPACK orbitals, the two horizontal Isabel wind components, and the two APSU datasets at fine error bounds exchange plans with little loss, whereas the vertical and horizontal wind components require separate plans.
+
+QMCPACK orbitals 0--287 share the same $115\times69\times69$ spline grid and include QMCPACK orbital 144 from the 18 evaluated fields. We order the orbitals by index and apply the windows defined above with $m\in\{1,3,5,9,17\}$. The average relative compression ratio stays between 0.98 and 0.99 for every $m>1$, but individual orbitals vary more than consecutive snapshots. Six orbitals select 1D4R at $10^{-3}$, and all other orbitals select 1D6R. At $m=3$ and $m=5$, the lowest ratios, 0.63 and 0.67, occur when one of these six orbitals generates the plan for neighbors that select 1D6R. None of these orbitals generates a plan at $m=9$ or $m=17$, and the minimum rises to 0.81 and 0.83, respectively.
+
+Isabel time step 24 provides the wind components U, V, and W on the same $100\times500\times500$ grid, and we apply the plan of each component to the other two. U and V exchange plans with relative compression ratios of 0.99 and 1.00. Plans transferred between W and either horizontal component reach only 0.46 to 0.64. In its two finest rounds, the W plan predicts along the vertical axis, whereas the U and V plans predict along horizontal axes. These two rounds contain about three quarters of all targets, so this difference dominates the compression ratio.
+
+APSU 004 and APSU 006 contain 1024 and 4096 frames, respectively, from the same $1558\times1813$ X-ray detector. We generate the plans on the smaller APSU 004 and apply them to APSU 006, which removes the 102 to 132~s of plan generation on APSU 006. Because this experiment has a single target file, we compute the relative compression ratio at the PSNR of the self-generated plan at each of the five evaluated error bounds. The ratio is at least 0.99 at $10^{-3}$ and finer bounds and decreases to 0.91 at $10^{-2}$ and 0.64 at $10^{-1}$. Plans transferred from the smaller dataset therefore suit APSU 006 from the middle error bound to the finest bound, while the two coarsest bounds benefit from a plan generated on APSU 006 itself.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics{revised-fig/non-temporal-plan-reuse.png}
+    \caption{Relative compression ratio of non-temporal plan reuse at matched PSNR. (a) Average and minimum over QMCPACK orbitals against the number of orbitals that share one plan. (b) Ratio for each Isabel wind component under the plans of the other two components, labeled above each bar. (c) Ratio for APSU 006 under the APSU 004 plan at each error bound. A value of 1 means that the transferred plan matches the self-generated plan.}
+    \label{fig:evaluation-non-temporal-reuse}
+\end{figure}

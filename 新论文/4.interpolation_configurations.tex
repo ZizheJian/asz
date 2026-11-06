@@ -20,24 +20,18 @@ p_0^{\mathrm{lin}}=\frac{1}{2}(\hat x_{-h}+\hat x_h).
 p_0^{\mathrm{cub},1}=\frac{9}{16}(\hat x_{-h}+\hat x_h)-\frac{1}{16}(\hat x_{-3h}+\hat x_{3h}).
 \end{equation}
 
-QoZ uses the following alternative cubic-spline formula with the same four-reference stencil in Figure~\ref{fig:background:stencils}(b):
+QoZ introduces the following alternative cubic-spline formula with the same four-reference stencil in Figure~\ref{fig:background:stencils}(b):
 \begin{equation}
 \label{eq:background:qoz-cubic2}
 p_0^{\mathrm{cub},2}=\frac{23}{40}(\hat x_{-h}+\hat x_h)-\frac{3}{40}(\hat x_{-3h}+\hat x_{3h}).
 \end{equation}
 
 QoZ also introduces a two-pass cubic interpolation scheme. It divides a prediction round into two dependent passes. In Figure~\ref{fig:background:stencils}(c), $R_1$, $R_4$, and $T$ would ordinarily be targets in the same round. The first pass predicts and quantizes $R_1$ and $R_4$ with a four-reference cubic formula. The second pass predicts $T$ using their reconstructed values together with references reconstructed before the current round. QoZ provides two formulas for this second-pass layout:
-\begin{equation}
-\label{eq:background:qoz-six-reference-not-a-knot}
-p_0^{\mathrm{6R},1}=\frac{2}{3}(\hat x_{-h}+\hat x_h)-\frac{1}{6}(\hat x_{-2h}+\hat x_{2h})+0\!\cdot\!(\hat x_{-3h}+\hat x_{3h}).
-\end{equation}
-\begin{equation}
-\label{eq:background:qoz-six-reference-natural}
-\begin{aligned}
-p_0^{\mathrm{6R},2}&=\frac{23}{31}(\hat x_{-h}+\hat x_h)-\frac{9}{31}(\hat x_{-2h}+\hat x_{2h})\\
-&\qquad+\frac{3}{62}(\hat x_{-3h}+\hat x_{3h}).
-\end{aligned}
-\end{equation}
+\begin{align}
+p_0^{\mathrm{6R},1}&=\frac{2}{3}(\hat x_{-h}+\hat x_h)-\frac{1}{6}(\hat x_{-2h}+\hat x_{2h}),\label{eq:background:qoz-six-reference-not-a-knot}\\
+p_0^{\mathrm{6R},2}&=\frac{23}{31}(\hat x_{-h}+\hat x_h)-\frac{9}{31}(\hat x_{-2h}+\hat x_{2h})\nonumber\\
+&\qquad+\frac{3}{62}(\hat x_{-3h}+\hat x_{3h}).\label{eq:background:qoz-six-reference-natural}
+\end{align}
 
 Equations~\eqref{eq:background:linear-interpolation} and~\eqref{eq:background:cubic-interpolation} assume that local data can be exactly represented by a linear or cubic function, respectively. Equations~\eqref{eq:background:qoz-cubic2}--\eqref{eq:background:qoz-six-reference-natural} are derived from cubic spline interpolation.
 
@@ -50,6 +44,6 @@ In all of the prediction formulas above, the coefficients sum to one, with equal
 
 SZ3 and QoZ jointly select prediction stencils and axis orders, but apply the resulting configurations at different granularities. When compressing a three-dimensional field with one-dimensional interpolation, SZ3 selects one interpolation formula and one axis order for the whole field. The order is either $x,y,z$ or $z,y,x$. SZ3 repeats this three-round cycle throughout the coarse-to-fine prediction process.
 
-QoZ typically selects a separate interpolation configuration, including the stencil and axis order, for each group of three rounds. For each group, QoZ can choose between $x,y,z$ and $z,y,x$. With one frozen axis, QoZ instead selects a configuration for each two-round group and uses either order of the remaining axes. For example, freezing $z$ leaves $x,y$ and $y,x$ as the two choices.
+QoZ typically selects a separate interpolation configuration, including the stencil and axis order, for each group of three rounds (an interpolation level in the QoZ paper). For each group, the QoZ implementation chooses between $x,y,z$ and $z,y,x$. With one frozen axis, along which QoZ never interpolates, QoZ instead selects a configuration for each two-round group and uses either order of the remaining axes. For example, freezing $z$ leaves $x,y$ and $y,x$ as the two choices.
 
 Because every permitted axis order is a permutation of the active axes, both SZ3 and QoZ use each active prediction axis the same number of times within every configured cycle or group.

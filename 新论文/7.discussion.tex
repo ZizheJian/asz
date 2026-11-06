@@ -1,10 +1,4 @@
 \section{Discussion and Limitations}
 \label{sec:discussion}
 
-The current design has three main limitations: reverse-greedy search is heuristic, plan reuse targets related arrays from the same application, and the implementation targets three-dimensional interpolation-based compression on CPUs.
-
-Reverse-greedy plan generation fixes each round once and does not guarantee a globally optimal joint configuration. Broader joint or beam search would examine more configurations at additional preprocessing cost.
-
-The transfer experiments cover temporal sequences as well as non-temporal groups of related arrays. Their shared structure comes from one simulation, numerical representation, or acquisition workflow. Each representative is therefore assigned to a compatible group rather than transferred across unrelated applications. Grouping criteria for abrupt phase changes and substantially different tensor structures remain an avenue for future work.
-
-The current implementation and evaluation target single-precision three-dimensional tensors, interpolation-based prediction, and serial CPU execution. Other tensor ranks, predictor classes, and parallel or GPU implementations remain outside the evaluated scope. For an isolated file, preprocessing is part of the measured codec cost. Reuse amortizes this cost only when multiple related files share a plan.
+ASZ has three main limitations. First, reverse-greedy plan generation fixes each round once and therefore does not guarantee a globally optimal joint configuration. Broader joint or beam search could examine more configurations at additional preprocessing cost. Second, plan transferability depends on how similar the arrays are, even within one application. Consecutive snapshots, neighboring QMCPACK orbitals, and the horizontal Isabel wind components exchange plans with little loss, whereas transfers between the vertical and horizontal wind components lose up to about half of the compression ratio. Criteria that automatically decide which arrays can share a plan remain future work. Third, the implementation and evaluation target single-precision three-dimensional tensors, interpolation-based prediction, and serial CPU execution.

@@ -11,16 +11,16 @@ Compression has long been integrated into database systems to reduce storage req
 \subsection{Error-Bounded Lossy Compression}
 \label{sec:background:compression}
 
-Error-bounded lossy compression supports scientific data management by reducing storage requirements and data movement through I/O and network transfers while controlling reconstruction error~\cite{cappello2019use,di2025survey}.
+Error-bounded lossy compression supports scientific data management by reducing storage requirements and data movement through I/O and network transfers while controlling reconstruction error~\cite{cappello2019use,di2025survey}. Existing compressors mainly follow prediction-based or transform-based designs.
 
-Prediction-based compressors such as SZ3~\cite{zhao2021optimizing,liang2022sz3} and QoZ~\cite{liu2022dynamic,liu2024high} often predict each data value as a weighted combination of neighboring values. They then quantize the prediction errors and losslessly compress the resulting sequence of quantization-bin indices. ASZ also belongs to this class.
+Prediction-based compressors such as SZ3~\cite{zhao2021optimizing,liang2022sz3} and QoZ~\cite{liu2022dynamic,liu2024high} often predict each data value as a weighted combination of previously reconstructed neighboring values. They then quantize the prediction errors and losslessly compress the resulting sequence of quantization-bin indices. ASZ also belongs to this class.
 
 Transform-based compressors such as ZFP~\cite{lindstrom2014fixed}, SPERR~\cite{li2023lossy}, and MGARD~\cite{gong2023mgard} use block transforms, wavelets, and multilevel decompositions, respectively.
 
 \subsection{Compression Objective}
 \label{sec:background:compression-objective}
 
-We evaluate scientific compression by its rate--distortion (RD) performance and main-pass runtime. RD performance captures the trade-off between compressed size and reconstruction quality, while compression and decompression times measure the processing cost required for the corresponding reduction in data size. We next formalize these quantities.
+We evaluate error-bounded compressors by their rate--distortion performance and runtime. Rate--distortion performance describes how much a compressor reduces the data size at a given reconstruction quality, and runtime describes how long the compressor takes to achieve this reduction. We next formalize these quantities.
 
 Let $X=(x_i)_{i=1}^{N}$ denote a scientific field containing $N$ values, and let $\epsilon_{\mathrm{abs}}>0$ be a user-specified absolute error bound. Compression produces a bitstream for $X$, and decompression reconstructs $\hat X$ from this bitstream. Error-bounded compression requires
 \begin{equation}
@@ -42,13 +42,13 @@ Reconstruction quality is measured using mean squared reconstruction error (MSE)
 \end{equation}
 where $R_X=\max_i x_i-\min_i x_i$ is the original value range of a nonconstant field.
 
-Different compressors or configurations can achieve different PSNR values under the same error bound because they produce different distributions of reconstruction errors. We therefore compare their bit rates at matched PSNR rather than compare runs solely by error-bound value. Varying the error bound produces an RD curve that shows the trade-off between bit rate and reconstruction quality.
+Different compressors or configurations can achieve different PSNR values under the same error bound because they produce different distributions of reconstruction errors. Varying the error bound produces a rate--distortion curve that shows the trade-off between bit rate and reconstruction quality. We therefore compare bit rates at matched PSNR along these curves rather than compare runs solely by error-bound value.
 
-Runtime can be reported at several scopes. Main-pass codec time covers compression and decompression. End-to-end data-management time also includes network transfer time, which depends on the compressed size and network bandwidth.
+Runtime can be reported at several scopes. Codec time covers compression and decompression. Total runtime also includes the precompression tuning described in Section~\ref{sec:background:tuning-objective}. \textcolor{red}{End-to-end data-management time further includes network transfer time, which depends on the compressed size and network bandwidth.}
 
 \subsection{Precompression Tuning Objective}
 \label{sec:background:tuning-objective}
 
-Precompression tuning is a preprocessing stage that searches among a compressor's available configuration choices for a given input and error bound before the main compression pass. The configurable mechanisms implemented by the compressor determine the available configuration space. The objective is to select a configuration with strong rate--distortion performance while keeping the tuning time practical.
+Precompression tuning is a preprocessing stage that searches among a compressor's available configuration choices for a given input and error bound before compression. The configurable mechanisms implemented by the compressor determine the available configuration space. The objective is to select a configuration with strong rate--distortion performance while keeping the tuning time practical.
 
-Tuning time is accounted for separately from main-pass codec time. When tuning is performed for every file, its cost is included in the per-file total codec time. When the selected configuration is reused across related files, the one-time tuning cost is amortized across those files.
+Tuning time is accounted for separately from codec time. When tuning is performed for every file, the total runtime of each file includes its full tuning cost. When the selected configuration is reused across related files, the one-time tuning cost is amortized over those files. SZ3 and QoZ run their built-in tuning inside compression, so their measured compression time already includes this cost.
