@@ -2,18 +2,18 @@
 \label{sec:background:pipeline}
 \label{sec:baseline-configurations}
 
-SZ3, QoZ, and ASZ share an SZ-family compression pipeline and several prediction concepts. This section first describes the pipeline and defines the terminology used throughout the paper, then examines the prediction configurations in SZ3 and QoZ that are most directly relevant to ASZ.
+SZ3, QoZ, and ASZ share the SZ compression pipeline and several prediction concepts. This section first describes the pipeline and defines the terminology used throughout the paper, and then examines the prediction configurations in SZ3 and QoZ that are most directly relevant to ASZ.
 
 \subsection{Pipeline Overview}
 
 \begin{figure}[htb]
 \centering
 \includegraphics[width=.840909\columnwidth]{revised-fig/0-sz-diagram.png}
-\caption{Overview of the SZ compression pipeline. Preprocessing selects a configuration that guides prediction during compression. The compressor quantizes prediction residuals and losslessly encodes the resulting QB indices using Huffman coding followed by Zstd.}
+\caption{Overview of the SZ compression pipeline. Preprocessing selects a configuration that guides prediction during compression. The compressor quantizes prediction residuals and losslessly encodes the resulting QBs using Huffman coding followed by Zstd.}
 \label{fig:pipeline:sz}
 \end{figure}
 
-The SZ compression pipeline comprises prediction, residual quantization, and lossless compression. Prediction and quantization alternate as the compressor traverses the data. Lossless compression processes the resulting QB indices after the traversal.
+The SZ compression pipeline consists of preprocessing and compression, as shown in Fig.~\ref{fig:pipeline:sz}. Preprocessing performs the precompression tuning described in Section~\ref{sec:background:tuning-objective} and selects a configuration for the input and error bound. Compression then applies prediction, residual quantization, and lossless compression under this configuration. Prediction and quantization alternate as the compressor traverses the data, and lossless compression processes the resulting QBs after the traversal.
 
 For each target value $x_i$, the predictor estimates it from $m$ previously reconstructed reference values:
 \begin{equation}
@@ -31,7 +31,7 @@ Setting $\Delta\leq2\epsilon_{\mathrm{abs}}$ guarantees $|x_i-\hat x_i|\leq\epsi
 
 These pointwise prediction and quantization operations are organized into a coarse-to-fine sequence of prediction rounds. SZ3, QoZ, and ASZ begin with a sparse set of available reference values. In each round, they predict and reconstruct a new subset of grid points, which then serve as references for later rounds. Consequently, the number of reconstructed points approximately doubles from one round to the next. Ignoring boundary effects, this progression means that the final round predicts $1/2$ of the field and the final three rounds together predict $7/8$. The SZ3 and QoZ papers describe this process in terms of interpolation levels, where each level corresponds to three consecutive rounds in this paper, one along each axis of a three-dimensional field. ASZ configures each round separately, so its rounds need not form such levels.
 
-After the final round, the QB indices are serialized in the selected order and compressed using Huffman coding followed by Zstd.
+After the final round, the QBs are serialized into a one-dimensional sequence and compressed using Huffman coding followed by Zstd.
 
 \subsection{Prediction Terminology}
 \label{sec:pipeline:terminology}
