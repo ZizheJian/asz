@@ -29,9 +29,9 @@ csv/factor_screen_*.csv
 新论文/main.out
 新论文/main.pdf
 新论文/main-*.png
-新论文/revised-fig/*.aux
-新论文/revised-fig/*.fdb_latexmk
-新论文/revised-fig/*.fls
-新论文/revised-fig/*.log
+新论文/legacy/revised-fig/*.aux
+新论文/legacy/revised-fig/*.fdb_latexmk
+新论文/legacy/revised-fig/*.fls
+新论文/legacy/revised-fig/*.log
 旧论文/*.zip
 configs/.temporal_plan_reuse/

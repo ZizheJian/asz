@@ -22,7 +22,7 @@ Transform-based compressors such as ZFP~\cite{lindstrom2014fixed}, SPERR~\cite{l
 
 We evaluate error-bounded compressors by their rate--distortion performance and runtime. Rate--distortion performance describes how much a compressor reduces the data size at a given reconstruction quality, and runtime describes how long the compressor takes to achieve this reduction. We next formalize these quantities.
 
-Let $X=(x_i)_{i=1}^{N}$ denote a scientific field containing $N$ values, and let $\epsilon_{\mathrm{abs}}>0$ be a user-specified absolute error bound. Compression produces a bitstream for $X$, and decompression reconstructs $\hat X$ from this bitstream. Error-bounded compression requires
+Let $X=(x_i)_{i=1}^{N}$ denote an input file containing $N$ values, and let $\epsilon_{\mathrm{abs}}>0$ be a user-specified absolute error bound. Compression produces a bitstream for $X$, and decompression reconstructs $\hat X$ from this bitstream. Error-bounded compression requires
 \begin{equation}
 \label{eq:background:error-bound}
 |x_i-\hat x_i|\leq\epsilon_{\mathrm{abs}},\qquad i=1,\ldots,N.
@@ -40,7 +40,7 @@ Reconstruction quality is measured using mean squared reconstruction error (MSE)
 \label{eq:background:quality}
 \mathrm{PSNR}=10\log_{10}\frac{R_X^2}{\mathrm{MSE}},
 \end{equation}
-where $R_X=\max_i x_i-\min_i x_i$ is the original value range of a nonconstant field.
+where $R_X=\max_i x_i-\min_i x_i$ is the original value range, and $X$ is assumed to be nonconstant.
 
 Different compressors or configurations can achieve different PSNR values under the same error bound because they produce different distributions of reconstruction errors. Varying the error bound produces a rate--distortion curve that shows the trade-off between bit rate and reconstruction quality. We therefore compare bit rates at matched PSNR along these curves rather than compare runs solely by error-bound value.
 

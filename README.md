@@ -126,7 +126,7 @@ The default `joint` selection estimates a tangent from the candidates in scope. 
 
 ## Manuscript and figures
 
-The current manuscript entry point is `新论文/main.tex`. Figures 7--10 are 300 dpi PNGs generated with `paperfig` at the IEEE single-column width, with a `sqrt(2):1` aspect ratio for every panel. Regenerate them from existing results with:
+The current manuscript entry point is `新论文/main.tex`. Figures used by the manuscript live in `新论文/figs/<section>/`, one folder per section (3--6), and retired figures and drafts are kept in `新论文/legacy/`. Figures 7--10 are 300 dpi PNGs generated with `paperfig` at the IEEE single-column width, with a `sqrt(2):1` aspect ratio for every panel. Regenerate them from existing results with:
 
 ```bash
 module load anaconda/2024.02-py311
@@ -169,7 +169,7 @@ python3 plot_final_runtime.py
 python3 analyze_final_evaluation.py
 ```
 
-The two final figures are 300 dpi PNG files under `新论文/figs/5/`: `rate-distortion-final-eighteen-log.png` and `time-breakdown-final-eighteen-vs-rel-eb.png`. The time figure reports preprocessing, compression, and decompression for ASZ and compression and decompression for SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Timings exclude input/output operations and post-run error verification. ASZ's compression stage includes its recorded data-range scan. The analysis writes `results/final_eighteen_analysis.csv`. All three scripts accept `--manifest` and `--result-directory` to select their inputs.
+The two final figures are 300 dpi PNG files under `新论文/figs/6/`: `rate-distortion-final-eighteen-log.png` and `time-breakdown-final-eighteen-vs-rel-eb.png`. The time figure reports preprocessing, compression, and decompression for ASZ and compression and decompression for SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Timings exclude input/output operations and post-run error verification. ASZ's compression stage includes its recorded data-range scan. The analysis writes `results/final_eighteen_analysis.csv`. All three scripts accept `--manifest` and `--result-directory` to select their inputs.
 
 The RD summary integrates the log-bit-rate difference over the shared PSNR interval and reports ASZ's geometric-mean compression-ratio gain against each baseline separately. Runtime analysis defaults to the middle error bound of each field and includes ASZ preprocessing, compression, and decompression. Pass `--rel-eb` to `analyze_final_evaluation.py` to override this behavior with one common bound.
 

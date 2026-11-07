@@ -116,7 +116,7 @@ def main():
     parser.add_argument("--wind-self",type=Path,default=project_root/"results/isabel_wind_plan_transfer_self.csv")
     parser.add_argument("--wind-transfer",type=Path,default=project_root/"results/isabel_wind_plan_transfer.csv")
     parser.add_argument("--apsu-transfer",type=Path,default=project_root/"results/apsu006_apsu004_plan.csv")
-    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/revised-fig/non-temporal-plan-reuse.png")
+    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/6/non-temporal-plan-reuse.png")
     arguments=parser.parse_args()
     wind=wind_ratios(arguments.wind_self,arguments.wind_transfer)
     apsu=apsu_ratios(arguments.manifest,arguments.apsu_transfer)

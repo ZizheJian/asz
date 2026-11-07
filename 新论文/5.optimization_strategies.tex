@@ -1,7 +1,7 @@
 \section{ASZ Optimization Strategies}
 \label{sec:optimization-strategies}
 
-In this section, we present ASZ's new predictors and per-round choices of prediction axis and QB serialization order, together with methods for tuning them efficiently:
+This section presents ASZ's variable-coefficient predictors, per-round prediction axes, and per-round QB serialization orders, together with methods that tune them efficiently:
 \begin{itemize}
 \item Sections~\ref{sec:configuration-space:predictors}--\ref{sec:configuration-space:reference-count} design and evaluate the \emph{variable-coefficient predictors}.
 \item Section~\ref{sec:configuration-space:serialization} creates and evaluates per-round \emph{QB serialization orders}.
@@ -25,7 +25,8 @@ In addition, we consider variable-coefficient 2D4R and 1D6R predictors. The 2D4R
 \label{eq:configuration-space:2d4r-prediction}
 p(t)=(\tfrac14+t)(\hat x_{-h_0,0}+\hat x_{h_0,0})+(\tfrac14-t)(\hat x_{0,-h_1}+\hat x_{0,h_1}).
 \end{equation}
-Unlike QoZ's two-pass cubic predictor, ASZ's 1D6R predictor uses three symmetric reference pairs at offsets $h$, $3h$, and $5h$, all reconstructed before the current round. Its targets therefore remain independent within a round, allowing ASZ to apply the predictor in one pass and avoid the overhead of a second prediction pass. We parameterize the per-reference weights as
+
+The 1D6R predictor uses three symmetric reference pairs at offsets $h$, $3h$, and $5h$, all reconstructed before the current round. Its targets therefore remain independent within a round, so ASZ applies the predictor in one pass and avoids the second prediction pass of QoZ's two-pass cubic predictor. We parameterize the per-reference weights as
 \begin{equation}
 \label{eq:configuration-space:1d6r-prediction}
 \begin{aligned}
@@ -38,7 +39,7 @@ This predictor recovers fixed six-point quintic interpolation at $a=3/256$ and $
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.772727\linewidth]{revised-fig/1d6r_prediction_stencils.png}
+\includegraphics[width=.772727\linewidth]{figs/5/1d6r_prediction_stencils.png}
 \caption{Reference layout of the 1D6R prediction stencil. The six references lie at offsets $\pm h$, $\pm3h$, and $\pm5h$ from target $T$ and are reconstructed before the current round. Targets within the round therefore remain independent and can be predicted in a single pass, reducing prediction overhead.}
 \label{fig:configuration-space:1d6r-stencil}
 \end{figure}
@@ -46,11 +47,11 @@ This predictor recovers fixed six-point quintic interpolation at $a=3/256$ and $
 \subsection{One- versus Two-Dimensional Prediction}
 \label{sec:configuration-space:dimensionality}
 
-We compare the compression performance of 1D4R and 2D4R to determine which prediction stencil to retain. Fig.~\ref{fig:configuration-space:1d4r-vs-2d4r} reports their rate--distortion curves on three datasets. We evaluate the three individual prediction axes for 1D4R and the three axis pairs for 2D4R, selecting the best coefficient and QB serialization order for each. The diagnostic isolates one final prediction round by holding its reference values fixed at the original data. Every candidate predicts the same checkerboard subset of interior targets, with five layers excluded from each boundary to support the widest stencil. This controlled target set gives every family, direction, and serialization order the same sample count. We find that 1D4R provides a better overall rate--distortion trade-off than 2D4R and therefore exclude 2D4R from the remaining configuration space.
+We compare the compression performance of 1D4R and 2D4R to determine which prediction stencil to retain. Fig.~\ref{fig:configuration-space:1d4r-vs-2d4r} reports their rate--distortion curves on three fields. We evaluate the three individual prediction axes for 1D4R and the three axis pairs for 2D4R, selecting the best coefficient and QB serialization order for each. The diagnostic isolates one final prediction round by holding its reference values fixed at the original data. Every candidate predicts the same checkerboard subset of interior targets, with five layers excluded from each boundary to support the widest stencil. This controlled target set gives every family, direction, and serialization order the same sample count. We find that 1D4R provides a better overall rate--distortion trade-off than 2D4R and therefore exclude 2D4R from the remaining configuration space.
 
 \begin{figure}[htb]
 \centering
-\includegraphics{revised-fig/predictor-family-common-final18/iv-1d4r-vs-2d4r-common-targets.png}
+\includegraphics{figs/5/iv-1d4r-vs-2d4r-common-targets.png}
 \caption{Rate--distortion comparison of 1D4R and 2D4R. Each curve represents one prediction axis for 1D4R or one pair of prediction axes for 2D4R after selecting the best coefficient and QB serialization order. We observe a better overall rate--distortion trade-off with 1D4R in all three cases.}
 \label{fig:configuration-space:1d4r-vs-2d4r}
 \end{figure}
@@ -86,7 +87,7 @@ Fig.~\ref{fig:configuration-space:1d4r-vs-1d6r} compares the two families on six
 
 \begin{figure}[htb]
 \centering
-\includegraphics{revised-fig/predictor-reference-count-common-final18/iv-1d4r-vs-1d6r-common-targets.png}
+\includegraphics{figs/5/iv-1d4r-vs-1d6r-common-targets.png}
 \caption{Rate--distortion comparison of 1D4R and 1D6R on common targets. Each family contributes three curves, one per prediction axis, after selecting its coefficient and QB serialization order. The curves nearly coincide in (a)--(c), while 1D6R improves rate--distortion performance in (d)--(f).}
 \label{fig:configuration-space:1d4r-vs-1d6r}
 \end{figure}
@@ -95,12 +96,12 @@ Fig.~\ref{fig:configuration-space:1d6r-coefficients} further compares 1D6R under
 
 \begin{figure}[htb]
 \centering
-\includegraphics{revised-fig/1d6r-coefficients-common-final18/iv-1d6r-coefficients-common-targets.png}
+\includegraphics{figs/5/iv-1d6r-coefficients-common-targets.png}
 \caption{Rate--distortion curves for 42 fixed 1D6R coefficient pairs on common targets. Fixed quintic interpolation gives the best rate--distortion performance in most cases.}
 \label{fig:configuration-space:1d6r-coefficients}
 \end{figure}
 
-After selecting the best direction and QB order for each field and error bound in Fig.~\ref{fig:configuration-space:1d4r-vs-1d6r}, fixed quintic is the best 1D6R coefficient pair in 22 of 30 cases. Transition coefficients are selected in five cases, and the remaining three select an embedded 1D4R candidate. Fig.~\ref{fig:configuration-space:1d6r-coefficients} shows that fixed quintic traces the best-per-error-bound curve at every Aramco and QMCPACK point and at four of five LETKF PRES points. The finest LETKF PRES bound is the visible exception where a transition coefficient improves the curve. In fixed-quintic 1D6R, each outermost reference accounts for only about $0.84\%$ of the total absolute coefficient magnitude, yet this small weight provides an effective correction. Changing $t$ in 1D4R directly redistributes substantial weight between the near and far reference pairs and therefore provides a broader range of prediction behaviors. ASZ retains variable-coefficient 1D4R and fixed-quintic 1D6R, then uses the family selector to choose between them for each field and error bound.
+After selecting the best direction and QB order for each field and error bound in Fig.~\ref{fig:configuration-space:1d4r-vs-1d6r}, fixed quintic is the best 1D6R coefficient pair in 22 of 30 cases. Transition coefficients are selected in five cases, and the remaining three select an embedded 1D4R candidate. Fig.~\ref{fig:configuration-space:1d6r-coefficients} shows that fixed quintic traces the best-per-error-bound curve at every Aramco and QMCPACK point and at four of five LETKF PRES points. The finest LETKF PRES bound is the visible exception where a transition coefficient improves the curve. In fixed-quintic 1D6R, each outermost reference accounts for only about $0.84\%$ of the total absolute coefficient magnitude, yet this small weight provides an effective correction. Changing $t$ in 1D4R directly redistributes substantial weight between the near and far reference pairs and therefore provides a broader range of prediction behaviors. ASZ retains variable-coefficient 1D4R and fixed-quintic 1D6R, then uses the family selector to choose between them for each file and error bound.
 
 % TODO: 最佳系数来自指定的有限网格，而非所有实数系数的全局最优。正式报告各prediction stencil的网格范围和步长。
 % 1D4R与2D4R使用results/predictor-dimensionality-common-final18-20261024。单轮、固定原始参考值，所有family、方向和QB顺序使用各维去掉两侧五层后的同一棋盘目标集合；机制段落是可能的解释，不是1D4R必然胜出的理论证明。
@@ -116,11 +117,11 @@ SZ3 and QoZ serialize QBs in generation order, which naturally keeps the QBs pro
 
 ASZ innovates in changing the QB serialization order within each prediction round. As a simple and fast prediction method, weighted-sum prediction can leave residual spatial correlation along any coordinate axis. The resulting QBs inherit this correlation, which commonly appears as runs of identical QBs along one dimension. Making that dimension the fastest-varying one places these symbols consecutively in the stream and exposes the run to Zstd. For each round, ASZ considers three serialization orders obtained by changing the fastest-varying dimension. The order of the other two dimensions has little effect on Zstd, so ASZ considers only these three rather than all six axis permutations.
 
-Fig.~\ref{fig:configuration-space:qb-order} compares the rate--distortion curves of the three QB serialization orders for the finest prediction round on three data files. For each data file, error bound, and serialization order, we independently select the best coefficient and prediction axis.
+Fig.~\ref{fig:configuration-space:qb-order} compares the rate--distortion curves of the three QB serialization orders for the finest prediction round on three fields. For each field, error bound, and serialization order, we independently select the best coefficient and prediction axis.
 
 \begin{figure}[htb]
 \centering
-\includegraphics{revised-fig/qb-order-rd.png}
+\includegraphics{figs/5/qb-order-rd.png}
 \caption{Rate--distortion comparison of QB serialization orders after independently selecting the best prediction axis and coefficient for each order. Labels $x$, $y$, and $z$ identify the fastest-varying axis of the serialized QB tensor. Across the three examples and their common PSNR intervals, the geometric mean of the best-to-worst compression-ratio improvement is $1.17\times$.}
 \label{fig:configuration-space:qb-order}
 \end{figure}
@@ -138,12 +139,12 @@ At a fixed error bound, each coefficient candidate is a point in the BR--PSNR pl
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.772727\linewidth]{revised-fig/br_psnr.png}
+\includegraphics[width=.772727\linewidth]{figs/5/br_psnr.png}
 \caption{Geometric interpretation of the BR--PSNR score. Each candidate is projected parallel to the local tangent onto the score axis normal to the tangent. A projection farther toward the upper left has a higher score.}
 \label{fig:configuration-space:rd-score}
 \end{figure}
 
-For a fixed dataset, error bound, prediction stencil, and prediction axis, the BR--PSNR score of coefficient $t$, computed using its measured Huffman--Zstd QB-stream bit rate, is
+For a fixed input file, error bound, prediction stencil, and prediction axis, the BR--PSNR score of coefficient $t$, computed using its measured Huffman--Zstd QB-stream bit rate, is
 \begin{equation}
 \label{eq:configuration-space:br-psnr-score}
 S_{\mathrm{BR}}(t)=\frac{\mathrm{PSNR}(t)-m_{\mathrm{BR}}\mathrm{BR}(t)}{\sqrt{1+m_{\mathrm{BR}}^2}},
@@ -166,12 +167,12 @@ Replacing BR with $H_1$ accelerates coefficient evaluation because $H_1$ depends
 
 \begin{figure}[htb]
 \centering
-\includegraphics{revised-fig/coefficient-proxy-validation.png}
+\includegraphics{figs/5/coefficient-proxy-validation.png}
 \caption{Coefficient-selection proxy validation. (a) $H_1$--PSNR achieves the highest agreement with measured single-round BR--PSNR among the proxy criteria, selecting the same coefficient in 95.93\% of the cases. (b)--(c) BR--PSNR and $H_1$--PSNR curves for Isabel P 24 with prediction axis 0 and QB order 0. Each color denotes one of the eleven coefficient candidates, and each curve contains the five relative error bounds from $10^{-1}$ to $10^{-5}$. The closely matched curve shapes preserve the relative performance of the candidate coefficients across the five error bounds, explaining the high agreement in (a).}
 \label{fig:configuration-space:global-coefficient-selection}
 \end{figure}
 
-Panel (a) evaluates coefficient selection under 270 combinations of data files, error bounds, prediction axes, and QB serialization orders. For each combination, BR--PSNR and each proxy independently select the best of eleven coefficient candidates. $H_1$--PSNR selects the same coefficient as BR--PSNR in 259 of the 270 combinations, or 95.93\%, more often than the other proxy criteria, which each omit either coding cost or reconstruction quality. Panels (b) and (c) compare the BR--PSNR and $H_1$--PSNR curves for one representative combination. The $H_1$--PSNR curves closely reproduce the detailed shapes of the BR--PSNR curves, including the relative performance of different coefficients at each error bound. ASZ therefore selects the candidate with the largest $S_{H_1}$.
+Panel (a) evaluates coefficient selection under 270 combinations of fields, error bounds, prediction axes, and QB serialization orders. For each combination, BR--PSNR and each proxy independently select the best of eleven coefficient candidates. $H_1$--PSNR selects the same coefficient as BR--PSNR in 259 of the 270 combinations, or 95.93\%, more often than the other proxy criteria, which each omit either coding cost or reconstruction quality. Panels (b) and (c) compare the BR--PSNR and $H_1$--PSNR curves for one representative combination. The $H_1$--PSNR curves closely reproduce the detailed shapes of the BR--PSNR curves, including the relative performance of different coefficients at each error bound. ASZ therefore selects the candidate with the largest $S_{H_1}$.
 
 \subsection{Reusable Coefficient Evaluation}
 \label{sec:configuration-space:coefficient-evaluation}
@@ -205,7 +206,7 @@ We analyze the time complexity to quantify the acceleration from reusing the joi
 
 The approximation has two controllable error sources: sampling only part of the targets and grouping $(A,B)$ pairs into grid cells. More samples reduce the sampling error, and finer cells reduce the discretization error. Consequently, the estimated $H_1(t)$ and PSNR$(t)$ approach their full-target, undiscretized values.
 
-Using the precomputed global slope, Sections~\ref{sec:configuration-space:coefficient-selection} and~\ref{sec:configuration-space:coefficient-evaluation} give the following batch coefficient-evaluation procedure for 1D4R when the input data, error bound, and prediction axis are fixed:
+Using the precomputed global slope, Sections~\ref{sec:configuration-space:coefficient-selection} and~\ref{sec:configuration-space:coefficient-evaluation} give the following batch coefficient-evaluation procedure for 1D4R when the input file, error bound, and prediction axis are fixed:
 \begin{center}
 \small
 \begin{tabular}{@{}l@{\hspace{0.6em}}l@{}}

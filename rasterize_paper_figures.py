@@ -5,7 +5,7 @@ from PIL import Image
 
 
 paper_root=Path(__file__).resolve().parent/"新论文"
-output_root=paper_root/"revised-fig"/"raster300"
+output_root=paper_root/"legacy"/"revised-fig"/"raster300"
 # IEEEtran默认单栏宽21pc=252pt；TeX中1in=72.27pt。
 column_width_pt=252
 points_per_inch=72.27
@@ -35,7 +35,7 @@ def rasterize_pdf(source,target,width_pt=column_width_pt,dpi=300):
 
 
 def main():
-    sources=[paper_root/"revised-fig"/name for name in figures]
+    sources=[paper_root/"legacy"/"revised-fig"/name for name in figures]
     for source in sources:
         if not source.is_file():
             raise FileNotFoundError(source)

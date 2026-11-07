@@ -117,10 +117,10 @@ finalImage=ImageResize[croppedExportImage,{exportWidthPixels,Automatic}];
 If[!ImageQ[finalImage],Print["Failed to create the final image."];Abort[]];
 finalImage
 
-(*将300 dpi PNG放在本文件旁边；通过Notebook运行时放在Notebook旁边。*)
+(*将300 dpi PNG写入论文的新论文/figs/3目录，路径相对本文件或Notebook所在目录。*)
 notebookDirectory=Quiet@Check[NotebookDirectory[],$Failed];
 outputDirectory=Which[StringQ[$InputFileName]&&StringLength[$InputFileName]>0,DirectoryName[$InputFileName],StringQ[notebookDirectory],notebookDirectory,True,Directory[]];
-pngPath=FileNameJoin[{outputDirectory,"stencils_in_3_directions.png"}];
+pngPath=FileNameJoin[{outputDirectory,"新论文","figs","3","stencils_in_3_directions.png"}];
 Export[pngPath,finalImage,"PNG",ImageResolution->exportResolution];
 
 pngPath

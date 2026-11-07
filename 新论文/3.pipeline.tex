@@ -8,7 +8,7 @@ SZ3, QoZ, and ASZ share the SZ compression pipeline and several prediction conce
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.840909\columnwidth]{revised-fig/0-sz-diagram.png}
+\includegraphics[width=.840909\columnwidth]{figs/3/sz_diagram.png}
 \caption{Overview of the SZ compression pipeline. Preprocessing selects a configuration that guides prediction during compression. The compressor quantizes prediction residuals and losslessly encodes the resulting QBs using Huffman coding followed by Zstd.}
 \label{fig:pipeline:sz}
 \end{figure}
@@ -29,7 +29,7 @@ q_i=\operatorname{round}\!\left(\frac{e_i}{\Delta}\right),\qquad \hat x_i=p_i+\D
 \end{equation}
 Setting $\Delta\leq2\epsilon_{\mathrm{abs}}$ guarantees $|x_i-\hat x_i|\leq\epsilon_{\mathrm{abs}}$ in exact arithmetic.
 
-These pointwise prediction and quantization operations are organized into a coarse-to-fine sequence of prediction rounds. SZ3, QoZ, and ASZ begin with a sparse set of available reference values. In each round, they predict and reconstruct a new subset of grid points, which then serve as references for later rounds. Consequently, the number of reconstructed points approximately doubles from one round to the next. Ignoring boundary effects, this progression means that the final round predicts $1/2$ of the field and the final three rounds together predict $7/8$. The SZ3 and QoZ papers describe this process in terms of interpolation levels, where each level corresponds to three consecutive rounds in this paper, one along each axis of a three-dimensional field. ASZ configures each round separately, so its rounds need not form such levels.
+These pointwise prediction and quantization operations are organized into a coarse-to-fine sequence of prediction rounds. SZ3, QoZ, and ASZ begin with a sparse set of available reference values. In each round, they predict and reconstruct a new subset of grid points, which then serve as references for later rounds. Consequently, the number of reconstructed points approximately doubles from one round to the next. Ignoring boundary effects, this progression means that the final round predicts $1/2$ of all grid points and the final three rounds together predict $7/8$. The SZ3 and QoZ papers describe this process in terms of interpolation levels, where each level corresponds to three consecutive rounds in this paper, one along each axis of three-dimensional data. ASZ configures each round separately, so its rounds need not form such levels.
 
 After the final round, the QBs are serialized into a one-dimensional sequence and compressed using Huffman coding followed by Zstd.
 
@@ -40,8 +40,8 @@ This subsection defines the terminology used throughout the paper.
 
 \begin{figure}[htb]
 \centering
-\includegraphics{../stencils_in_3_directions.png}
-\caption{The same two-reference linear-interpolation stencil aligned with the three axes of a three-dimensional field.}
+\includegraphics{figs/3/stencils_in_3_directions.png}
+\caption{The same two-reference linear-interpolation stencil aligned with the three axes of three-dimensional data.}
 \label{fig:related-work:stencil-axes}
 \end{figure}
 
@@ -56,5 +56,5 @@ This subsection defines the terminology used throughout the paper.
 
 \item \emph{QB Serialization Order.} Before lossless compression, the QBs produced for multidimensional data must be written as a one-dimensional sequence. The serialization order determines whether QBs adjacent along the $x$, $y$, or $z$ axis appear consecutively in this sequence. Reordering preserves the QB values, their frequencies, and the reconstructed data, but changes the Huffman-codeword sequence presented to Zstd and can therefore affect lossless compression.
 
-\item \emph{Configuration Granularity.} Configuration granularity specifies the scope over which a selected choice is shared, such as a field, a group of rounds, one round, or one data block.
+\item \emph{Configuration Granularity.} Configuration granularity specifies the scope over which a selected choice is shared, such as an entire file, a group of rounds, one round, or one data block.
 \end{enumerate}

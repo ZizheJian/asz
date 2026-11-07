@@ -12,7 +12,7 @@ We conduct all experiments on Purdue Anvil. Each standard compute node contains 
 
 \subsubsection{Scientific Datasets}
 
-Table~\ref{tab:evaluation-datasets} summarizes the 18 fields used in the rate--distortion and runtime experiments. They span weather and climate data, seismic imaging, fluid dynamics, cosmology, electronic-structure calculations, hydrodynamics, and X-ray experiments. For the plan-transfer experiments in Section~\ref{sec:evaluation:transfer}, we use related time steps or fields from data sources represented in Table~\ref{tab:evaluation-datasets}.
+Table~\ref{tab:evaluation-datasets} summarizes the 18 fields used in the rate--distortion and runtime experiments. We evaluate one file per field, and the Index column identifies that file within its dataset. The fields span weather and climate data, seismic imaging, fluid dynamics, cosmology, electronic-structure calculations, hydrodynamics, and X-ray experiments. For the plan-transfer experiments in Section~\ref{sec:evaluation:transfer}, we use related time steps or fields from data sources represented in Table~\ref{tab:evaluation-datasets}.
 
 \begin{table*}[htb]
     \centering
@@ -53,7 +53,7 @@ SPERR comes closest to ASZ because both methods perform multiscale spatial decor
 
 \begin{figure*}[htb]
     \centering
-    \IfFileExists{figs/5/rate-distortion-final-eighteen-log.png}{\includegraphics{figs/5/rate-distortion-final-eighteen-log.png}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field rate--distortion figure pending.}}}
+    \IfFileExists{figs/6/rate-distortion-final-eighteen-log.png}{\includegraphics{figs/6/rate-distortion-final-eighteen-log.png}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field rate--distortion figure pending.}}}
     \caption{Rate--distortion performance on 18 scientific fields. At matched PSNR, ASZ achieves $2.48\times$, $2.07\times$, $6.18\times$, and $1.36\times$ the geometric-mean compression ratios of SZ3, QoZ, ZFP, and SPERR, respectively, outperforming the first three on all 18 fields and SPERR on 10.}
     \label{fig:evaluation-rd}
 \end{figure*}
@@ -65,7 +65,7 @@ Fig.~\ref{fig:evaluation-codec-time} compares ASZ with SZ3, QoZ, ZFP, and SPERR 
 
 \begin{figure*}[htb]
     \centering
-    \IfFileExists{figs/5/time-breakdown-final-eighteen-vs-rel-eb.png}{\includegraphics{figs/5/time-breakdown-final-eighteen-vs-rel-eb.png}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field codec-time figure pending.}}}
+    \IfFileExists{figs/6/time-breakdown-final-eighteen-vs-rel-eb.png}{\includegraphics{figs/6/time-breakdown-final-eighteen-vs-rel-eb.png}}{\fbox{\parbox[c][1.5in][c]{0.96\textwidth}{\centering Final 18-field codec-time figure pending.}}}
     \caption{Total runtime across five relative error bounds. Each error-bound group contains one bar per method. ASZ stacks preprocessing, compression, and decompression, while each baseline stacks compression and decompression. ASZ's geometric-mean total runtime is $0.81\times$ that of QoZ and $0.43\times$ that of SPERR.}
     \label{fig:evaluation-codec-time}
 \end{figure*}
@@ -73,7 +73,7 @@ Fig.~\ref{fig:evaluation-codec-time} compares ASZ with SZ3, QoZ, ZFP, and SPERR 
 \subsection{Plan Transferability Across Related Files}
 \label{sec:evaluation:transfer}
 
-This subsection evaluates ASZ's ability to reuse a plan generated for one file on other related files. We consider two settings. Temporal reuse shares plans across consecutive snapshots of Isabel PRECIP, RTM Small, and CESM UU. Non-temporal reuse transfers plans across distinct arrays from the same application, namely QMCPACK orbitals, the three Isabel wind components, and two APSU datasets of different sizes.
+This subsection evaluates ASZ's ability to reuse a plan generated for one file on other related files. We consider two settings. Temporal reuse shares plans across consecutive snapshots of Isabel PRECIP, RTM Small, and CESM UU. Non-temporal reuse transfers plans across distinct files from the same application, namely QMCPACK orbitals, the three Isabel wind components, and two APSU files of different sizes.
 
 For an ordered sequence of $T$ files in which $m$ files share one plan, with $m$ odd, we place $\lfloor T/m\rfloor$ contiguous windows of $m$ files at the center of the sequence. The middle file of each window generates the plan for every file in that window. The remaining $T-m\lfloor T/m\rfloor$ files at the two ends lie outside every window and are excluded from the statistics for that $m$, so each target file lies within $(m-1)/2$ positions of the file that generated its plan. Thus, $m=1$ generates a plan for every file, and larger values of $m$ apply each plan to files farther from the file that generated it.
 
@@ -81,30 +81,30 @@ The transferred plan fixes the preprocessing decisions, including each round's p
 
 \subsubsection{Temporal Reuse}
 
-The temporal experiment covers Isabel PRECIP time steps 01--48, RTM Small snapshots 0335--0385, and CESM UU time steps 00--62. These sequences contain PRECIP 24, RTM Small 0360, and CESM UU 31 from the 18 evaluated fields. We evaluate $m\in\{1,3,5,9,17\}$.
+The temporal experiment covers Isabel PRECIP time steps 01--48, RTM Small snapshots 0335--0385, and CESM UU time steps 00--62. These sequences include the files PRECIP 24, RTM Small 0360, and CESM UU 31 listed in Table~\ref{tab:evaluation-datasets}. We evaluate $m\in\{1,3,5,9,17\}$.
 
 Fig.~\ref{fig:evaluation-temporal-reuse} shows that the average relative compression ratio stays between 0.98 and 1.02 on all three sequences for every $m$. Values above 1 occur because plan generation relies on sampled estimates, so a neighboring file's plan occasionally compresses a target better than the target's own plan. The lowest single-file ratios are 0.87, 0.93, and 0.88 on Isabel PRECIP, RTM Small, and CESM UU, respectively. The minimum varies irregularly with $m$ because it depends on a few files whose windows change with $m$. How many snapshots can share one plan depends on the similarity between snapshots and therefore varies across fields. For the three sequences evaluated here, every group size from 3 to 17 keeps the average compression ratio within 2\% of per-file plan generation.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics{revised-fig/temporal-plan-reuse.png}
+    \includegraphics{figs/6/temporal-plan-reuse.png}
     \caption{Relative compression ratio of temporal plan reuse at matched PSNR. Each panel plots the average over the evaluated files and the minimum over individual files against the number of files that share one plan. A value of 1 means that the transferred plan matches the self-generated plan.}
     \label{fig:evaluation-temporal-reuse}
 \end{figure}
 
-\subsubsection{Reuse Across Non-Temporal Related Arrays}
+\subsubsection{Reuse Across Non-Temporal Related Files}
 
-The non-temporal experiments transfer plans across arrays that come from the same application but differ in orbital index, velocity component, or number of frames. Fig.~\ref{fig:evaluation-non-temporal-reuse} shows that transferability depends on how similar the arrays are. Neighboring QMCPACK orbitals, the two horizontal Isabel wind components, and the two APSU datasets at fine error bounds exchange plans with little loss, whereas the vertical and horizontal wind components require separate plans.
+The non-temporal experiments transfer plans across files that come from the same application but differ in orbital index, velocity component, or number of frames. Fig.~\ref{fig:evaluation-non-temporal-reuse} shows that transferability depends on how similar the files are. Neighboring QMCPACK orbitals, the two horizontal Isabel wind components, and the two APSU files at fine error bounds exchange plans with little loss, whereas the vertical and horizontal wind components require separate plans.
 
-QMCPACK orbitals 0--287 share the same $115\times69\times69$ spline grid and include QMCPACK orbital 144 from the 18 evaluated fields. We order the orbitals by index and apply the windows defined above with $m\in\{1,3,5,9,17\}$. The average relative compression ratio stays between 0.98 and 0.99 for every $m>1$, but individual orbitals vary more than consecutive snapshots. Six orbitals select 1D4R at $10^{-3}$, and all other orbitals select 1D6R. At $m=3$ and $m=5$, the lowest ratios, 0.63 and 0.67, occur when one of these six orbitals generates the plan for neighbors that select 1D6R. None of these orbitals generates a plan at $m=9$ or $m=17$, and the minimum rises to 0.81 and 0.83, respectively.
+QMCPACK orbitals 0--287 share the same $115\times69\times69$ spline grid and include orbital 144 listed in Table~\ref{tab:evaluation-datasets}. We order the orbitals by index and apply the windows defined above with $m\in\{1,3,5,9,17\}$. The average relative compression ratio stays between 0.98 and 0.99 for every $m>1$, but individual orbitals vary more than consecutive snapshots. Six orbitals select 1D4R at $10^{-3}$, and all other orbitals select 1D6R. At $m=3$ and $m=5$, the lowest ratios, 0.63 and 0.67, occur when one of these six orbitals generates the plan for neighbors that select 1D6R. None of these orbitals generates a plan at $m=9$ or $m=17$, and the minimum rises to 0.81 and 0.83, respectively.
 
 Isabel time step 24 provides the wind components U, V, and W on the same $100\times500\times500$ grid, and we apply the plan of each component to the other two. U and V exchange plans with relative compression ratios of 0.99 and 1.00. Plans transferred between W and either horizontal component reach only 0.46 to 0.64. In its two finest rounds, the W plan predicts along the vertical axis, whereas the U and V plans predict along horizontal axes. These two rounds contain about three quarters of all targets, so this difference dominates the compression ratio.
 
-APSU 004 and APSU 006 contain 1024 and 4096 frames, respectively, from the same $1558\times1813$ X-ray detector. We generate the plans on the smaller APSU 004 and apply them to APSU 006, which removes the 102 to 132~s of plan generation on APSU 006. Because this experiment has a single target file, we compute the relative compression ratio at the PSNR of the self-generated plan at each of the five evaluated error bounds. The ratio is at least 0.99 at $10^{-3}$ and finer bounds and decreases to 0.91 at $10^{-2}$ and 0.64 at $10^{-1}$. Plans transferred from the smaller dataset therefore suit APSU 006 from the middle error bound to the finest bound, while the two coarsest bounds benefit from a plan generated on APSU 006 itself.
+APSU 004 and APSU 006 contain 1024 and 4096 frames, respectively, from the same $1558\times1813$ X-ray detector. We generate the plans on the smaller APSU 004 and apply them to APSU 006, which removes the 102 to 132~s of plan generation on APSU 006. Because this experiment has a single target file, we compute the relative compression ratio at the PSNR of the self-generated plan at each of the five evaluated error bounds. The ratio is at least 0.99 at $10^{-3}$ and finer bounds and decreases to 0.91 at $10^{-2}$ and 0.64 at $10^{-1}$. Plans transferred from the smaller file therefore suit APSU 006 from the middle error bound to the finest bound, while the two coarsest bounds benefit from a plan generated on APSU 006 itself.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics{revised-fig/non-temporal-plan-reuse.png}
+    \includegraphics{figs/6/non-temporal-plan-reuse.png}
     \caption{Relative compression ratio of non-temporal plan reuse at matched PSNR. (a) Average and minimum over QMCPACK orbitals against the number of orbitals that share one plan. (b) Ratio for each Isabel wind component under the plans of the other two components, labeled above each bar. (c) Ratio for APSU 006 under the APSU 004 plan at each error bound. A value of 1 means that the transferred plan matches the self-generated plan.}
     \label{fig:evaluation-non-temporal-reuse}
 \end{figure}

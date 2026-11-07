@@ -58,7 +58,7 @@ def render(summaries,output_png):
 def main():
     parser=argparse.ArgumentParser(description="Plot the equal-PSNR relative compression ratio against the number of files sharing one plan")
     parser.add_argument("--field",nargs="+",choices=list(fields),default=list(temporal_fields))
-    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/revised-fig/temporal-plan-reuse.png")
+    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/6/temporal-plan-reuse.png")
     arguments=parser.parse_args()
     render({field:load_summary(field) for field in arguments.field},arguments.output_png)
     print(f"wrote {arguments.output_png}")
