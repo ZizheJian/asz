@@ -169,8 +169,8 @@ def render_coefficient_figure(output_png):
 
 def specifications():
     return {
-        "fig7":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-common-final18-20261024"),("qmcpack144",project_root/"results/predictor-dimensionality-common-final18-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-common-final18-20261024")],"output":project_root/"新论文/figs/5/iv-1d4r-vs-2d4r-common-targets"},
-        "fig8":{"families":("1d4r","1d6r"),"datasets":[("precip24",project_root/"results/predictor-reference-count-common-final18-20261025"),("vd01_31",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_t",project_root/"results/predictor-reference-count-common-final18-20261025"),("aramco1800",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_pres",project_root/"results/predictor-reference-count-common-final18-20261025"),("qmcpack144",project_root/"results/predictor-reference-count-common-final18-20261025")],"output":project_root/"新论文/figs/5/iv-1d4r-vs-1d6r-common-targets"},
+        "fig7":{"families":("1d4r","2d4r"),"datasets":[("precip24",project_root/"results/predictor-dimensionality-common-final18-20261024"),("qmcpack144",project_root/"results/predictor-dimensionality-common-final18-20261024"),("aramco1800",project_root/"results/predictor-dimensionality-common-final18-20261024")],"output":project_root/"overleaf/figures/5/iv-1d4r-vs-2d4r-common-targets"},
+        "fig8":{"families":("1d4r","1d6r"),"datasets":[("precip24",project_root/"results/predictor-reference-count-common-final18-20261025"),("vd01_31",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_t",project_root/"results/predictor-reference-count-common-final18-20261025"),("aramco1800",project_root/"results/predictor-reference-count-common-final18-20261025"),("letkf_pres",project_root/"results/predictor-reference-count-common-final18-20261025"),("qmcpack144",project_root/"results/predictor-reference-count-common-final18-20261025")],"output":project_root/"overleaf/figures/5/iv-1d4r-vs-1d6r-common-targets"},
     }
 
 
@@ -185,7 +185,7 @@ def main():
         parser.error(f"unknown figures: {', '.join(sorted(unknown))}")
     for name in figures:
         if name=="fig9":
-            output=project_root/"新论文/figs/5/iv-1d6r-coefficients-common-targets"
+            output=project_root/"overleaf/figures/5/iv-1d6r-coefficients-common-targets"
             render_coefficient_figure(output.with_suffix(".png"))
             print(f"wrote {output}.png")
             continue

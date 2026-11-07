@@ -57,7 +57,7 @@ def main():
     parser=argparse.ArgumentParser(description="Plot RD curves for the final 18-field evaluation")
     parser.add_argument("--manifest",type=Path,default=default_manifest)
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
-    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/6/rate-distortion-final-eighteen-log.png")
+    parser.add_argument("--output-png",type=Path,default=project_root/"overleaf/figures/6/rate-distortion-final-eighteen-log.png")
     parser.add_argument("--dpi",type=int,default=300)
     arguments=parser.parse_args()
     datasets=load_datasets(arguments.manifest)

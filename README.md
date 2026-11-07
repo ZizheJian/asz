@@ -17,7 +17,7 @@ The repository also contains launchers for SZ3, QoZ, ZFP, and SPERR. SZ3 and QoZ
 - `csv/`: retained numerical summaries and tuning provenance.
 - `results/`: generated experiment output; ignored by Git.
 - `third_party/`: Git submodules for baseline compressors and supporting libraries.
-- `新论文/`: current ICDE manuscript and figures.
+- `overleaf/`: current ICDE manuscript and figures, a separate git clone of the Overleaf project (ignored by this repository). Pull before editing and push after committing.
 - `旧论文/`: earlier manuscripts retained for reference.
 
 `t1_start_compressors.py` launches experiments. `evaluation_datasets.py` loads the shared evaluation manifest and result files, while `analyze_final_evaluation.py`, `plot_final_rd.py`, and `plot_final_runtime.py` produce the aggregate analysis and final figures. `paper_plot_layout.py` supplies shared plotting styles and layout helpers.
@@ -126,7 +126,7 @@ The default `joint` selection estimates a tangent from the candidates in scope. 
 
 ## Manuscript and figures
 
-The current manuscript entry point is `新论文/main.tex`. Figures used by the manuscript live in `新论文/figs/<section>/`, one folder per section (3--6), and retired figures and drafts are kept in `新论文/legacy/`. Figures 7--10 are 300 dpi PNGs generated with `paperfig` at the IEEE single-column width, with a `sqrt(2):1` aspect ratio for every panel. Regenerate them from existing results with:
+The current manuscript entry point is `overleaf/main.tex`, with section sources under `overleaf/sections/`. Figures used by the manuscript live in `overleaf/figures/<section>/`, one folder per section (3--6). Retired figures and drafts were removed with the old `新论文/` folder and can be restored from commit 1e1c720. Figures 7--10 are 300 dpi PNGs generated with `paperfig` at the IEEE single-column width, with a `sqrt(2):1` aspect ratio for every panel. Regenerate them from existing results with:
 
 ```bash
 module load anaconda/2024.02-py311
@@ -141,12 +141,12 @@ module load anaconda/2024.02-py311
 MPLCONFIGDIR=/tmp/asz-matplotlib python3 -m unittest discover -v
 ```
 
-Compile the manuscript from the repository root:
+Clone the Overleaf project once into `overleaf/` (the Overleaf token is read from `~/.git-credentials`), then pull and compile from the repository root. The local Makefile compiles into `overleaf/build/` and copies the PDF to `overleaf/main.pdf`. These three stay out of the Overleaf repository through `overleaf/.git/info/exclude`, so a fresh clone needs the Makefile copied from `../unsz/overleaf/Makefile`.
 
 ```bash
-module load texlive/20200406
-cd 新论文
-latexmk -pdf -interaction=nonstopmode -halt-on-error -silent main.tex
+git -c credential.helper=store clone https://git@git.overleaf.com/6aef5e4e0324c6c7a6d2818d overleaf
+git -C overleaf pull
+make -C overleaf pdf
 ```
 
 ## Current 18-field evaluation
@@ -169,7 +169,7 @@ python3 plot_final_runtime.py
 python3 analyze_final_evaluation.py
 ```
 
-The two final figures are 300 dpi PNG files under `新论文/figs/6/`: `rate-distortion-final-eighteen-log.png` and `time-breakdown-final-eighteen-vs-rel-eb.png`. The time figure reports preprocessing, compression, and decompression for ASZ and compression and decompression for SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Timings exclude input/output operations and post-run error verification. ASZ's compression stage includes its recorded data-range scan. The analysis writes `results/final_eighteen_analysis.csv`. All three scripts accept `--manifest` and `--result-directory` to select their inputs.
+The two final figures are 300 dpi PNG files under `overleaf/figures/6/`: `rate-distortion-final-eighteen-log.png` and `time-breakdown-final-eighteen-vs-rel-eb.png`. The time figure reports preprocessing, compression, and decompression for ASZ and compression and decompression for SZ3, QoZ, ZFP, and SPERR at all five relative error bounds. Timings exclude input/output operations and post-run error verification. ASZ's compression stage includes its recorded data-range scan. The analysis writes `results/final_eighteen_analysis.csv`. All three scripts accept `--manifest` and `--result-directory` to select their inputs.
 
 The RD summary integrates the log-bit-rate difference over the shared PSNR interval and reports ASZ's geometric-mean compression-ratio gain against each baseline separately. Runtime analysis defaults to the middle error bound of each field and includes ASZ preprocessing, compression, and decompression. Pass `--rel-eb` to `analyze_final_evaluation.py` to override this behavior with one common bound.
 

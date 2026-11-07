@@ -75,7 +75,7 @@ def main():
     parser=argparse.ArgumentParser(description="Plot throughput and runtime for the final 18-field evaluation")
     parser.add_argument("--manifest",type=Path,default=default_manifest)
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
-    parser.add_argument("--output-directory",type=Path,default=project_root/"新论文/figs/6")
+    parser.add_argument("--output-directory",type=Path,default=project_root/"overleaf/figures/6")
     parser.add_argument("--dpi",type=int,default=300)
     arguments=parser.parse_args()
     datasets=load_datasets(arguments.manifest)

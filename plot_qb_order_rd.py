@@ -82,7 +82,7 @@ def main():
     parser=argparse.ArgumentParser(description="Plot independently optimized QB serialization-order RD curves")
     parser.add_argument("--input-directory",type=Path,default=project_root/"results/qb-order-zoom-final18-20261025")
     parser.add_argument("--extension-directory",type=Path,default=project_root/"results/qb-order-common-final18-20261025")
-    parser.add_argument("--output-png",type=Path,default=project_root/"新论文/figs/5/qb-order-rd.png")
+    parser.add_argument("--output-png",type=Path,default=project_root/"overleaf/figures/5/qb-order-rd.png")
     arguments=parser.parse_args()
     render(load_rows(arguments.input_directory),load_rows(arguments.extension_directory),arguments.output_png)
     print(f"wrote {arguments.output_png}")
