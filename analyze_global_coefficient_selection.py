@@ -7,7 +7,7 @@ from collections import defaultdict
 from pathlib import Path
 
 project_root=Path(__file__).resolve().parent
-candidate_t=[i/32 for i in range(2,13)]
+candidate_t=[i/32 for i in range(0,13)]
 selection_order=[1/4,*[value for value in candidate_t if value!=1/4]]
 rel_ebs=[1e-1,1e-2,1e-3,1e-4,1e-5]
 criteria=("h1_psnr","h1_only","psnr_only","prediction_mse","prediction_mae")
@@ -144,10 +144,11 @@ def write_csv(path,rows,fieldnames):
         writer.writerows(rows)
     temporary.replace(path)
 
-def plot_validation_triptych(measurements,rows,output):
+def plot_validation_triptych(measurements,rows,output_png):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from matplotlib.cm import ScalarMappable
     from matplotlib.colors import Normalize
     from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
     from paperfig import PANEL_GAP_WITH_YLABEL_PT,PaperFigureSpec,add_panel_captions,apply_paper_style,layout_panel_row,save_paper_png_vertical_crop,style_plot_axis
@@ -185,9 +186,20 @@ def plot_validation_triptych(measurements,rows,output):
         style_plot_axis(axis)
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55,axis="y" if index==0 else "both")
         axis.set_axisbelow(True)
-    layout_panel_row(figure,axes,(1,1,1),bottom_pt=78,panel_gap_pt=PANEL_GAP_WITH_YLABEL_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
+    layout_panel_row(figure,axes,(1,1,1),bottom_pt=78,panel_gap_pt=PANEL_GAP_WITH_YLABEL_PT,left_edge_gap_pt=3,right_edge_gap_pt=5.5)
     add_panel_captions(figure,axes,titles,gap_pt=2,source="xlabel")
-    save_paper_png_vertical_crop(figure,output/"coefficient-proxy-validation.png",spec,edge_gap_pt=3)
+    # continuous colorbar for t above panels (b) and (c)
+    point_y=1/(spec.size_in[1]*72)
+    left,right,top=axes[1].get_position().x0,axes[2].get_position().x1,axes[1].get_position().y1
+    color_axis=figure.add_axes([left,top+4*point_y,right-left,3.5*point_y])
+    colorbar=figure.colorbar(ScalarMappable(normalizer,color_map),cax=color_axis,orientation="horizontal",ticks=[0,1/8,1/4,3/8])
+    color_axis.xaxis.set_ticks_position("top")
+    color_axis.set_xticklabels(["0","1/8","1/4","3/8"])
+    color_axis.tick_params(length=1.8,width=.45,pad=1)
+    colorbar.outline.set_linewidth(.5)
+    color_axis.text(-.015,.5,"$t$",transform=color_axis.transAxes,ha="right",va="center")
+    output_png.parent.mkdir(parents=True,exist_ok=True)
+    save_paper_png_vertical_crop(figure,output_png,spec,edge_gap_pt=3)
     plt.close(figure)
 
 def self_test():
@@ -197,11 +209,12 @@ def self_test():
     tied_values={t:0.0 for t in candidate_t}
     selected,tied=select(tied_values)
     assert selected==0.25 and len(tied)==len(candidate_t)
-    assert candidate_index(0.25000000000001)==6
+    assert candidate_index(0.25000000000001)==candidate_t.index(0.25)
 
 def main():
     parser=argparse.ArgumentParser(description="Validate global 1D4R coefficient-selection criteria from complete legacy sweeps")
-    parser.add_argument("--output",type=Path,default=project_root/"results/coefficient-proxy-global-20261012")
+    parser.add_argument("--output",type=Path,default=project_root/"results/coefficient-proxy-global-20261107")
+    parser.add_argument("--output-png",type=Path,default=project_root/"overleaf/figures/5/coefficient-proxy-validation.png")
     parser.add_argument("--self-test",action="store_true")
     args=parser.parse_args()
     self_test()
@@ -217,7 +230,7 @@ def main():
     summary=summarize(rows)
     write_csv(output/"cases.csv",rows,list(rows[0]))
     write_csv(output/"summary.csv",summary,list(summary[0]))
-    plot_validation_triptych(measurements,rows,output)
+    plot_validation_triptych(measurements,rows,args.output_png.resolve())
     report={"protocol":"global 1D4R coefficient selection on fixed dataset/direction/QB-order cases; actual Huffman-Zstd QB-stream BR-PSNR is ground truth","datasets":[dataset for dataset,_,_,_ in datasets],"relative_error_bounds":rel_ebs,"directions":[0,1,2],"qb_orders":[0,1,2],"candidate_t":[f"{round(t*32)}/32" for t in candidate_t],"tie_break":"ASZ order: initialize at 1/4,then scan candidates in ascending order; ground-score ties count as agreement","slope":"neighboring coefficient-averaged points; centered differences internally and one-sided differences at endpoints","rate_scope":"Huffman plus Zstd level-3 quantization-symbol bytes only; legacy single-round prediction with frozen original references,not full-compressor RD","input_sha256":input_hashes}
     temporary=output/"report.json.tmp"
     with open(temporary,"w",encoding="utf-8") as output_file:

@@ -87,10 +87,10 @@ def render(qmcpack_rows,wind,apsu,output_png):
             axes[1].text(target_index+offset,ratio,source,ha="center",va="bottom",fontsize=6)
     axes[1].set_xticks(range(len(components)),list(components))
     axes[1].set_xlim(-.6,len(components)-.4)
-    axes[1].set_ylim(0,1.15)
+    axes[1].set_ylim(0,1.3)
     axes[1].set_xlabel("Target component")
     # 误差界从左到右减小，只在10的整数次幂处标刻度
-    axes[2].plot([rel_eb for rel_eb,_ in apsu],[ratio for _,ratio in apsu],color="#2166ac",marker="o",linewidth=.8,markersize=2.5)
+    axes[2].plot([rel_eb for rel_eb,_ in apsu],[ratio for _,ratio in apsu],color="#2166ac",linewidth=.8)
     axes[2].set_xscale("log")
     axes[2].set_xlim(.2,6e-5)
     axes[2].xaxis.set_major_locator(FixedLocator([1e-1,1e-2,1e-3,1e-4]))
@@ -99,8 +99,8 @@ def render(qmcpack_rows,wind,apsu,output_png):
     axes[2].grid(True,axis="x",color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
     axes[2].set_xlabel("Relative error bound")
     # (a)和(c)使用相同的纵轴范围，便于比较
-    for axis,ylim,step in zip(axes,((.6,1.04),(0,1.15),(.6,1.04)),(.1,.5,.1)):style_ratio_axis(axis,ylim,step)
-    axes[0].set_ylabel("Relative compression ratio")
+    for axis,ylim,step in zip(axes,((.6,1.04),(0,1.3),(.6,1.04)),(.1,.5,.1)):style_ratio_axis(axis,ylim,step)
+    axes[0].set_ylabel("Relative CR")
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=60,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],linewidth=.8,markersize=2.5,**style) for style in styles.values()]
     legend_above(axes[0],handles=handles,ncol=len(handles),frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(10,column_gap_pt=5))

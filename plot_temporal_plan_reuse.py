@@ -12,7 +12,7 @@ from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions
 from analyze_temporal_plan_reuse import fields,result_root,temporal_fields,uses_list
 
 project_root=Path(__file__).resolve().parent
-styles={"average":{"label":"Average","color":"#2166ac","marker":"o","linestyle":"-"},"minimum":{"label":"Minimum","color":"#b2182b","marker":"s","linestyle":"--"}}
+styles={"average":{"label":"Average","color":"#2166ac","marker":"None","linestyle":"-"},"minimum":{"label":"Minimum","color":"#b2182b","marker":"None","linestyle":"--"}}
 columns={"average":"AGGREGATE_RELATIVE_CR","minimum":"MIN_FILE_RELATIVE_CR"}
 
 
@@ -39,12 +39,13 @@ def render(summaries,output_png):
         axis.xaxis.set_major_locator(FixedLocator(uses_list))
         axis.xaxis.set_major_formatter(FuncFormatter(lambda value,_:f"{value:g}"))
         axis.xaxis.set_minor_locator(NullLocator())
+        axis.margins(y=.08)
         axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
         axis.axhline(1,color="#616161",linewidth=.45)
         style_plot_axis(axis)
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
         axis.set_axisbelow(True)
-    axes[0].set_ylabel("Relative compression ratio")
+    axes[0].set_ylabel("Relative CR")
     layout_panel_row(figure,axes,panel_aspect_ratios(*[1]*len(axes)),bottom_pt=40,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],linewidth=.8,markersize=2.5,**style) for style in styles.values()]
     legend_above(axes[len(axes)//2],handles=handles,ncol=len(handles),frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(10,column_gap_pt=5))
