@@ -1,11 +1,11 @@
-import argparse,csv
+import argparse,csv,math
 from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from matplotlib.ticker import LogFormatterSciNotation,LogLocator,MaxNLocator,NullLocator
+from matplotlib.ticker import FixedFormatter,FixedLocator,MaxNLocator,NullLocator
 
 from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
 
@@ -60,8 +60,14 @@ def render(rows,extension_rows,output_png):
         axis.set_xscale("log")
         axis.set_xlim(min(local_rates)/rate_padding,max(local_rates)*rate_padding)
         axis.set_ylim(min(local_psnr)-psnr_padding,max(local_psnr)+psnr_padding)
-        axis.xaxis.set_major_locator(LogLocator(base=10,subs=(1,2,5),numticks=6))
-        axis.xaxis.set_major_formatter(LogFormatterSciNotation(base=10,labelOnlyBase=True))
+        # 范围不足两个十进制刻度时补上3倍刻度，标成10^k和3×10^k，避免子图只剩一个刻度标签
+        low,high=axis.get_xlim()
+        for subs in ((1,),(1,3)):
+            ticks=[(sub,power) for power in range(math.floor(math.log10(low)),math.ceil(math.log10(high))+1) for sub in subs if low<=sub*10.0**power<=high]
+            if len(ticks)>=2:
+                break
+        axis.xaxis.set_major_locator(FixedLocator([sub*10.0**power for sub,power in ticks]))
+        axis.xaxis.set_major_formatter(FixedFormatter([rf"$10^{{{power}}}$" if sub==1 else rf"${sub}{{\times}}10^{{{power}}}$" for sub,power in ticks]))
         axis.xaxis.set_minor_locator(NullLocator())
         axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
         style_plot_axis(axis)

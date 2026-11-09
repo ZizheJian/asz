@@ -75,7 +75,10 @@ def main():
     grid_center=(min(axis.get_position().y0 for axis in axes.flat)+max(axis.get_position().y1 for axis in axes.flat))/2
     figure.supylabel("PSNR (dB)",x=7/spec.width_pt,y=grid_center,fontsize=8)
     handles=[Line2D([],[],color=styles[method]["color"],linestyle="-",linewidth=.8,label=styles[method]["label"]) for method in methods]
-    top=max(axis.get_position().y1 for axis in axes[0])
+    # 顶端刻度标签会伸出坐标框，图例放在第一行坐标框和刻度标签两者的最高点之上
+    figure.canvas.draw()
+    renderer=figure.canvas.get_renderer()
+    top=max([axis.get_position().y1 for axis in axes[0]]+[tick.label1.get_window_extent(renderer).y1/figure.bbox.height for axis in axes[0] for tick in axis.yaxis.get_major_ticks() if axis.get_ylim()[0]<=tick.get_loc()<=axis.get_ylim()[1] and tick.label1.get_visible()])
     legend_above(axes[0,0],handles=handles,ncol=5,frameon=False,bbox_to_anchor=(.5,top+1/spec.height_pt),bbox_transform=figure.transFigure,**legend_spacing_kwargs(12,column_gap_pt=8))
     arguments.output_png.parent.mkdir(parents=True,exist_ok=True)
     save_paper_png_vertical_crop(figure,arguments.output_png,spec,edge_gap_pt=3)
