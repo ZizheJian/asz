@@ -130,7 +130,6 @@ The criteria `br-psnr`, `h1-psnr`, `rmse`, `mae`, and `psnr` are available throu
 - `results/`: experiment outputs. Only the 18-field results are tracked.
 - `third_party/`: SZ3, QoZ, ZFP, SPERR, Zstd, and helper libraries as Git submodules.
 - `t1_start_compressors.py`: experiment launcher. The other top-level Python files analyze results and plot the paper's figures.
-- `旧论文/`: earlier manuscripts kept for reference.
 
 ## Tests
 

@@ -130,7 +130,6 @@ python3 summarize_prediction_sweep.py PREFIX --family 1d4r --retain qb_order --o
 - `results/`：实验输出，只有 18 个场的结果纳入版本管理。
 - `third_party/`：以 Git 子模块形式引入的 SZ3、QoZ、ZFP、SPERR、Zstd 和辅助库。
 - `t1_start_compressors.py`：实验启动脚本。顶层的其他 Python 文件用于分析结果和绘制论文中的图。
-- `旧论文/`：保留作参考的早期稿件。
 
 ## 测试
 
