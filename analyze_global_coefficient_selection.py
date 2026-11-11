@@ -13,12 +13,12 @@ rel_ebs=[1e-1,1e-2,1e-3,1e-4,1e-5]
 criteria=("h1_psnr","h1_only","psnr_only","prediction_mse","prediction_mae")
 criterion_labels={"h1_psnr":r"$H_1$--PSNR","h1_only":r"$H_1$","psnr_only":"PSNR","prediction_mse":"Prediction MSE","prediction_mae":"Prediction MAE"}
 datasets=(
-    ("Isabel_Pf24","Isabel","results/predictor-family-4r6r-middle-21250842","isabel"),
-    ("CESM_T_t31","CESM T","results/predictor-family-4r6r-middle-21250842","cesmt"),
-    ("LETKF_QV_log10","LETKF QV","results/predictor-family-4r6r-supplement-21274865","letkf_qv"),
-    ("Aramco_1800","Aramco","results/predictor-family-4r6r-middle-21250842","aramco"),
-    ("LETKF_PRES","LETKF PRES","results/predictor-family-4r6r-supplement-21274865","letkf"),
-    ("QMCPACK_orbital0","QMCPACK","results/predictor-family-4r6r-qmcpack-orbital0-20261011","qmcpack"),
+    ("Isabel_PRECIP24","Isabel PRECIP 24","results/predictor-reference-count-common-final18-20261025","precip24"),
+    ("CESM_VD01_31","CESM VD01 31","results/predictor-reference-count-common-final18-20261025","vd01_31"),
+    ("LETKF_T","SCALE-LETKF T","results/predictor-reference-count-common-final18-20261025","letkf_t"),
+    ("Aramco_1800","Aramco 1800","results/predictor-reference-count-common-final18-20261025","aramco1800"),
+    ("LETKF_PRES","SCALE-LETKF PRES","results/predictor-reference-count-common-final18-20261025","letkf_pres"),
+    ("QMCPACK_orbital144","QMCPACK Orbital 144","results/predictor-reference-count-common-final18-20261025","qmcpack144"),
 )
 
 def close(a,b):
@@ -164,7 +164,10 @@ def plot_validation_triptych(measurements,rows,output_png):
     axes[0].set_ylabel("Agreement (%)")
     axes[0].set_xticks(range(len(criteria)),labels,rotation=45,ha="right",rotation_mode="anchor")
     axes[0].text(0.08,values[0]+3,f"{values[0]:.2f}",ha="center",va="bottom",fontsize=6,color="#243391")
-    grouped=measurements[("Isabel_Pf24",0,0)]
+    # 同时标出第二、三名（PSNR和MAE）的一致率
+    for index,shift in ((criteria.index("psnr_only"),0),(criteria.index("prediction_mae"),-.15)):
+        axes[0].text(index+shift,values[index]+3,f"{values[index]:.2f}",ha="center",va="bottom",fontsize=6,color="#4d4d4d")
+    grouped=measurements[("Isabel_PRECIP24",1,0)]
     normalizer=Normalize(min(candidate_t),max(candidate_t))
     color_map=plt.get_cmap("viridis")
     for t in candidate_t:
@@ -213,7 +216,7 @@ def self_test():
 
 def main():
     parser=argparse.ArgumentParser(description="Validate global 1D4R coefficient-selection criteria from complete legacy sweeps")
-    parser.add_argument("--output",type=Path,default=project_root/"results/coefficient-proxy-global-20261107")
+    parser.add_argument("--output",type=Path,default=project_root/"results/coefficient-proxy-global-common-20261111")
     parser.add_argument("--output-png",type=Path,default=project_root/"overleaf/figures/5/coefficient-proxy-validation.png")
     parser.add_argument("--self-test",action="store_true")
     args=parser.parse_args()
@@ -231,7 +234,7 @@ def main():
     write_csv(output/"cases.csv",rows,list(rows[0]))
     write_csv(output/"summary.csv",summary,list(summary[0]))
     plot_validation_triptych(measurements,rows,args.output_png.resolve())
-    report={"protocol":"global 1D4R coefficient selection on fixed dataset/direction/QB-order cases; actual Huffman-Zstd QB-stream BR-PSNR is ground truth","datasets":[dataset for dataset,_,_,_ in datasets],"relative_error_bounds":rel_ebs,"directions":[0,1,2],"qb_orders":[0,1,2],"candidate_t":[f"{round(t*32)}/32" for t in candidate_t],"tie_break":"ASZ order: initialize at 1/4,then scan candidates in ascending order; ground-score ties count as agreement","slope":"neighboring coefficient-averaged points; centered differences internally and one-sided differences at endpoints","rate_scope":"Huffman plus Zstd level-3 quantization-symbol bytes only; legacy single-round prediction with frozen original references,not full-compressor RD","input_sha256":input_hashes}
+    report={"protocol":"global 1D4R coefficient selection on fixed dataset/direction/QB-order cases; actual Huffman-Zstd QB-stream BR-PSNR is ground truth","datasets":[dataset for dataset,_,_,_ in datasets],"relative_error_bounds":rel_ebs,"directions":[0,1,2],"qb_orders":[0,1,2],"candidate_t":[f"{round(t*32)}/32" for t in candidate_t],"tie_break":"ASZ order: initialize at 1/4,then scan candidates in ascending order; ground-score ties count as agreement","slope":"neighboring coefficient-averaged points; centered differences internally and one-sided differences at endpoints","rate_scope":"Huffman plus Zstd level-3 quantization-symbol bytes only; legacy single-round prediction with frozen original references on common targets,not full-compressor RD","input_sha256":input_hashes}
     temporary=output/"report.json.tmp"
     with open(temporary,"w",encoding="utf-8") as output_file:
         json.dump(report,output_file,indent=2)
