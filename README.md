@@ -75,11 +75,10 @@ The remaining tuning options are documented in [configs/README.md](configs/READM
 
 ```bash
 python3 t1_start_compressors.py isabel_pf01
-python3 t1_start_compressors.py configs/isabel_pf01.json --dry-run
 python3 t1_start_compressors.py isabel_pf01 --skip-build --no-csv
 ```
 
-`--dry-run` validates the configuration and the input files and prints the commands without running them. `--skip-build` reuses installed binaries, and `--no-csv` suppresses the per-input CSV files. The launcher measures the compressed size from the actual bitstream and computes PSNR and maximum error independently from the reconstructed file. A task can save ASZ plans with `write_plan` or reuse them with `read_plan`. [configs/README.md](configs/README.md) describes the JSON format, the ASZ parameters, and the maintained experiment groups.
+`--skip-build` reuses installed binaries, and `--no-csv` suppresses the per-input CSV files. The launcher measures the compressed size from the actual bitstream and computes PSNR and maximum error independently from the reconstructed file. A task can save ASZ plans with `write_plan` or reuse them with `read_plan`. [configs/README.md](configs/README.md) describes the JSON format, the ASZ parameters, and the maintained experiment groups.
 
 ## Reproducing the paper
 

@@ -55,12 +55,6 @@ Supported ASZ method fields include:
 
 The default configuration search samples every fifth value along its two non-prediction axes. The predictor-family selector uses six suffix rounds, eight stratified candidate blocks, a 32,768-value absolute budget, and a 2% relative budget. Its probe block ratio is 3 for `rel_eb>1e-4` and 4 otherwise. These probe settings do not change the formal compression block ratio.
 
-Validate a configuration and input file sizes without running the codecs:
-
-```bash
-python3 t1_start_compressors.py configs/isabel_pf01.json --dry-run
-```
-
 ## Maintained experiment groups
 
 - `final_eighteen.json`: authoritative 18-field analysis manifest shared by final RD, throughput, runtime, and aggregate analysis. It contains the selected input paths, shapes, five error bounds, and ASZ/SZ3/QoZ/ZFP/SPERR result paths. It uses a different schema from launcher tasks and is consumed by `evaluation_datasets.py`.

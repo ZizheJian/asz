@@ -75,11 +75,10 @@ install/bin/s1_decompress -f -z data.asz -o data.asz.out -3 100 500 500 -M REL 1
 
 ```bash
 python3 t1_start_compressors.py isabel_pf01
-python3 t1_start_compressors.py configs/isabel_pf01.json --dry-run
 python3 t1_start_compressors.py isabel_pf01 --skip-build --no-csv
 ```
 
-`--dry-run` 只检查配置和输入文件并打印命令，不实际运行。`--skip-build` 复用已安装的程序，`--no-csv` 不生成每个输入单独的 CSV 文件。启动脚本根据实际码流计算压缩后大小，并从重建文件独立计算 PSNR 和最大误差。任务可以用 `write_plan` 保存 ASZ 的 plan，也可以用 `read_plan` 复用已有的 plan。JSON 格式、ASZ 参数和现有的实验组见 [configs/README.md](configs/README.md)。
+`--skip-build` 复用已安装的程序，`--no-csv` 不生成每个输入单独的 CSV 文件。启动脚本根据实际码流计算压缩后大小，并从重建文件独立计算 PSNR 和最大误差。任务可以用 `write_plan` 保存 ASZ 的 plan，也可以用 `read_plan` 复用已有的 plan。JSON 格式、ASZ 参数和现有的实验组见 [configs/README.md](configs/README.md)。
 
 ## 复现论文结果
 

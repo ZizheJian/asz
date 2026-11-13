@@ -1,7 +1,9 @@
-import argparse,array,csv,errno,hashlib,json,math,os,pty,re,shlex,subprocess,sys
+import argparse,array,csv,hashlib,json,math,os,re
 from pathlib import Path
 
 import numpy as np
+
+from third_party.run_command.run_command import run_command
 
 project_root=Path(__file__).resolve().parent
 config_directory=project_root/"configs"
@@ -51,37 +53,6 @@ def add_csv(method,csv_path,rel_eb,br,psnr):
     with open(csv_path,"w",encoding="utf-8") as output_file:
         for record in records:
             output_file.write(",".join(record)+"\n")
-
-def run_command(command,silent=False,dry_run=False):
-    command=[str(item) for item in command]
-    print(f"$ {shlex.join(command)}",flush=True)
-    if dry_run:
-        return ""
-    if silent:
-        result=subprocess.run(command,capture_output=True,text=True,encoding="utf-8")
-        if result.returncode!=0:
-            if result.stdout:
-                print(result.stdout,end="")
-            if result.stderr:
-                print(result.stderr,end="",file=sys.stderr)
-            raise subprocess.CalledProcessError(result.returncode,command)
-        return result.stdout+result.stderr
-    master,slave=pty.openpty()
-    process=subprocess.Popen(command,stdout=slave,stderr=slave,text=True,bufsize=1)
-    os.close(slave)
-    lines=[]
-    with os.fdopen(master) as process_stdout:
-        try:
-            for line in process_stdout:
-                print(line,end="")
-                lines.append(line)
-        except OSError as error:
-            if error.errno!=errno.EIO:
-                raise
-    process.wait()
-    if process.returncode!=0:
-        raise subprocess.CalledProcessError(process.returncode,command)
-    return "".join(lines)
 
 def resolve_json_path(path_or_name):
     path=Path(path_or_name).expanduser()
@@ -346,17 +317,17 @@ def resolve_plan_path(path_template,data_path):
         raise ValueError(f"plan路径使用未知模板参数：{error.args[0]}") from error
     return resolve_task_path(path)
 
-def build_asz(silent,dry_run):
-    run_command(["cmake","-S",project_root/"c_codes","-B",project_root/"build","-DCODE_NAME=s1_compress",f"-DCMAKE_INSTALL_PREFIX={project_root/'install'}"],silent,dry_run)
-    run_command(["cmake","--build",project_root/"build","--parallel","4"],silent,dry_run)
-    run_command(["cmake","--install",project_root/"build"],silent,dry_run)
+def build_asz(silent):
+    run_command(["cmake","-S",project_root/"c_codes","-B",project_root/"build","-DCODE_NAME=s1_compress",f"-DCMAKE_INSTALL_PREFIX={project_root/'install'}"],silent)
+    run_command(["cmake","--build",project_root/"build","--parallel","4"],silent)
+    run_command(["cmake","--install",project_root/"build"],silent)
 
-def build_zstd(silent,dry_run):
+def build_zstd(silent):
     build_path=project_root/"build/common_zstd_build"
     install_path=project_root/"install/common_zstd_install"
-    run_command(["cmake","-S",project_root/"third_party/zstd/build/cmake","-B",build_path,"-DCMAKE_BUILD_TYPE=Release","-DCMAKE_INSTALL_LIBDIR=lib","-DZSTD_BUILD_SHARED=OFF","-DZSTD_BUILD_STATIC=ON","-DZSTD_BUILD_PROGRAMS=OFF","-DZSTD_BUILD_TESTS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent,dry_run)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent,dry_run)
-    run_command(["cmake","--install",build_path],silent,dry_run)
+    run_command(["cmake","-S",project_root/"third_party/zstd/build/cmake","-B",build_path,"-DCMAKE_BUILD_TYPE=Release","-DCMAKE_INSTALL_LIBDIR=lib","-DZSTD_BUILD_SHARED=OFF","-DZSTD_BUILD_STATIC=ON","-DZSTD_BUILD_PROGRAMS=OFF","-DZSTD_BUILD_TESTS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
+    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
+    run_command(["cmake","--install",build_path],silent)
 
 def zstd_cmake_environment():
     pkgconfig_path=project_root/"install/common_zstd_install/lib/pkgconfig"
@@ -365,48 +336,48 @@ def zstd_cmake_environment():
 def zstd_cmake_library():
     return f"-Dpkgcfg_lib_ZSTD_zstd:FILEPATH={project_root/'install/common_zstd_install/lib/libzstd.a'}"
 
-def build_sz3(silent,dry_run):
+def build_sz3(silent):
     build_path=project_root/"build/sz3_build"
     install_path=project_root/"install/sz3_install"
-    run_command([*zstd_cmake_environment(),"-S",project_root/"third_party/SZ3","-B",build_path,"-UZSTD_*",zstd_cmake_library(),"-DBUILD_SHARED_LIBS=OFF","-DSZ3_USE_BUNDLED_ZSTD=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent,dry_run)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent,dry_run)
-    run_command(["cmake","--install",build_path],silent,dry_run)
+    run_command([*zstd_cmake_environment(),"-S",project_root/"third_party/SZ3","-B",build_path,"-UZSTD_*",zstd_cmake_library(),"-DBUILD_SHARED_LIBS=OFF","-DSZ3_USE_BUNDLED_ZSTD=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
+    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
+    run_command(["cmake","--install",build_path],silent)
 
-def build_qoz(silent,dry_run):
+def build_qoz(silent):
     build_path=project_root/"build/qoz_build"
     install_path=project_root/"install/qoz_install"
-    run_command([*zstd_cmake_environment(),"-S",project_root/"third_party/QoZ","-B",build_path,"-UZSTD_*",zstd_cmake_library(),"-DBUILD_SHARED_LIBS=OFF","-DQoZ_USE_BUNDLED_ZSTD=OFF","-DQoZ_DEBUG_TIMINGS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent,dry_run)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent,dry_run)
-    run_command(["cmake","--install",build_path],silent,dry_run)
+    run_command([*zstd_cmake_environment(),"-S",project_root/"third_party/QoZ","-B",build_path,"-UZSTD_*",zstd_cmake_library(),"-DBUILD_SHARED_LIBS=OFF","-DQoZ_USE_BUNDLED_ZSTD=OFF","-DQoZ_DEBUG_TIMINGS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
+    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
+    run_command(["cmake","--install",build_path],silent)
 
-def build_zfp(silent,dry_run):
+def build_zfp(silent):
     build_path=project_root/"build/zfp_build"
     install_path=project_root/"install/zfp_install"
-    run_command(["cmake","-S",project_root/"third_party/zfp","-B",build_path,"-DBUILD_SHARED_LIBS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent,dry_run)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent,dry_run)
-    run_command(["cmake","--install",build_path],silent,dry_run)
+    run_command(["cmake","-S",project_root/"third_party/zfp","-B",build_path,"-DBUILD_SHARED_LIBS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
+    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
+    run_command(["cmake","--install",build_path],silent)
 
-def build_sperr(silent,dry_run):
+def build_sperr(silent):
     build_path=project_root/"build/sperr_build"
     install_path=project_root/"install/sperr_install"
-    run_command(["cmake","-S",project_root/"third_party/sperr","-B",build_path,"-DBUILD_SHARED_LIBS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent,dry_run)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent,dry_run)
-    run_command(["cmake","--install",build_path],silent,dry_run)
+    run_command(["cmake","-S",project_root/"third_party/sperr","-B",build_path,"-DBUILD_SHARED_LIBS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
+    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
+    run_command(["cmake","--install",build_path],silent)
 
-def build_compressors(compressors,silent,dry_run):
+def build_compressors(compressors,silent):
     if any(compressor in ("sz3","qoz") for compressor in compressors):
-        build_zstd(silent,dry_run)
+        build_zstd(silent)
     for compressor in compressors:
         if compressor=="asz":
-            build_asz(silent,dry_run)
+            build_asz(silent)
         elif compressor=="sz3":
-            build_sz3(silent,dry_run)
+            build_sz3(silent)
         elif compressor=="qoz":
-            build_qoz(silent,dry_run)
+            build_qoz(silent)
         elif compressor=="zfp":
-            build_zfp(silent,dry_run)
+            build_zfp(silent)
         elif compressor=="sperr":
-            build_sperr(silent,dry_run)
+            build_sperr(silent)
 
 def parse_asz_result(output):
     patterns={"cr":r"^CR= ([0-9.eE+-]+)\r?$","data_range_time":r"^Data range time: ([0-9.eE+-]+)","compression_time":r"^Compression time: ([0-9.eE+-]+)","decompression_time":r"^Decompression time: ([0-9.eE+-]+)"}
@@ -508,7 +479,7 @@ def codec_output_path(task,suffix):
     prefix=hashlib.sha256(str(data_path).encode("utf-8")).hexdigest()[:12]
     return output_directory/f"{prefix}_{data_path.name}{suffix}"
 
-def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
+def run_asz(task,rel_eb,predictors,method,plan_predictor_family=None):
     shape=task["data_shape"]
     data_path=task["data_path"]
     compressed_path=codec_output_path(task,".asz")
@@ -535,10 +506,8 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
         compress_command.append("--report-t-histogram")
     if predictors is not None:
         compress_command.extend(["--predictor-plan",",".join(predictors)])
-    compression_output=run_command(compress_command,dry_run=dry_run)
-    decompression_output=run_command([asz_executable_directory/"s1_decompress",*common,"-z",compressed_path,"-o",reconstructed_path],dry_run=dry_run)
-    if dry_run:
-        return None,None,None
+    compression_output=run_command(compress_command)
+    decompression_output=run_command([asz_executable_directory/"s1_decompress",*common,"-z",compressed_path,"-o",reconstructed_path])
     output=compression_output+decompression_output
     reported=parse_asz_result(output)
     compressed_size=compressed_path.stat().st_size
@@ -572,7 +541,7 @@ def run_asz(task,rel_eb,predictors,method,dry_run,plan_predictor_family=None):
     result["preprocessing_time"]=sum(result.get(key,0.0) for key in preprocessing_keys)
     return result,parse_predictors(compression_output),actual_predictor_family
 
-def run_sz_variant(compressor,task,rel_eb,dry_run):
+def run_sz_variant(compressor,task,rel_eb):
     data_path=task["data_path"]
     shape=task["data_shape"]
     compressed_path=codec_output_path(task,f".{compressor}")
@@ -581,9 +550,7 @@ def run_sz_variant(compressor,task,rel_eb,dry_run):
     command=[executable,"-f","-i",data_path,"-z",compressed_path,"-o",reconstructed_path,"-3",shape[2],shape[1],shape[0],"-M","REL",f"{rel_eb:.17g}","-a"]
     if compressor=="qoz":
         command.extend(["-q","4"])
-    output=run_command(command,silent=True,dry_run=dry_run)
-    if dry_run:
-        return None
+    output=run_command(command,silent=True)
     reported=parse_sz_result(output,compressor)
     compressed_size=compressed_path.stat().st_size
     if compressed_size<=0:
@@ -600,19 +567,17 @@ def run_sz_variant(compressor,task,rel_eb,dry_run):
         raise RuntimeError(f"{compressor}报告的PSNR与独立计算不一致：reported={reported['psnr']},actual={metrics['psnr']}")
     return {"cr":cr,"br":32/cr,"psnr":metrics["psnr"],"max_error":metrics["max_error"],"absolute_eb":absolute_eb,"compressed_bytes":compressed_size,"compression_time":reported["compression_time"],"decompression_time":reported["decompression_time"]}
 
-def run_zfp(task,rel_eb,value_range,dry_run):
+def run_zfp(task,rel_eb,value_range):
     data_path=task["data_path"]
     shape=task["data_shape"]
     compressed_path=codec_output_path(task,".zfp")
     decompressed_path=codec_output_path(task,".zfp.bin")
-    absolute_eb=rel_eb*value_range if value_range is not None else f"<{rel_eb:.17g}*data_range>"
+    absolute_eb=rel_eb*value_range
     executable=project_root/"install/zfp_install/bin/zfp"
     dimensions=["-3",shape[2],shape[1],shape[0]]
-    absolute_eb_text=f"{absolute_eb:.17g}" if isinstance(absolute_eb,float) else absolute_eb
-    compression_output=run_command([executable,"-f","-i",data_path,"-z",compressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
-    decompression_output=run_command([executable,"-f","-z",compressed_path,"-o",decompressed_path,*dimensions,"-a",absolute_eb_text],silent=True,dry_run=dry_run)
-    if dry_run:
-        return None
+    absolute_eb_text=f"{absolute_eb:.17g}"
+    compression_output=run_command([executable,"-f","-i",data_path,"-z",compressed_path,*dimensions,"-a",absolute_eb_text],silent=True)
+    decompression_output=run_command([executable,"-f","-z",compressed_path,"-o",decompressed_path,*dimensions,"-a",absolute_eb_text],silent=True)
     compression_time=parse_codec_time(compression_output,"zfp","compression")
     decompression_time=parse_codec_time(decompression_output,"zfp","decompression")
     compressed_size=compressed_path.stat().st_size
@@ -639,19 +604,17 @@ def cleanup_test_outputs(task,compressor):
             output_path.unlink()
             print(f"删除运行产物：{output_path}",flush=True)
 
-def run_sperr(task,rel_eb,value_range,dry_run):
+def run_sperr(task,rel_eb,value_range):
     data_path=task["data_path"]
     shape=task["data_shape"]
     compressed_path=codec_output_path(task,".sperr")
     decompressed_path=codec_output_path(task,".sperr.bin")
-    absolute_eb=rel_eb*value_range if value_range is not None else f"<{rel_eb:.17g}*data_range>"
+    absolute_eb=rel_eb*value_range
     executable=project_root/"install/sperr_install/bin/sperr3d"
     dimensions=["--dims",shape[2],shape[1],shape[0]]
-    absolute_eb_text=f"{absolute_eb:.17g}" if isinstance(absolute_eb,float) else absolute_eb
-    compression_output=run_command([executable,data_path,"-c","--ftype","32",*dimensions,"--bitstream",compressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
-    decompression_output=run_command([executable,compressed_path,"-d","--ftype","32",*dimensions,"--decomp_f",decompressed_path,"--pwe",absolute_eb_text],silent=True,dry_run=dry_run)
-    if dry_run:
-        return None
+    absolute_eb_text=f"{absolute_eb:.17g}"
+    compression_output=run_command([executable,data_path,"-c","--ftype","32",*dimensions,"--bitstream",compressed_path,"--pwe",absolute_eb_text],silent=True)
+    decompression_output=run_command([executable,compressed_path,"-d","--ftype","32",*dimensions,"--decomp_f",decompressed_path,"--pwe",absolute_eb_text],silent=True)
     compression_time=parse_codec_time(compression_output,"sperr","compression")
     decompression_time=parse_codec_time(decompression_output,"sperr","decompression")
     compressed_size=compressed_path.stat().st_size
@@ -684,30 +647,27 @@ def report_result(method_name,task,rel_eb,result,write_csv):
     if write_csv:
         add_csv(method_name,codec_output_path(task,".csv"),rel_eb,result["br"],result["psnr"])
 
-def prepare_runtime_methods(methods,data_path,dry_run):
+def prepare_runtime_methods(methods,data_path):
     runtime_methods=[]
     for method in methods:
         runtime_method=dict(method)
         if "read_plan" in method:
             runtime_method["read_plan"]=resolve_plan_path(method["read_plan"],data_path)
-            if not dry_run or runtime_method["read_plan"].is_file():
-                runtime_method["plans"]=load_plan(runtime_method["read_plan"])
-            else:
-                runtime_method["plans"]=None
+            runtime_method["plans"]=load_plan(runtime_method["read_plan"])
         if "write_plan" in method:
             runtime_method["write_plan"]=resolve_plan_path(method["write_plan"],data_path)
             runtime_method["written_plans"]={}
         runtime_methods.append(runtime_method)
     return runtime_methods
 
-def run_task(task,data_path,dry_run,write_csv):
+def run_task(task,data_path,write_csv):
     validate_data_file(data_path,task["data_shape"])
     data_task={**task,"data_path":data_path}
-    if data_task.get("output_directory") is not None and not dry_run:
+    if data_task.get("output_directory") is not None:
         data_task["output_directory"].mkdir(parents=True,exist_ok=True)
-    runtime_methods=prepare_runtime_methods(task["method_list"],data_path,dry_run)
+    runtime_methods=prepare_runtime_methods(task["method_list"],data_path)
     value_range=None
-    if any(method["compressor"] in ("zfp","sperr") for method in runtime_methods) and not dry_run:
+    if any(method["compressor"] in ("zfp","sperr") for method in runtime_methods):
         value_range=calculate_float32_range(data_path)
     records=[]
     for rel_eb in task["rel_eb_list"]:
@@ -720,29 +680,25 @@ def run_task(task,data_path,dry_run,write_csv):
                     plan_predictor_family=None
                     if "read_plan" not in method:
                         predictors=None
-                    elif method["plans"] is None:
-                        predictors=[f"<from-plan:{method['read_plan']}>"]
                     else:
                         predictors,plan_predictor_family=predictors_for_rel_eb(method["plans"],rel_eb,method["read_plan"])
-                    result,actual_predictors,actual_predictor_family=run_asz(data_task,rel_eb,predictors,method,dry_run,plan_predictor_family)
-                    if actual_predictors is not None and "write_plan" in method:
+                    result,actual_predictors,actual_predictor_family=run_asz(data_task,rel_eb,predictors,method,plan_predictor_family)
+                    if "write_plan" in method:
                         method["written_plans"][rel_eb]=(actual_predictors,actual_predictor_family)
                 elif compressor in ("sz3","qoz"):
-                    result=run_sz_variant(compressor,data_task,rel_eb,dry_run)
+                    result=run_sz_variant(compressor,data_task,rel_eb)
                 elif compressor=="zfp":
-                    result=run_zfp(data_task,rel_eb,value_range,dry_run)
+                    result=run_zfp(data_task,rel_eb,value_range)
                 else:
-                    result=run_sperr(data_task,rel_eb,value_range,dry_run)
-                if result is not None:
-                    report_result(method_name,data_task,rel_eb,result,write_csv)
-                    records.append({"data_path":str(data_path),"rel_eb":rel_eb,"method":method_name,**result})
+                    result=run_sperr(data_task,rel_eb,value_range)
+                report_result(method_name,data_task,rel_eb,result,write_csv)
+                records.append({"data_path":str(data_path),"rel_eb":rel_eb,"method":method_name,**result})
             finally:
-                if not dry_run and task.get("cleanup_after_each_test",False):
+                if task.get("cleanup_after_each_test",False):
                     cleanup_test_outputs(data_task,compressor)
-    if not dry_run:
-        for method in runtime_methods:
-            if "write_plan" in method:
-                write_plan(method["write_plan"],method["written_plans"])
+    for method in runtime_methods:
+        if "write_plan" in method:
+            write_plan(method["write_plan"],method["written_plans"])
     return records
 
 def write_comparison_summary(path,records,baseline_method):
@@ -767,19 +723,18 @@ def cli():
     parser.add_argument("json",help="configs中的JSON配置名称，或JSON文件路径")
     parser.add_argument("--skip-build",action="store_true",help="使用已有安装，不重新构建")
     parser.add_argument("--silent-build",action="store_true",help="隐藏成功的构建输出")
-    parser.add_argument("--dry-run",action="store_true",help="只校验配置并打印命令")
     parser.add_argument("--no-csv",action="store_true",help="不写入数据文件旁的CSV")
     arguments=parser.parse_args()
     try:
         tasks=load_tasks(resolve_json_path(arguments.json))
         compressors=list(dict.fromkeys(method["compressor"] for task in tasks for method in task["method_list"]))
-        if not arguments.skip_build and not arguments.dry_run:
-            build_compressors(compressors,arguments.silent_build,False)
+        if not arguments.skip_build:
+            build_compressors(compressors,arguments.silent_build)
         for task in tasks:
             records=[]
             for data_path in task["data_path_list"]:
-                records.extend(run_task(task,data_path,arguments.dry_run,not arguments.no_csv))
-                if task.get("summary_csv") is not None and not arguments.dry_run:
+                records.extend(run_task(task,data_path,not arguments.no_csv))
+                if task.get("summary_csv") is not None:
                     write_comparison_summary(task["summary_csv"],records,task["comparison_baseline"])
     except (FileNotFoundError,TypeError,ValueError) as error:
         parser.error(str(error))
