@@ -29,11 +29,11 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SRC_FILE}")
 endif()
 
 add_executable(${CODE_NAME} ${SRC_FILE})
-target_link_libraries(${CODE_NAME} PRIVATE libasz libcsv libzstd_static)
+target_link_libraries(${CODE_NAME} PRIVATE libasz csv_tools libzstd_static)
 install(TARGETS ${CODE_NAME} DESTINATION bin)
 
 if(CODE_NAME STREQUAL "s1_compress")
     add_executable(s1_decompress s1_decompress.cpp)
-    target_link_libraries(s1_decompress PRIVATE libasz libcsv libzstd_static)
+    target_link_libraries(s1_decompress PRIVATE libasz csv_tools libzstd_static)
     install(TARGETS s1_decompress DESTINATION bin)
 endif()
