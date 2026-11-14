@@ -9,7 +9,7 @@ from matplotlib.patches import Patch
 from matplotlib.ticker import MaxNLocator
 
 from evaluation_datasets import compression_time,dataset_size,default_manifest,load_datasets,load_timings,preprocessing_time,styles,throughput_methods
-from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_shared_xlabel,apply_paper_style,layout_panel_grid,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
+from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_shared_xlabel,apply_paper_style,layout_panel_grid,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
 panel_titles={"QMCPACK Orbital 144":"QMCPACK\nOrbital 144","Miranda Velocity-x":"Miranda\nVelocity-x","Nyx Baryon density 632":"Nyx Baryon 632"}
@@ -58,16 +58,15 @@ def save_time_by_error_bound(ordered,timings_by_title,output_path,dpi):
     labels=[f"({chr(ord('a')+index)}) {panel_titles.get(dataset['title'],dataset['title'])}" for index,dataset in enumerate(ordered)]
     for axis,label in zip(axes.flat,labels):
         axis.set_xlabel(label,labelpad=2)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=82,column_gap_pt=PANEL_GAP_WITH_YTICKS_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
-    add_shared_xlabel(figure,axes[2],"Relative error bound",gap_pt=2,source_artists=[axis.xaxis.label for axis in axes[2]])
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=82,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
+    add_shared_xlabel(figure,axes[2],"Relative error bound")
     grid_center=(min(axis.get_position().y0 for axis in axes.flat)+max(axis.get_position().y1 for axis in axes.flat))/2
     figure.supylabel("Time (s)",x=7/spec.width_pt,y=grid_center,fontsize=8)
     method_handles=[Patch(facecolor=styles[method]["color"],edgecolor=styles[method]["color"],label=styles[method]["label"]) for method in throughput_methods]
     stage_handles=[Patch(facecolor="#777777",edgecolor="#333333",hatch="xx",alpha=.25,label="Preprocessing"),Patch(facecolor="#777777",edgecolor="#333333",alpha=.9,label="Compression"),Patch(facecolor="#777777",edgecolor="#333333",alpha=.35,label="Decompression")]
-    top=max(axis.get_position().y1 for axis in axes[0])
-    legend_above(axes[0,0],handles=method_handles+stage_handles,ncol=8,frameon=False,bbox_to_anchor=(.5,top+1/spec.height_pt),bbox_transform=figure.transFigure,**legend_spacing_kwargs(7,column_gap_pt=3))
+    legend_above(axes[0],handles=method_handles+stage_handles,center="figure",ncol=8,**legend_spacing_kwargs(7,column_gap_pt=3))
     output_path.parent.mkdir(parents=True,exist_ok=True)
-    save_paper_png_vertical_crop(figure,output_path.with_suffix(".png"),spec,edge_gap_pt=3)
+    save_paper_png(figure,output_path.with_suffix(".png"),spec)
     plt.close(figure)
 
 

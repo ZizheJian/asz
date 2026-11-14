@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
-from paperfig import PANEL_GAP_WITHOUT_Y_DECORATION_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_grid,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
+from paperfig import PANEL_GAP_WITHOUT_Y_DECORATION_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_grid,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
 family_styles=((0,(3,2)),(0,(1.5,1)),(0,(3,1.5,.75,1)))
@@ -88,11 +88,11 @@ def render_paperfig_row(spec,output_png):
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=family_legend_handles(spec["families"])
     order=(0,3,1,4,2,5)
-    legend_above(axes[1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=5))
-    captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {row_names[key]}" for index,(key,_) in enumerate(datasets)],gap_pt=2,source="ticks")
-    add_shared_xlabel(figure,axes,"Bit rate (bits/value)",gap_pt=2,source_artists=captions)
+    legend_above(axes[1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,**legend_spacing_kwargs(8,column_gap_pt=5))
+    captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {row_names[key]}" for index,(key,_) in enumerate(datasets)],below="ticks")
+    add_shared_xlabel(figure,axes,"Bit rate (bits/value)",below=captions)
     output_png.parent.mkdir(parents=True,exist_ok=True)
-    save_paper_png_vertical_crop(figure,output_png,paper_spec,edge_gap_pt=3)
+    save_paper_png(figure,output_png,paper_spec)
     plt.close(figure)
 
 
@@ -109,14 +109,14 @@ def render_paperfig_grid(spec,output_png):
     labels=[f"({chr(97+index)}) {names[key] if key in single_line_keys else multiline_names[key]}" for index,(key,_) in enumerate(datasets)]
     for axis,label in zip(axes.flat,labels):
         axis.set_xlabel(label,labelpad=2)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,column_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
     handles=family_legend_handles(spec["families"])
     order=(0,3,1,4,2,5)
-    legend_above(axes[0,1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=5))
-    add_shared_xlabel(figure,axes[1],"Bit rate (bits/value)",gap_pt=2,source_artists=[axis.xaxis.label for axis in axes[1]])
+    legend_above(axes[0,1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,**legend_spacing_kwargs(8,column_gap_pt=5))
+    add_shared_xlabel(figure,axes[1],"Bit rate (bits/value)")
     figure.supylabel("PSNR (dB)",x=7/paper_spec.width_pt,fontsize=8)
     output_png.parent.mkdir(parents=True,exist_ok=True)
-    save_paper_png_vertical_crop(figure,output_png,paper_spec,edge_gap_pt=3)
+    save_paper_png(figure,output_png,paper_spec)
     plt.close(figure)
 
 
@@ -159,11 +159,11 @@ def render_coefficient_figure(output_png):
     axes[0].set_ylabel("PSNR (dB)")
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITHOUT_Y_DECORATION_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],label="Fixed quintic",**coefficient_styles["quintic"]),Line2D([],[],label="Best per error bound",color=".1",linewidth=.85,linestyle=(0,(2.5,2.5))),Line2D([],[],label="Other coefficients",**coefficient_styles["other"])]
-    legend_above(axes[1],handles=handles,ncol=3,frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(8,column_gap_pt=4))
-    captions=add_panel_captions(figure,axes,["(a) Aramco 1800","(b) SCALE-LETKF\nPRES","(c) QMCPACK\nOrbital 144"],gap_pt=2,source="ticks")
-    add_shared_xlabel(figure,axes,"Bit rate (bits/value)",gap_pt=2,source_artists=captions)
+    legend_above(axes[1],handles=handles,ncol=3,**legend_spacing_kwargs(8,column_gap_pt=4))
+    captions=add_panel_captions(figure,axes,["(a) Aramco 1800","(b) SCALE-LETKF\nPRES","(c) QMCPACK\nOrbital 144"],below="ticks")
+    add_shared_xlabel(figure,axes,"Bit rate (bits/value)",below=captions)
     output_png.parent.mkdir(parents=True,exist_ok=True)
-    save_paper_png_vertical_crop(figure,output_png,paper_spec,edge_gap_pt=3)
+    save_paper_png(figure,output_png,paper_spec)
     plt.close(figure)
 
 

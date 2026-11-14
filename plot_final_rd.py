@@ -9,7 +9,7 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
 
 from evaluation_datasets import dataset_size,default_manifest,format_size,load_datasets,methods,read_curves,styles
-from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_shared_xlabel,apply_paper_style,layout_panel_grid,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
+from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_shared_xlabel,apply_paper_style,layout_panel_grid,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
 panel_titles={"QMCPACK Orbital 144":"QMCPACK\nOrbital 144","Miranda Velocity-x":"Miranda\nVelocity-x","Nyx Baryon density 632":"Nyx Baryon 632"}
@@ -70,8 +70,8 @@ def main():
     labels=[f"({chr(ord('a')+index)}) {panel_titles.get(dataset['title'],dataset['title'])}" for index,dataset in enumerate(ordered)]
     for axis,label in zip(axes.flat,labels):
         axis.set_xlabel(label,labelpad=2)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=52,column_gap_pt=PANEL_GAP_WITH_YTICKS_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
-    add_shared_xlabel(figure,axes[2],"Bit rate (bits/value)",gap_pt=2,source_artists=[axis.xaxis.label for axis in axes[2]])
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=52,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
+    add_shared_xlabel(figure,axes[2],"Bit rate (bits/value)")
     grid_center=(min(axis.get_position().y0 for axis in axes.flat)+max(axis.get_position().y1 for axis in axes.flat))/2
     figure.supylabel("PSNR (dB)",x=7/spec.width_pt,y=grid_center,fontsize=8)
     handles=[Line2D([],[],color=styles[method]["color"],linestyle="-",linewidth=.8,label=styles[method]["label"]) for method in methods]
@@ -79,9 +79,9 @@ def main():
     figure.canvas.draw()
     renderer=figure.canvas.get_renderer()
     top=max([axis.get_position().y1 for axis in axes[0]]+[tick.label1.get_window_extent(renderer).y1/figure.bbox.height for axis in axes[0] for tick in axis.yaxis.get_major_ticks() if axis.get_ylim()[0]<=tick.get_loc()<=axis.get_ylim()[1] and tick.label1.get_visible()])
-    legend_above(axes[0,0],handles=handles,ncol=5,frameon=False,bbox_to_anchor=(.5,top+1/spec.height_pt),bbox_transform=figure.transFigure,**legend_spacing_kwargs(12,column_gap_pt=8))
+    legend_above(axes[0,0],handles=handles,ncol=5,bbox_to_anchor=(.5,top+1/spec.height_pt),bbox_transform=figure.transFigure,**legend_spacing_kwargs(12,column_gap_pt=8))
     arguments.output_png.parent.mkdir(parents=True,exist_ok=True)
-    save_paper_png_vertical_crop(figure,arguments.output_png,spec,edge_gap_pt=3)
+    save_paper_png(figure,arguments.output_png,spec)
     plt.close(figure)
     for index,dataset in enumerate(ordered,1):
         print(f"{index:2d}. {dataset['title']}: {format_size(dataset_size(dataset))}")

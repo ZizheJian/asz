@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedLocator,FuncFormatter,MultipleLocator,NullLocator
 
-from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png_vertical_crop,style_plot_axis
+from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
 
 from analyze_temporal_plan_reuse import interpolate_bit_rate,target_bound,uses_list
 from plot_temporal_plan_reuse import columns,load_summary,styles
@@ -103,10 +103,10 @@ def render(qmcpack_rows,wind,apsu,output_png):
     axes[0].set_ylabel("Relative CR")
     layout_panel_row(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=60,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
     handles=[Line2D([],[],linewidth=.8,markersize=2.5,**style) for style in styles.values()]
-    legend_above(axes[0],handles=handles,ncol=len(handles),frameon=False,gap_pt=1,row_gap_pt=1,**legend_spacing_kwargs(10,column_gap_pt=5))
-    add_panel_captions(figure,axes,["(a) QMCPACK Orbital","(b) Isabel Wind 24","(c) APSU 004$\\to$006"],gap_pt=2,source="xlabel")
+    legend_above(axes[0],handles=handles,ncol=len(handles),**legend_spacing_kwargs(10,column_gap_pt=5))
+    add_panel_captions(figure,axes,["(a) QMCPACK Orbital","(b) Isabel Wind 24","(c) APSU 004$\\to$006"])
     output_png.parent.mkdir(parents=True,exist_ok=True)
-    save_paper_png_vertical_crop(figure,output_png,spec,edge_gap_pt=3)
+    save_paper_png(figure,output_png,spec)
     plt.close(figure)
 
 

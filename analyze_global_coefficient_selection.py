@@ -151,7 +151,7 @@ def plot_validation_triptych(measurements,rows,output_png):
     from matplotlib.cm import ScalarMappable
     from matplotlib.colors import Normalize
     from matplotlib.ticker import LogLocator,MaxNLocator,NullLocator
-    from paperfig import PANEL_GAP_WITH_YLABEL_PT,PaperFigureSpec,add_panel_captions,apply_paper_style,layout_panel_row,save_paper_png_vertical_crop,style_plot_axis
+    from paperfig import PANEL_GAP_WITH_YLABEL_PT,PaperFigureSpec,add_panel_captions,apply_paper_style,layout_panel_row,save_paper_png,style_plot_axis
     summary={row["criterion"]:row for row in summarize(rows)}
     apply_paper_style()
     spec=PaperFigureSpec.column()
@@ -190,7 +190,7 @@ def plot_validation_triptych(measurements,rows,output_png):
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55,axis="y" if index==0 else "both")
         axis.set_axisbelow(True)
     layout_panel_row(figure,axes,(1,1,1),bottom_pt=78,panel_gap_pt=PANEL_GAP_WITH_YLABEL_PT,left_edge_gap_pt=3,right_edge_gap_pt=5.5)
-    add_panel_captions(figure,axes,titles,gap_pt=2,source="xlabel")
+    add_panel_captions(figure,axes,titles)
     # continuous colorbar for t above panels (b) and (c)
     point_y=1/(spec.size_in[1]*72)
     left,right,top=axes[1].get_position().x0,axes[2].get_position().x1,axes[1].get_position().y1
@@ -202,7 +202,7 @@ def plot_validation_triptych(measurements,rows,output_png):
     colorbar.outline.set_linewidth(.5)
     color_axis.text(-.015,.5,"$t$",transform=color_axis.transAxes,ha="right",va="center")
     output_png.parent.mkdir(parents=True,exist_ok=True)
-    save_paper_png_vertical_crop(figure,output_png,spec,edge_gap_pt=3)
+    save_paper_png(figure,output_png,spec)
     plt.close(figure)
 
 def self_test():
