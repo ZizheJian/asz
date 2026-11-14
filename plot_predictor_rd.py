@@ -109,12 +109,11 @@ def render_paperfig_grid(spec,output_png):
     labels=[f"({chr(97+index)}) {names[key] if key in single_line_keys else multiline_names[key]}" for index,(key,_) in enumerate(datasets)]
     for axis,label in zip(axes.flat,labels):
         axis.set_xlabel(label,labelpad=2)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,row_content_gap_pt=4,left_edge_gap_pt=14)
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1),bottom_pt=52,row_content_gap_pt=4,shared_ylabel="PSNR (dB)")
     handles=family_legend_handles(spec["families"])
     order=(0,3,1,4,2,5)
     legend_above(axes[0,1],[handles[index] for index in order],[handles[index].get_label() for index in order],ncol=3,**legend_spacing_kwargs(8,column_gap_pt=5))
     add_shared_xlabel(figure,axes[1],"Bit rate (bits/value)")
-    figure.supylabel("PSNR (dB)",x=7/paper_spec.width_pt,fontsize=8)
     output_png.parent.mkdir(parents=True,exist_ok=True)
     save_paper_png(figure,output_png,paper_spec)
     plt.close(figure)

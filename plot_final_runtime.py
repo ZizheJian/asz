@@ -58,10 +58,8 @@ def save_time_by_error_bound(ordered,timings_by_title,output_path,dpi):
     labels=[f"({chr(ord('a')+index)}) {panel_titles.get(dataset['title'],dataset['title'])}" for index,dataset in enumerate(ordered)]
     for axis,label in zip(axes.flat,labels):
         axis.set_xlabel(label,labelpad=2)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=82,row_content_gap_pt=4,left_edge_gap_pt=14)
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=82,row_content_gap_pt=4,shared_ylabel="Time (s)")
     add_shared_xlabel(figure,axes[2],"Relative error bound")
-    grid_center=(min(axis.get_position().y0 for axis in axes.flat)+max(axis.get_position().y1 for axis in axes.flat))/2
-    figure.supylabel("Time (s)",x=7/spec.width_pt,y=grid_center,fontsize=8)
     method_handles=[Patch(facecolor=styles[method]["color"],edgecolor=styles[method]["color"],label=styles[method]["label"]) for method in throughput_methods]
     stage_handles=[Patch(facecolor="#777777",edgecolor="#333333",hatch="xx",alpha=.25,label="Preprocessing"),Patch(facecolor="#777777",edgecolor="#333333",alpha=.9,label="Compression"),Patch(facecolor="#777777",edgecolor="#333333",alpha=.35,label="Decompression")]
     legend_above(axes[0],handles=method_handles+stage_handles,center="figure",ncol=8,**legend_spacing_kwargs(7,column_gap_pt=3))

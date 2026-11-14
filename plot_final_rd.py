@@ -70,10 +70,8 @@ def main():
     labels=[f"({chr(ord('a')+index)}) {panel_titles.get(dataset['title'],dataset['title'])}" for index,dataset in enumerate(ordered)]
     for axis,label in zip(axes.flat,labels):
         axis.set_xlabel(label,labelpad=2)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=52,row_content_gap_pt=4,left_edge_gap_pt=14)
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=52,row_content_gap_pt=4,shared_ylabel="PSNR (dB)")
     add_shared_xlabel(figure,axes[2],"Bit rate (bits/value)")
-    grid_center=(min(axis.get_position().y0 for axis in axes.flat)+max(axis.get_position().y1 for axis in axes.flat))/2
-    figure.supylabel("PSNR (dB)",x=7/spec.width_pt,y=grid_center,fontsize=8)
     handles=[Line2D([],[],color=styles[method]["color"],linestyle="-",linewidth=.8,label=styles[method]["label"]) for method in methods]
     # 顶端刻度标签会伸出坐标框，图例放在第一行坐标框和刻度标签两者的最高点之上
     figure.canvas.draw()
