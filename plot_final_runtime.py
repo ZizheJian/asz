@@ -9,7 +9,7 @@ from matplotlib.patches import Patch
 from matplotlib.ticker import MaxNLocator
 
 from evaluation_datasets import compression_time,dataset_size,default_manifest,load_datasets,load_timings,preprocessing_time,styles,throughput_methods
-from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_shared_xlabel,apply_paper_style,layout_panel_grid,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
+from paperfig import PaperFigureSpec,add_shared_xlabel,apply_paper_style,layout_panel_grid,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
 
 project_root=Path(__file__).resolve().parent
 panel_titles={"QMCPACK Orbital 144":"QMCPACK\nOrbital 144","Miranda Velocity-x":"Miranda\nVelocity-x","Nyx Baryon density 632":"Nyx Baryon 632"}
@@ -58,7 +58,7 @@ def save_time_by_error_bound(ordered,timings_by_title,output_path,dpi):
     labels=[f"({chr(ord('a')+index)}) {panel_titles.get(dataset['title'],dataset['title'])}" for index,dataset in enumerate(ordered)]
     for axis,label in zip(axes.flat,labels):
         axis.set_xlabel(label,labelpad=2)
-    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=82,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,row_content_gap_pt=4,left_edge_gap_pt=14,right_edge_gap_pt=3)
+    layout_panel_grid(figure,axes,panel_aspect_ratios(1,1,1,1,1,1),bottom_pt=82,row_content_gap_pt=4,left_edge_gap_pt=14)
     add_shared_xlabel(figure,axes[2],"Relative error bound")
     grid_center=(min(axis.get_position().y0 for axis in axes.flat)+max(axis.get_position().y1 for axis in axes.flat))/2
     figure.supylabel("Time (s)",x=7/spec.width_pt,y=grid_center,fontsize=8)

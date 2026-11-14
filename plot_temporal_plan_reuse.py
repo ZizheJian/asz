@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedLocator,FuncFormatter,MaxNLocator,NullLocator
 
-from paperfig import PANEL_GAP_WITH_YTICKS_PT,PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
+from paperfig import PaperFigureSpec,add_panel_captions,add_shared_xlabel,apply_paper_style,layout_panel_row,legend_above,legend_spacing_kwargs,panel_aspect_ratios,save_paper_png,style_plot_axis
 
 from analyze_temporal_plan_reuse import fields,result_root,temporal_fields,uses_list
 
@@ -46,7 +46,7 @@ def render(summaries,output_png):
         axis.grid(True,color="#9e9e9e",linestyle="--",linewidth=.45,alpha=.55)
         axis.set_axisbelow(True)
     axes[0].set_ylabel("Relative CR")
-    layout_panel_row(figure,axes,panel_aspect_ratios(*[1]*len(axes)),bottom_pt=40,panel_gap_pt=PANEL_GAP_WITH_YTICKS_PT,left_edge_gap_pt=3,right_edge_gap_pt=3)
+    layout_panel_row(figure,axes,panel_aspect_ratios(*[1]*len(axes)),bottom_pt=40)
     handles=[Line2D([],[],linewidth=.8,markersize=2.5,**style) for style in styles.values()]
     legend_above(axes[len(axes)//2],handles=handles,ncol=len(handles),**legend_spacing_kwargs(10,column_gap_pt=5))
     captions=add_panel_captions(figure,axes,[f"({chr(97+index)}) {fields[field]['title']}" for index,field in enumerate(summaries)],below="ticks")
