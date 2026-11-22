@@ -4,11 +4,14 @@ from pathlib import Path
 import numpy as np
 
 from third_party.csv_tools.py_codes.write_csv_item import write_csv_item
+from third_party.experiment_launcher.py_codes.experiment_launcher import cmake_build_and_install,job_command_from_argv,load_experiment_config,resolve_config_path,resolve_project_path,submit_slurm_job
+from third_party.get_max_cpus.py_codes.get_max_cpus import get_max_cpus
 from third_party.run_command.run_command import run_command
 
 project_root=Path(__file__).resolve().parent
 config_directory=project_root/"configs"
-asz_executable_directory=Path(os.environ.get("ASZ_EXECUTABLE_DIRECTORY",project_root/"install/bin")).resolve()
+slurm_account="cis240669" # config的slurm里没有写account时用这个账户
+slurm_log_path=project_root/"results/slurm/%x-%j.out" # 作业日志，%x是作业名（config名），%j是作业号
 supported_compressors=("asz","sz3","qoz","zfp","sperr")
 traversal_orders={(1,2,0):"120",(0,2,1):"021",(0,1,2):"012"}
 asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio","max_layer_num","full_predictor_search_layer_num","t_precision")
@@ -16,25 +19,8 @@ asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_
 asz_block_policy_keys=("coarse_block_pivot_ratio","fine_block_pivot_ratio")
 
 
-def resolve_json_path(path_or_name):
-    path=Path(path_or_name).expanduser()
-    if path.is_absolute() or path.parent!=Path("."):
-        resolved=path.resolve()
-    else:
-        filename=path.name if path.suffix==".json" else path.name+".json"
-        resolved=(config_directory/filename).resolve()
-    if not resolved.is_file():
-        raise FileNotFoundError(f"找不到JSON配置：{resolved}")
-    return resolved
-
 def resolve_task_path(path):
-    expanded=Path(path).expanduser()
-    return expanded.resolve() if expanded.is_absolute() else (project_root/expanded).resolve()
-
-def resolve_data_path(path):
-    expanded=Path(path).expanduser()
-    absolute=expanded if expanded.is_absolute() else project_root/expanded
-    return Path(os.path.abspath(absolute))
+    return Path(resolve_project_path(path,project_root)).resolve()
 
 def prepare_methods(method_list,task_id):
     if not isinstance(method_list,list) or not method_list:
@@ -118,27 +104,17 @@ def prepare_methods(method_list,task_id):
         raise ValueError(f"task {task_id}的method name不能重复")
     return methods
 
-def load_tasks(json_path):
-    with open(json_path,encoding="utf-8") as config_file:
-        tasks=json.load(config_file)
-    if not isinstance(tasks,list):
-        raise TypeError("JSON顶层必须是task list")
-    if not tasks:
-        raise ValueError("JSON中没有task")
-    required_keys={"data_path_list","data_shape","rel_eb_list","method_list"}
-    allowed_keys=required_keys|{"cleanup_after_each_test","comparison_baseline","summary_csv","output_directory"}
+required_task_keys=("data_path_list","data_shape","rel_eb_list","method_list")
+optional_task_keys=("cleanup_after_each_test","comparison_baseline","summary_csv","output_directory")
+path_task_keys=("data_path_list","summary_csv","output_directory")
+
+# 读取config，检查参数，相对路径接在项目根目录后面。返回的slurm是作业资源，config顶层是task列表时为None
+def load_config(config_path):
+    config=load_experiment_config(config_path,required_keys=required_task_keys,optional_keys=optional_task_keys,path_keys=path_task_keys,project_root=project_root)
     prepared=[]
-    for task_id,task in enumerate(tasks):
-        if not isinstance(task,dict):
-            raise TypeError(f"task {task_id}必须是object")
-        missing=required_keys-task.keys()
-        if missing:
-            raise ValueError(f"task {task_id}缺少参数：{','.join(sorted(missing))}")
-        unknown=task.keys()-allowed_keys
-        if unknown:
-            raise ValueError(f"task {task_id}包含未知参数：{','.join(sorted(unknown))}")
+    for task_id,task in enumerate(config.tasks):
         data_path_list=task["data_path_list"]
-        if not isinstance(data_path_list,list) or not data_path_list or any(not isinstance(path,str) or not path for path in data_path_list):
+        if not isinstance(data_path_list,list) or not data_path_list:
             raise ValueError(f"task {task_id}的data_path_list必须是非空字符串列表")
         if len(data_path_list)!=len(set(data_path_list)):
             raise ValueError(f"task {task_id}的data_path_list不能包含重复项")
@@ -159,21 +135,21 @@ def load_tasks(json_path):
             raise ValueError(f"task {task_id}的comparison_baseline不在method_list中")
         if (comparison_baseline is None)!=(task.get("summary_csv") is None):
             raise ValueError(f"task {task_id}必须同时提供comparison_baseline和summary_csv")
-        if task.get("summary_csv") is not None and not isinstance(task["summary_csv"],str):
-            raise ValueError(f"task {task_id}的summary_csv必须是字符串")
-        if task.get("output_directory") is not None and (not isinstance(task["output_directory"],str) or not task["output_directory"]):
-            raise ValueError(f"task {task_id}的output_directory必须是非空字符串")
+        for key in ("summary_csv","output_directory"):
+            if task.get(key) is not None and not isinstance(task[key],str):
+                raise ValueError(f"task {task_id}的{key}必须是字符串")
         if len(data_path_list)>1:
             for method in methods:
                 if "write_plan" in method and "{stem}" not in method["write_plan"] and "{name}" not in method["write_plan"]:
                     raise ValueError(f"task {task_id}有多个数据文件，method {method['name']}的write_plan必须包含{{stem}}或{{name}}")
-        prepared_task={**task,"data_path_list":[resolve_data_path(path) for path in data_path_list],"rel_eb_list":[float(value) for value in rel_eb_list],"method_list":methods}
-        if prepared_task.get("summary_csv") is not None:
-            prepared_task["summary_csv"]=resolve_task_path(prepared_task["summary_csv"])
-        if prepared_task.get("output_directory") is not None:
-            prepared_task["output_directory"]=resolve_task_path(prepared_task["output_directory"])
+        # 数据路径只规范化、不解析符号链接，它会写进汇总CSV的DATA_PATH列
+        prepared_task={**task,"data_path_list":[Path(os.path.abspath(path)) for path in data_path_list],"rel_eb_list":[float(value) for value in rel_eb_list],"method_list":methods}
+        for key in ("summary_csv","output_directory"):
+            if prepared_task.get(key) is not None:
+                prepared_task[key]=Path(prepared_task[key]).resolve()
         prepared.append(prepared_task)
-    return prepared
+    config.tasks=prepared
+    return config
 
 def validate_data_file(path,shape):
     if not path.is_file():
@@ -279,67 +255,29 @@ def resolve_plan_path(path_template,data_path):
         raise ValueError(f"plan路径使用未知模板参数：{error.args[0]}") from error
     return resolve_task_path(path)
 
-def build_asz(silent):
-    run_command(["cmake","-S",project_root/"c_codes","-B",project_root/"build","-DCODE_NAME=s1_compress",f"-DCMAKE_INSTALL_PREFIX={project_root/'install'}"],silent)
-    run_command(["cmake","--build",project_root/"build","--parallel","4"],silent)
-    run_command(["cmake","--install",project_root/"build"],silent)
+# 用CMake配置、编译并安装一个项目，路径都相对于项目根目录。configure_once为True时，已经配置过就不再重新配置。
+# with_zstd为True时，cmake运行时PKG_CONFIG_PATH指向项目里编译的zstd，SZ3和QoZ通过pkg-config找到它
+def build_cmake_project(source_path,build_path,install_path,options,build_max_cpus,silent,configure_once=True,with_zstd=False):
+    environment=["cmake","-E","env",f"PKG_CONFIG_PATH={project_root/'install/common_zstd_install/lib/pkgconfig'}"] if with_zstd else []
+    cmake_build_and_install(lambda command:run_command([*environment,*command],silent),*(project_root/path for path in (source_path,build_path,install_path)),options,build_max_cpus,configure_once)
 
-def build_zstd(silent):
-    build_path=project_root/"build/common_zstd_build"
-    install_path=project_root/"install/common_zstd_install"
-    run_command(["cmake","-S",project_root/"third_party/zstd/build/cmake","-B",build_path,"-DCMAKE_BUILD_TYPE=Release","-DCMAKE_INSTALL_LIBDIR=lib","-DZSTD_BUILD_SHARED=OFF","-DZSTD_BUILD_STATIC=ON","-DZSTD_BUILD_PROGRAMS=OFF","-DZSTD_BUILD_TESTS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
-    run_command(["cmake","--install",build_path],silent)
-
-def zstd_cmake_environment():
-    pkgconfig_path=project_root/"install/common_zstd_install/lib/pkgconfig"
-    return ["cmake","-E","env",f"PKG_CONFIG_PATH={pkgconfig_path}","cmake"]
-
-def zstd_cmake_library():
-    return f"-Dpkgcfg_lib_ZSTD_zstd:FILEPATH={project_root/'install/common_zstd_install/lib/libzstd.a'}"
-
-def build_sz3(silent):
-    build_path=project_root/"build/sz3_build"
-    install_path=project_root/"install/sz3_install"
-    run_command([*zstd_cmake_environment(),"-S",project_root/"third_party/SZ3","-B",build_path,"-UZSTD_*",zstd_cmake_library(),"-DBUILD_SHARED_LIBS=OFF","-DSZ3_USE_BUNDLED_ZSTD=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
-    run_command(["cmake","--install",build_path],silent)
-
-def build_qoz(silent):
-    build_path=project_root/"build/qoz_build"
-    install_path=project_root/"install/qoz_install"
-    run_command([*zstd_cmake_environment(),"-S",project_root/"third_party/QoZ","-B",build_path,"-UZSTD_*",zstd_cmake_library(),"-DBUILD_SHARED_LIBS=OFF","-DQoZ_USE_BUNDLED_ZSTD=OFF","-DQoZ_DEBUG_TIMINGS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
-    run_command(["cmake","--install",build_path],silent)
-
-def build_zfp(silent):
-    build_path=project_root/"build/zfp_build"
-    install_path=project_root/"install/zfp_install"
-    run_command(["cmake","-S",project_root/"third_party/zfp","-B",build_path,"-DBUILD_SHARED_LIBS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
-    run_command(["cmake","--install",build_path],silent)
-
-def build_sperr(silent):
-    build_path=project_root/"build/sperr_build"
-    install_path=project_root/"install/sperr_install"
-    run_command(["cmake","-S",project_root/"third_party/sperr","-B",build_path,"-DBUILD_SHARED_LIBS=OFF",f"-DCMAKE_INSTALL_PREFIX={install_path}"],silent)
-    run_command(["cmake","--build",build_path,"--parallel","4"],silent)
-    run_command(["cmake","--install",build_path],silent)
-
-def build_compressors(compressors,silent):
+# 编译用到的压缩器。各baseline和zstd都装在install/*_install下。ASZ装到install，install_directory是别的目录时再装一份到那里，
+# build目录里配置的安装目录始终是install，所以直接运行cmake --install build时仍然装到install
+def build_compressors(compressors,build_max_cpus,silent,install_directory):
+    zstd_library=f"-Dpkgcfg_lib_ZSTD_zstd:FILEPATH={project_root/'install/common_zstd_install/lib/libzstd.a'}"
     if any(compressor in ("sz3","qoz") for compressor in compressors):
-        build_zstd(silent)
+        build_cmake_project("third_party/zstd/build/cmake","build/common_zstd_build","install/common_zstd_install",["-DCMAKE_BUILD_TYPE=Release","-DCMAKE_INSTALL_LIBDIR=lib","-DZSTD_BUILD_SHARED=OFF","-DZSTD_BUILD_STATIC=ON","-DZSTD_BUILD_PROGRAMS=OFF","-DZSTD_BUILD_TESTS=OFF"],build_max_cpus,silent)
     for compressor in compressors:
         if compressor=="asz":
-            build_asz(silent)
+            build_cmake_project("c_codes","build","install",["-DCODE_NAME=s1_compress"],build_max_cpus,silent,configure_once=False)
+            if install_directory.resolve()!=(project_root/"install").resolve():
+                run_command(["cmake","--install",project_root/"build","--prefix",install_directory],silent)
         elif compressor=="sz3":
-            build_sz3(silent)
+            build_cmake_project("third_party/SZ3","build/sz3_build","install/sz3_install",["-UZSTD_*",zstd_library,"-DBUILD_SHARED_LIBS=OFF","-DSZ3_USE_BUNDLED_ZSTD=OFF"],build_max_cpus,silent,with_zstd=True)
         elif compressor=="qoz":
-            build_qoz(silent)
-        elif compressor=="zfp":
-            build_zfp(silent)
-        elif compressor=="sperr":
-            build_sperr(silent)
+            build_cmake_project("third_party/QoZ","build/qoz_build","install/qoz_install",["-UZSTD_*",zstd_library,"-DBUILD_SHARED_LIBS=OFF","-DQoZ_USE_BUNDLED_ZSTD=OFF","-DQoZ_DEBUG_TIMINGS=OFF"],build_max_cpus,silent,with_zstd=True)
+        elif compressor in ("zfp","sperr"):
+            build_cmake_project(f"third_party/{compressor}",f"build/{compressor}_build",f"install/{compressor}_install",["-DBUILD_SHARED_LIBS=OFF"],build_max_cpus,silent)
 
 def parse_asz_result(output):
     patterns={"cr":r"^CR= ([0-9.eE+-]+)\r?$","data_range_time":r"^Data range time: ([0-9.eE+-]+)","compression_time":r"^Compression time: ([0-9.eE+-]+)","decompression_time":r"^Decompression time: ([0-9.eE+-]+)"}
@@ -441,7 +379,7 @@ def codec_output_path(task,suffix):
     prefix=hashlib.sha256(str(data_path).encode("utf-8")).hexdigest()[:12]
     return output_directory/f"{prefix}_{data_path.name}{suffix}"
 
-def run_asz(task,rel_eb,predictors,method,plan_predictor_family=None):
+def run_asz(task,rel_eb,predictors,method,asz_bin_directory,plan_predictor_family=None):
     shape=task["data_shape"]
     data_path=task["data_path"]
     compressed_path=codec_output_path(task,".asz")
@@ -460,7 +398,7 @@ def run_asz(task,rel_eb,predictors,method,plan_predictor_family=None):
             common.extend([option_names[key],method_options[key]])
     if "predictor_family" in method_options:
         common.extend(["--predictor-family",method_options["predictor_family"]])
-    compress_command=[asz_executable_directory/"s1_compress",*common,"-z",compressed_path,"-o",reconstructed_path]
+    compress_command=[asz_bin_directory/"s1_compress",*common,"-z",compressed_path,"-o",reconstructed_path]
     for key in asz_compress_parameter_keys:
         if key in method_options:
             compress_command.extend([option_names[key],method_options[key]])
@@ -469,7 +407,7 @@ def run_asz(task,rel_eb,predictors,method,plan_predictor_family=None):
     if predictors is not None:
         compress_command.extend(["--predictor-plan",",".join(predictors)])
     compression_output=run_command(compress_command)
-    decompression_output=run_command([asz_executable_directory/"s1_decompress",*common,"-z",compressed_path,"-o",reconstructed_path])
+    decompression_output=run_command([asz_bin_directory/"s1_decompress",*common,"-z",compressed_path,"-o",reconstructed_path])
     output=compression_output+decompression_output
     reported=parse_asz_result(output)
     compressed_size=compressed_path.stat().st_size
@@ -624,7 +562,7 @@ def prepare_runtime_methods(methods,data_path):
         runtime_methods.append(runtime_method)
     return runtime_methods
 
-def run_task(task,data_path,write_csv):
+def run_task(task,data_path,write_csv,asz_bin_directory):
     validate_data_file(data_path,task["data_shape"])
     data_task={**task,"data_path":data_path}
     if data_task.get("output_directory") is not None:
@@ -646,7 +584,7 @@ def run_task(task,data_path,write_csv):
                         predictors=None
                     else:
                         predictors,plan_predictor_family=predictors_for_rel_eb(method["plans"],rel_eb,method["read_plan"])
-                    result,actual_predictors,actual_predictor_family=run_asz(data_task,rel_eb,predictors,method,plan_predictor_family)
+                    result,actual_predictors,actual_predictor_family=run_asz(data_task,rel_eb,predictors,method,asz_bin_directory,plan_predictor_family)
                     if "write_plan" in method:
                         method["written_plans"][rel_eb]=(actual_predictors,actual_predictor_family)
                 elif compressor in ("sz3","qoz"):
@@ -688,16 +626,33 @@ def cli():
     parser.add_argument("--skip-build",action="store_true",help="使用已有安装，不重新构建")
     parser.add_argument("--silent-build",action="store_true",help="隐藏成功的构建输出")
     parser.add_argument("--no-csv",action="store_true",help="不写入数据文件旁的CSV")
+    parser.add_argument("--install-dir",default="install",help="编译时把ASZ的s1_compress和s1_decompress装到这个目录的bin里，运行时使用这里的程序，相对路径从项目根目录算起，默认为install。各baseline始终装在install/*_install下。提交作业后还要重新编译时，给这次提交指定单独的目录，作业就不会用到之后编译的ASZ")
+    parser.add_argument("--submit",action="store_true",help="先在当前机器上编译，再按config中slurm的资源把实验提交成Slurm作业，作业里不再编译。日志写到results/slurm")
     arguments=parser.parse_args()
     try:
-        tasks=load_tasks(resolve_json_path(arguments.json))
-        compressors=list(dict.fromkeys(method["compressor"] for task in tasks for method in task["method_list"]))
+        config_path=resolve_config_path(arguments.json,config_directory)
+        config=load_config(config_path)
+        if arguments.submit and config.slurm is None:
+            raise ValueError(f"{config_path}顶层是task列表，没有slurm资源，不能提交作业")
+        install_directory=Path(resolve_project_path(arguments.install_dir,project_root))
+        compressors=list(dict.fromkeys(method["compressor"] for task in config.tasks for method in task["method_list"]))
         if not arguments.skip_build:
-            build_compressors(compressors,arguments.silent_build)
-        for task in tasks:
+            build_compressors(compressors,get_max_cpus(8),arguments.silent_build,install_directory)
+        asz_bin_directory=install_directory/"bin"
+        if "asz" in compressors:
+            for name in ("s1_compress","s1_decompress"):
+                if not (asz_bin_directory/name).is_file():
+                    raise FileNotFoundError(f"找不到{asz_bin_directory/name}，请先不加--skip-build运行一次，编译并安装到这个目录")
+        if arguments.submit:
+            # 隐藏的config（例如.final18_rd_small.json）去掉开头的点作为作业名，日志就不是隐藏文件
+            job_name=Path(config_path).stem.lstrip(".")
+            job_id=submit_slurm_job(job_command_from_argv(),config.slurm,job_name=job_name,output_path=str(slurm_log_path),account=slurm_account)
+            print(f"已提交作业{job_id}，日志：{str(slurm_log_path).replace('%x',job_name).replace('%j',job_id)}")
+            return
+        for task in config.tasks:
             records=[]
             for data_path in task["data_path_list"]:
-                records.extend(run_task(task,data_path,not arguments.no_csv))
+                records.extend(run_task(task,data_path,not arguments.no_csv,asz_bin_directory))
                 if task.get("summary_csv") is not None:
                     write_comparison_summary(task["summary_csv"],records,task["comparison_baseline"])
     except (FileNotFoundError,TypeError,ValueError) as error:

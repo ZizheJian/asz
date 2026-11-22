@@ -76,9 +76,10 @@ The remaining tuning options are documented in [configs/README.md](configs/READM
 ```bash
 python3 t1_start_compressors.py isabel_pf01
 python3 t1_start_compressors.py isabel_pf01 --skip-build --no-csv
+python3 t1_start_compressors.py EXPERIMENT --submit
 ```
 
-`--skip-build` reuses installed binaries, and `--no-csv` suppresses the per-input CSV files. The launcher measures the compressed size from the actual bitstream and computes PSNR and maximum error independently from the reconstructed file. A task can save ASZ plans with `write_plan` or reuse them with `read_plan`. [configs/README.md](configs/README.md) describes the JSON format, the ASZ parameters, and the maintained experiment groups.
+`--skip-build` reuses installed binaries, and `--no-csv` suppresses the per-input CSV files. An experiment that runs on a compute node writes its config as `{"slurm":{...},"tasks":[...]}`, with the partition, CPU count, and time limit under `slurm`. With `--submit`, the launcher builds on the current machine and then submits a Slurm job with these resources, using the account `cis240669` by default and writing the log to `results/slurm/`. `--install-dir DIR` installs ASZ's `s1_compress` and `s1_decompress` into `DIR/bin` and runs them from there. It defaults to `install`, and the baselines always stay under `install/*_install`. When the code will be changed and rebuilt while a submitted job is still queued, give that submission its own directory so the job does not pick up the newer build. The launcher measures the compressed size from the actual bitstream and computes PSNR and maximum error independently from the reconstructed file. A task can save ASZ plans with `write_plan` or reuse them with `read_plan`. [configs/README.md](configs/README.md) describes the JSON format, the ASZ parameters, and the maintained experiment groups.
 
 ## Reproducing the paper
 

@@ -1,6 +1,17 @@
 # Experiment configuration format
 
-`t1_start_compressors.py` accepts a JSON file whose top level is a nonempty list of tasks. Each task requires:
+`t1_start_compressors.py` accepts a JSON file whose top level is a nonempty list of tasks. An experiment submitted as a Slurm job instead uses an object that holds its resources and its tasks:
+
+```json
+{
+  "slurm":{"partition":"shared","cpus":8,"time":"00:10:00"},
+  "tasks":[...]
+}
+```
+
+`slurm` requires `partition`, `cpus` (a power of two), and `time` (`HH:MM:SS` or `D-HH:MM:SS`), and accepts `account` and `exclusive`. Memory follows the CPU count and is not requested separately. Estimate the time limit from earlier runs and keep it short. `python3 t1_start_compressors.py CONFIG --submit` builds first and then submits the job, as described in [third_party/experiment_launcher/README.md](../third_party/experiment_launcher/README.md).
+
+Each task requires:
 
 - `data_path_list`: one or more input paths. All inputs in one task share a shape.
 - `data_shape`: exactly three dimensions, each containing at least seven values.

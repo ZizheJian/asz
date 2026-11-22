@@ -76,9 +76,10 @@ install/bin/s1_decompress -f -z data.asz -o data.asz.out -3 100 500 500 -M REL 1
 ```bash
 python3 t1_start_compressors.py isabel_pf01
 python3 t1_start_compressors.py isabel_pf01 --skip-build --no-csv
+python3 t1_start_compressors.py EXPERIMENT --submit
 ```
 
-`--skip-build` 复用已安装的程序，`--no-csv` 不生成每个输入单独的 CSV 文件。启动脚本根据实际码流计算压缩后大小，并从重建文件独立计算 PSNR 和最大误差。任务可以用 `write_plan` 保存 ASZ 的 plan，也可以用 `read_plan` 复用已有的 plan。JSON 格式、ASZ 参数和现有的实验组见 [configs/README.md](configs/README.md)。
+`--skip-build` 复用已安装的程序，`--no-csv` 不生成每个输入单独的 CSV 文件。需要在计算节点上运行的实验，把 config 顶层写成 `{"slurm":{...},"tasks":[...]}`，在 `slurm` 中写分区、CPU 数和时长。加 `--submit` 时，启动脚本先在当前机器上编译，再按这些资源提交 Slurm 作业，账户默认为 `cis240669`，日志写到 `results/slurm/`。`--install-dir DIR` 把 ASZ 的 `s1_compress` 和 `s1_decompress` 装到 `DIR/bin` 并使用那里的程序，默认为 `install`，各基线始终装在 `install/*_install` 下。提交作业后还要修改代码、重新编译时，给这次提交指定单独的目录，排队中的作业就不会用到之后编译的程序。启动脚本根据实际码流计算压缩后大小，并从重建文件独立计算 PSNR 和最大误差。任务可以用 `write_plan` 保存 ASZ 的 plan，也可以用 `read_plan` 复用已有的 plan。JSON 格式、ASZ 参数和现有的实验组见 [configs/README.md](configs/README.md)。
 
 ## 复现论文结果
 
