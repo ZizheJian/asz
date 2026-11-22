@@ -1,6 +1,10 @@
 import argparse,csv,json,math,os
 from pathlib import Path
 
+# 生成最终18-field实验的launcher config，每个config带Slurm资源，用t1_start_compressors.py逐个提交。例如RD实验：
+# for config in configs/.final18_rd_{small,medium,nyx,apsu004}.json configs/.final18_rd_apsu006_{,sperr_}{0..4}.json;do python3 t1_start_compressors.py "$config" --submit --skip-build --no-csv --install-dir install/final18_rd;done
+# --prepare-throughput生成的吞吐量实验把config换成configs/.final18_throughput_*.json，--prepare-rerun生成的重跑实验换成configs/.final18_rd_{name}_*.json。
+# install/final18_rd/bin里是最终结果使用的ASZ程序，各baseline使用install/*_install中的程序。APSU006的分片误差界、临时文件目录和汇总CSV各不相同，可以同时运行
 
 project_root=Path(__file__).resolve().parents[1]
 manifest_path=project_root/"configs/final_eighteen.json"
@@ -19,6 +23,16 @@ def write_json(path,value):
         output_file.write("\n")
 
 
+def slurm_config(resources,tasks):
+    cpus,time=resources
+    return {"slurm":{"partition":"shared","cpus":cpus,"time":time},"tasks":tasks}
+
+
+# RD作业的Slurm资源（CPU数，时长）。CPU数沿用以往的运行，时长按sacct记录的耗时留出余量，APSU的运行时间在不同运行间最多相差1.8倍。
+# 全部method的耗时：small 6分钟、medium 19分钟、nyx 40分钟、apsu004 63分钟，APSU006每个SPERR分片21–35分钟，主分片约45–55分钟
+rd_slurm={"small":(8,"00:10:00"),"medium":(16,"00:30:00"),"nyx":(64,"01:00:00"),"apsu004":(64,"01:40:00"),"apsu006":(128,"01:30:00"),"apsu006_sperr":(128,"00:55:00")}
+
+
 def load_manifest():
     with open(manifest_path,encoding="utf-8") as input_file:
         return json.load(input_file)
@@ -28,19 +42,23 @@ def prepare():
     datasets=load_manifest()
     for group,indexes in groups.items():
         output_directory=f"/anvil/scratch/x-zjian1/asz-final18-rd/{group}"
-        write_json(project_root/f"configs/.final18_rd_{group}.json",[task(datasets[index],output_directory) for index in indexes])
+        write_json(project_root/f"configs/.final18_rd_{group}.json",slurm_config(rd_slurm[group],[task(datasets[index],output_directory) for index in indexes]))
     apsu006=datasets[17]
+    # 主分片和SPERR分片可能同时运行，各用一个临时文件目录，数据文件旁的CSV也不会写到同一个文件
     for index,rel_eb in enumerate(apsu006["rel_eb_list"]):
         part=f"final18_parts/apsu006_{index}.csv"
         output_directory=f"/anvil/scratch/x-zjian1/asz-final18-rd/apsu006_{index}"
-        write_json(project_root/f"configs/.final18_rd_apsu006_{index}.json",[task(apsu006,output_directory,[rel_eb],part,["asz","sz3","qoz","zfp"])])
+        write_json(project_root/f"configs/.final18_rd_apsu006_{index}.json",slurm_config(rd_slurm["apsu006"],[task(apsu006,output_directory,[rel_eb],part,["asz","sz3","qoz","zfp"])]))
         sperr_part=f"final18_parts/apsu006_sperr_{index}.csv"
-        write_json(project_root/f"configs/.final18_rd_apsu006_sperr_{index}.json",[task(apsu006,output_directory,[rel_eb],sperr_part,["sperr"],"sperr")])
+        output_directory=f"/anvil/scratch/x-zjian1/asz-final18-rd/apsu006_sperr_{index}"
+        write_json(project_root/f"configs/.final18_rd_apsu006_sperr_{index}.json",slurm_config(rd_slurm["apsu006_sperr"],[task(apsu006,output_directory,[rel_eb],sperr_part,["sperr"],"sperr")]))
 
 
 # 只重跑部分method时，结果先写入final18_{name}，再由merge_rerun替换final18中对应的行
 # asz在压缩器修改后重跑所有field的ASZ，timing在APSU上把ASZ、SZ3、QoZ放进同一作业再测一次时间
 reruns={"asz":(["asz"],list(groups)),"timing":(["asz","sz3","qoz"],["apsu004"])}
+# 重跑作业的Slurm资源。asz在small、medium、nyx、apsu004和每个APSU006分片上分别用了1、3、8、12、11–14分钟，timing在apsu004上32分钟，每个APSU006分片36–49分钟
+rerun_slurm={"asz":{"small":(8,"00:05:00"),"medium":(16,"00:08:00"),"nyx":(64,"00:15:00"),"apsu004":(64,"00:25:00"),"apsu006":(128,"00:25:00")},"timing":{"apsu004":(128,"00:55:00"),"apsu006":(128,"01:15:00")}}
 
 
 def total_time(row):
@@ -57,11 +75,11 @@ def prepare_rerun(name):
     datasets=load_manifest()
     for group in group_names:
         output_directory=f"/anvil/scratch/x-zjian1/asz-final18-rd/{name}_{group}"
-        write_json(project_root/f"configs/.final18_rd_{name}_{group}.json",[task(datasets[index],output_directory,summary_csv=rerun_part(name,datasets[index]),method_list=method_list) for index in groups[group]])
+        write_json(project_root/f"configs/.final18_rd_{name}_{group}.json",slurm_config(rerun_slurm[name][group],[task(datasets[index],output_directory,summary_csv=rerun_part(name,datasets[index]),method_list=method_list) for index in groups[group]]))
     apsu006=datasets[17]
     for index,rel_eb in enumerate(apsu006["rel_eb_list"]):
         output_directory=f"/anvil/scratch/x-zjian1/asz-final18-rd/{name}_apsu006_{index}"
-        write_json(project_root/f"configs/.final18_rd_{name}_apsu006_{index}.json",[task(apsu006,output_directory,[rel_eb],rerun_part(name,apsu006,index),method_list)])
+        write_json(project_root/f"configs/.final18_rd_{name}_apsu006_{index}.json",slurm_config(rerun_slurm[name]["apsu006"],[task(apsu006,output_directory,[rel_eb],rerun_part(name,apsu006,index),method_list)]))
 
 
 def merge_rerun(name):
@@ -119,13 +137,8 @@ def merge_rerun(name):
         print(f"替换{'、'.join(method_list)}结果：{target_path}")
 
 
-# 吞吐量作业的Slurm资源。CPU数沿用2026-10-23的运行，时长按当时的耗时（small 3分钟、medium 11分钟、nyx 20分钟、apsu004和apsu006_zfp各35分钟）留出余量，
-# APSU的运行时间在不同运行间最多相差1.8倍。生成的config用python3 t1_start_compressors.py configs/.final18_throughput_{group}.json --submit提交
+# 吞吐量作业的Slurm资源。CPU数沿用2026-10-23的运行，时长按当时的耗时（small 3分钟、medium 11分钟、nyx 20分钟、apsu004和apsu006_zfp各35分钟）留出余量
 throughput_slurm={"small":(8,"00:06:00"),"medium":(16,"00:20:00"),"nyx":(64,"00:35:00"),"apsu004":(64,"01:00:00"),"apsu006_zfp":(32,"01:00:00")}
-
-
-def slurm_config(cpus,time,tasks):
-    return {"slurm":{"partition":"shared","cpus":cpus,"time":time},"tasks":tasks}
 
 
 def prepare_throughput():
@@ -137,11 +150,11 @@ def prepare_throughput():
             dataset=datasets[index]
             filename=Path(dataset["results"]["asz"]).name
             tasks.append(task(dataset,output_directory,summary_csv=f"final18_throughput/{filename}",method_list=["zfp","sperr"],comparison_baseline="zfp"))
-        write_json(project_root/f"configs/.final18_throughput_{group}.json",slurm_config(*throughput_slurm[group],tasks))
+        write_json(project_root/f"configs/.final18_throughput_{group}.json",slurm_config(throughput_slurm[group],tasks))
     apsu006=datasets[17]
     filename=Path(apsu006["results"]["asz"]).name
     output_directory="/anvil/scratch/x-zjian1/asz-final18-throughput/apsu006_zfp"
-    write_json(project_root/"configs/.final18_throughput_apsu006_zfp.json",slurm_config(*throughput_slurm["apsu006_zfp"],[task(apsu006,output_directory,summary_csv=f"final18_throughput/{filename}",method_list=["zfp"],comparison_baseline="zfp")]))
+    write_json(project_root/"configs/.final18_throughput_apsu006_zfp.json",slurm_config(throughput_slurm["apsu006_zfp"],[task(apsu006,output_directory,summary_csv=f"final18_throughput/{filename}",method_list=["zfp"],comparison_baseline="zfp")]))
 
 
 # APSU006按误差界拆成多个作业，SPERR另开作业，合并各分片得到final18/apsu006.csv

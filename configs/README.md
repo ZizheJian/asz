@@ -68,7 +68,7 @@ The default configuration search samples every fifth value along its two non-pre
 
 ## Maintained experiment groups
 
-- `final_eighteen.json`: authoritative 18-field analysis manifest shared by final RD, throughput, runtime, and aggregate analysis. It contains the selected input paths, shapes, five error bounds, and ASZ/SZ3/QoZ/ZFP/SPERR result paths. It uses a different schema from launcher tasks and is consumed by `evaluation_datasets.py`.
+- `final_eighteen.json`: authoritative 18-field analysis manifest shared by final RD, throughput, runtime, and aggregate analysis. It contains the selected input paths, shapes, five error bounds, and ASZ/SZ3/QoZ/ZFP/SPERR result paths. It uses a different schema from launcher tasks and is consumed by `evaluation_datasets.py`. `scripts/prepare_final18_rd.py` turns it into launcher configs that carry their Slurm resources, `configs/.final18_rd_*.json` for RD and `configs/.final18_throughput_*.json` for throughput, and the header of that script gives the loop that submits them. APSU 006 is split into one job per error bound, with SPERR in separate jobs, and these jobs can run at the same time.
 - `final_seventeen_miranda_density.json` and `final_seventeen_isabel_f24.json`: historical focused runs retained for provenance. They do not define the final field list.
 - `isabel_f24_field_finalists.json`: historical screening of five Isabel fields at time step 24. The final evaluation selects PRECIP and QGRAUP.
 - `final_twelve_qmcpack_orbital144.json`,`apsu006.json`,and `rtm_middle.json`: historical measurement batches that supply or precede parts of the current evaluation. The final measurements are written to `results/final18/`.
