@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 
+from third_party.csv_tools.py_codes.write_csv_item import write_csv_item
 from third_party.run_command.run_command import run_command
 
 project_root=Path(__file__).resolve().parent
@@ -14,45 +15,6 @@ asz_parameter_keys=("pivot_eb_ratio","eb_ratio","slope_ratio","block_pivot_ratio
 asz_compress_parameter_keys=("generate_config_sample_stride","h1_block_sampling_num","stat_eb_ratio","predictor_family_suffix_layers","predictor_family_sample_blocks","predictor_family_sample_point_limit","predictor_family_sample_fraction_limit","predictor_family_coarse_probe_block_pivot_ratio","predictor_family_fine_probe_block_pivot_ratio","predictor_family_fine_eb_threshold","default_slope_invalid_ratio_threshold","default_slope_fallback","default_slope_eb_span","t_min","t_max")
 asz_block_policy_keys=("coarse_block_pivot_ratio","fine_block_pivot_ratio")
 
-
-def add_csv(method,csv_path,rel_eb,br,psnr):
-    if os.path.exists(csv_path):
-        with open(csv_path,"r",encoding="utf-8") as input_file:
-            records=[line.strip().split(",") for line in input_file]
-        width=len(records[0])
-        if any(len(record)>width for record in records):
-            raise ValueError(f"{csv_path} has a row wider than its header")
-        for record in records:
-            record.extend([""]*(width-len(record)))
-        records[0][0]="REL_EB"
-        row_index=0
-        for index in range(1,len(records)+1):
-            if index==len(records) or rel_eb>float(records[index][0])*1.001:
-                records.insert(index,[""]*len(records[0]))
-                records[index][0]=str(rel_eb)
-                row_index=index
-                break
-            if .999*float(records[index][0])<=rel_eb<=1.001*float(records[index][0]):
-                row_index=index
-                break
-        column_index=0
-        for index in range(1,len(records[0])+2,2):
-            if index==len(records[0]) or method.upper()+"_BR">records[0][index]:
-                records[0][index:index]=[method.upper()+"_BR",method.upper()+"_PSNR"]
-                for record in records[1:]:
-                    record[index:index]=["",""]
-                column_index=index
-                break
-            if method.upper()+"_BR"==records[0][index]:
-                column_index=index
-                break
-        records[row_index][column_index]=str(br)
-        records[row_index][column_index+1]=str(psnr)
-    else:
-        records=[["REL_EB",method.upper()+"_BR",method.upper()+"_PSNR"],[str(rel_eb),str(br),str(psnr)]]
-    with open(csv_path,"w",encoding="utf-8") as output_file:
-        for record in records:
-            output_file.write(",".join(record)+"\n")
 
 def resolve_json_path(path_or_name):
     path=Path(path_or_name).expanduser()
@@ -645,7 +607,9 @@ def report_result(method_name,task,rel_eb,result,write_csv):
         audit_text=f",max_error={result['max_error']},absolute_eb={result['absolute_eb']},compressed_bytes={result['compressed_bytes']}"
     print(f"result method={method_name},rel_eb={rel_eb:g},cr={result['cr']},br={result['br']},psnr={result['psnr']}{audit_text}{time_text}",flush=True)
     if write_csv:
-        add_csv(method_name,codec_output_path(task,".csv"),rel_eb,result["br"],result["psnr"])
+        csv_path=codec_output_path(task,".csv")
+        write_csv_item(csv_path,{"REL_EB":rel_eb},method_name.upper()+"_BR",result["br"])
+        write_csv_item(csv_path,{"REL_EB":rel_eb},method_name.upper()+"_PSNR",result["psnr"])
 
 def prepare_runtime_methods(methods,data_path):
     runtime_methods=[]
