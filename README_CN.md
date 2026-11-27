@@ -50,7 +50,7 @@ cmake --build build --target s1_compress s1_decompress --parallel 4
 cmake --install build
 ```
 
-编译后得到 `install/bin/s1_compress` 和 `install/bin/s1_decompress`。实验启动脚本会自动编译 ASZ 和所有基线，除非指定 `--skip-build`。
+编译后得到 `install/bin/s1_compress` 和 `install/bin/s1_decompress`。实验启动脚本默认会编译 ASZ 和 config 用到的基线，见下文。
 
 ## 快速上手
 
@@ -75,11 +75,13 @@ install/bin/s1_decompress -f -z data.asz -o data.asz.out -3 100 500 500 -M REL 1
 
 ```bash
 python3 t1_start_compressors.py isabel_pf01
-python3 t1_start_compressors.py isabel_pf01 --skip-build --no-csv
+python3 t1_start_compressors.py isabel_pf01 --no-build --no-install --no-csv
 python3 t1_start_compressors.py EXPERIMENT --submit
 ```
 
-`--skip-build` 复用已安装的程序，`--no-csv` 不生成每个输入单独的 CSV 文件。需要在计算节点上运行的实验，把 config 顶层写成 `{"slurm":{...},"tasks":[...]}`，在 `slurm` 中写分区、CPU 数和时长。加 `--submit` 时，启动脚本先在当前机器上编译，再按这些资源提交 Slurm 作业，账户默认为 `cis240669`，日志写到 `results/slurm/`。`--install-dir DIR` 把 ASZ 的 `s1_compress` 和 `s1_decompress` 装到 `DIR/bin` 并使用那里的程序，默认为 `install`，各基线始终装在 `install/*_install` 下。提交作业后还要修改代码、重新编译时，给这次提交指定单独的目录，排队中的作业就不会用到之后编译的程序。启动脚本根据实际码流计算压缩后大小，并从重建文件独立计算 PSNR 和最大误差。任务可以用 `write_plan` 保存 ASZ 的 plan，也可以用 `read_plan` 复用已有的 plan。JSON 格式、ASZ 参数和现有的实验组见 [configs/README.md](configs/README.md)。
+启动脚本默认依次做三步：编译并安装 config 用到的基线（装在 `install/*_install` 下，运行时直接用那里的程序），再把 ASZ 编译到 `build/`；把 `build/` 里的 ASZ 装到安装目录，不管它是不是最新的；用安装目录里的 ASZ 运行任务。`--no-build`、`--no-install`、`--no-run` 分别关掉其中一步，只编译时可以不给 config。`--no-csv` 不生成每个输入单独的 CSV 文件。
+
+安装目录默认是 `install/`。config 顶层写成 `{"install_dir":"...","slurm":{...},"tasks":[...]}`，只有一个 task 时 `tasks` 也写成列表，另外两项可以不写。可以用 `install_dir` 换成 `install/` 外面的其他目录，几个 config 写同一个目录就共用同一份 ASZ，例如最终 18-field 实验的 config 都用 `install_final18_rd`。需要在计算节点上运行的实验在 `slurm` 中写分区、CPU 数和时长。加 `--submit` 时，当前机器上什么都不做，只把去掉 `--submit` 的同一条命令按这些资源提交成 Slurm 作业，命令里关掉了哪几步，作业里就不做哪几步。账户默认为 `cis240669`，日志写到 `results/slurm/`。启动脚本根据实际码流计算压缩后大小，并从重建文件独立计算 PSNR 和最大误差。任务可以用 `write_plan` 保存 ASZ 的 plan，也可以用 `read_plan` 复用已有的 plan。JSON 格式、ASZ 参数和现有的实验组见 [configs/README.md](configs/README.md)。
 
 ## 复现论文结果
 

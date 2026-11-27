@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 
 from third_party.csv_tools.py_codes.write_csv_item import write_csv_item
-from third_party.experiment_launcher.py_codes.experiment_launcher import cmake_build_and_install,job_command_from_argv,load_experiment_config,resolve_config_path,resolve_project_path,submit_slurm_job
+from third_party.experiment_launcher.py_codes.experiment_launcher import cmake_build,cmake_build_and_install,cmake_install,job_command_from_argv,load_experiment_config,resolve_config_path,resolve_install_dir,resolve_project_path,submit_slurm_job
 from third_party.get_max_cpus.py_codes.get_max_cpus import get_max_cpus
 from third_party.run_command.run_command import run_command
 
@@ -108,7 +108,7 @@ required_task_keys=("data_path_list","data_shape","rel_eb_list","method_list")
 optional_task_keys=("cleanup_after_each_test","comparison_baseline","summary_csv","output_directory")
 path_task_keys=("data_path_list","summary_csv","output_directory")
 
-# 读取config，检查参数，相对路径接在项目根目录后面。返回的slurm是作业资源，config顶层是task列表时为None
+# 读取config，检查参数，相对路径接在项目根目录后面。返回的slurm是作业资源，config里没写时为None
 def load_config(config_path):
     config=load_experiment_config(config_path,required_keys=required_task_keys,optional_keys=optional_task_keys,path_keys=path_task_keys,project_root=project_root)
     prepared=[]
@@ -255,29 +255,30 @@ def resolve_plan_path(path_template,data_path):
         raise ValueError(f"plan路径使用未知模板参数：{error.args[0]}") from error
     return resolve_task_path(path)
 
-# 用CMake配置、编译并安装一个项目，路径都相对于项目根目录。configure_once为True时，已经配置过就不再重新配置。
+# 用CMake配置、编译并安装一个baseline或依赖库，路径都相对于项目根目录。
 # with_zstd为True时，cmake运行时PKG_CONFIG_PATH指向项目里编译的zstd，SZ3和QoZ通过pkg-config找到它
-def build_cmake_project(source_path,build_path,install_path,options,build_max_cpus,silent,configure_once=True,with_zstd=False):
+def build_dependency(source_path,build_path,install_path,options,build_max_cpus,silent,with_zstd=False):
     environment=["cmake","-E","env",f"PKG_CONFIG_PATH={project_root/'install/common_zstd_install/lib/pkgconfig'}"] if with_zstd else []
-    cmake_build_and_install(lambda command:run_command([*environment,*command],silent),*(project_root/path for path in (source_path,build_path,install_path)),options,build_max_cpus,configure_once)
+    cmake_build_and_install(lambda command:run_command([*environment,*command],silent),*(project_root/path for path in (source_path,build_path,install_path)),options,build_max_cpus)
 
-# 编译用到的压缩器。各baseline和zstd都装在install/*_install下。ASZ装到install，install_directory是别的目录时再装一份到那里，
-# build目录里配置的安装目录始终是install，所以直接运行cmake --install build时仍然装到install
-def build_compressors(compressors,build_max_cpus,silent,install_directory):
+# 编译这一步：编译并安装用到的baseline（和SZ3、QoZ需要的zstd一起装在install/*_install下，运行时直接用那里的程序），再把ASZ编译到build，ASZ本身不安装。
+# build里配置的默认安装目录是install，所以直接运行cmake --install build时装到install
+def build_project(baselines,build_max_cpus,silent):
     zstd_library=f"-Dpkgcfg_lib_ZSTD_zstd:FILEPATH={project_root/'install/common_zstd_install/lib/libzstd.a'}"
-    if any(compressor in ("sz3","qoz") for compressor in compressors):
-        build_cmake_project("third_party/zstd/build/cmake","build/common_zstd_build","install/common_zstd_install",["-DCMAKE_BUILD_TYPE=Release","-DCMAKE_INSTALL_LIBDIR=lib","-DZSTD_BUILD_SHARED=OFF","-DZSTD_BUILD_STATIC=ON","-DZSTD_BUILD_PROGRAMS=OFF","-DZSTD_BUILD_TESTS=OFF"],build_max_cpus,silent)
-    for compressor in compressors:
-        if compressor=="asz":
-            build_cmake_project("c_codes","build","install",["-DCODE_NAME=s1_compress"],build_max_cpus,silent,configure_once=False)
-            if install_directory.resolve()!=(project_root/"install").resolve():
-                run_command(["cmake","--install",project_root/"build","--prefix",install_directory],silent)
-        elif compressor=="sz3":
-            build_cmake_project("third_party/SZ3","build/sz3_build","install/sz3_install",["-UZSTD_*",zstd_library,"-DBUILD_SHARED_LIBS=OFF","-DSZ3_USE_BUNDLED_ZSTD=OFF"],build_max_cpus,silent,with_zstd=True)
-        elif compressor=="qoz":
-            build_cmake_project("third_party/QoZ","build/qoz_build","install/qoz_install",["-UZSTD_*",zstd_library,"-DBUILD_SHARED_LIBS=OFF","-DQoZ_USE_BUNDLED_ZSTD=OFF","-DQoZ_DEBUG_TIMINGS=OFF"],build_max_cpus,silent,with_zstd=True)
-        elif compressor in ("zfp","sperr"):
-            build_cmake_project(f"third_party/{compressor}",f"build/{compressor}_build",f"install/{compressor}_install",["-DBUILD_SHARED_LIBS=OFF"],build_max_cpus,silent)
+    if any(baseline in ("sz3","qoz") for baseline in baselines):
+        build_dependency("third_party/zstd/build/cmake","build/common_zstd_build","install/common_zstd_install",["-DCMAKE_BUILD_TYPE=Release","-DCMAKE_INSTALL_LIBDIR=lib","-DZSTD_BUILD_SHARED=OFF","-DZSTD_BUILD_STATIC=ON","-DZSTD_BUILD_PROGRAMS=OFF","-DZSTD_BUILD_TESTS=OFF"],build_max_cpus,silent)
+    for baseline in baselines:
+        if baseline=="sz3":
+            build_dependency("third_party/SZ3","build/sz3_build","install/sz3_install",["-UZSTD_*",zstd_library,"-DBUILD_SHARED_LIBS=OFF","-DSZ3_USE_BUNDLED_ZSTD=OFF"],build_max_cpus,silent,with_zstd=True)
+        elif baseline=="qoz":
+            build_dependency("third_party/QoZ","build/qoz_build","install/qoz_install",["-UZSTD_*",zstd_library,"-DBUILD_SHARED_LIBS=OFF","-DQoZ_USE_BUNDLED_ZSTD=OFF","-DQoZ_DEBUG_TIMINGS=OFF"],build_max_cpus,silent,with_zstd=True)
+        elif baseline in ("zfp","sperr"):
+            build_dependency(f"third_party/{baseline}",f"build/{baseline}_build",f"install/{baseline}_install",["-DBUILD_SHARED_LIBS=OFF"],build_max_cpus,silent)
+    cmake_build(lambda command:run_command(command,silent),project_root/"c_codes",project_root/"build",project_root/"install",["-DCODE_NAME=s1_compress"],build_max_cpus)
+
+# 安装这一步：把build里的ASZ装到install_dir，不管build里的程序是不是最新的
+def install_project(install_dir,silent):
+    cmake_install(lambda command:run_command(command,silent),project_root/"build",install_dir)
 
 def parse_asz_result(output):
     patterns={"cr":r"^CR= ([0-9.eE+-]+)\r?$","data_range_time":r"^Data range time: ([0-9.eE+-]+)","compression_time":r"^Compression time: ([0-9.eE+-]+)","decompression_time":r"^Decompression time: ([0-9.eE+-]+)"}
@@ -621,42 +622,49 @@ def write_comparison_summary(path,records,baseline_method):
     print(f"写入比较汇总：{path}",flush=True)
 
 def cli():
-    parser=argparse.ArgumentParser(description="运行configs目录中的ASZ及基线压缩器实验")
-    parser.add_argument("json",help="configs中的JSON配置名称，或JSON文件路径")
-    parser.add_argument("--skip-build",action="store_true",help="使用已有安装，不重新构建")
+    parser=argparse.ArgumentParser(description="默认依次编译、安装、运行configs目录中的ASZ及基线压缩器实验，每一步都可以单独关掉")
+    parser.add_argument("config",nargs="?",help="configs中的配置名称，或配置文件路径。加了--no-run时可以不给，这时只编译ASZ，并装到install")
+    parser.add_argument("--no-build",action="store_true",help="不编译。默认编译并安装config用到的baseline，再把ASZ编译到build")
+    parser.add_argument("--no-install",action="store_true",help="不安装。默认把build里的ASZ装到config的install_dir，没写时装到install")
+    parser.add_argument("--no-run",action="store_true",help="不运行实验。默认用安装目录里的ASZ和install/*_install里的baseline运行config中的task")
+    parser.add_argument("--submit",action="store_true",help="当前机器上什么都不做，把去掉--submit的同一条命令按config中slurm的资源提交成Slurm作业。日志写到results/slurm")
     parser.add_argument("--silent-build",action="store_true",help="隐藏成功的构建输出")
     parser.add_argument("--no-csv",action="store_true",help="不写入数据文件旁的CSV")
-    parser.add_argument("--install-dir",default="install",help="编译时把ASZ的s1_compress和s1_decompress装到这个目录的bin里，运行时使用这里的程序，相对路径从项目根目录算起，默认为install。各baseline始终装在install/*_install下。提交作业后还要重新编译时，给这次提交指定单独的目录，作业就不会用到之后编译的ASZ")
-    parser.add_argument("--submit",action="store_true",help="先在当前机器上编译，再按config中slurm的资源把实验提交成Slurm作业，作业里不再编译。日志写到results/slurm")
     arguments=parser.parse_args()
-    try:
-        config_path=resolve_config_path(arguments.json,config_directory)
+    config=None
+    if arguments.config is not None:
+        config_path=resolve_config_path(arguments.config,config_directory)
         config=load_config(config_path)
-        if arguments.submit and config.slurm is None:
-            raise ValueError(f"{config_path}顶层是task列表，没有slurm资源，不能提交作业")
-        install_directory=Path(resolve_project_path(arguments.install_dir,project_root))
-        compressors=list(dict.fromkeys(method["compressor"] for task in config.tasks for method in task["method_list"]))
-        if not arguments.skip_build:
-            build_compressors(compressors,get_max_cpus(8),arguments.silent_build,install_directory)
-        asz_bin_directory=install_directory/"bin"
-        if "asz" in compressors:
-            for name in ("s1_compress","s1_decompress"):
-                if not (asz_bin_directory/name).is_file():
-                    raise FileNotFoundError(f"找不到{asz_bin_directory/name}，请先不加--skip-build运行一次，编译并安装到这个目录")
-        if arguments.submit:
-            # 隐藏的config（例如.final18_rd_small.json）去掉开头的点作为作业名，日志就不是隐藏文件
-            job_name=Path(config_path).stem.lstrip(".")
-            job_id=submit_slurm_job(job_command_from_argv(),config.slurm,job_name=job_name,output_path=str(slurm_log_path),account=slurm_account)
-            print(f"已提交作业{job_id}，日志：{str(slurm_log_path).replace('%x',job_name).replace('%j',job_id)}")
-            return
-        for task in config.tasks:
-            records=[]
-            for data_path in task["data_path_list"]:
-                records.extend(run_task(task,data_path,not arguments.no_csv,asz_bin_directory))
-                if task.get("summary_csv") is not None:
-                    write_comparison_summary(task["summary_csv"],records,task["comparison_baseline"])
-    except (FileNotFoundError,TypeError,ValueError) as error:
-        parser.error(str(error))
+    elif not arguments.no_run or arguments.submit:
+        parser.error("运行实验或提交作业时必须给config")
+    if arguments.submit:
+        if config.slurm is None:
+            parser.error(f"{config_path}里没有slurm，不能提交作业。需要提交时，在config顶层加上\"slurm\":{{...}}")
+        # 隐藏的config（例如.final18_rd_small.json）去掉开头的点作为作业名，日志就不是隐藏文件
+        job_name=Path(config_path).stem.lstrip(".")
+        job_command=job_command_from_argv()
+        job_id=submit_slurm_job(job_command,config.slurm,job_name=job_name,output_path=str(slurm_log_path),account=slurm_account)
+        print(f"已提交作业{job_id}，作业运行{' '.join(job_command[3:])}，日志：{str(slurm_log_path).replace('%x',job_name).replace('%j',job_id)}")
+        return
+    install_dir=Path(resolve_install_dir(None,project_root) if config is None else config.install_dir)
+    compressors=[] if config is None else list(dict.fromkeys(method["compressor"] for task in config.tasks for method in task["method_list"]))
+    if not arguments.no_build:
+        build_project([compressor for compressor in compressors if compressor!="asz"],get_max_cpus(8),arguments.silent_build)
+    if not arguments.no_install:
+        install_project(install_dir,arguments.silent_build)
+    if arguments.no_run:
+        return
+    asz_bin_directory=install_dir/"bin"
+    if "asz" in compressors:
+        for name in ("s1_compress","s1_decompress"):
+            if not (asz_bin_directory/name).is_file():
+                raise FileNotFoundError(f"找不到{asz_bin_directory/name}，请先编译并安装到这个目录")
+    for task in config.tasks:
+        records=[]
+        for data_path in task["data_path_list"]:
+            records.extend(run_task(task,data_path,not arguments.no_csv,asz_bin_directory))
+            if task.get("summary_csv") is not None:
+                write_comparison_summary(task["summary_csv"],records,task["comparison_baseline"])
 
 if __name__=="__main__":
     cli()

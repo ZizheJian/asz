@@ -50,7 +50,7 @@ cmake --build build --target s1_compress s1_decompress --parallel 4
 cmake --install build
 ```
 
-This installs `install/bin/s1_compress` and `install/bin/s1_decompress`. The experiment launcher builds ASZ and all baselines automatically unless `--skip-build` is given.
+This installs `install/bin/s1_compress` and `install/bin/s1_decompress`. By default the experiment launcher builds ASZ and the baselines that the config uses, as described below.
 
 ## Quick start
 
@@ -75,11 +75,13 @@ The remaining tuning options are documented in [configs/README.md](configs/READM
 
 ```bash
 python3 t1_start_compressors.py isabel_pf01
-python3 t1_start_compressors.py isabel_pf01 --skip-build --no-csv
+python3 t1_start_compressors.py isabel_pf01 --no-build --no-install --no-csv
 python3 t1_start_compressors.py EXPERIMENT --submit
 ```
 
-`--skip-build` reuses installed binaries, and `--no-csv` suppresses the per-input CSV files. An experiment that runs on a compute node writes its config as `{"slurm":{...},"tasks":[...]}`, with the partition, CPU count, and time limit under `slurm`. With `--submit`, the launcher builds on the current machine and then submits a Slurm job with these resources, using the account `cis240669` by default and writing the log to `results/slurm/`. `--install-dir DIR` installs ASZ's `s1_compress` and `s1_decompress` into `DIR/bin` and runs them from there. It defaults to `install`, and the baselines always stay under `install/*_install`. When the code will be changed and rebuilt while a submitted job is still queued, give that submission its own directory so the job does not pick up the newer build. The launcher measures the compressed size from the actual bitstream and computes PSNR and maximum error independently from the reconstructed file. A task can save ASZ plans with `write_plan` or reuse them with `read_plan`. [configs/README.md](configs/README.md) describes the JSON format, the ASZ parameters, and the maintained experiment groups.
+By default the launcher takes three steps: it builds and installs the baselines that the config uses (under `install/*_install`, where they are run from) and builds ASZ in `build/`, installs the ASZ programs in `build/` into the install directory whether or not they are up to date, and runs the tasks with the installed ASZ. `--no-build`, `--no-install` and `--no-run` each turn off one step, and a config is not needed when only building. `--no-csv` suppresses the per-input CSV files.
+
+The default install directory is `install/`. A config is written as `{"install_dir":"...","slurm":{...},"tasks":[...]}`, where `tasks` stays a list even with a single task and the other two keys are optional. It may choose another directory outside `install/` with `install_dir`, and configs that give the same directory share one copy of ASZ; the configs of the final 18-field evaluation all use `install_final18_rd`. An experiment that runs on a compute node gives the partition, CPU count, and time limit under `slurm`. With `--submit`, nothing happens on the current machine: the same command without `--submit` is submitted as a Slurm job with these resources, and the job skips exactly the steps that the command turns off. The account is `cis240669` by default, and the log goes to `results/slurm/`. The launcher measures the compressed size from the actual bitstream and computes PSNR and maximum error independently from the reconstructed file. A task can save ASZ plans with `write_plan` or reuse them with `read_plan`. [configs/README.md](configs/README.md) describes the JSON format, the ASZ parameters, and the maintained experiment groups.
 
 ## Reproducing the paper
 

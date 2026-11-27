@@ -2,6 +2,7 @@ astz_env/
 build/
 build-*/
 install/
+install_*/
 __pycache__/
 *.pyc
 results/*

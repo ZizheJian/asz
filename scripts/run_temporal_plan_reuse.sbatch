@@ -8,6 +8,6 @@ cd /home/x-zjian1/asz
 field=${1:?缺少field名称}
 parallel=${2:-${SLURM_CPUS_PER_TASK:-1}}
 for phase in self transfer;do
-    python3 scripts/prepare_temporal_plan_reuse.py --field "$field" --pending "$phase"|xargs -r -n 1 -P "$parallel" python3 t1_start_compressors.py --skip-build --no-csv --install-dir install/final18_rd
+    python3 scripts/prepare_temporal_plan_reuse.py --field "$field" --pending "$phase"|xargs -r -n 1 -P "$parallel" python3 t1_start_compressors.py --no-build --no-install --no-csv
 done
 python3 analyze_temporal_plan_reuse.py --field "$field"

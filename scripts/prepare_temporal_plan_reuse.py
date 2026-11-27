@@ -21,7 +21,7 @@ def write_json(path,value):
 
 
 def task(field,data_path,method,summary_csv,output_name):
-    return [{"data_path_list":[data_path],"data_shape":fields[field]["shape"],"rel_eb_list":list(bounds),"method_list":[method],"cleanup_after_each_test":True,"comparison_baseline":method["name"],"summary_csv":str(summary_csv),"output_directory":f"{output_root}/{field}/{output_name}"}]
+    return {"install_dir":"install_final18_rd","tasks":[{"data_path_list":[data_path],"data_shape":fields[field]["shape"],"rel_eb_list":list(bounds),"method_list":[method],"cleanup_after_each_test":True,"comparison_baseline":method["name"],"summary_csv":str(summary_csv),"output_directory":f"{output_root}/{field}/{output_name}"}]}
 
 
 # self阶段为每个文件生成并保存自己的plan，transfer阶段对每个(代表,目标)对只压缩一次，供所有共享该对的uses复用
@@ -51,7 +51,7 @@ def prepare(field):
 def pending(field,phase):
     for path in sorted((config_root/field).glob(f"{phase}_*.json")):
         with open(path,encoding="utf-8") as input_file:
-            summary_csv=Path(json.load(input_file)[0]["summary_csv"])
+            summary_csv=Path(json.load(input_file)["tasks"][0]["summary_csv"])
         if not summary_csv.is_file():
             print(path)
 

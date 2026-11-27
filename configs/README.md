@@ -1,15 +1,16 @@
 # Experiment configuration format
 
-`t1_start_compressors.py` accepts a JSON file whose top level is a nonempty list of tasks. An experiment submitted as a Slurm job instead uses an object that holds its resources and its tasks:
+`t1_start_compressors.py` accepts a JSON file whose top level is an object with a nonempty task list `tasks`, which stays a list even with a single task. An experiment submitted as a Slurm job also gives its resources under `slurm`, and `install_dir` chooses another install directory:
 
 ```json
 {
+  "install_dir":"install_final18_rd",
   "slurm":{"partition":"shared","cpus":8,"time":"00:10:00"},
   "tasks":[...]
 }
 ```
 
-`slurm` requires `partition`, `cpus` (a power of two), and `time` (`HH:MM:SS` or `D-HH:MM:SS`), and accepts `account` and `exclusive`. Memory follows the CPU count and is not requested separately. Estimate the time limit from earlier runs and keep it short. `python3 t1_start_compressors.py CONFIG --submit` builds first and then submits the job, as described in [third_party/experiment_launcher/README.md](../third_party/experiment_launcher/README.md).
+`slurm` requires `partition`, `cpus` (a power of two), and `time` (`HH:MM:SS` or `D-HH:MM:SS`), and accepts `account`. Memory follows the CPU count and is not requested separately. A job that needs the whole node uses `wholenode`, or requests 128 CPUs in `shared`. Estimate the time limit from earlier runs and keep it short. `python3 t1_start_compressors.py CONFIG --submit` does nothing on the current machine and submits the same command without `--submit` as a job, as described in [third_party/experiment_launcher/README.md](../third_party/experiment_launcher/README.md).
 
 Each task requires:
 

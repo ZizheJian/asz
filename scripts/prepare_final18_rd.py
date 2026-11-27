@@ -2,9 +2,9 @@ import argparse,csv,json,math,os
 from pathlib import Path
 
 # 生成最终18-field实验的launcher config，每个config带Slurm资源，用t1_start_compressors.py逐个提交。例如RD实验：
-# for config in configs/.final18_rd_{small,medium,nyx,apsu004}.json configs/.final18_rd_apsu006_{,sperr_}{0..4}.json;do python3 t1_start_compressors.py "$config" --submit --skip-build --no-csv --install-dir install/final18_rd;done
+# for config in configs/.final18_rd_{small,medium,nyx,apsu004}.json configs/.final18_rd_apsu006_{,sperr_}{0..4}.json;do python3 t1_start_compressors.py "$config" --no-build --no-install --no-csv --submit;done
 # --prepare-throughput生成的吞吐量实验把config换成configs/.final18_throughput_*.json，--prepare-rerun生成的重跑实验换成configs/.final18_rd_{name}_*.json。
-# install/final18_rd/bin里是最终结果使用的ASZ程序，各baseline使用install/*_install中的程序。APSU006的分片误差界、临时文件目录和汇总CSV各不相同，可以同时运行
+# 每个config的install_dir都是install_final18_rd，它的bin里是最终结果使用的ASZ程序，各baseline使用install/*_install中的程序。APSU006的分片误差界、临时文件目录和汇总CSV各不相同，可以同时运行
 
 project_root=Path(__file__).resolve().parents[1]
 manifest_path=project_root/"configs/final_eighteen.json"
@@ -25,7 +25,7 @@ def write_json(path,value):
 
 def slurm_config(resources,tasks):
     cpus,time=resources
-    return {"slurm":{"partition":"shared","cpus":cpus,"time":time},"tasks":tasks}
+    return {"install_dir":"install_final18_rd","slurm":{"partition":"shared","cpus":cpus,"time":time},"tasks":tasks}
 
 
 # RD作业的Slurm资源（CPU数，时长）。CPU数沿用以往的运行，时长按sacct记录的耗时留出余量，APSU的运行时间在不同运行间最多相差1.8倍。
