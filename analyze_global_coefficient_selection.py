@@ -215,7 +215,7 @@ def self_test():
     assert candidate_index(0.25000000000001)==candidate_t.index(0.25)
 
 def main():
-    parser=argparse.ArgumentParser(description="Validate global 1D4R coefficient-selection criteria from complete legacy sweeps")
+    parser=argparse.ArgumentParser(description="Validate global 1D4R coefficient-selection criteria from complete legacy sweeps",allow_abbrev=False)
     parser.add_argument("--output",type=Path,default=project_root/"results/coefficient-proxy-global-common-20261111")
     parser.add_argument("--output-png",type=Path,default=project_root/"overleaf/figures/5/coefficient-proxy-validation.png")
     parser.add_argument("--self-test",action="store_true")

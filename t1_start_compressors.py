@@ -622,7 +622,7 @@ def write_comparison_summary(path,records,baseline_method):
     print(f"写入比较汇总：{path}",flush=True)
 
 def cli():
-    parser=argparse.ArgumentParser(description="默认依次编译、安装、运行configs目录中的ASZ及基线压缩器实验，每一步都可以单独关掉")
+    parser=argparse.ArgumentParser(description="默认依次编译、安装、运行configs目录中的ASZ及基线压缩器实验，每一步都可以单独关掉",allow_abbrev=False)
     parser.add_argument("config",nargs="?",help="configs中的配置名称，或配置文件路径。加了--no-run时可以不给，这时只编译ASZ，并装到install")
     parser.add_argument("--no-build",action="store_true",help="不编译。默认编译并安装config用到的baseline，再把ASZ编译到build")
     parser.add_argument("--no-install",action="store_true",help="不安装。默认把build里的ASZ装到config的install_dir，没写时装到install")
@@ -641,10 +641,7 @@ def cli():
         if config.slurm is None:
             parser.error(f"{config_path}里没有slurm，不能提交作业。需要提交时，在config顶层加上\"slurm\":{{...}}")
         # 隐藏的config（例如.final18_rd_small.json）去掉开头的点作为作业名，日志就不是隐藏文件
-        job_name=Path(config_path).stem.lstrip(".")
-        job_command=job_command_from_argv()
-        job_id=submit_slurm_job(job_command,config.slurm,job_name=job_name,output_path=str(slurm_log_path),account=slurm_account)
-        print(f"已提交作业{job_id}，作业运行{' '.join(job_command[3:])}，日志：{str(slurm_log_path).replace('%x',job_name).replace('%j',job_id)}")
+        submit_slurm_job(job_command_from_argv(),config.slurm,job_name=Path(config_path).stem.lstrip("."),output_path=slurm_log_path,account=slurm_account)
         return
     install_dir=Path(resolve_install_dir(None,project_root) if config is None else config.install_dir)
     compressors=[] if config is None else list(dict.fromkeys(method["compressor"] for task in config.tasks for method in task["method_list"]))

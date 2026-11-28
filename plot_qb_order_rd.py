@@ -85,7 +85,7 @@ def render(rows,extension_rows,output_png):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Plot independently optimized QB serialization-order RD curves")
+    parser=argparse.ArgumentParser(description="Plot independently optimized QB serialization-order RD curves",allow_abbrev=False)
     parser.add_argument("--input-directory",type=Path,default=project_root/"results/qb-order-zoom-final18-20261025")
     parser.add_argument("--extension-directory",type=Path,default=project_root/"results/qb-order-common-final18-20261025")
     parser.add_argument("--output-png",type=Path,default=project_root/"overleaf/figures/5/qb-order-rd.png")

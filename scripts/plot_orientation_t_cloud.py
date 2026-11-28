@@ -13,7 +13,7 @@ import numpy as np
 
 
 def parse_args():
-    parser=argparse.ArgumentParser()
+    parser=argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("--input",default="/anvil/projects/x-cis240192/x-zjian1-in-cis240192/tensor-data/aramco/aramco-snapshot-1800.f32")
     parser.add_argument("--shape",type=int,nargs=3,default=(449,449,235))
     parser.add_argument("--output-dir",default="results/orientation-t-aramco-20261018")

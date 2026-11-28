@@ -111,7 +111,7 @@ def render(qmcpack_rows,wind,apsu,output_png):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Plot the equal-PSNR relative compression ratio of non-temporal plan reuse")
+    parser=argparse.ArgumentParser(description="Plot the equal-PSNR relative compression ratio of non-temporal plan reuse",allow_abbrev=False)
     parser.add_argument("--manifest",type=Path,default=project_root/"configs/final_eighteen.json")
     parser.add_argument("--wind-self",type=Path,default=project_root/"results/isabel_wind_plan_transfer_self.csv")
     parser.add_argument("--wind-transfer",type=Path,default=project_root/"results/isabel_wind_plan_transfer.csv")

@@ -143,7 +143,7 @@ def write_csv(path,rows):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Summarize the equal-PSNR relative compression ratio of plan reuse")
+    parser=argparse.ArgumentParser(description="Summarize the equal-PSNR relative compression ratio of plan reuse",allow_abbrev=False)
     parser.add_argument("--field",nargs="+",choices=list(fields),default=list(fields))
     arguments=parser.parse_args()
     for field in arguments.field:

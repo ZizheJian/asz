@@ -111,7 +111,7 @@ def write_csv(path,rows):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Summarize RD and runtime for the final 18-field evaluation")
+    parser=argparse.ArgumentParser(description="Summarize RD and runtime for the final 18-field evaluation",allow_abbrev=False)
     parser.add_argument("--manifest",type=Path,default=default_manifest)
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
     parser.add_argument("--rel-eb",type=float)

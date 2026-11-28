@@ -69,7 +69,7 @@ def save_time_by_error_bound(ordered,timings_by_title,output_path,dpi):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Plot throughput and runtime for the final 18-field evaluation")
+    parser=argparse.ArgumentParser(description="Plot throughput and runtime for the final 18-field evaluation",allow_abbrev=False)
     parser.add_argument("--manifest",type=Path,default=default_manifest)
     parser.add_argument("--result-directory",type=Path,default=project_root/"results")
     parser.add_argument("--output-directory",type=Path,default=project_root/"overleaf/figures/6")

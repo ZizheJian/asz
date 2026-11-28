@@ -434,7 +434,7 @@ def write_csv(path,rows):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Select prediction-sweep candidates while retaining requested configuration dimensions")
+    parser=argparse.ArgumentParser(description="Select prediction-sweep candidates while retaining requested configuration dimensions",allow_abbrev=False)
     parser.add_argument("input_prefix",type=Path)
     parser.add_argument("--family",nargs="+",choices=("1d4r","2d4r","1d6r"),required=True)
     parser.add_argument("--retain",nargs="*",choices=dimensions,default=("axis",))

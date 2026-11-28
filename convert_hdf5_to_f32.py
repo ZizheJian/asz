@@ -20,7 +20,7 @@ def parse_shape(text):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Stream an HDF5 dataset into a raw float32 file")
+    parser=argparse.ArgumentParser(description="Stream an HDF5 dataset into a raw float32 file",allow_abbrev=False)
     parser.add_argument("source",type=Path)
     parser.add_argument("destination",type=Path)
     parser.add_argument("--dataset",required=True)

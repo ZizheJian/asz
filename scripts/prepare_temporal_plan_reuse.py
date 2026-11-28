@@ -57,7 +57,7 @@ def pending(field,phase):
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Prepare launcher configurations for the temporal plan-reuse experiment")
+    parser=argparse.ArgumentParser(description="Prepare launcher configurations for the temporal plan-reuse experiment",allow_abbrev=False)
     parser.add_argument("--field",nargs="+",choices=list(fields),default=list(fields))
     parser.add_argument("--pending",choices=("self","transfer"),help="list unfinished configurations of one phase instead of preparing")
     arguments=parser.parse_args()

@@ -195,7 +195,7 @@ def merge_apsu006():
 
 
 def main():
-    parser=argparse.ArgumentParser(description="准备或合并最终18-field RD任务")
+    parser=argparse.ArgumentParser(description="准备或合并最终18-field RD任务",allow_abbrev=False)
     parser.add_argument("--merge-apsu006",action="store_true")
     parser.add_argument("--prepare-throughput",action="store_true")
     parser.add_argument("--prepare-rerun",choices=list(reruns),help="生成只重跑部分method的配置")

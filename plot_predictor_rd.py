@@ -174,7 +174,7 @@ def specifications():
 
 
 def main():
-    parser=argparse.ArgumentParser(description="Plot predictor-family RD comparisons")
+    parser=argparse.ArgumentParser(description="Plot predictor-family RD comparisons",allow_abbrev=False)
     parser.add_argument("figures",nargs="*")
     arguments=parser.parse_args()
     specs=specifications()
